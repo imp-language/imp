@@ -1,0 +1,18 @@
+class Stack {
+    list = []
+    constructor() {
+
+    }
+
+    get peek {
+        return length
+    }
+
+    push
+
+
+    get length {
+        return list.length
+    }
+
+}
