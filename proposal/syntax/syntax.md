@@ -44,9 +44,8 @@ loop {
 ```
 
 
-/**
- * If-else if-else statements
- */
+## If-else statements
+```c
 if cond {
     log(“branch 0”)
 } else if 4 < x {
@@ -54,3 +53,4 @@ if cond {
 } else {
     log(“branch 2”)
 }
+```
