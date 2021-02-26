@@ -1,0 +1,11 @@
+
+
+function isPalindrome(source string) {
+    return source.reverse() == source
+}
+
+
+log(isPalindrome("racecar"))
+
+var result = isPalindrome("not a palindrome")
+log(result)
