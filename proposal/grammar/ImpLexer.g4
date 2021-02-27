@@ -18,6 +18,8 @@ IF : 'if';
 ELSE : 'else';
 FUNCTION : 'function';
 RETURN : 'return';
+VAL : 'val';
+MUT : 'mut';
 
 BOOL : 'bool';
 INT : 'int';
@@ -98,3 +100,8 @@ fragment HEX_DIGIT
 fragment EXPONENT
     : [eE] [+-]? DECIMALS
     ;
+
+fragment ALPHA
+    : [a-zA-Z_]
+    ;
+
