@@ -25,6 +25,7 @@ BOOL : 'bool';
 INT : 'int';
 FLOAT : 'float';
 CHAR : 'char';
+STRING : 'string';
 
 EXPORT : 'export';
 IMPORT : 'import';
@@ -32,6 +33,8 @@ IMPORT : 'import';
 NEW : 'new';
 CLASS : 'class';
 ENUM : 'enum';
+
+IN : 'in';
 
 
 
