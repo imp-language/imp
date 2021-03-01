@@ -51,6 +51,7 @@ FATARROW=50
 BooleanLiteral=51
 DECIMAL_LIT=52
 FLOAT_LIT=53
+IDENTIFIER=54
 'loop'=4
 'if'=5
 'else'=6

@@ -88,6 +88,9 @@ FLOAT_LIT : DECIMALS ('.' DECIMALS? EXPONENT? | EXPONENT)
                        | '.' DECIMALS EXPONENT?
                        ;
 
+
+IDENTIFIER : ALPHA (ALPHA | DECIMALS)*;
+
 // Fragments
 
 

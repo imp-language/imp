@@ -96,8 +96,8 @@ argument
 
 // Type
 type
-    : identifier primitiveType   // single instances of a type
-    | listType                   // lists
+    : listType                   // lists
+    | primitiveType   // single instances of a type
     | functionType               // functions passed as parameters to functions
     ;
 
@@ -107,7 +107,7 @@ primitiveType
 
 // function acceptsList(words string[])
 listType
-    : identifier LBRACK RBRACK
+    : (identifier | primitiveType) LBRACK RBRACK
     ;
 
 functionType
@@ -121,7 +121,8 @@ variableStatement
     ;
 
 variableDeclaration
-    : identifier+ ('=' singleExpression)?
+    // : identifier+ ('=' singleExpression)?
+    : identifier+ (EQUAL expression)?
     ;
 
 
@@ -134,8 +135,10 @@ expressionList
     ;
 
 expression
-    : primaryExpr
-    | unaryExpr;
+    : identifier
+    // | primaryExpr
+    // | unaryExpr
+    ;
 
 
 
@@ -146,14 +149,15 @@ expression
  */
 
 identifier
-    : ALPHA (ALPHA | DECIMALS)*;
+    : IDENTIFIER
+    ;
 
 arrayLiteral
-    : ('[' elementList ']')
+    : (LBRACK elementList RBRACK)
     ;
 
 elementList
-    : ','* arrayElement? (','+ arrayElement)* ','* // Yes, everything is optional
+    : COMMA* arrayElement? (COMMA+ arrayElement)* COMMA* // Yes, everything is optional
     ;
 
 arrayElement
