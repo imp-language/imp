@@ -10,9 +10,7 @@ options {
     tokenVocab = ImpLexer;
 }
 
-program : sourceElements? EOF;
-
-sourceElements : statement+;
+program : statement* EOF;
 
 /*
  * Core
@@ -31,8 +29,8 @@ statement
 
 // Increment/Decrement, Variables, Expressions
 simpleStatement
-    : incDecStatement
-    | variableStatement
+    : variableStatement
+    | incDecStatement
     | expressionStatement
     | assignment
     ;
@@ -97,7 +95,7 @@ loopStatement
     ;
 
 loopCondition
-    : variableStatement SEMICOLON // val i = 0; i < 10; i++
+    : variableStatement SEMICOLON simpleStatement SEMICOLON simpleStatement SEMICOLON? // val i = 0; i < 10; i++
     | variableStatement IN expression // val item, idx in list
     ;
 
