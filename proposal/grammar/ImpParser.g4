@@ -21,11 +21,12 @@ sourceElements : statement+;
 // If statements, Loops, Returns, Switch, etc
 statement
     : block
+    | callStatement
+    | functionStatement
     | returnStatement
     | ifStatement
     | simpleStatement
     | loopStatement
-    | functionStatement
     ;
 
 // Increment/Decrement, Variables, Expressions
@@ -128,6 +129,11 @@ arguments
 
 argument
     : identifier type
+    ;
+
+// Function call
+callStatement
+    : identifier LPAREN (expressionList)? RPAREN
     ;
 
 
