@@ -33,6 +33,7 @@ simpleStatement
     : incDecStatement
     | variableStatement
     | expressionStatement
+    | assignment
     ;
 
 statementList
@@ -44,6 +45,34 @@ block
     : LBRACE statementList? RBRACE
     ;
 
+/*
+ * Expressions
+ */
+// Comma-separated list of one or more expressions
+expressionList
+    : expression (COMMA expression)*
+    ;
+
+expression
+    : terminalExpr
+    | unaryExpr
+    | <assoc=right> expression POW expression
+    | expression (MUL | DIV | MOD) expression
+    | expression (ADD | SUB) expression
+    | expression (EQUAL | NOTEQUAL | LE | LT | GE | GT) expression
+    | expression (AND) expression
+    ;
+
+// literals and the like
+terminalExpr
+    : identifier
+    | literal
+    ;
+
+// not equals, negation, etc
+unaryExpr
+    : (ADD | SUB | (BANG | NOT)) expression
+    ;
 
 /*
  * Statements
@@ -51,6 +80,14 @@ block
 // Simple expression
 expressionStatement
     : expression
+    ;
+
+assignment
+    : expressionList assign_op expressionList;
+
+// +=, -=, *=, /=, ^=, %=, or of course =
+assign_op
+    : (ADD | SUB | MUL | DIV | POW | MOD)? ASSIGN
     ;
 
 // Loops
@@ -126,21 +163,6 @@ variableInitialize
     : identifier (ASSIGN expression)?
     ;
 
-
-/*
- * Expressions
- */
-// Comma-separated list of one or more expressions
-expressionList
-    : expression (COMMA expression)*
-    ;
-
-expression
-    : identifier
-    | literal
-    // | primaryExpr
-    // | unaryExpr
-    ;
 
 
 
