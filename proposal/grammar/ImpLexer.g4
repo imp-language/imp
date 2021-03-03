@@ -91,7 +91,18 @@ FLOAT_LIT : DECIMALS ('.' DECIMALS? EXPONENT? | EXPONENT)
 
 IDENTIFIER : ALPHA (ALPHA | DECIMALS)*;
 
+// String literals
+RAW_STRING_LIT         : '`' ~'`'*                      '`';
+
+STRING_LITERAL : ('"' DoubleStringCharacter* '"');
+
 // Fragments
+
+fragment DoubleStringCharacter
+    : ~["\\\r\n]
+    // | '\\' EscapeSequence
+    // | LineContinuation
+    ;
 
 
 fragment DECIMALS

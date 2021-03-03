@@ -10,9 +10,9 @@ options {
     tokenVocab = ImpLexer;
 }
 
-// program : sourceElements? EOF;
+program : sourceElements? EOF;
 
-// sourceElements : statement+;
+sourceElements : statement+;
 
 /*
  * Core
@@ -116,13 +116,14 @@ functionType
     ;
 
 
+// Declare and optionally initialize variables
 variableStatement
-    : (VAL | MUT) variableDeclaration (COMMA variableDeclaration)*
+    : (VAL | MUT) variableInitialize (COMMA variableInitialize)*
     ;
 
-variableDeclaration
-    // : identifier+ ('=' singleExpression)?
-    : identifier+ (EQUAL expression)?
+// Initialize a single variable
+variableInitialize
+    : identifier (ASSIGN expression)?
     ;
 
 
@@ -136,6 +137,7 @@ expressionList
 
 expression
     : identifier
+    | literal
     // | primaryExpr
     // | unaryExpr
     ;
@@ -147,19 +149,46 @@ expression
 /*
  * Literals
  */
+literal
+    : listLiteral
+    | stringLiteral
+    | integerLiteral
+    | floatLiteral
+    ;
 
 identifier
     : IDENTIFIER
     ;
 
-arrayLiteral
+// Integers and booleans
+integerLiteral
+    : DECIMAL_LIT
+    | BooleanLiteral
+    ;
+
+floatLiteral
+    : FLOAT_LIT
+    ;
+
+
+
+// Lists
+listLiteral
     : (LBRACK elementList RBRACK)
     ;
 
 elementList
-    : COMMA* arrayElement? (COMMA+ arrayElement)* COMMA* // Yes, everything is optional
+    : COMMA* listElement? (COMMA+ listElement)* COMMA* // Yes, everything is optional
     ;
 
-arrayElement
-    : COMMA // todo
+listElement
+    : expression // todo
     ;
+
+
+// Strings
+stringLiteral
+    : RAW_STRING_LIT
+    | STRING_LITERAL
+    ;
+    // TODO: template string literals?
