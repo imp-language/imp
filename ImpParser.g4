@@ -5,6 +5,7 @@ parser grammar ImpParser;
 //    Plus stands for: one or more
 //    Star stands for: zero or more
 
+import ImpLiterals;
 
 options {
     tokenVocab = ImpLexer;
@@ -23,8 +24,8 @@ statement
     | functionStatement
     | returnStatement
     | ifStatement
-    | simpleStatement
     | loopStatement
+    | simpleStatement
     ;
 
 // Increment/Decrement, Variables, Expressions
@@ -60,6 +61,7 @@ expression
     | expression (ADD | SUB) expression
     | expression (EQUAL | NOTEQUAL | LE | LT | GE | GT) expression
     | expression (AND) expression
+    | expression DOT expression
     ;
 
 // literals and the like
@@ -167,54 +169,3 @@ variableInitialize
     : identifier (ASSIGN expression)?
     ;
 
-
-
-
-
-
-/*
- * Literals
- */
-literal
-    : listLiteral
-    | stringLiteral
-    | integerLiteral
-    | floatLiteral
-    ;
-
-identifier
-    : IDENTIFIER
-    ;
-
-// Integers and booleans
-integerLiteral
-    : DECIMAL_LIT
-    | BooleanLiteral
-    ;
-
-floatLiteral
-    : FLOAT_LIT
-    ;
-
-
-
-// Lists
-listLiteral
-    : (LBRACK elementList RBRACK)
-    ;
-
-elementList
-    : COMMA* listElement? (COMMA+ listElement)* COMMA* // Yes, everything is optional
-    ;
-
-listElement
-    : expression // todo
-    ;
-
-
-// Strings
-stringLiteral
-    : RAW_STRING_LIT
-    | STRING_LITERAL
-    ;
-    // TODO: template string literals?
