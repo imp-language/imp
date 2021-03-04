@@ -32,7 +32,9 @@ IMPORT : 'import';
 
 NEW : 'new';
 CLASS : 'class';
+INTERFACE : 'interface';
 ENUM : 'enum';
+PUBLIC : 'public';
 
 IN : 'in';
 

@@ -5,7 +5,6 @@ parser grammar ImpParser;
 //    Plus stands for: one or more
 //    Star stands for: zero or more
 
-import ImpLiterals;
 
 options {
     tokenVocab = ImpLexer;
@@ -22,6 +21,7 @@ statement
     : block
     | callStatement
     | functionStatement
+    | classStatement
     | returnStatement
     | ifStatement
     | loopStatement
@@ -137,11 +137,41 @@ callStatement
     ;
 
 
+// Classes
+classStatement
+    : INTERFACE identifier interfaceBlock
+    | CLASS identifier (COLON identifier)? LBRACE classBlock RBRACE
+    | ENUM identifier LBRACE enumBlock RBRACE
+    ;
+
+
+interfaceBlock
+    : (methodSignature)*
+    ;
+
+methodSignature
+    : identifier LPAREN (arguments)? RPAREN (type)?
+    ;
+
+property
+    : (PUBLIC)? (VAL | MUT) identifier;
+
+classBlock
+     :  (((PUBLIC)? methodSignature block) | (property ASSIGN expression))*
+     ;
+
+enumBlock
+     : enumMember (COMMA enumMember)* (COMMA)?
+     ;
+
+enumMember: identifier (ASSIGN expression)?;
+
+
 // Type
 type
     : listType                   // lists
     | primitiveType   // single instances of a type
-    | functionType               // functions passed as parameters to functions
+    | objectType               // functions passed as parameters to functions
     ;
 
 primitiveType
@@ -153,8 +183,8 @@ listType
     : (identifier | primitiveType) LBRACK RBRACK
     ;
 
-functionType
-    : identifier  // function type saved to a variable
+objectType
+    : identifier  // function or class type saved to a variable
     | LPAREN (arguments)? RPAREN FATARROW type // anonymous type signature
     ;
 
@@ -169,3 +199,46 @@ variableInitialize
     : identifier (ASSIGN expression)?
     ;
 
+
+/*
+ * Literals
+ */
+literal
+    : listLiteral
+    | stringLiteral
+    | integerLiteral
+    | floatLiteral
+    ;
+
+identifier
+    : IDENTIFIER
+    ;
+
+// Integers and booleans
+integerLiteral
+    : DECIMAL_LIT
+    | BooleanLiteral
+    ;
+
+floatLiteral
+    : FLOAT_LIT
+    ;
+
+
+
+// Lists
+listLiteral
+    : (LBRACK elementList RBRACK)
+    ;
+
+elementList
+    : COMMA* expression? (COMMA+ expression)* COMMA* // Yes, everything is optional
+    ;
+
+
+// Strings
+stringLiteral
+    : RAW_STRING_LIT
+    | STRING_LITERAL
+    ;
+    // TODO: template string literals?
