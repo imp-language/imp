@@ -65,7 +65,8 @@ expression
     | expression (ADD | SUB) expression
     | expression (EQUAL | NOTEQUAL | LE | LT | GE | GT) expression
     | expression (AND) expression
-    | expression DOT expression
+    | expression DOT expression // property access
+    | expression DOT callStatement // class method call
     ;
 
 

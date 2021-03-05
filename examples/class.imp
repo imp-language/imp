@@ -4,6 +4,10 @@ class Animal {
     constructor(name string) {
         this.name = name
     }
+
+    public sound(noise Noise) {
+        noise.play()
+    }
 }
 
 interface Action {
