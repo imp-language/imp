@@ -1,0 +1,16 @@
+class Animal {
+    val name string
+
+    constructor(name string) {
+        this.name = name
+    }
+}
+
+interface Action {
+    send(message string)
+    execute(i int) bool
+}
+
+
+val yer = calc("yer")
+val dog = new Animal("dog", 8, 99, yer)

@@ -16,24 +16,27 @@ program : statement* EOF;
  * Core
  */
 
+// Core Language Constructs
 // If statements, Loops, Returns, Switch, etc
 statement
     : block
-    | callStatement
     | functionStatement
     | classStatement
     | returnStatement
     | ifStatement
     | loopStatement
     | simpleStatement
+    | variableStatement
+    | assignment
     ;
 
+// Things that can be assigned to a variable
 // Increment/Decrement, Variables, Expressions
 simpleStatement
-    : variableStatement
+    : callStatement
+    | newObjectStatement
     | incDecStatement
     | expressionStatement
-    | assignment
     ;
 
 statementList
@@ -54,7 +57,8 @@ expressionList
     ;
 
 expression
-    : terminalExpr
+    : identifier
+    | literal
     | unaryExpr
     | <assoc=right> expression POW expression
     | expression (MUL | DIV | MOD) expression
@@ -64,11 +68,6 @@ expression
     | expression DOT expression
     ;
 
-// literals and the like
-terminalExpr
-    : identifier
-    | literal
-    ;
 
 // not equals, negation, etc
 unaryExpr
@@ -136,17 +135,21 @@ callStatement
     : identifier LPAREN (expressionList)? RPAREN
     ;
 
+// New Object
+newObjectStatement
+    : NEW identifier LPAREN (expressionList)? RPAREN
+    ;
 
 // Classes
 classStatement
-    : INTERFACE identifier interfaceBlock
+    : INTERFACE identifier LBRACE interfaceBlock RBRACE
     | CLASS identifier (COLON identifier)? LBRACE classBlock RBRACE
     | ENUM identifier LBRACE enumBlock RBRACE
     ;
 
 
 interfaceBlock
-    : (methodSignature)*
+    : (methodSignature | (property type))*
     ;
 
 methodSignature
@@ -156,8 +159,12 @@ methodSignature
 property
     : (PUBLIC)? (VAL | MUT) identifier;
 
+classProperty
+    : property (type)? ASSIGN expression
+    | property type
+    ;
 classBlock
-     :  (((PUBLIC)? methodSignature block) | (property ASSIGN expression))*
+     :  (((PUBLIC)? methodSignature block) | (classProperty))*
      ;
 
 enumBlock
@@ -196,7 +203,7 @@ variableStatement
 
 // Initialize a single variable
 variableInitialize
-    : identifier (ASSIGN expression)?
+    : identifier (ASSIGN simpleStatement)?
     ;
 
 
