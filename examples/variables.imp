@@ -1,0 +1,4 @@
+val first, second, _ = getPosts("mh15")
+mut a = 0
+mut b = a + 4
+var a, b, c = [1, 2, 3]

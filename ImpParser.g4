@@ -213,8 +213,8 @@ objectType
 
 // Declare and optionally initialize variables
 variableStatement
-    : (VAL | MUT) identifierList ASSIGN simpleStatement // iterator destruturing
-    | (VAL | MUT) variableInitialize/* (COMMA variableInitialize)* COMMA?*/
+    : (VAL | MUT) variableInitialize/* (COMMA variableInitialize)* COMMA?*/
+    | (VAL | MUT) iteratorDestructuring
     ;
 
 // Initialize a single variable
@@ -222,6 +222,9 @@ variableInitialize
     : identifier (ASSIGN simpleStatement)?
     ;
 
+// val a, b, _ = getPosts("matthall")
+iteratorDestructuring
+    : identifierList ASSIGN simpleStatement;
 
 /*
  * Literals
