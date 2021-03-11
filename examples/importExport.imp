@@ -1,0 +1,14 @@
+import priorityQueue, disjointSet from collections
+import path
+import fs as files
+
+
+export function myFunction(s string) {
+    log("hello")
+}
+
+class MyClass {
+
+}
+
+export MyClass

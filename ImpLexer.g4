@@ -29,6 +29,8 @@ STRING : 'string';
 
 EXPORT : 'export';
 IMPORT : 'import';
+FROM : 'from';
+AS : 'as';
 
 NEW : 'new';
 CLASS : 'class';

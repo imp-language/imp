@@ -28,15 +28,17 @@ statement
     | simpleStatement
     | variableStatement
     | assignment
+    | importStatement
+    | exportStatement
     ;
 
 // Things that can be assigned to a variable
 // Increment/Decrement, Variables, Expressions
 simpleStatement
     : callStatement
+    | expressionStatement
     | newObjectStatement
     | incDecStatement
-    | expressionStatement
     ;
 
 statementList
@@ -174,6 +176,18 @@ enumBlock
 
 enumMember: identifier (ASSIGN expression)?;
 
+// Import/Export
+importStatement
+    : IMPORT identifier (AS identifier)?
+    | IMPORT identifierList FROM identifier;
+
+exportStatement
+    : EXPORT (classStatement | functionStatement) // class, function, interface, enum
+    | EXPORT identifierList // identifiers
+    ;
+
+
+
 
 // Type
 type
@@ -199,7 +213,8 @@ objectType
 
 // Declare and optionally initialize variables
 variableStatement
-    : (VAL | MUT) variableInitialize (COMMA variableInitialize)*
+    : (VAL | MUT) identifierList ASSIGN simpleStatement // iterator destruturing
+    | (VAL | MUT) variableInitialize/* (COMMA variableInitialize)* COMMA?*/
     ;
 
 // Initialize a single variable
@@ -233,6 +248,9 @@ floatLiteral
     ;
 
 
+//    Question mark stands for: zero or one
+//    Plus stands for: one or more
+//    Star stands for: zero or more
 
 // Lists
 listLiteral
@@ -242,6 +260,11 @@ listLiteral
 elementList
     : COMMA* expression? (COMMA+ expression)* COMMA* // Yes, everything is optional
     ;
+
+// used in imports/exports
+identifierList
+    : identifier (COMMA identifier)* COMMA?
+    ; // TODO: do we allow ( ) around identifier lists
 
 
 // Strings
