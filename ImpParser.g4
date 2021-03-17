@@ -60,6 +60,7 @@ expressionList
 
 expression
     : identifier
+    | simpleStatement
     | literal
     | unaryExpr
     | <assoc=right> expression POW expression
