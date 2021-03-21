@@ -1,0 +1,15 @@
+
+
+mut l = [0,1,2,3,4]
+
+loop mut i = 0; i < l.length; i++ {
+    log(l[i])
+}
+
+loop mut item, idx in list {
+    log(idx, item)
+}
+
+loop {
+    log("forever")
+}

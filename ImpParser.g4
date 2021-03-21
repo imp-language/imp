@@ -25,21 +25,13 @@ statement
     | returnStatement
     | ifStatement
     | loopStatement
-    | simpleStatement
+    | expression
     | variableStatement
     | assignment
     | importStatement
     | exportStatement
     ;
 
-// Things that can be assigned to a variable
-// Increment/Decrement, Variables, Expressions
-simpleStatement
-    : callStatement
-    | expressionStatement
-    | newObjectStatement
-    | incDecStatement
-    ;
 
 statementList
     : statement+
@@ -59,32 +51,30 @@ expressionList
     ;
 
 expression
-    : identifier
-    | simpleStatement
-    | literal
-    | unaryExpr
-    | <assoc=right> expression POW expression
-    | expression (MUL | DIV | MOD) expression
-    | expression (ADD | SUB) expression
-    | expression (EQUAL | NOTEQUAL | LE | LT | GE | GT) expression
-    | expression (AND) expression
-    | expression DOT expression // property access
-    | expression DOT callStatement // class method call
-    ;
-
-
-// not equals, negation, etc
-unaryExpr
-    : (ADD | SUB | (BANG | NOT)) expression
+    : identifier #IdentifierExpression
+    | literal #LiteralExpression
+    | (BANG | NOT) expression                          #UnaryNotExpression
+    | ADD expression                                   #UnaryAddExpression
+    | SUB expression                                   #UnarySubtractExpression
+    | <assoc=right> expression POW expression          #PowerExpression
+    | expression (MUL | DIV | MOD) expression          #MultiplicativeExpression
+    | expression (ADD | SUB) expression                #AdditiveExpression
+    | expression (LE | LT | GE | GT) expression        #RelationalExpression
+    | expression (EQUAL | NOTEQUAL) expression         #EqualityExpression
+    | expression AND expression                        #LogicalAndExpression
+    | expression OR expression                         #LogicalOrExpression
+    | expression DOT expression                        #PropertyAccessExpression
+    | expression DOT callStatement                     #CallStatementExpression
+    | expression INC                                   #PostIncrementExpression
+    | expression DEC                                   #PostDecrementExpression
+    | callStatement #CallStatementExpression
+    | newObjectStatement #NewObjectExpression
+    | expression LBRACK expression RBRACK              #MemberIndexExpression
     ;
 
 /*
  * Statements
  */
-// Simple expression
-expressionStatement
-    : expression
-    ;
 
 assignment
     : expressionList assign_op expressionList;
@@ -100,14 +90,10 @@ loopStatement
     ;
 
 loopCondition
-    : variableStatement SEMICOLON simpleStatement SEMICOLON simpleStatement SEMICOLON? // val i = 0; i < 10; i++
+    : variableStatement SEMICOLON expression SEMICOLON expression SEMICOLON? // val i = 0; i < 10; i++
     | variableStatement IN expression // val item, idx in list
     ;
 
-// var++ var--
-incDecStatement
-    : expression (INC | DEC)
-    ;
 
 // return expression
 returnStatement
@@ -220,12 +206,12 @@ variableStatement
 
 // Initialize a single variable
 variableInitialize
-    : identifier (ASSIGN simpleStatement)?
+    : identifier (ASSIGN expression)?
     ;
 
 // val a, b, _ = getPosts("matthall")
 iteratorDestructuring
-    : identifierList ASSIGN simpleStatement;
+    : identifierList (ASSIGN expression)?;
 
 /*
  * Literals

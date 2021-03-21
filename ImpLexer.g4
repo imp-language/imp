@@ -67,7 +67,7 @@ COLON : ':';
 BANG : '!';
 NOT: 'not';
 AND : '&&' | 'and';
-// OR : '||' | 'or';
+OR : '||' | 'or';
 INC : '++';
 DEC : '--';
 ADD : '+';
