@@ -1,5 +1,8 @@
-package main.java.imp.domain.root;
+package imp.domain.root;
 
 
-public class StaticUnit {
+public class StaticUnit  extends  RootUnit{
+    public StaticUnit(String name) {
+        super(name);
+    }
 }

@@ -1,4 +1,4 @@
-package main.java.imp.domain.root;
+package imp.domain.root;
 
 /**
  * An Imp file is split into several root units,

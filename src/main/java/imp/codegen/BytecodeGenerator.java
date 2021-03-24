@@ -1,12 +1,14 @@
-package main.java.imp.codegen;
+package imp.codegen;
 
-import main.java.imp.domain.CompilationUnit;
+import imp.domain.ImpFile;
+import org.objectweb.asm.Opcodes;
 
 public class BytecodeGenerator {
-    public byte[] generate(CompilationUnit compilationUnit) {
+    public byte[] generate(ImpFile impFile) {
 //        ClassDeclaration classDeclaration = compilationUnit.getClassDeclaration();
 //        ClassGenerator classGenerator = new ClassGenerator();
 //        return classGenerator.generate(classDeclaration).toByteArray();3
-        return null;
+        var bytes = new byte[]{Opcodes.DUP_X1, Opcodes.AASTORE};
+        return bytes;
     }
 }

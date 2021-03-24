@@ -1,4 +1,4 @@
-package main.java.imp.parser;
+package imp.parser;
 
 public class Parser {
 }

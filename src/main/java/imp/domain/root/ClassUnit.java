@@ -1,4 +1,4 @@
-package main.java.imp.domain.root;
+package imp.domain.root;
 
 import imp.domain.scope.Method;
 import imp.domain.scope.Property;
