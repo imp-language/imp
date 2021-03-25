@@ -1,6 +1,6 @@
-package imp.codegen;
+package org.imp.jvm.codegen;
 
-import imp.domain.ImpFile;
+import org.imp.jvm.domain.ImpFile;
 import org.objectweb.asm.Opcodes;
 
 public class BytecodeGenerator {

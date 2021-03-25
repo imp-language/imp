@@ -10,6 +10,10 @@ options {
     tokenVocab = ImpLexer;
 }
 
+//@header {
+//    package org.imp.jvm
+//}
+
 program : statement* EOF;
 
 /*

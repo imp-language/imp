@@ -1,9 +1,8 @@
-package imp.domain;
+package org.imp.jvm.domain;
 
 
-import imp.domain.root.ClassUnit;
-import imp.domain.root.RootUnit;
-import imp.domain.root.StaticUnit;
+import org.imp.jvm.domain.root.ClassUnit;
+import org.imp.jvm.domain.root.StaticUnit;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class ImpFile {
     // Filename
-    public String name = "aaaaa";
+    public String name;
 
     // Top-level entities in the source file.
     private final StaticUnit staticUnit;

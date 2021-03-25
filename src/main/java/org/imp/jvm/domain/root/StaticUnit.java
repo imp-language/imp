@@ -1,4 +1,4 @@
-package imp.domain.root;
+package org.imp.jvm.domain.root;
 
 
 public class StaticUnit  extends  RootUnit{

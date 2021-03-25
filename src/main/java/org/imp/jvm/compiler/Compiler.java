@@ -1,9 +1,8 @@
-package imp.compiler;
+package org.imp.jvm.compiler;
 
-import imp.codegen.BytecodeGenerator;
-import imp.domain.ImpFile;
+import org.imp.jvm.codegen.BytecodeGenerator;
+import org.imp.jvm.domain.ImpFile;
 
-import imp.domain.root.StaticUnit;
 import org.objectweb.asm.Opcodes;
 
 import java.io.*;

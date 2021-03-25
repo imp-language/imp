@@ -1,7 +1,7 @@
-package imp.domain.root;
+package org.imp.jvm.domain.root;
 
-import imp.domain.scope.Method;
-import imp.domain.scope.Property;
+import org.imp.jvm.domain.scope.Method;
+import org.imp.jvm.domain.scope.Property;
 
 import java.util.List;
 
