@@ -3,6 +3,7 @@ package org.imp.jvm.compiler;
 import org.imp.jvm.codegen.BytecodeGenerator;
 import org.imp.jvm.domain.ImpFile;
 
+import org.imp.jvm.parser.Parser;
 import org.objectweb.asm.Opcodes;
 
 import java.io.*;
@@ -18,7 +19,7 @@ public class Compiler {
         System.out.println(Opcodes.DUP_X1);
 
         File source = new File(filename);
-        ImpFile impFile = new ImpFile(source);
+        ImpFile impFile = Parser.getImpFile(source);
 
 
         saveByteCodeToClassFile(impFile);
