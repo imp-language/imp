@@ -14,14 +14,14 @@ public class ImpFile {
     public String name;
 
     // Top-level entities in the source file.
-    private final StaticUnit staticUnit;
+    public final StaticUnit staticUnit;
 
     // All classes defined in the source file.
-    private final List<ClassUnit> classUnits = new ArrayList<>();
+    public final List<ClassUnit> classUnits = new ArrayList<>();
 
-    public ImpFile(File file) {
-        this.name = FilenameUtils.getBaseName(file.getName());
-        this.staticUnit = null;
+    public ImpFile(StaticUnit staticUnit) {
+//        this.name = FilenameUtils.getBaseName(file.getName());
+        this.staticUnit = staticUnit;
     }
 
     public String getClassName() {

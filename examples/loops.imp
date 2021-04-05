@@ -1,6 +1,20 @@
 
+val a = 4
+mut c = "hello, world"
 
 mut l = [0,1,2,3,4]
+
+class Animal {
+    val name string
+
+    constructor(name string) {
+        this.name = name
+    }
+
+    public sound(noise Noise) {
+        noise.play()
+    }
+}
 
 loop mut i = 0; i < l.length; i++ {
     log(l[i])

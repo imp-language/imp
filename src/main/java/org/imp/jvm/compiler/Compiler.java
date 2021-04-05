@@ -28,12 +28,17 @@ public class Compiler {
 
     public void saveByteCodeToClassFile(ImpFile impFile) throws IOException {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
-        byte[] bytes = bytecodeGenerator.generate(impFile);
+        var byteUnits = bytecodeGenerator.generate(impFile);
+
         String className = impFile.getClassName();
-        String fileName = ".compile/" + className + ".txt";
-        OutputStream output = new FileOutputStream(fileName);
-        output.write(bytes);
-        output.flush();
-        output.close();
+        for (var byteUnit : byteUnits.entrySet()) {
+            String qualifiedName = className + byteUnit.getKey();
+            String fileName = ".compile/" + qualifiedName + ".txt";
+            OutputStream output = new FileOutputStream(fileName);
+            output.write(byteUnit.getValue());
+            output.flush();
+            output.close();
+
+        }
     }
 }
