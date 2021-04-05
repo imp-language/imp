@@ -2,6 +2,7 @@ package org.imp.jvm.parser.visitor.statement;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.Statement;
 
 public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
