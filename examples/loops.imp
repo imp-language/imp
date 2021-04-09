@@ -1,13 +1,14 @@
 
 
-function test(a int, b string) bool {
-
-}
 
 mut c = "hello, world"
 val a = 4.9
 
 mut l = [0,1,2,3,4]
+
+function test(a int, b string) bool {
+
+}
 
 /*
 

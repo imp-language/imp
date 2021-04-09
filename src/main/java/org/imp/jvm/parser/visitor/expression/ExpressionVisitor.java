@@ -26,7 +26,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
 
     public ExpressionVisitor(Scope scope) {
-        literalVisitor = new LiteralVisitor();
+        literalVisitor = new LiteralVisitor(this);
         unaryNotVisitor = new UnaryNotVisitor();
         unaryAdditiveVisitor = new UnaryAdditiveVisitor();
         powerVisitor = new PowerVisitor();

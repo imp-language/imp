@@ -2,6 +2,7 @@ package org.imp.jvm.parser.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.domain.expression.Expression;
 import org.imp.jvm.domain.expression.Literal;
 import org.imp.jvm.domain.statement.VariableDeclaration;
 import org.imp.jvm.domain.statement.variable.Declaration;
@@ -10,7 +11,17 @@ import org.imp.jvm.domain.types.Mutability;
 import org.imp.jvm.parser.visitor.statement.variable.IteratorDestructuringVisitor;
 import org.imp.jvm.parser.visitor.statement.variable.VariableInitializationVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
+    private final ExpressionVisitor expressionVisitor;
+
+
+    public LiteralVisitor(ExpressionVisitor expressionVisitor) {
+        this.expressionVisitor = expressionVisitor;
+    }
 
     @Override
     public Literal visitIntegerLiteral(ImpParser.IntegerLiteralContext ctx) {
@@ -30,6 +41,9 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
     @Override
     public Literal visitListLiteral(ImpParser.ListLiteralContext ctx) {
         // List literals are converted to collections
+        var elements = ctx.elementList().expression();
+        List<Expression> expressions = elements.stream().map(expressionVisitor::visit).collect(Collectors.toList());
+
         return null;
     }
 

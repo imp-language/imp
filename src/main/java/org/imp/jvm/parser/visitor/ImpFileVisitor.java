@@ -32,14 +32,13 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         StatementVisitor statementVisitor = new StatementVisitor(new Scope());
         for (var statement : statementContexts) {
             Statement s = statement.accept(statementVisitor);
+            System.out.println(s);
 
 
             // Split classes out to their own files
             if (s instanceof ClassUnit) {
 
             } else {
-                System.out.println(s);
-                System.out.println(s instanceof VariableDeclaration);
                 // For everything else, add to the static class.
                 if (s instanceof VariableDeclaration) {
                     VariableDeclaration variableDeclaration = (VariableDeclaration) s;
@@ -59,9 +58,9 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
             }
 
-            System.out.println(staticUnit);
 
         }
+        System.out.println(staticUnit);
 
         // Visit the Static Unit
 //        StaticUnitVisitor staticUnitVisitor = new StaticUnitVisitor();
