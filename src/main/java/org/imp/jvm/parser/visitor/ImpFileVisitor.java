@@ -5,6 +5,7 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.root.ClassUnit;
 import org.imp.jvm.domain.root.StaticUnit;
+import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.Statement;
 import org.imp.jvm.parser.visitor.statement.StatementVisitor;
 
@@ -22,7 +23,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         var impFile = new ImpFile(staticUnit);
 
         // handle each statement appropriately
-        StatementVisitor statementVisitor = new StatementVisitor();
+        StatementVisitor statementVisitor = new StatementVisitor(new Scope());
         for (var statement : statementContexts) {
             Statement s = statement.accept(statementVisitor);
             System.out.println(s.getClass().getSimpleName());

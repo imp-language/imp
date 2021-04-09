@@ -4,6 +4,7 @@ import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.Statement;
+import org.imp.jvm.parser.visitor.expression.ExpressionVisitor;
 
 public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     private final BlockVisitor blockVisitor;
@@ -25,7 +26,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         returnVisitor = new ReturnVisitor();
         ifVisitor = new IfVisitor();
         loopVisitor = new LoopVisitor();
-        expressionVisitor = new ExpressionVisitor();
+        expressionVisitor = new ExpressionVisitor(scope);
         variableVisitor = new VariableVisitor();
         assignmentVisitor = new AssignmentVisitor();
         importVisitor = new ImportVisitor();

@@ -55,26 +55,23 @@ expressionList
     ;
 
 expression
-    : identifier #IdentifierExpression
-    | literal #LiteralExpression
+    : identifier                                       #IdentifierExpression
+    | literal                                          #LiteralExpression
     | (BANG | NOT) expression                          #UnaryNotExpression
-    | ADD expression                                   #UnaryAddExpression
-    | SUB expression                                   #UnarySubtractExpression
+    | (ADD | SUB) expression                           #UnaryAdditiveExpression
     | <assoc=right> expression POW expression          #PowerExpression
     | expression (MUL | DIV | MOD) expression          #MultiplicativeExpression
     | expression (ADD | SUB) expression                #AdditiveExpression
-    | expression (LE | LT | GE | GT) expression        #RelationalExpression
-    | expression (EQUAL | NOTEQUAL) expression         #EqualityExpression
-    | expression AND expression                        #LogicalAndExpression
-    | expression OR expression                         #LogicalOrExpression
+    | expression (LE | LT | GE | GT | EQUAL | NOTEQUAL) expression        #RelationalExpression
+    | expression (AND | OR) expression                 #LogicalExpression
     | expression DOT expression                        #PropertyAccessExpression
-    | expression DOT callStatement                     #CallStatementExpression
-    | expression INC                                   #PostIncrementExpression
-    | expression DEC                                   #PostDecrementExpression
-    | callStatement #CallStatementExpression
-    | newObjectStatement #NewObjectExpression
+    | expression DOT callStatement                     #MethodCallExpression
+    | expression (INC | DEC)                           #PostIncrementExpression
+    | callStatement                                    #CallStatementExpression
+    | newObjectStatement                               #NewObjectExpression
     | expression LBRACK expression RBRACK              #MemberIndexExpression
     ;
+
 
 /*
  * Statements
