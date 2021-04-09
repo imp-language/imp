@@ -1,6 +1,7 @@
 package org.imp.jvm.codegen;
 
 import org.imp.jvm.domain.root.RootUnit;
+import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Method;
 import org.imp.jvm.domain.scope.Property;
 import org.objectweb.asm.ClassWriter;
@@ -21,7 +22,7 @@ public class ClassGenerator {
         String name = classDeclaration.name;
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
         List<Method> methods = classDeclaration.methods;
-        Collection<Property> fields = classDeclaration.properties;
+        Collection<Identifier> fields = classDeclaration.properties;
 //        FieldGenerator fieldGenerator = new FieldGenerator(classWriter);
 //        fields.forEach(f -> f.accept(fieldGenerator));
 //        MethodGenerator methodGenerator = new MethodGenerator(classWriter);

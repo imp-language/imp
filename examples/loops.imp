@@ -1,8 +1,15 @@
 
-val a = 4
+
+function test(a int, b string) bool {
+
+}
+
 mut c = "hello, world"
+val a = 4.9
 
 mut l = [0,1,2,3,4]
+
+/*
 
 class Animal {
     val name string
@@ -26,4 +33,4 @@ loop mut item, idx in list {
 
 loop {
     log("forever")
-}
+}*/

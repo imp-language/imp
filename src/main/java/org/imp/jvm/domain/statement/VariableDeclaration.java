@@ -1,6 +1,7 @@
 package org.imp.jvm.domain.statement;
 
 import org.imp.jvm.codegen.statement.StatementGenerator;
+import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.statement.variable.Declaration;
 import org.imp.jvm.domain.types.Mutability;
 

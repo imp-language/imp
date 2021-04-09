@@ -2,13 +2,27 @@ package org.imp.jvm.parser.visitor.statement;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.VariableDeclaration;
 import org.imp.jvm.domain.statement.variable.Declaration;
 import org.imp.jvm.domain.types.Mutability;
+import org.imp.jvm.parser.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.parser.visitor.statement.variable.IteratorDestructuringVisitor;
 import org.imp.jvm.parser.visitor.statement.variable.VariableInitializationVisitor;
 
 public class VariableVisitor extends ImpParserBaseVisitor<VariableDeclaration> {
+    private final ExpressionVisitor expressionVisitor;
+    private final Scope scope;
+
+    private final VariableInitializationVisitor variableInitializationVisitor;
+    private final IteratorDestructuringVisitor iteratorDestructuringVisitor;
+
+    public VariableVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
+        this.expressionVisitor = expressionVisitor;
+        this.scope = scope;
+        variableInitializationVisitor = new VariableInitializationVisitor(expressionVisitor, scope);
+        iteratorDestructuringVisitor = new IteratorDestructuringVisitor(expressionVisitor, scope);
+    }
 
     @Override
     public VariableDeclaration visitVariableStatement(ImpParser.VariableStatementContext ctx) {
@@ -28,9 +42,9 @@ public class VariableVisitor extends ImpParserBaseVisitor<VariableDeclaration> {
         Declaration declaration = null;
 
         if (iteratorDestructuringContext != null) {
-            declaration = iteratorDestructuringContext.accept(new IteratorDestructuringVisitor());
+            declaration = iteratorDestructuringContext.accept(iteratorDestructuringVisitor);
         } else if (variableInitializeContext != null) {
-            declaration = variableInitializeContext.accept(new VariableInitializationVisitor());
+            declaration = variableInitializeContext.accept(variableInitializationVisitor);
         } else {
             // ToDo: parser error
             System.err.println("Parser error.");

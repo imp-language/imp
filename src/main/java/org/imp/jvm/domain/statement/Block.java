@@ -1,4 +1,10 @@
 package org.imp.jvm.domain.statement;
 
-public class Block {
+import org.imp.jvm.codegen.statement.StatementGenerator;
+
+public class Block implements Statement {
+    @Override
+    public void accept(StatementGenerator generator) {
+        
+    }
 }

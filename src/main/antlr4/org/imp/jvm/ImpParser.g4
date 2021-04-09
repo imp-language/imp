@@ -222,6 +222,7 @@ literal
     | stringLiteral
     | integerLiteral
     | floatLiteral
+    | booleanLiteral
     ;
 
 identifier
@@ -231,7 +232,10 @@ identifier
 // Integers and booleans
 integerLiteral
     : DECIMAL_LIT
-    | BooleanLiteral
+    ;
+
+booleanLiteral
+    : BooleanLiteral
     ;
 
 floatLiteral
