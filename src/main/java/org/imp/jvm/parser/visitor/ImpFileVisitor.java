@@ -5,13 +5,17 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.root.ClassUnit;
 import org.imp.jvm.domain.root.StaticUnit;
+import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.domain.statement.Block;
 import org.imp.jvm.domain.statement.Function;
 import org.imp.jvm.domain.statement.Statement;
 import org.imp.jvm.domain.statement.VariableDeclaration;
 import org.imp.jvm.domain.statement.variable.Declaration;
+import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.parser.visitor.statement.StatementVisitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
@@ -24,6 +28,14 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         // static unit for all non-class statements in the file
         var staticUnit = new StaticUnit("static_unit");
+        var main = new Function("main",
+                new Block(new ArrayList<Statement>(), new Scope()),
+                new ArrayList<Identifier>(),
+                BuiltInType.VOID);
+        Identifier varArgs = new Identifier();
+        varArgs.type = BuiltInType.STRING_ARR;
+        varArgs.name = "args";
+        main.parameters.add(varArgs);
 
         // create an ImpFile node with appropriate children
         var impFile = new ImpFile(staticUnit);
@@ -54,12 +66,17 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
                     // add function to static class methods
                     staticUnit.functions.add(f);
+                } else {
+                    // All other root level nodes go in the main method
+                    main.block.statements.add(s);
                 }
 
             }
 
 
         }
+
+        staticUnit.functions.add(main);
         System.out.println(staticUnit);
 
         // Visit the Static Unit

@@ -1,5 +1,6 @@
 package org.imp.jvm.codegen;
 
+import org.imp.jvm.codegen.statement.FunctionGenerator;
 import org.imp.jvm.domain.root.RootUnit;
 import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.Identifier;
@@ -36,7 +37,10 @@ public class ClassGenerator {
     public ClassWriter generate(StaticUnit staticUnit) {
         String name = staticUnit.name;
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
+
+        FunctionGenerator functionGenerator = new FunctionGenerator(classWriter, Opcodes.ACC_STATIC);
         List<Function> functions = staticUnit.functions;
+        functions.forEach(p -> p.accept(functionGenerator));
 
         FieldGenerator fieldGenerator = new FieldGenerator(classWriter, Opcodes.ACC_STATIC);
         List<Identifier> properties = staticUnit.properties;

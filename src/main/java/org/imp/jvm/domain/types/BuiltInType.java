@@ -6,7 +6,15 @@ public enum BuiltInType implements Type {
     FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT),
     DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE),
     STRING("string", String.class, "Ljava/lang/String;", TypeSpecificOpcodes.OBJECT),
-    VOID("void", void.class, "V", TypeSpecificOpcodes.VOID);
+    VOID("void", void.class, "V", TypeSpecificOpcodes.VOID),
+
+    BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT),
+    INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT),
+    FLOAT_ARR("float[]", float[].class, "[F", TypeSpecificOpcodes.OBJECT),
+    DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT),
+    STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT),
+
+    ;
 
     private final String name;
     private final Class<?> typeClass;

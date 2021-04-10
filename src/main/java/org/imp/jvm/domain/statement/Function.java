@@ -1,5 +1,7 @@
 package org.imp.jvm.domain.statement;
 
+import org.imp.jvm.codegen.FieldGenerator;
+import org.imp.jvm.codegen.statement.FunctionGenerator;
 import org.imp.jvm.codegen.statement.StatementGenerator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.Type;
@@ -16,6 +18,10 @@ public class Function extends Identifier implements Statement {
         this.block = block;
         this.parameters = parameters;
         this.type = returnType;
+    }
+
+    public void accept(FunctionGenerator generator) {
+        generator.generate(this);
     }
 
     @Override
