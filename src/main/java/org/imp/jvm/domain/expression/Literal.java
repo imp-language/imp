@@ -1,5 +1,6 @@
 package org.imp.jvm.domain.expression;
 
+import org.imp.jvm.codegen.expression.ExpressionGenerator;
 import org.imp.jvm.codegen.statement.StatementGenerator;
 import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.domain.types.Type;
@@ -8,9 +9,9 @@ import org.imp.jvm.domain.types.Type;
 public class Literal implements Expression {
 
     public final Type type;
-    public final String value;
+    public final Object value;
 
-    public Literal(Type type, String value) {
+    public Literal(Type type, Object value) {
         this.type = type;
         this.value = value;
     }
@@ -19,6 +20,11 @@ public class Literal implements Expression {
     @Override
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public void accept(ExpressionGenerator generator) {
+
     }
 
     @Override

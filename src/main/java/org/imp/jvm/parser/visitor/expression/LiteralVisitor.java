@@ -44,7 +44,10 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
         var elements = ctx.elementList().expression();
         List<Expression> expressions = elements.stream().map(expressionVisitor::visit).collect(Collectors.toList());
 
-        return null;
+        // ToDo: type inference, first element in list defines type of whole collection
+        // ToDo: type check lists
+
+        return new Literal(BuiltInType.VOID, null);
     }
 
     @Override

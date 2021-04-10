@@ -35,6 +35,7 @@ public class VariableInitializationVisitor extends ImpParserBaseVisitor<Variable
 
         scope.addLocalVariable(new LocalVariable(identifier, initialization.type));
 
+        initialization.name = identifier;
 
 //        Expression expression =
         return initialization;

@@ -2,6 +2,7 @@ package org.imp.jvm.codegen;
 
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.root.StaticUnit;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
 import java.util.HashMap;
@@ -13,16 +14,16 @@ public class BytecodeGenerator {
         var code = new HashMap<String, byte[]>();
 
         // Generate bytecode for impFile.StaticUnit
-        StaticUnit classDeclaration = impFile.staticUnit;
+        StaticUnit staticUnit = impFile.staticUnit;
         ClassGenerator classGenerator = new ClassGenerator();
-        code.put("main", classGenerator.generate(classDeclaration).toByteArray());
+        ClassWriter staticWriter = classGenerator.generate(staticUnit);
+        code.put("main", staticWriter.toByteArray());
 
         // Generate bytecode for each impFile.ClassUnit[]
         for (var classUnit : impFile.classUnits) {
             code.put("", classGenerator.generate(classUnit).toByteArray());
         }
 
-        code.put("test", new byte[]{Opcodes.DUP_X1, Opcodes.AASTORE, Opcodes.ACC_FINAL});
         return code;
     }
 }

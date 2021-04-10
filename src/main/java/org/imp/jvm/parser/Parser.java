@@ -25,16 +25,16 @@ public class Parser {
         parser.setBuildParseTree(true);
 
         ParseTree parseTree = parser.program();
-        parseTree.accept(new ImpFileVisitor());
+        ImpFile impFile = parseTree.accept(new ImpFileVisitor());
 
 
-        parser.addErrorListener(null);
+//        parser.addErrorListener(null);
 
 
         // ToDo: figure out how to split parsed file into StaticUnit and ClassUnits
 //        impParser.addErrorListener(new ImpFile);
 //        parser.
 
-        return null;
+        return impFile;
     }
 }

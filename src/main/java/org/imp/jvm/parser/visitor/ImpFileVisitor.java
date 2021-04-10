@@ -23,7 +23,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
 
         // static unit for all non-class statements in the file
-        var staticUnit = new StaticUnit("static unit");
+        var staticUnit = new StaticUnit("static_unit");
 
         // create an ImpFile node with appropriate children
         var impFile = new ImpFile(staticUnit);

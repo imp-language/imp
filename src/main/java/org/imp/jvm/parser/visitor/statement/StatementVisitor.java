@@ -7,6 +7,7 @@ import org.imp.jvm.domain.statement.Statement;
 import org.imp.jvm.parser.visitor.expression.ExpressionVisitor;
 
 // http://www.ist.tugraz.at/_attach/Publish/Cb/typechecker_2017.pdf
+// https://web.stanford.edu/class/archive/cs/cs143/cs143.1128/lectures/09/Slides09.pdf
 public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     private final BlockVisitor blockVisitor;
     private final FunctionVisitor functionVisitor;
@@ -21,13 +22,13 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     private final ExportVisitor exportVisitor;
 
     public StatementVisitor(Scope scope) {
+        expressionVisitor = new ExpressionVisitor(scope);
         blockVisitor = new BlockVisitor(scope);
         functionVisitor = new FunctionVisitor(scope);
         classVisitor = new ClassVisitor();
         returnVisitor = new ReturnVisitor();
-        ifVisitor = new IfVisitor();
+        ifVisitor = new IfVisitor(expressionVisitor, blockVisitor);
         loopVisitor = new LoopVisitor();
-        expressionVisitor = new ExpressionVisitor(scope);
         variableVisitor = new VariableVisitor(expressionVisitor, scope);
         assignmentVisitor = new AssignmentVisitor();
         importVisitor = new ImportVisitor();
@@ -56,7 +57,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Statement visitIfStatement(ImpParser.IfStatementContext ctx) {
-        return super.visitIfStatement(ctx);
+        return ifVisitor.visitIfStatement(ctx);
     }
 
     @Override
