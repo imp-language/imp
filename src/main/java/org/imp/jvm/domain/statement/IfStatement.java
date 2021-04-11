@@ -6,6 +6,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.parser.visitor.statement.IfVisitor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,12 +17,12 @@ public class IfStatement implements Statement {
 
     public IfStatement(Expression condition, Block body, IfStatement elseIf) {
         this.condition = condition;
-        this.body = body;
+        this.body = Optional.ofNullable(body).orElse(new Block());
         this.elseIf = elseIf;
     }
 
     @Override
     public void accept(StatementGenerator generator) {
-
+        generator.generate(this);
     }
 }

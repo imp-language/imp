@@ -2,6 +2,7 @@ package org.imp.jvm.codegen.statement;
 
 import org.imp.jvm.codegen.DescriptorFactory;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.Block;
 import org.imp.jvm.domain.statement.Function;
 import org.objectweb.asm.ClassWriter;
@@ -22,17 +23,17 @@ public class FunctionGenerator {
         String name = function.name;
         String description = DescriptorFactory.getMethodDescriptor(function);
         Block block = function.block;
-//        Scope scope = block.getScope();
+        Scope scope = block.scope;
 
         int access = Opcodes.ACC_PUBLIC + this.access;
-        MethodVisitor methodVisitor = classWriter.visitMethod(access, name, description, null, null);
-        methodVisitor.visitCode();
+        MethodVisitor mv = classWriter.visitMethod(access, name, description, null, null);
+        mv.visitCode();
 
-//        StatementGenerator statementScopeGenrator = new StatementGenerator(methodVisitor,scope);
-//        block.accept(statementScopeGenrator);
-//        appendReturnIfNotExists(function, block,statementScopeGenrator);
+        StatementGenerator statementScopeGenerator = new StatementGenerator(mv, scope);
+        block.accept(statementScopeGenerator);
+//        appendReturnIfNotExists(function, block,statementScopeGenerator);
 
-        methodVisitor.visitMaxs(-1, -1);
-        methodVisitor.visitEnd();
+        mv.visitMaxs(-1, -1);
+        mv.visitEnd();
     }
 }

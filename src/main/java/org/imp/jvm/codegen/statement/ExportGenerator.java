@@ -10,12 +10,12 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Optional;
 
-public class IfGenerator {
+public class ExportGenerator {
     private final StatementGenerator statementGenerator;
     private final ExpressionGenerator expressionGenerator;
     private final MethodVisitor mv;
 
-    public IfGenerator(StatementGenerator statementGenerator, ExpressionGenerator expressionGenerator, MethodVisitor mv) {
+    public ExportGenerator(StatementGenerator statementGenerator, ExpressionGenerator expressionGenerator, MethodVisitor mv) {
         this.statementGenerator = statementGenerator;
         this.expressionGenerator = expressionGenerator;
         this.mv = mv;

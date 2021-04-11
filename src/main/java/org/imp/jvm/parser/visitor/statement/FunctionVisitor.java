@@ -2,6 +2,7 @@ package org.imp.jvm.parser.visitor.statement;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.Block;
@@ -14,6 +15,7 @@ import org.imp.jvm.domain.types.TypeResolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // ToDo: support anonymous fat arrow functions
 public class FunctionVisitor extends ImpParserBaseVisitor<Function> {
@@ -31,7 +33,7 @@ public class FunctionVisitor extends ImpParserBaseVisitor<Function> {
         // Block
         BlockVisitor blockVisitor = new BlockVisitor(scope);
         ImpParser.BlockContext blockContext = ctx.block();
-        Block block = blockContext.accept(blockVisitor);
+        Block block = Optional.ofNullable(blockContext.accept(blockVisitor)).orElse(new Block(new ArrayList<Statement>(), new Scope()));
 
         // Arguments
         List<Identifier> arguments = new ArrayList<>();
@@ -50,6 +52,8 @@ public class FunctionVisitor extends ImpParserBaseVisitor<Function> {
 
         // Todo: scope.addLocalVariable(new LocalVariable("this",scope.getClassType()));
         // Todo: addParametersAsLocalVariables(signature);
+        FunctionSignature signature = new FunctionSignature(name, arguments, returnType);
+        scope.addSignature(signature);
 
         return new Function(name, block, arguments, returnType);
     }

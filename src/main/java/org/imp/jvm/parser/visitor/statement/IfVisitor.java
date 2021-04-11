@@ -20,7 +20,7 @@ public class IfVisitor extends ImpParserBaseVisitor<IfStatement> {
     @Override
     public IfStatement visitIfStatement(ImpParser.IfStatementContext ctx) {
         Expression condition = ctx.expression().accept(expressionVisitor);
-        Block block = ctx.expression().accept(blockVisitor);
+        Block block = ctx.block(0).accept(blockVisitor);
         IfStatement elseIf = null;
 
         if (ctx.ifStatement() != null) {

@@ -2,6 +2,7 @@ package org.imp.jvm.parser.visitor.statement;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.domain.expression.Expression;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.Statement;
 import org.imp.jvm.parser.visitor.expression.ExpressionVisitor;
@@ -28,12 +29,18 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         classVisitor = new ClassVisitor();
         returnVisitor = new ReturnVisitor();
         ifVisitor = new IfVisitor(expressionVisitor, blockVisitor);
-        loopVisitor = new LoopVisitor();
+        loopVisitor = new LoopVisitor(expressionVisitor, blockVisitor);
         variableVisitor = new VariableVisitor(expressionVisitor, scope);
         assignmentVisitor = new AssignmentVisitor();
         importVisitor = new ImportVisitor();
         exportVisitor = new ExportVisitor();
     }
+
+    @Override
+    public Expression visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
+        return expressionVisitor.visitCallStatementExpression(ctx);
+    }
+
 
     @Override
     public Statement visitBlock(ImpParser.BlockContext ctx) {
@@ -47,7 +54,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Statement visitLoopStatement(ImpParser.LoopStatementContext ctx) {
-        return super.visitLoopStatement(ctx);
+        return loopVisitor.visitLoopStatement(ctx);
     }
 
     @Override

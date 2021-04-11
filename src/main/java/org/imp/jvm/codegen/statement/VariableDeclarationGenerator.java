@@ -1,6 +1,7 @@
 package org.imp.jvm.codegen.statement;
 
 import org.imp.jvm.codegen.expression.ExpressionGenerator;
+import org.imp.jvm.domain.expression.Expression;
 import org.imp.jvm.domain.statement.VariableDeclaration;
 
 public class VariableDeclarationGenerator {

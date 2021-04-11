@@ -3,9 +3,7 @@ package org.imp.jvm.parser.visitor.expression;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.expression.Expression;
-import org.imp.jvm.domain.expression.Literal;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.statement.Function;
 
 public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     private final LiteralVisitor literalVisitor;
@@ -20,7 +18,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     private final PropertyAccessVisitor propertyAccessVisitor;
     private final MethodCallVisitor methodCallVisitor;
     private final PostIncrementVisitor postIncrementVisitor;
-    private final CallStatementVisitor callStatementVisitor;
+    private final CallVisitor callStatementVisitor;
     private final NewObjectVisitor newObjectVisitor;
     private final MemberIndexVisitor memberIndexVisitor;
 
@@ -37,7 +35,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         propertyAccessVisitor = new PropertyAccessVisitor();
         methodCallVisitor = new MethodCallVisitor();
         postIncrementVisitor = new PostIncrementVisitor();
-        callStatementVisitor = new CallStatementVisitor();
+        callStatementVisitor = new CallVisitor(scope, this);
         newObjectVisitor = new NewObjectVisitor();
         memberIndexVisitor = new MemberIndexVisitor();
     }
@@ -50,5 +48,10 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitUnaryNotExpression(ImpParser.UnaryNotExpressionContext ctx) {
         return super.visitUnaryNotExpression(ctx);
+    }
+
+    @Override
+    public Expression visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
+        return callStatementVisitor.visitCallStatementExpression(ctx);
     }
 }
