@@ -46,7 +46,8 @@ public class FunctionVisitor extends ImpParserBaseVisitor<Function> {
         ImpParser.TypeContext typeContext = ctx.type();
         Type returnType = BuiltInType.VOID;
         if (typeContext != null) {
-            // ToDo: parse return type, including multiple returns
+            // ToDo: parse multiple returns
+            returnType = TypeResolver.getFromTypeName(typeContext);
         }
 
 

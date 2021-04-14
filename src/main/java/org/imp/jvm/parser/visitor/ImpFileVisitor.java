@@ -63,7 +63,8 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
                     staticUnit.properties.add(declaration);
 
                     // Initialize variable in static block
-                    staticUnit.staticInitializations.add(variableDeclaration);
+//                    staticUnit.staticInitializations.add(variableDeclaration);
+                    main.block.statements.add(variableDeclaration);
                 } else if (s instanceof Function) {
                     Function f = (Function) s;
 

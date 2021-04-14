@@ -11,7 +11,7 @@ import java.util.List;
 public class FunctionCall extends Call {
     public final FunctionSignature signature;
 
-    public FunctionCall(FunctionSignature signature, List<Identifier> arguments) {
+    public FunctionCall(FunctionSignature signature, List<Expression> arguments) {
         this.signature = signature;
         this.arguments = arguments;
         this.type = signature.type;

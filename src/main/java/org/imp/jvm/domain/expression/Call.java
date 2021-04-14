@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class Call implements Expression {
 
     public Type type;
-    public List<Identifier> arguments;
+    public List<Expression> arguments;
 
 
     @Override

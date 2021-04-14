@@ -8,15 +8,17 @@ public class ExpressionGenerator {
     private final RelationalExpressionGenerator relationalExpressionGenerator;
     private final LiteralExpressionGenerator literalExpressionGenerator;
     private final AdditiveGenerator additiveGenerator;
+    private final CallExpressionGenerator callGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
         relationalExpressionGenerator = new RelationalExpressionGenerator(this, methodVisitor);
         literalExpressionGenerator = new LiteralExpressionGenerator(methodVisitor);
         additiveGenerator = new AdditiveGenerator(this, methodVisitor);
+        callGenerator = new CallExpressionGenerator(this, scope, methodVisitor);
     }
 
     public void generate(FunctionCall functionCall) {
-//        callExpressionGenerator.generate(functionCall);
+        callGenerator.generate(functionCall);
     }
 
     public void generate(RelationalExpression relationalExpression) {

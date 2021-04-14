@@ -11,6 +11,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.Type;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,21 +28,28 @@ public class CallVisitor extends ImpParserBaseVisitor<Call> {
     @Override
     public Call visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
         ImpParser.CallStatementContext callCtx = ctx.callStatement();
+
+        // Identifier
         String functionName = callCtx.identifier().getText();
-        var arguments = callCtx.expressionList().expression();
+
         // Todo: error handling for nonexistent function signatures
-
+        // Function Signature
+        var arguments = callCtx.expressionList().expression();
         var argTypes = getArgumentsForCall(arguments);
-
-//        var signature = new FunctionSignature(functionName, parameters)
         FunctionSignature signature;
         if (functionName.equals("call")) {
-            signature = scope.getSignature(functionName, argTypes);
-        } else {
             signature = new FunctionSignature("log", null, null);
+        } else {
+            signature = scope.getSignature(functionName, argTypes);
         }
 
-        return new FunctionCall(signature, null);
+        // Visit Arguments
+        List<Expression> visited = new ArrayList<>();
+        for (var arg : arguments) {
+            visited.add(arg.accept(expressionVisitor));
+        }
+
+        return new FunctionCall(signature, visited);
     }
 
     private List<Identifier> getArgumentsForCall(List<ImpParser.ExpressionContext> argumentsListCtx) {

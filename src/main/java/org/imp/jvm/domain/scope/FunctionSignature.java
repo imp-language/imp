@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FunctionSignature extends Identifier {
-    private final List<Identifier> parameters;
+    public final List<Identifier> parameters;
 
     public FunctionSignature(String name, List<Identifier> parameters, Type returnType) {
         this.name = name;

@@ -1,9 +1,11 @@
 package org.imp.jvm.codegen;
 
+import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.statement.Function;
 import org.imp.jvm.domain.types.Type;
 
+import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,12 +19,13 @@ public final class DescriptorFactory {
         return getMethodDescriptor(parameters, returnType);
     }
 
-    //    public static String getMethodDescriptor(FunctionSignature signature) {
-//        Collection<Parameter> parameters = signature.getParameters();
-//        Type returnType = signature.getReturnType();
-//        return getMethodDescriptor(parameters, returnType);
-//    }
-//
+    public static String getMethodDescriptor(FunctionSignature signature) {
+        Collection<Identifier> parameters = signature.parameters;
+        Type returnType = signature.type;
+        return getMethodDescriptor(parameters, returnType);
+    }
+
+    //
     private static String getMethodDescriptor(Collection<Identifier> parameters, Type returnType) {
         String parametersDescriptor = parameters.stream()
                 .map(parameter -> parameter.type.getDescriptor())
