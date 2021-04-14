@@ -1,38 +1,16 @@
 
-function log(s string) {
-
+function sum(x int, y int) int {
+    return x + y
 }
 
 
-log("Hello, world")
+val expected = 8
+val actual = sum(3, 5)
+if actual == expected {
+    //log("test passed")
+}
 
-/*
-if a < 4 {
-    loop val b in [] {
-        log(4)
-    }
-} else {
 
+ /*else {
+    log("test failed")
 }*/
-
-
-mut c = "hello, world"
-val a = 4.9
-
-mut l = [0,1,2,3,4]
-
-
-/*
-if c.length > 4 {
-    log("penis")
-}
-
-
-*/
-
-
-
-
-function test(a int, b string) bool {
-    val d = 4
-}

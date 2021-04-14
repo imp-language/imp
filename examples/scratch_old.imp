@@ -1,0 +1,45 @@
+
+function log(s string) {
+
+}
+
+
+
+
+if 4 == 4 {
+    log("4")
+}
+
+
+//log("Hello, world")
+
+/*
+if a < 4 {
+    loop val b in [] {
+        log("4")
+    }
+} else {
+
+}*/
+
+
+mut c = "hello, world"
+val a = 4.9
+
+mut l = [0,1,2,3,4]
+
+
+/*
+if c.length > 4 {
+    log("penis")
+}
+
+
+*/
+
+
+
+
+function test(a int, b string) bool {
+    val d = 4
+}

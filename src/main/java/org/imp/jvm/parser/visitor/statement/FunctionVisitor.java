@@ -33,7 +33,7 @@ public class FunctionVisitor extends ImpParserBaseVisitor<Function> {
         // Block
         BlockVisitor blockVisitor = new BlockVisitor(scope);
         ImpParser.BlockContext blockContext = ctx.block();
-        Block block = Optional.ofNullable(blockContext.accept(blockVisitor)).orElse(new Block(new ArrayList<Statement>(), new Scope()));
+        Block block = Optional.ofNullable(blockContext.accept(blockVisitor)).orElse(new Block());
 
         // Arguments
         List<Identifier> arguments = new ArrayList<>();

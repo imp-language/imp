@@ -3,7 +3,9 @@ package org.imp.jvm.domain.scope;
 import org.imp.jvm.domain.types.Type;
 
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FunctionSignature extends Identifier {
     private final List<Identifier> parameters;
@@ -34,5 +36,13 @@ public class FunctionSignature extends Identifier {
 //            }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        // ToDo: this throws an exception, probably something with null parameters or return type
+        String params = parameters.stream().map(Object::toString)
+                .collect(Collectors.joining(", "));
+        return name + " (" + String.join(", ", params) + ") " + type;
     }
 }

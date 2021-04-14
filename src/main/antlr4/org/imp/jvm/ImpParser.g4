@@ -55,14 +55,14 @@ expressionList
     ;
 
 expression
-    : identifier                                       #IdentifierExpression
+    : identifier                                       #IdentifierReferenceExpression
     | literal                                          #LiteralExpression
     | (BANG | NOT) expression                          #UnaryNotExpression
     | (ADD | SUB) expression                           #UnaryAdditiveExpression
     | <assoc=right> expression POW expression          #PowerExpression
     | expression (MUL | DIV | MOD) expression          #MultiplicativeExpression
     | expression (ADD | SUB) expression                #AdditiveExpression
-    | expression (LE | LT | GE | GT | EQUAL | NOTEQUAL) expression        #RelationalExpression
+    | expression cmp=(LE | LT | GE | GT | EQUAL | NOTEQUAL) expression        #RelationalExpression
     | expression (AND | OR) expression                 #LogicalExpression
     | expression DOT expression                        #PropertyAccessExpression
     | expression DOT callStatement                     #MethodCallExpression
@@ -102,6 +102,7 @@ returnStatement
     ;
 
 // if condition { } else if condition { } else { }
+// ToDo: actually support else if
 ifStatement
     : IF expression block (ELSE (ifStatement | block))?
     ; 

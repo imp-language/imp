@@ -25,11 +25,14 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         // get all top level statements in the file
         List<ImpParser.StatementContext> statementContexts = ctx.statement();
 
+        // Root Scope for Static Unit
+        Scope staticScope = new Scope("static");
+
 
         // static unit for all non-class statements in the file
         var staticUnit = new StaticUnit("static_unit");
         var main = new Function("main",
-                new Block(new ArrayList<Statement>(), new Scope()),
+                new Block(new ArrayList<Statement>(), staticScope),
                 new ArrayList<Identifier>(),
                 BuiltInType.VOID);
         Identifier varArgs = new Identifier();
@@ -41,7 +44,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         var impFile = new ImpFile(staticUnit);
 
         // handle each statement appropriately
-        StatementVisitor statementVisitor = new StatementVisitor(new Scope());
+        StatementVisitor statementVisitor = new StatementVisitor(staticScope);
         for (var statement : statementContexts) {
             Statement s = statement.accept(statementVisitor);
             System.out.println(s);

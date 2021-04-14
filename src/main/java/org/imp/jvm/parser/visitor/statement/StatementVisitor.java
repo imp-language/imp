@@ -27,7 +27,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         blockVisitor = new BlockVisitor(scope);
         functionVisitor = new FunctionVisitor(scope);
         classVisitor = new ClassVisitor();
-        returnVisitor = new ReturnVisitor();
+        returnVisitor = new ReturnVisitor(expressionVisitor);
         ifVisitor = new IfVisitor(expressionVisitor, blockVisitor);
         loopVisitor = new LoopVisitor(expressionVisitor, blockVisitor);
         variableVisitor = new VariableVisitor(expressionVisitor, scope);
@@ -59,7 +59,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Statement visitReturnStatement(ImpParser.ReturnStatementContext ctx) {
-        return super.visitReturnStatement(ctx);
+        return returnVisitor.visitReturnStatement(ctx);
     }
 
     @Override

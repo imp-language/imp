@@ -6,14 +6,30 @@ import org.imp.jvm.exception.MethodSignatureNotFoundException;
 
 import java.util.*;
 
+/**
+ * Describes the entities available to expressions and statements in
+ * the current block.
+ * <p>
+ * New Scopes can "inherit" entities from higher scopes. Methods defined
+ * outside the current block are accessible inside this block, for example.
+ */
 public class Scope {
     private final Map<String, LocalVariable> localVariables;
 
     private final List<FunctionSignature> functionSignatures;
 
-    public Scope() {
+    private final String name;
+
+    public Scope(String name) {
+        this.name = name;
         localVariables = new HashMap<>();
         functionSignatures = new ArrayList<>();
+    }
+
+    public Scope(Scope scope) {
+        name = scope.name;
+        functionSignatures = scope.functionSignatures;
+        localVariables = scope.localVariables;
     }
 
     /**
@@ -31,6 +47,15 @@ public class Scope {
     public LocalVariable getLocalVariable(String varName) {
         return Optional.ofNullable(localVariables.get(varName))
                 .orElseThrow(() -> new LocalVariableNotFoundException(this, varName));
+    }
+
+    /**
+     * @param varName name to search for
+     * @return whether a variable exists in the current scope
+     */
+    public boolean variableExists(String varName) {
+        // ToDo: decide what happens with scope and local variable overriding by inner scopes.
+        return true;
     }
 
 

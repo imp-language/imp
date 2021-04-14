@@ -6,6 +6,7 @@ import org.imp.jvm.domain.expression.Expression;
 import org.imp.jvm.domain.scope.Scope;
 
 public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
+    private final IdentifierReferenceVisitor identifierReferenceVisitor;
     private final LiteralVisitor literalVisitor;
     private final UnaryNotVisitor unaryNotVisitor;
 
@@ -24,13 +25,14 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
 
     public ExpressionVisitor(Scope scope) {
+        identifierReferenceVisitor = new IdentifierReferenceVisitor(scope);
         literalVisitor = new LiteralVisitor(this);
         unaryNotVisitor = new UnaryNotVisitor();
         unaryAdditiveVisitor = new UnaryAdditiveVisitor();
         powerVisitor = new PowerVisitor();
         multiplicativeVisitor = new MultiplicativeVisitor();
-        additiveVisitor = new AdditiveVisitor();
-        relationalVisitor = new RelationalVisitor();
+        additiveVisitor = new AdditiveVisitor(this);
+        relationalVisitor = new RelationalVisitor(this);
         logicalVisitor = new LogicalVisitor();
         propertyAccessVisitor = new PropertyAccessVisitor();
         methodCallVisitor = new MethodCallVisitor();
@@ -53,5 +55,21 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
         return callStatementVisitor.visitCallStatementExpression(ctx);
+    }
+
+    @Override
+    public Expression visitRelationalExpression(ImpParser.RelationalExpressionContext ctx) {
+        return relationalVisitor.visitRelationalExpression(ctx);
+    }
+
+    @Override
+    public Expression visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
+        return identifierReferenceVisitor.visitIdentifierReferenceExpression(ctx);
+    }
+
+
+    @Override
+    public Expression visitAdditiveExpression(ImpParser.AdditiveExpressionContext ctx) {
+        return additiveVisitor.visitAdditiveExpression(ctx);
     }
 }

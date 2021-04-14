@@ -8,6 +8,7 @@ import org.imp.jvm.domain.types.Type;
 
 import java.util.List;
 
+// Todo: refactor to use the FunctionSignature class
 public class Function extends Identifier implements Statement {
     public final Block block;
     public final List<Identifier> parameters;

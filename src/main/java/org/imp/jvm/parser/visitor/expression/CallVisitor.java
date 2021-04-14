@@ -34,7 +34,12 @@ public class CallVisitor extends ImpParserBaseVisitor<Call> {
         var argTypes = getArgumentsForCall(arguments);
 
 //        var signature = new FunctionSignature(functionName, parameters)
-        FunctionSignature signature = scope.getSignature(functionName, argTypes);
+        FunctionSignature signature;
+        if (functionName.equals("call")) {
+            signature = scope.getSignature(functionName, argTypes);
+        } else {
+            signature = new FunctionSignature("log", null, null);
+        }
 
         return new FunctionCall(signature, null);
     }

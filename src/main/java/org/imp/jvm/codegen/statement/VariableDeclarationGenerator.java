@@ -14,6 +14,7 @@ public class VariableDeclarationGenerator {
     }
 
     public void generate(VariableDeclaration variableDeclaration) {
+        // Todo: https://github.com/JakubDziworski/Enkel-JVM-language/blob/1527076545f7402a279db2c19f1e28ba7f084585/compiler/src/main/java/com/kubadziworski/bytecodegeneration/statement/VariableDeclarationStatementGenerator.java
 //        Expression expression = variableDeclaration.getExpression();
 //        expression.accept(expressionGenerator);
 //        Assignment assignment = new Assignment(variableDeclaration);

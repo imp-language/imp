@@ -21,9 +21,12 @@ public class BlockVisitor extends ImpParserBaseVisitor<Block> {
         if (ctx.statementList() != null) {
             List<ImpParser.StatementContext> blockStatementsCtx = ctx.statementList().statement();
 //        Scope newScope = new Scope(scope);
-            Scope newScope = new Scope();
+
+            // Child blocks inherit the parent block's scope
+            Scope newScope = new Scope(scope);
+
             StatementVisitor statementVisitor = new StatementVisitor(newScope);
-            List<Statement> statements = blockStatementsCtx.stream().map(smtt -> smtt.accept(statementVisitor)).collect(Collectors.toList());
+            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
             return new Block(statements, newScope);
         }
         return new Block();
