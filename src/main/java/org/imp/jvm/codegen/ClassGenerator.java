@@ -18,9 +18,9 @@ public class ClassGenerator {
     private final ClassWriter classWriter;
 
     public ClassGenerator() {
-//        classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
+        classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
 //        classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+//        classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
     }
 
     public ClassWriter generate(RootUnit classDeclaration) {

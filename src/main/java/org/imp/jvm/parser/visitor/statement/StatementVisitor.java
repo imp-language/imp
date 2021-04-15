@@ -31,7 +31,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         ifVisitor = new IfVisitor(expressionVisitor, blockVisitor);
         loopVisitor = new LoopVisitor(expressionVisitor, blockVisitor);
         variableVisitor = new VariableVisitor(expressionVisitor, scope);
-        assignmentVisitor = new AssignmentVisitor();
+        assignmentVisitor = new AssignmentVisitor(expressionVisitor);
         importVisitor = new ImportVisitor();
         exportVisitor = new ExportVisitor();
     }
@@ -49,7 +49,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Statement visitAssignment(ImpParser.AssignmentContext ctx) {
-        return super.visitAssignment(ctx);
+        return assignmentVisitor.visitAssignment(ctx);
     }
 
     @Override

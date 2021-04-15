@@ -4,6 +4,7 @@ import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.Block;
 import org.imp.jvm.domain.statement.Function;
@@ -22,7 +23,7 @@ public class FunctionVisitor extends ImpParserBaseVisitor<Function> {
     private final Scope scope;
 
     public FunctionVisitor(Scope scope) {
-        this.scope = scope;
+        this.scope = new Scope(scope);
     }
 
     @Override
@@ -41,6 +42,7 @@ public class FunctionVisitor extends ImpParserBaseVisitor<Function> {
         if (argumentsContext != null) {
             arguments = argumentsContext.accept(new ArgumentsVisitor());
         }
+        addParametersAsLocalVariables(arguments);
 
         // Return type
         ImpParser.TypeContext typeContext = ctx.type();
@@ -57,6 +59,10 @@ public class FunctionVisitor extends ImpParserBaseVisitor<Function> {
         scope.addSignature(signature);
 
         return new Function(name, block, arguments, returnType);
+    }
+
+    private void addParametersAsLocalVariables(List<Identifier> parameters) {
+        parameters.forEach(param -> scope.addLocalVariable(new LocalVariable(param.name, param.type)));
     }
 
 

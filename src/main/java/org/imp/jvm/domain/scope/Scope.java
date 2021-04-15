@@ -3,6 +3,7 @@ package org.imp.jvm.domain.scope;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.exception.LocalVariableNotFoundException;
 import org.imp.jvm.exception.MethodSignatureNotFoundException;
+import org.apache.commons.collections4.map.LinkedMap;
 
 import java.util.*;
 
@@ -14,7 +15,7 @@ import java.util.*;
  * outside the current block are accessible inside this block, for example.
  */
 public class Scope {
-    private final Map<String, LocalVariable> localVariables;
+    private final LinkedMap<String, LocalVariable> localVariables;
 
     private final List<FunctionSignature> functionSignatures;
 
@@ -22,7 +23,7 @@ public class Scope {
 
     public Scope(String name) {
         this.name = name;
-        localVariables = new HashMap<>();
+        localVariables = new LinkedMap<>();
         functionSignatures = new ArrayList<>();
     }
 
@@ -47,6 +48,14 @@ public class Scope {
     public LocalVariable getLocalVariable(String varName) {
         return Optional.ofNullable(localVariables.get(varName))
                 .orElseThrow(() -> new LocalVariableNotFoundException(this, varName));
+    }
+
+    /**
+     * @param varName name to search for
+     * @return index of local variable in frame
+     */
+    public int getLocalVariableIndex(String varName) {
+        return localVariables.indexOf(varName);
     }
 
     /**

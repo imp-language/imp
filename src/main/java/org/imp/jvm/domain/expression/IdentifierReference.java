@@ -23,7 +23,7 @@ public class IdentifierReference implements Expression {
 
     @Override
     public void accept(ExpressionGenerator generator) {
-
+        generator.generate(this);
     }
 
     @Override

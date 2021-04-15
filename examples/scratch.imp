@@ -3,7 +3,7 @@ function sum(x int, y int) int {
     return x + y
 }
 
-
+/*
 val expected = 8
 val actual = sum(3, 5)
 if actual == expected {

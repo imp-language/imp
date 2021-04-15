@@ -9,12 +9,14 @@ public class ExpressionGenerator {
     private final LiteralExpressionGenerator literalExpressionGenerator;
     private final AdditiveGenerator additiveGenerator;
     private final CallExpressionGenerator callGenerator;
+    private final IdentifierReferenceGenerator identifierReferenceGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
         relationalExpressionGenerator = new RelationalExpressionGenerator(this, methodVisitor);
         literalExpressionGenerator = new LiteralExpressionGenerator(methodVisitor);
         additiveGenerator = new AdditiveGenerator(this, methodVisitor);
         callGenerator = new CallExpressionGenerator(this, scope, methodVisitor);
+        identifierReferenceGenerator = new IdentifierReferenceGenerator(methodVisitor, scope);
     }
 
     public void generate(FunctionCall functionCall) {
@@ -32,5 +34,9 @@ public class ExpressionGenerator {
 
     public void generate(AdditiveExpression additiveExpression) {
         additiveGenerator.generate(additiveExpression);
+    }
+
+    public void generate(IdentifierReference identifierReference) {
+        identifierReferenceGenerator.generate(identifierReference);
     }
 }

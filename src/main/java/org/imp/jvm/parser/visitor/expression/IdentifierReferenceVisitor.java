@@ -24,7 +24,8 @@ public class IdentifierReferenceVisitor extends ImpParserBaseVisitor<IdentifierR
         if (scope.variableExists(name)) {
 
         }
-        LocalVariable localVariable = new LocalVariable("test", BuiltInType.STRING);
+        // ToDo: reference type parsing
+        LocalVariable localVariable = new LocalVariable(name, BuiltInType.INT);
         return new IdentifierReference(localVariable);
     }
 }

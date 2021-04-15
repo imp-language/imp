@@ -16,7 +16,7 @@ public class AdditiveVisitor extends ImpParserBaseVisitor<AdditiveExpression> {
     @Override
     public AdditiveExpression visitAdditiveExpression(ImpParser.AdditiveExpressionContext ctx) {
         var left = ctx.expression(0).accept(expressionVisitor);
-        var right = ctx.expression(0).accept(expressionVisitor);
+        var right = ctx.expression(1).accept(expressionVisitor);
         if (ctx.ADD() != null) {
             return new AdditiveExpression(left, right, Operator.ADD);
         } else if (ctx.SUB() != null) {

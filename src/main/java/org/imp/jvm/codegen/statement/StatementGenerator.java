@@ -15,7 +15,7 @@ public class StatementGenerator {
     private final ReturnGenerator returnGenerator;
     private final IfGenerator ifGenerator;
     private final LoopGenerator loopGenerator;
-    private final VariableDeclarationGenerator variableDeclarationGenerator = new VariableDeclarationGenerator(null, null);
+    private final VariableDeclarationGenerator variableDeclarationGenerator;
 //    private final AssignmentGenerator assignmentGenerator;
 //    private final ImportGenerator importGenerator;
 //    private final ExportGenerator exportGenerator;
@@ -28,6 +28,7 @@ public class StatementGenerator {
         returnGenerator = new ReturnGenerator(expressionGenerator, methodVisitor);
         ifGenerator = new IfGenerator(this, expressionGenerator, methodVisitor);
         loopGenerator = new LoopGenerator(null, null, null);
+        variableDeclarationGenerator = new VariableDeclarationGenerator(this, expressionGenerator);
 
     }
 
@@ -54,5 +55,9 @@ public class StatementGenerator {
 
     public void generate(ReturnStatement returnStatement) {
         returnGenerator.generate(returnStatement);
+    }
+
+    public void generate(Assignment assignment) {
+        throw new NotImplementedException("peneeeee");
     }
 }
