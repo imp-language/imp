@@ -18,12 +18,7 @@ public class Return extends Statement {
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
         Type type = expression.type;
-        expression.generate(mv);
+        expression.generate(mv, scope);
         mv.visitInsn(type.getReturnOpcode());
-    }
-
-    @Override
-    public void generate(ClassWriter cw) {
-        throw new NotImplementedException("ree");
     }
 }

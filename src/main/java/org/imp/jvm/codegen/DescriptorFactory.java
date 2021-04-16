@@ -19,6 +19,10 @@ public final class DescriptorFactory {
         return getMethodDescriptor(parameters, returnType);
     }
 
+    public static String getMethodDescriptor(org.imp.jvm.statement.Function function) {
+        return getMethodDescriptor(function.signature);
+    }
+
     public static String getMethodDescriptor(FunctionSignature signature) {
         Collection<Identifier> parameters = signature.parameters;
         Type returnType = signature.type;

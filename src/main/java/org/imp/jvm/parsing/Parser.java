@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.imp.jvm.ImpLexer;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.ImpFile;
+import org.imp.jvm.domain.ImpFile2;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
 
 import java.io.File;
@@ -14,7 +15,7 @@ import java.io.IOException;
 
 
 public class Parser {
-    public static ImpFile getImpFile(File file) throws IOException {
+    public static ImpFile2 getImpFile(File file) throws IOException {
 
         CharStream charStream = CharStreams.fromFileName(file.getAbsolutePath());
         ImpLexer impLexer = new ImpLexer(charStream);
@@ -24,7 +25,7 @@ public class Parser {
         parser.setBuildParseTree(true);
 
         ParseTree parseTree = parser.program();
-        ImpFile impFile = parseTree.accept(new ImpFileVisitor());
+        ImpFile2 impFile = parseTree.accept(new ImpFileVisitor());
 
 
 //        parser.addErrorListener(null);

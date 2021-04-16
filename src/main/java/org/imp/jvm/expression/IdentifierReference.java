@@ -1,6 +1,7 @@
 package org.imp.jvm.expression;
 
 import org.imp.jvm.domain.scope.LocalVariable;
+import org.imp.jvm.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 
 public class IdentifierReference extends Expression {
@@ -8,10 +9,12 @@ public class IdentifierReference extends Expression {
     public final LocalVariable localVariable;
 
     public IdentifierReference(LocalVariable localVariable) {
+        this.type = localVariable.getType();
         this.localVariable = localVariable;
     }
 
-    public void generate(MethodVisitor mv) {
+    @Override
+    public void generate(MethodVisitor mv, Scope scope) {
         // ToDo: refactor IdentifierReference to inherit from Identifier
         String varName = localVariable.getName();
         int index = scope.getLocalVariableIndex(varName);

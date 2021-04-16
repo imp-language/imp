@@ -24,7 +24,7 @@ public class If extends Statement {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        condition.generate(mv);
+        condition.generate(mv, scope);
 
         Label trueLabel = new Label();
         Label endLabel = new Label();
@@ -36,8 +36,4 @@ public class If extends Statement {
         mv.visitLabel(endLabel);
     }
 
-    @Override
-    public void generate(ClassWriter cw) {
-        throw new NotImplementedException("ree");
-    }
 }

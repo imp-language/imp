@@ -1,5 +1,6 @@
 package org.imp.jvm.expression;
 
+import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.Type;
 import org.objectweb.asm.MethodVisitor;
 
@@ -13,7 +14,7 @@ public class Literal extends Expression {
         this.value = value;
     }
 
-    public void generate(MethodVisitor mv) {
+    public void generate(MethodVisitor mv, Scope scope) {
         // ToDo: support types other than integers
         int transformed = Integer.parseInt((String) value);
         mv.visitLdcInsn(transformed);

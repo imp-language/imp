@@ -23,6 +23,9 @@ public class Assignment extends Statement {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
+        // ToDo: does not work except in declarations
+        expression.generate(mv, scope);
+
         Type type = expression.type;
         if (scope.variableExists(name)) {
             int index = scope.getLocalVariableIndex(name);

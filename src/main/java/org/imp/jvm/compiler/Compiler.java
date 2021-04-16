@@ -1,9 +1,11 @@
 package org.imp.jvm.compiler;
 
 import org.imp.jvm.codegen.BytecodeGenerator;
+import org.imp.jvm.codegen.BytecodeGenerator2;
 import org.imp.jvm.domain.ImpFile;
+import org.imp.jvm.domain.ImpFile2;
 
-import org.imp.jvm.parser.Parser;
+import org.imp.jvm.parsing.Parser;
 import org.objectweb.asm.Opcodes;
 
 import java.io.*;
@@ -19,15 +21,15 @@ public class Compiler {
         System.out.println(Opcodes.DUP_X1);
 
         File source = new File(filename);
-        ImpFile impFile = Parser.getImpFile(source);
+        ImpFile2 impFile = Parser.getImpFile(source);
 
 
         saveByteCodeToClassFile(impFile);
 
     }
 
-    public void saveByteCodeToClassFile(ImpFile impFile) throws IOException {
-        BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
+    public void saveByteCodeToClassFile(ImpFile2 impFile) throws IOException {
+        BytecodeGenerator2 bytecodeGenerator = new BytecodeGenerator2();
         var byteUnits = bytecodeGenerator.generate(impFile);
 
         String className = impFile.getClassName();

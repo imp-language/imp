@@ -2,16 +2,14 @@ package org.imp.jvm.parsing.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.expression.Call;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.expression.FunctionCall;
+import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.BuiltInType;
-import org.imp.jvm.expression.Expression;
-import org.imp.jvm.expression.IdentifierReference;
-import org.imp.jvm.expression.Literal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +57,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
+    public IdentifierReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
         if (scope.variableExists(name)) {
 
@@ -79,6 +77,17 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public Expression visitUnaryNotExpression(ImpParser.UnaryNotExpressionContext ctx) {
         return super.visitUnaryNotExpression(ctx);
     }
+
+
+    @Override
+    public Relational visitRelationalExpression(ImpParser.RelationalExpressionContext ctx) {
+        Expression left = ctx.expression(0).accept(this);
+        Expression right = ctx.expression(1).accept(this);
+        // ToDo: operator overloading for comparison
+        CompareSign compareSign = CompareSign.fromString(ctx.cmp.getText());
+        return new Relational(left, right, compareSign);
+    }
+
 
     @Override
     public FunctionCall visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
@@ -121,14 +130,9 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         return Collections.emptyList();
     }
 
-    @Override
-    public Expression visitRelationalExpression(ImpParser.RelationalExpressionContext ctx) {
-        return relationalVisitor.visitRelationalExpression(ctx);
-    }
-
 
     @Override
-    public Expression visitAdditiveExpression(ImpParser.AdditiveExpressionContext ctx) {
+    public Arithmetic visitAdditiveExpression(ImpParser.AdditiveExpressionContext ctx) {
         return arithmeticVisitor.visitAdditiveExpression(ctx);
     }
 }

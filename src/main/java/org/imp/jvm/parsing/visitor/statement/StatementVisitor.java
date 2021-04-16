@@ -141,6 +141,8 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             Expression expression = variableInitializeContext.expression().accept(expressionVisitor);
             String name = variableInitializeContext.identifier().getText();
             declaration = new Declaration(mutability, name, expression);
+            scope.addLocalVariable(new LocalVariable(name, expression.type));
+
         } else {
             // ToDo: parser error
             System.err.println("Parser error.");

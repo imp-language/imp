@@ -3,6 +3,7 @@ package org.imp.jvm.expression;
 import org.imp.jvm.codegen.DescriptorFactory;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -18,9 +19,9 @@ public class FunctionCall extends Expression {
         this.type = signature.type;
     }
 
-    public void generate(MethodVisitor mv) {
+    public void generate(MethodVisitor mv, Scope scope) {
         // generate arguments
-        arguments.forEach(argument -> argument.generate(mv));
+        arguments.forEach(argument -> argument.generate(mv, scope));
 
         // bytecode
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);

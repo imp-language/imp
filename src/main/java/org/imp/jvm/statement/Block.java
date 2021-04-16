@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Block extends Statement {
     public final List<Statement> statements;
-    public final Scope scope;
+    public Scope scope;
 
     public Block(List<Statement> statements, Scope scope) {
         this.statements = statements;
@@ -24,11 +24,7 @@ public class Block extends Statement {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        statements.forEach(statement -> statement.generate(mv, null));
+        statements.forEach(statement -> statement.generate(mv, this.scope));
     }
 
-    @Override
-    public void generate(ClassWriter cw) {
-        throw new NotImplementedException("re");
-    }
 }

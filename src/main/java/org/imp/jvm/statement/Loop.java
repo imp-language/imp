@@ -22,8 +22,4 @@ public class Loop extends Statement {
         throw new NotImplementedException("todo");
     }
 
-    @Override
-    public void generate(ClassWriter cw) {
-        throw new NotImplementedException("ree");
-    }
 }
