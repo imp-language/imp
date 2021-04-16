@@ -1,41 +1,45 @@
 package org.imp.jvm.codegen.statement;
 
-import org.imp.jvm.codegen.expression.ExpressionGenerator;
 import org.imp.jvm.domain.expression.Expression;
-import org.imp.jvm.domain.statement.IfStatement;
-import org.imp.jvm.domain.statement.Statement;
-import org.objectweb.asm.Label;
+import org.imp.jvm.domain.scope.LocalVariable;
+import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.domain.statement.Assignment;
+import org.imp.jvm.domain.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Optional;
-
 public class AssignmentGenerator {
-    private final StatementGenerator statementGenerator;
-    private final ExpressionGenerator expressionGenerator;
-    private final MethodVisitor mv;
+    private final MethodVisitor methodVisitor;
+    private final Scope scope;
 
-    public AssignmentGenerator(StatementGenerator statementGenerator, ExpressionGenerator expressionGenerator, MethodVisitor mv) {
-        this.statementGenerator = statementGenerator;
-        this.expressionGenerator = expressionGenerator;
-        this.mv = mv;
+    public AssignmentGenerator(MethodVisitor methodVisitor, Scope scope) {
+        this.methodVisitor = methodVisitor;
+        this.scope = scope;
     }
 
-    public void generate(IfStatement ifStatement) {
-        Expression condition = ifStatement.condition;
-        condition.accept(expressionGenerator);
-
-        Label trueLabel = new Label();
-        Label endLabel = new Label();
-        mv.visitJumpInsn(Opcodes.IFNE, trueLabel);
-        Optional<Statement> falseStatement = Optional.ofNullable(ifStatement.elseIf);
-        if (falseStatement.isPresent()) {
-            falseStatement.get().accept(statementGenerator);
+    public void generate(Assignment assignment) {
+        String varName = assignment.name;
+        Expression expression = assignment.expression;
+        Type type = expression.getType();
+        if (scope.variableExists(varName)) {
+            int index = scope.getLocalVariableIndex(varName);
+            LocalVariable localVariable = scope.getLocalVariable(varName);
+            Type localVariableType = localVariable.getType();
+            castIfNecessary(type, localVariableType);
+            methodVisitor.visitVarInsn(type.getStoreVariableOpcode(), index);
+//          return;
         }
+//        Field field = scope.getField(varName);
+//        String descriptor = field.getType().getDescriptor();
+//        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
+//        expression.accept(expressionGenerator);
+//        castIfNecessary(type, field.getType());
+//        methodVisitor.visitFieldInsn(Opcodes.PUTFIELD, field.getOwnerInternalName(), field.getName(), descriptor);
+    }
 
-        mv.visitJumpInsn(Opcodes.GOTO, endLabel);
-        mv.visitLabel(trueLabel);
-        ifStatement.body.accept(statementGenerator);
-        mv.visitLabel(endLabel);
+    private void castIfNecessary(Type expressionType, Type variableType) {
+        if (!expressionType.equals(variableType)) {
+            methodVisitor.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());
+        }
     }
 }

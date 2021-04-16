@@ -22,8 +22,9 @@ public class LiteralExpressionGenerator {
     public void generate(Literal literal) {
         Type type = literal.getType();
         Object value = literal.value;
-        Object transformed = value;
-        methodVisitor.visitLdcInsn(8);
+        // ToDo: support types other than integers
+        int transformed = Integer.parseInt((String) value);
+        methodVisitor.visitLdcInsn(transformed);
     }
 
 

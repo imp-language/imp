@@ -3,13 +3,19 @@ function sum(x int, y int) int {
     return x + y
 }
 
-/*
+
 val expected = 8
-val actual = sum(3, 5)
+val actual = 4
+
 if actual == expected {
-    //log("test passed")
+    //val a = sum(2,4)
 }
 
+
+/*
+val actual = sum(3, 5)
+
+sum(1,sum(2,4))
 
  /*else {
     log("test failed")

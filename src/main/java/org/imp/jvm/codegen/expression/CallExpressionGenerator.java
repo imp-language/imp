@@ -32,7 +32,7 @@ public class CallExpressionGenerator {
         String functionName = functionCall.signature.name;
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(functionCall.signature);
         String ownerDescriptor = "java/lang/Object";
-        methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, functionName, methodDescriptor, false);
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, functionName, methodDescriptor, false);
 
     }
 

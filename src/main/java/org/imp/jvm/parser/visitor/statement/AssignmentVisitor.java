@@ -17,9 +17,9 @@ public class AssignmentVisitor extends ImpParserBaseVisitor<Assignment> {
 
     @Override
     public Assignment visitAssignment(ImpParser.AssignmentContext ctx) {
-        Expression left = ctx.expression(0).accept(expressionVisitor);
-        Expression right = ctx.expression(1).accept(expressionVisitor);
+        String name = ctx.identifier().getText();
+        Expression expression = ctx.expression().accept(expressionVisitor);
 
-        return new Assignment(left, right);
+        return new Assignment(name, expression);
     }
 }

@@ -1,11 +1,9 @@
 package org.imp.jvm.codegen.statement;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.codegen.expression.ExpressionGenerator;
 import org.imp.jvm.domain.expression.FunctionCall;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.statement.*;
-import org.imp.jvm.parser.visitor.statement.ReturnVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 public class StatementGenerator {
@@ -16,7 +14,7 @@ public class StatementGenerator {
     private final IfGenerator ifGenerator;
     private final LoopGenerator loopGenerator;
     private final VariableDeclarationGenerator variableDeclarationGenerator;
-//    private final AssignmentGenerator assignmentGenerator;
+    private final AssignmentGenerator assignmentGenerator;
 //    private final ImportGenerator importGenerator;
 //    private final ExportGenerator exportGenerator;
 
@@ -29,7 +27,7 @@ public class StatementGenerator {
         ifGenerator = new IfGenerator(this, expressionGenerator, methodVisitor);
         loopGenerator = new LoopGenerator(null, null, null);
         variableDeclarationGenerator = new VariableDeclarationGenerator(this, expressionGenerator);
-
+        assignmentGenerator = new AssignmentGenerator(methodVisitor, scope);
     }
 
     public void generate(VariableDeclaration variableDeclaration) {
@@ -58,6 +56,6 @@ public class StatementGenerator {
     }
 
     public void generate(Assignment assignment) {
-        throw new NotImplementedException("peneeeee");
+        assignmentGenerator.generate(assignment);
     }
 }

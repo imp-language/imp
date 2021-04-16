@@ -79,7 +79,7 @@ expression
 
 assignment
 //    : expressionList assign_op expressionList
-    : expression assign_op expression;
+    : identifier assign_op expression;
 
 // +=, -=, *=, /=, ^=, %=, or of course =
 assign_op

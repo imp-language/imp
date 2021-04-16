@@ -2,6 +2,7 @@ package org.imp.jvm.codegen.statement;
 
 import org.imp.jvm.codegen.expression.ExpressionGenerator;
 import org.imp.jvm.domain.expression.Expression;
+import org.imp.jvm.domain.statement.Assignment;
 import org.imp.jvm.domain.statement.VariableDeclaration;
 import org.imp.jvm.domain.statement.variable.Declaration;
 import org.imp.jvm.domain.statement.variable.VariableInitialization;
@@ -22,7 +23,7 @@ public class VariableDeclarationGenerator {
 
         Expression expression = declaration.expression;
         expression.accept(expressionGenerator);
-//        Assignment assignment = new Assignment(variableDeclaration);
-//        assignment.accept(statementGenerator);
+        Assignment assignment = new Assignment(variableDeclaration);
+        assignment.accept(statementGenerator);
     }
 }

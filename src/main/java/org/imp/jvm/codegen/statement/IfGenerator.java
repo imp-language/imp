@@ -28,10 +28,10 @@ public class IfGenerator {
         Label trueLabel = new Label();
         Label endLabel = new Label();
         mv.visitJumpInsn(Opcodes.IFNE, trueLabel);
-        Optional<Statement> falseStatement = Optional.ofNullable(ifStatement.elseIf);
-        if (falseStatement.isPresent()) {
-            falseStatement.get().accept(statementGenerator);
-        }
+//        Optional<Statement> falseStatement = Optional.ofNullable(ifStatement.elseIf);
+//        if (falseStatement.isPresent()) {
+//            falseStatement.get().accept(statementGenerator);
+//        }
 
         mv.visitJumpInsn(Opcodes.GOTO, endLabel);
         mv.visitLabel(trueLabel);

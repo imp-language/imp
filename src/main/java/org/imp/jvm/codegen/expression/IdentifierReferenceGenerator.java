@@ -26,7 +26,6 @@ public class IdentifierReferenceGenerator {
 
 
     public void generate(IdentifierReference reference) {
-        System.out.println(reference);
         // ToDo: refactor IdentifierReference to inherit from Identifier
         String varName = reference.localVariable.getName();
         Type type = reference.getType();

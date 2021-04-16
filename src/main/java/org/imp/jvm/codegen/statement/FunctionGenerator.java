@@ -29,8 +29,6 @@ public class FunctionGenerator {
         access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
         MethodVisitor mv = classWriter.visitMethod(access, name, description, null, null);
         mv.visitCode();
-//        mv.visitIntInsn(Opcodes.ILOAD, 0);
-//        mv.visitIntInsn(Opcodes.ILOAD, 1);
 
         StatementGenerator statementScopeGenerator = new StatementGenerator(mv, scope);
         block.accept(statementScopeGenerator);
