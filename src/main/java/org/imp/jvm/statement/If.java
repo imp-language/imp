@@ -1,7 +1,7 @@
 package org.imp.jvm.statement;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.imp.jvm.domain.statement.IfStatement;
+import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Expression;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -23,7 +23,7 @@ public class If extends Statement {
     }
 
     @Override
-    public void generate(MethodVisitor mv) {
+    public void generate(MethodVisitor mv, Scope scope) {
         condition.generate(mv);
 
         Label trueLabel = new Label();
@@ -32,7 +32,7 @@ public class If extends Statement {
 
         mv.visitJumpInsn(Opcodes.GOTO, endLabel);
         mv.visitLabel(trueLabel);
-        body.generate(mv);
+        body.generate(mv, null);
         mv.visitLabel(endLabel);
     }
 

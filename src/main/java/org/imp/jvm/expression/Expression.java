@@ -6,7 +6,7 @@ import org.objectweb.asm.MethodVisitor;
 public abstract class Expression {
     public Type type;
 
-    public abstract void generate(MethodVisitor methodVisitor);
+    public abstract void generate(MethodVisitor mv);
 
 }
 

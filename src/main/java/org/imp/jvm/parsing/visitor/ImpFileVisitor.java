@@ -5,20 +5,27 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.root.ClassUnit;
 import org.imp.jvm.domain.root.StaticUnit;
+import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.statement.Block;
-import org.imp.jvm.domain.statement.Function;
-import org.imp.jvm.domain.statement.Statement;
 import org.imp.jvm.domain.statement.VariableDeclaration;
-import org.imp.jvm.domain.statement.variable.Declaration;
 import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
+import org.imp.jvm.statement.Block;
+import org.imp.jvm.statement.Declaration;
+import org.imp.jvm.statement.Function;
+import org.imp.jvm.statement.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
+
+    private FunctionSignature mainSignature = new FunctionSignature(
+            "main",
+            new ArrayList<Identifier>(),
+            BuiltInType.VOID
+    );
 
     @Override
     public ImpFile visitProgram(ImpParser.ProgramContext ctx) {
@@ -31,14 +38,11 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         // static unit for all non-class statements in the file
         var staticUnit = new StaticUnit("static_unit");
-        var main = new Function("main",
-                new Block(new ArrayList<Statement>(), staticScope),
-                new ArrayList<Identifier>(),
-                BuiltInType.VOID);
+        var main = new Function(mainSignature, new Block());
         Identifier varArgs = new Identifier();
         varArgs.type = BuiltInType.STRING_ARR;
         varArgs.name = "args";
-        main.parameters.add(varArgs);
+        main.signature.parameters.add(varArgs);
 
         // create an ImpFile node with appropriate children
         var impFile = new ImpFile(staticUnit);
@@ -55,9 +59,8 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
             } else {
                 // For everything else, add to the static class.
-                if (s instanceof VariableDeclaration) {
-                    VariableDeclaration variableDeclaration = (VariableDeclaration) s;
-                    Declaration declaration = variableDeclaration.declaration;
+                if (s instanceof org.imp.jvm.statement.Declaration) {
+                    Declaration declaration = (Declaration) s;
 
                     // Add variable signature to static unit
                     staticUnit.properties.add(declaration);

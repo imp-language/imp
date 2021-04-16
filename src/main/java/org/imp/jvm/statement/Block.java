@@ -23,8 +23,8 @@ public class Block extends Statement {
     }
 
     @Override
-    public void generate(MethodVisitor mv) {
-        statements.forEach(statement -> statement.generate(mv));
+    public void generate(MethodVisitor mv, Scope scope) {
+        statements.forEach(statement -> statement.generate(mv, null));
     }
 
     @Override

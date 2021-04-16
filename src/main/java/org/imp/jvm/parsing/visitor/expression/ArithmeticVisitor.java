@@ -5,10 +5,10 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.expression.AdditiveExpression;
 
-public class AdditiveVisitor extends ImpParserBaseVisitor<AdditiveExpression> {
+public class ArithmeticVisitor extends ImpParserBaseVisitor<AdditiveExpression> {
     private final ExpressionVisitor expressionVisitor;
 
-    public AdditiveVisitor(ExpressionVisitor expressionVisitor) {
+    public ArithmeticVisitor(ExpressionVisitor expressionVisitor) {
         this.expressionVisitor = expressionVisitor;
     }
 

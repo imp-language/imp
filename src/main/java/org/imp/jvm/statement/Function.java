@@ -1,8 +1,8 @@
 package org.imp.jvm.statement;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.imp.jvm.codegen.DescriptorFactory;
 import org.imp.jvm.domain.scope.FunctionSignature;
+import org.imp.jvm.domain.scope.Scope;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -19,11 +19,11 @@ public class Function extends Statement {
 
 
     @Override
-    public void generate(MethodVisitor mv) {
+    public void generate(MethodVisitor mv, Scope scope) {
         throw new NotImplementedException("ree");
     }
 
-    @Override
+
     public void generate(ClassWriter cw) {
         String name = signature.name;
 //        String description = DescriptorFactory.getMethodDescriptor(this);
@@ -33,7 +33,7 @@ public class Function extends Statement {
         MethodVisitor mv = cw.visitMethod(access, name, description, null, null);
         mv.visitCode();
 
-        block.generate(mv);
+        block.generate(mv, null);
 
         mv.visitMaxs(-1, -1);
         mv.visitEnd();

@@ -6,8 +6,8 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.statement.IfStatement;
 import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.domain.types.Mutability;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.domain.types.TypeResolver;
 import org.imp.jvm.expression.Expression;
@@ -90,12 +90,12 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
     @Override
-    public Statement visitIfStatement(ImpParser.IfStatementContext ctx) {
+    public If visitIfStatement(ImpParser.IfStatementContext ctx) {
         Expression condition = null;
         if (ctx.expression() != null) {
             condition = ctx.expression().accept(expressionVisitor);
         }
-        Block block = ctx.block(0).accept(this);
+        Block block = (Block) ctx.block(0).accept(this);
         If elseIf = null;
 
         return new If(condition, block, elseIf);
@@ -111,15 +111,42 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
         if (conditionContext != null) {
             condition = conditionContext.accept(expressionVisitor);
-            block = blockContext.accept(this);
+            block = (Block) blockContext.accept(this);
         }
 
         return new Loop(condition, block);
     }
 
     @Override
-    public Statement visitVariableStatement(ImpParser.VariableStatementContext ctx) {
-        return variableVisitor.visitVariableStatement(ctx);
+    public Declaration visitVariableStatement(ImpParser.VariableStatementContext ctx) {
+        Mutability mutability = Mutability.Val;
+
+        // Is the variable described as `mut` or `val`?
+        if (ctx.VAL() != null && ctx.MUT() == null) {
+            mutability = Mutability.Val;
+        } else if (ctx.VAL() == null && ctx.MUT() != null) {
+            mutability = Mutability.Mut;
+        }
+
+        // Variable initialization or iterator descructuring?
+        ImpParser.IteratorDestructuringContext iteratorDestructuringContext = ctx.iteratorDestructuring();
+        ImpParser.VariableInitializeContext variableInitializeContext = ctx.variableInitialize();
+        Declaration declaration = null;
+
+        if (iteratorDestructuringContext != null) {
+//            declaration = iteratorDestructuringContext.accept(iteratorDestructuringVisitor);
+            System.err.println("Parser error.");
+            System.exit(1);
+        } else if (variableInitializeContext != null) {
+            Expression expression = variableInitializeContext.expression().accept(expressionVisitor);
+            String name = variableInitializeContext.identifier().getText();
+            declaration = new Declaration(mutability, name, expression);
+        } else {
+            // ToDo: parser error
+            System.err.println("Parser error.");
+            System.exit(1);
+        }
+        return declaration;
     }
 
 
@@ -142,8 +169,10 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
 
     @Override
-    public Statement visitAssignment(ImpParser.AssignmentContext ctx) {
-        return assignmentVisitor.visitAssignment(ctx);
+    public Assignment visitAssignment(ImpParser.AssignmentContext ctx) {
+        String name = ctx.identifier().getText();
+        Expression expression = ctx.expression().accept(expressionVisitor);
+        return new Assignment(name, expression);
     }
 
 
