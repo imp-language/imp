@@ -46,7 +46,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
         main.block.scope = staticScope;
 
         // create an ImpFile node with appropriate children
-        var impFile = new ImpFile2(staticUnit);
+        var impFile = new ImpFile2(staticUnit, "Test");
 
         // handle each statement appropriately
         StatementVisitor statementVisitor = new StatementVisitor(staticScope);

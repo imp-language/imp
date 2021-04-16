@@ -18,7 +18,8 @@ public class ImpFile2 {
     // All classes defined in the source file.
     public final List<ClassUnit> classUnits = new ArrayList<>();
 
-    public ImpFile2(StaticUnit2 staticUnit) {
+    public ImpFile2(StaticUnit2 staticUnit, String name) {
+        this.name = name;
 //        this.name = FilenameUtils.getBaseName(file.getName());
         this.staticUnit = staticUnit;
     }
