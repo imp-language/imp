@@ -1,12 +1,32 @@
-
-
-val expected = 8
-expected = 4
-
-/*
 function sum(x int, y int) int {
     return x + y
 }
+
+val expected = 8
+val actual = sum(3, 5)
+
+
+if expected == actual {
+    val c = 4
+}
+
+
+/*
+b = sum(a,b)
+b = sum(a, b)
+
+if a > b {
+    val p = 4
+}
+
+
+/*
+
+
+val expected = 80000000
+val actual = sum(40000,50000)
+
+
 val actual = sum(3, 5)
 val s = expected + actual + 4
 

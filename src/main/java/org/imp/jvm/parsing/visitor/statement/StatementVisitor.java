@@ -52,10 +52,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         // Identifier
         String name = ctx.identifier().getText();
 
-        // Block
-        BlockVisitor blockVisitor = new BlockVisitor(scope);
-        ImpParser.BlockContext blockContext = ctx.block();
-        Block block = Optional.ofNullable(blockContext.accept(blockVisitor)).orElse(new Block());
 
         // Arguments
         List<Identifier> arguments = new ArrayList<>();
@@ -65,6 +61,11 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         }
 //        addParametersAsLocalVariables(arguments);
         arguments.forEach(param -> scope.addLocalVariable(new LocalVariable(param.name, param.type)));
+
+        // Block
+        ImpParser.BlockContext blockContext = ctx.block();
+        Block block = (Block) Optional.ofNullable(blockContext.accept(this)).orElse(new Block());
+
 
         // Return type
         ImpParser.TypeContext typeContext = ctx.type();

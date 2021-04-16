@@ -39,7 +39,7 @@ public class Relational extends Expression {
     private void generatePrimitivesComparison(MethodVisitor mv, Scope scope, Expression left, Expression right, CompareSign compareSign) {
         left.generate(mv, scope);
         right.generate(mv, scope);
-        mv.visitInsn(Opcodes.ISUB);
+//        mv.visitInsn(Opcodes.ISUB);
     }
 
 }

@@ -59,12 +59,15 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public IdentifierReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
+
+        LocalVariable local = scope.getLocalVariable(name);
         if (scope.variableExists(name)) {
 
         }
         // ToDo: reference type parsing
         LocalVariable localVariable = new LocalVariable(name, BuiltInType.INT);
-        return new IdentifierReference(localVariable);
+
+        return new IdentifierReference(local);
     }
 
 

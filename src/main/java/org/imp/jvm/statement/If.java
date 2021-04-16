@@ -32,7 +32,7 @@ public class If extends Statement {
 
         mv.visitJumpInsn(Opcodes.GOTO, endLabel);
         mv.visitLabel(trueLabel);
-        body.generate(mv, null);
+        body.generate(mv, scope);
         mv.visitLabel(endLabel);
     }
 

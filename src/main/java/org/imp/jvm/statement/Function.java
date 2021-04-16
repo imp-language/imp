@@ -4,6 +4,8 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.codegen.DescriptorFactory;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.expression.EmptyExpression;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -35,7 +37,14 @@ public class Function extends Statement {
 
         block.generate(mv, block.scope);
 
+        appendReturn(mv, block.scope);
+
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
+    }
+
+    private void appendReturn(MethodVisitor mv, Scope scope) {
+        Return r = new Return(new EmptyExpression(BuiltInType.VOID));
+        r.generate(mv, scope);
     }
 }
