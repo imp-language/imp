@@ -84,7 +84,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
         }
 
         staticUnit.functions.add(main);
-        var constructorSignature = new FunctionSignature("nullmain", Collections.emptyList(), BuiltInType.VOID);
+        var constructorSignature = new FunctionSignature("Testmain", Collections.emptyList(), BuiltInType.VOID);
         staticUnit.functions.add(new Constructor(constructorSignature, new Block()));
         System.out.println(staticUnit);
 

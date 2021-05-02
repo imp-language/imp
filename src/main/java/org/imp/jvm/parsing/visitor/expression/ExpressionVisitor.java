@@ -104,7 +104,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         var arguments = callCtx.expressionList().expression();
         var argTypes = getArgumentsForCall(arguments);
         FunctionSignature signature;
-        if (functionName.equals("call")) {
+        if (functionName.equals("log")) {
             signature = new FunctionSignature("log", null, null);
         } else {
             signature = scope.getSignature(functionName, argTypes);

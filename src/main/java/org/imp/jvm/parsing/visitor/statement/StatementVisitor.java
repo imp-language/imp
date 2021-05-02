@@ -31,6 +31,11 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         expressionVisitor = new ExpressionVisitor(scope);
     }
 
+    @Override
+    public Statement visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
+        return expressionVisitor.visitCallStatementExpression(ctx);
+    }
+
 
     @Override
     public Block visitBlock(ImpParser.BlockContext ctx) {

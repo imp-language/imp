@@ -57,7 +57,8 @@ public class ClassGenerator {
 
     public ClassWriter generate(StaticUnit2 staticUnit) {
         String name = "Testmain";
-        classWriter.visit(CLASS_VERSION, Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
+//        classWriter.visit(CLASS_VERSION, Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
+        classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
 
         FunctionGenerator functionGenerator = new FunctionGenerator(classWriter, Opcodes.ACC_STATIC);
         List<org.imp.jvm.statement.Function> functions = staticUnit.functions;

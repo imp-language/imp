@@ -7,7 +7,7 @@ val actual = sum(3, 6)
 
 
 if expected == actual {
-    val c = 4
+    log("success")
 }
 
 
