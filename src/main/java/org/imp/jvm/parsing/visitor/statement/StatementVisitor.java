@@ -113,17 +113,28 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     @Override
     public Loop visitLoopStatement(ImpParser.LoopStatementContext ctx) {
         ImpParser.LoopConditionContext conditionContext = ctx.loopCondition();
-        ImpParser.BlockContext blockContext = ctx.block();
 
-        Expression condition = null;
-        Block block = null;
 
-        if (conditionContext != null) {
-            condition = conditionContext.accept(expressionVisitor);
-            block = (Block) blockContext.accept(this);
+        if (conditionContext instanceof ImpParser.ForLoopConditionContext) {
+            // loop val i = 0; i < 10; i++ { }
+            ImpParser.ForLoopConditionContext cond = (ImpParser.ForLoopConditionContext) conditionContext;
+            Declaration declaration = (Declaration) cond.variableStatement().accept(this);
+            Expression condition = cond.expression().accept(expressionVisitor);
+            Statement incrementer = cond.statement().accept(this);
+            Block block = (Block) ctx.block().accept(this);
+            block.scope = new Scope(scope);
+
+            return new ForLoop(declaration, condition, incrementer, block);
+        } else if (conditionContext instanceof ImpParser.ForInLoopConditionContext) {
+            // loop val item, idx in list { }
+
+        } else if (conditionContext instanceof ImpParser.WhileLoopConditionContext) {
+            // loop someExpression() == true { }
         }
 
-        return new Loop(condition, block);
+        System.out.println("ahhh oh no error bad loop syntax");
+        return null;
+
     }
 
     @Override

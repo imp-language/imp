@@ -9,12 +9,18 @@ import org.objectweb.asm.MethodVisitor;
 import java.util.Optional;
 
 public class Loop extends Statement {
-    public final Expression condition;
     public final Block body;
+    public LoopKind loopKind;
 
-    public Loop(Expression condition, Block body) {
-        this.condition = condition;
-        this.body = Optional.ofNullable(body).orElse(new Block()); // Todo: empty loop body is probably an error
+
+    public enum LoopKind {
+        For,
+        ForIn,
+        While
+    }
+
+    public Loop(Block block) {
+        this.body = block;
     }
 
     @Override
@@ -23,3 +29,5 @@ public class Loop extends Statement {
     }
 
 }
+
+

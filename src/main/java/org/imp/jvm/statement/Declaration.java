@@ -1,9 +1,12 @@
 package org.imp.jvm.statement;
 
+import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.Mutability;
+import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.expression.Expression;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 public class Declaration extends Statement {
     public final Mutability mutability;
@@ -21,8 +24,24 @@ public class Declaration extends Statement {
     public void generate(MethodVisitor mv, Scope scope) {
         // Todo: https://github.com/JakubDziworski/Enkel-JVM-language/blob/1527076545f7402a279db2c19f1e28ba7f084585/compiler/src/main/java/com/kubadziworski/bytecodegeneration/statement/VariableDeclarationStatementGenerator.java
         expression.generate(mv, scope);
-        Assignment assignment = new Assignment(this);
-        assignment.generate(mv, scope);
+//        Assignment assignment = new Assignment(this);
+//        assignment.generate(mv, scope);
+
+        Type type = expression.type;
+        if (scope.variableExists(name)) {
+            int index = scope.getLocalVariableIndex(name);
+            LocalVariable localVariable = scope.getLocalVariable(name);
+            Type localVariableType = localVariable.getType();
+            castIfNecessary(type, localVariableType, mv);
+            mv.visitVarInsn(type.getStoreVariableOpcode(), index);
+//          return;
+        }
+    }
+
+    private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {
+        if (!expressionType.equals(variableType)) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());
+        }
     }
 
 

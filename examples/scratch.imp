@@ -1,5 +1,25 @@
 
 
+
+loop val i=0; i<10; i=i+1 {
+    if i==4 {
+        log("b")
+    }
+    log("aaa")
+}
+
+if 4+5 == 8 {
+    log("reee")
+} else {
+    loop val i=0; i<12000; i=i+1 {
+        log("peen")
+    }
+}
+
+
+
+/*
+
 function sum(x int, y int) int {
     return x + y
 }

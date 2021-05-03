@@ -14,13 +14,13 @@ import java.util.Optional;
 public class If extends Statement {
     public final Expression condition;
     public final Statement trueStatement;
-    public final Optional<Statement> falseStatement;
+    public final Statement falseStatement;
 
 
     public If(Expression condition, Statement trueStatement, Statement falseStatement) {
         this.condition = condition;
         this.trueStatement = trueStatement;
-        this.falseStatement = Optional.ofNullable(falseStatement);
+        this.falseStatement = falseStatement;
     }
 
     @Override
@@ -31,8 +31,8 @@ public class If extends Statement {
         Label endLabel = new Label();
         mv.visitJumpInsn(Opcodes.IFNE, trueLabel);
 
-        if (falseStatement.isPresent()) {
-            falseStatement.get().generate(mv, scope);
+        if (falseStatement != null) {
+            falseStatement.generate(mv, scope);
         }
 
         mv.visitJumpInsn(Opcodes.GOTO, endLabel);

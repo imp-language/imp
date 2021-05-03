@@ -92,8 +92,9 @@ loopStatement
     ;
 
 loopCondition
-    : variableStatement SEMICOLON expression SEMICOLON expression SEMICOLON? // val i = 0; i < 10; i++
-    | variableStatement IN expression // val item, idx in list
+    : variableStatement SEMICOLON expression SEMICOLON statement SEMICOLON? #ForLoopCondition // val i = 0; i < 10; i++
+    | variableStatement IN expression #ForInLoopCondition // val item, idx in list
+    | expression #WhileLoopCondition
     ;
 
 
