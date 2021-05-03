@@ -15,20 +15,22 @@ import org.objectweb.asm.util.CheckClassAdapter;
 import java.io.*;
 
 public class Compiler {
+    long startTime;
 
     public static void main(String[] args) throws IOException {
         new Compiler().compile(args[0]);
     }
 
     public void compile(String filename) throws IOException {
-        System.out.println("yeee");
-        System.out.println(Opcodes.DUP_X1);
 
         File source = new File(filename);
+
+        startTime = System.currentTimeMillis();
         ImpFile2 impFile = Parser.getImpFile(source);
 
 
         saveByteCodeToClassFile(impFile);
+
 
         InputStream inputStream = new FileInputStream(".compile/Testmain.class");
         ClassReader classReader = new ClassReader(inputStream);
@@ -40,11 +42,18 @@ public class Compiler {
         PrintWriter printWriter = new PrintWriter(stringWriter);
         CheckClassAdapter.verify(new ClassReader(classWriter.toByteArray()), false, printWriter);
 //        assertTrue(stringWriter.toString().isEmpty());
+
     }
 
     public void saveByteCodeToClassFile(ImpFile2 impFile) throws IOException {
         BytecodeGenerator2 bytecodeGenerator = new BytecodeGenerator2();
         var byteUnits = bytecodeGenerator.generate(impFile);
+
+        long endTime = System.currentTimeMillis();
+
+        long duration = (endTime - startTime);
+        System.out.printf("Duration: %.0f ms.", (float) duration);
+
 
         String className = impFile.getClassName();
         for (var byteUnit : byteUnits.entrySet()) {

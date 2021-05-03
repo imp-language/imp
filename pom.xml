@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>groupId</groupId>
+    <groupId>org.imp.jvm</groupId>
     <artifactId>imp</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-DEV</version>
     <dependencies>
         <dependency>
             <groupId>org.ow2.asm</groupId>
@@ -46,8 +46,8 @@
     </dependencies>
 
     <properties>
-        <maven.compiler.source>13</maven.compiler.source>
-        <maven.compiler.target>13</maven.compiler.target>
+        <maven.compiler.source>14</maven.compiler.source>
+        <maven.compiler.target>14</maven.compiler.target>
 
     </properties>
 
@@ -67,22 +67,57 @@
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
-<!--                        <configuration>-->
-<!--                            <visitor>true</visitor>-->
-<!--                            <listener>false</listener>-->
-<!--                            <outputDirectory>${basedir}/src/main/antlr4</outputDirectory>-->
-<!--                        </configuration>-->
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
                     <source>14</source>
                     <target>14</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>imp-0.1</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.imp.jvm.compiler.Compiler</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>directory-single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <!--                    <archive>-->
+                    <!--                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>-->
+                    <!--                    </archive>-->
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
