@@ -33,6 +33,16 @@
             <artifactId>antlr4-runtime</artifactId>
             <version>4.9.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-analysis</artifactId>
+            <version>4.1</version>
+        </dependency>
     </dependencies>
 
     <properties>

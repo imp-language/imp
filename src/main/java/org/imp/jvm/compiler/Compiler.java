@@ -6,7 +6,11 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.ImpFile2;
 
 import org.imp.jvm.parsing.Parser;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.util.CheckClassAdapter;
 
 import java.io.*;
 
@@ -26,6 +30,16 @@ public class Compiler {
 
         saveByteCodeToClassFile(impFile);
 
+        InputStream inputStream = new FileInputStream(".compile/Testmain.class");
+        ClassReader classReader = new ClassReader(inputStream);
+        ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
+        ClassVisitor classVisitor = new CheckClassAdapter(classWriter, true);
+        classReader.accept(classVisitor, 0);
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        CheckClassAdapter.verify(new ClassReader(classWriter.toByteArray()), false, printWriter);
+//        assertTrue(stringWriter.toString().isEmpty());
     }
 
     public void saveByteCodeToClassFile(ImpFile2 impFile) throws IOException {

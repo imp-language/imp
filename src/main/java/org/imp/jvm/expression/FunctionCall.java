@@ -8,6 +8,7 @@ import org.imp.jvm.domain.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.io.PrintStream;
 import java.util.List;
 
 public class FunctionCall extends Expression {
@@ -32,15 +33,23 @@ public class FunctionCall extends Expression {
             String name = "java.io.PrintStream";
             String fieldDescriptor = "L" + name.replace('.', '/') + ";";
 
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, fieldDescriptor, "println", descriptor, false);
+            descriptor = org.objectweb.asm.Type.getDescriptor(java.io.PrintStream.class);
+
+
+            String owner = "java/io/PrintStream";
+            name = "println"; // name of the method we call
+            descriptor = "(Ljava/lang/String;)V";
+
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, "println", descriptor, false);
             return;
         }
+
         arguments.forEach(argument -> argument.generate(mv, scope));
 
 
         // bytecode
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
-        String ownerDescriptor = "java/lang/Object";
+        String ownerDescriptor = "Testmain";
         mv.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, signature.name, methodDescriptor, false);
 
     }
