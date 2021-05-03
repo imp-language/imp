@@ -50,17 +50,18 @@
                 <configuration>
                     <visitor>true</visitor>
                     <listener>true</listener>
+                    <outputDirectory>${basedir}/src/main/antlr4</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
-                        <configuration>
-                            <visitor>true</visitor>
-                            <listener>false</listener>
-                            <outputDirectory>${basedir}/src/main/antlr4</outputDirectory>
-                        </configuration>
+<!--                        <configuration>-->
+<!--                            <visitor>true</visitor>-->
+<!--                            <listener>false</listener>-->
+<!--                            <outputDirectory>${basedir}/src/main/antlr4</outputDirectory>-->
+<!--                        </configuration>-->
                     </execution>
                 </executions>
             </plugin>
