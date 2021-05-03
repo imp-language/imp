@@ -60,7 +60,7 @@
                 <configuration>
                     <visitor>true</visitor>
                     <listener>true</listener>
-                    <outputDirectory>${basedir}/src/main/antlr4</outputDirectory>
+<!--                    <outputDirectory>${basedir}/src/main/antlr4</outputDirectory>-->
                 </configuration>
                 <executions>
                     <execution>

@@ -6,11 +6,13 @@ function sum(x int, y int) int {
 }
 
 val expected = 8
-val actual = sum(3, 5)
+val actual = sum(3, 50)
 
 
 if expected == actual {
-    log("success")
+    log("equal")
+} else {
+    log("not equal")
 }
 
 

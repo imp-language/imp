@@ -103,9 +103,8 @@ returnStatement
     ;
 
 // if condition { } else if condition { } else { }
-// ToDo: actually support else if
 ifStatement
-    : IF expression block (ELSE (ifStatement | block))?
+    : IF expression trueStatement=statement (ELSE falseStatement=statement)?
     ; 
 
 

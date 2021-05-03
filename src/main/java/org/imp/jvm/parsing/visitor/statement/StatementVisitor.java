@@ -14,6 +14,7 @@ import org.imp.jvm.expression.Expression;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.statement.*;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -97,14 +98,16 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public If visitIfStatement(ImpParser.IfStatementContext ctx) {
-        Expression condition = null;
-        if (ctx.expression() != null) {
-            condition = ctx.expression().accept(expressionVisitor);
-        }
-        Block block = (Block) ctx.block(0).accept(this);
-        If elseIf = null;
+        Expression condition = ctx.expression().accept(expressionVisitor);
 
-        return new If(condition, block, elseIf);
+        Statement trueStatement = ctx.trueStatement.accept(this);
+
+        Statement falseStatement = null;
+        if (ctx.falseStatement != null) {
+            falseStatement = ctx.falseStatement.accept(this);
+        }
+
+        return new If(condition, trueStatement, falseStatement);
     }
 
     @Override

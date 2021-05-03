@@ -8,18 +8,19 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.Optional;
 
 public class If extends Statement {
     public final Expression condition;
-    public final Block body;
-    public If elseIf;
+    public final Statement trueStatement;
+    public final Optional<Statement> falseStatement;
 
 
-    public If(Expression condition, Block body, If elseIf) {
+    public If(Expression condition, Statement trueStatement, Statement falseStatement) {
         this.condition = condition;
-        this.body = Optional.ofNullable(body).orElse(new Block());
-        this.elseIf = elseIf;
+        this.trueStatement = trueStatement;
+        this.falseStatement = Optional.ofNullable(falseStatement);
     }
 
     @Override
@@ -30,10 +31,15 @@ public class If extends Statement {
         Label endLabel = new Label();
         mv.visitJumpInsn(Opcodes.IFNE, trueLabel);
 
+        if (falseStatement.isPresent()) {
+            falseStatement.get().generate(mv, scope);
+        }
+
         mv.visitJumpInsn(Opcodes.GOTO, endLabel);
         mv.visitLabel(trueLabel);
-        body.generate(mv, scope);
+        trueStatement.generate(mv, scope);
         mv.visitLabel(endLabel);
+
     }
 
 }

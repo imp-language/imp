@@ -4,7 +4,6 @@ import org.imp.jvm.codegen.statement.StatementGenerator;
 import org.imp.jvm.domain.expression.Expression;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.Type;
-import org.imp.jvm.parser.visitor.statement.IfVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
