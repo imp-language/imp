@@ -39,9 +39,9 @@ public class Compiler {
             CommandLine.usage(compiler, System.out);
             return;
         } else {
-            String outputClass = compiler.compile();
+            String outputClassName = compiler.compile();
             if (!compiler.compile) {
-                compiler.run(".compile Testmain");
+                compiler.run(".compile " + outputClassName);
             }
         }
     }
@@ -78,7 +78,6 @@ public class Compiler {
     }
 
     public String compile() throws IOException {
-
         File source = new File(filename);
 
         startTime = System.currentTimeMillis();
@@ -88,7 +87,7 @@ public class Compiler {
         saveByteCodeToClassFile(impFile);
 
 
-        InputStream inputStream = new FileInputStream(".compile/Testmain.class");
+        InputStream inputStream = new FileInputStream(".compile/" + impFile.name + ".class");
         ClassReader classReader = new ClassReader(inputStream);
         ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
         ClassVisitor classVisitor = new CheckClassAdapter(classWriter, true);
@@ -99,7 +98,7 @@ public class Compiler {
         CheckClassAdapter.verify(new ClassReader(classWriter.toByteArray()), false, printWriter);
 //        assertTrue(stringWriter.toString().isEmpty());
 
-        return ".compile/Testmain.class";
+        return impFile.name;
     }
 
     public void saveByteCodeToClassFile(ImpFile2 impFile) throws IOException {
@@ -114,7 +113,10 @@ public class Compiler {
 
         String className = impFile.getClassName();
         for (var byteUnit : byteUnits.entrySet()) {
-            String qualifiedName = className + byteUnit.getKey();
+            String qualifiedName = className;
+            if (!byteUnit.getKey().equals("main")) {
+                qualifiedName = byteUnit.getKey();
+            }
             String fileName = ".compile/" + qualifiedName + ".class";
             OutputStream output = new FileOutputStream(fileName);
             output.write(byteUnit.getValue());

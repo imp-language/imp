@@ -56,7 +56,7 @@ public class ClassGenerator {
     }
 
     public ClassWriter generate(StaticUnit2 staticUnit) {
-        String name = "Testmain";
+        String name = staticUnit.name;
 //        classWriter.visit(CLASS_VERSION, Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
 

@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.ImpLexer;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.ImpFile;
@@ -25,7 +26,7 @@ public class Parser {
         parser.setBuildParseTree(true);
 
         ParseTree parseTree = parser.program();
-        ImpFile2 impFile = parseTree.accept(new ImpFileVisitor());
+        ImpFile2 impFile = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(file.getName())));
 
 
 //        parser.addErrorListener(null);

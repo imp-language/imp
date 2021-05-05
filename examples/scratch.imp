@@ -1,3 +1,24 @@
+function sum(x int, y int) int {
+    return x + y
+}
+
+val expected = 8
+val actual = sum(3, 50)
+
+
+if expected == actual {
+    log("equal")
+} else {
+    log("not equal")
+}
+
+
+
+
+/*
+
+
+
 
 
 
@@ -15,25 +36,6 @@ if 4+5 == 8 {
         log("peen")
     }
 }
-
-
-
-/*
-
-function sum(x int, y int) int {
-    return x + y
-}
-
-val expected = 8
-val actual = sum(3, 50)
-
-
-if expected == actual {
-    log("equal")
-} else {
-    log("not equal")
-}
-
 
 /*
 b = sum(a,b)

@@ -20,6 +20,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
+    private final String filename;
+
+
+    public ImpFileVisitor(String filename) {
+        this.filename = filename;
+    }
 
     private FunctionSignature mainSignature = new FunctionSignature(
             "main",
@@ -37,7 +43,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
 
 
         // static unit for all non-class statements in the file
-        var staticUnit = new StaticUnit2("static_unit");
+        var staticUnit = new StaticUnit2(filename);
         var main = new Function(mainSignature, new Block());
         Identifier varArgs = new Identifier();
         varArgs.type = BuiltInType.STRING_ARR;
@@ -46,7 +52,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
         main.block.scope = staticScope;
 
         // create an ImpFile node with appropriate children
-        var impFile = new ImpFile2(staticUnit, "Test");
+        var impFile = new ImpFile2(staticUnit, filename);
 
         // handle each statement appropriately
         StatementVisitor statementVisitor = new StatementVisitor(staticScope);
