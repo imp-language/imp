@@ -14,10 +14,12 @@ import java.util.List;
 public class FunctionCall extends Expression {
     public final FunctionSignature signature;
     public List<Expression> arguments;
+    public final Expression owner;
 
-    public FunctionCall(FunctionSignature signature, List<Expression> arguments) {
+    public FunctionCall(FunctionSignature signature, List<Expression> arguments, Expression owner) {
         this.signature = signature;
         this.arguments = arguments;
+        this.owner = owner;
         this.type = signature.type;
     }
 
@@ -42,15 +44,17 @@ public class FunctionCall extends Expression {
 
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, "println", descriptor, false);
             return;
+        } else {
+            arguments.forEach(argument -> argument.generate(mv, scope));
+
+
+            // bytecode
+            String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
+            String ownerDescriptor = owner.type.getInternalName();
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, signature.name, methodDescriptor, false);
+
         }
 
-        arguments.forEach(argument -> argument.generate(mv, scope));
-
-
-        // bytecode
-        String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
-        String ownerDescriptor = "Testmain";
-        mv.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, signature.name, methodDescriptor, false);
 
     }
 
