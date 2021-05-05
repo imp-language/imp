@@ -11,17 +11,73 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.util.CheckClassAdapter;
+import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
 import java.io.*;
 
+@CommandLine.Command(name = "imp")
 public class Compiler {
+    @CommandLine.Parameters(index = "0", description = "Source file to compile.")
+    private String filename;
+
+    @Option(names = {"-c", "--compile"}, description = "Compile instead of running.")
+    private boolean compile;
+
+    @Option(names = {"-v", "--version"}, versionHelp = true, description = "display version info")
+    boolean versionInfoRequested;
+
+    @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
+    boolean usageHelpRequested;
+
+
     long startTime;
 
     public static void main(String[] args) throws IOException {
-        new Compiler().compile(args[0]);
+        Compiler compiler = CommandLine.populateCommand(new Compiler(), args);
+        if (compiler.usageHelpRequested) {
+            CommandLine.usage(compiler, System.out);
+            return;
+        } else {
+            String outputClass = compiler.compile();
+            if (!compiler.compile) {
+                compiler.run(".compile Testmain");
+            }
+        }
     }
 
-    public void compile(String filename) throws IOException {
+    public int run(String className) {
+        int result = 0;
+
+        try {
+            System.out.println("command output:");
+            Process proc = Runtime.getRuntime().exec("java -cp " + className);
+
+            InputStream errin = proc.getErrorStream();
+            InputStream in = proc.getInputStream();
+            BufferedReader errorOutput = new BufferedReader(new InputStreamReader(errin));
+            BufferedReader output = new BufferedReader(new InputStreamReader(in));
+            String line1 = null;
+            String line2 = null;
+            try {
+                while ((line1 = errorOutput.readLine()) != null ||
+                        (line2 = output.readLine()) != null) {
+                    if (line1 != null) System.out.println(line1);
+                    if (line2 != null) System.out.println(line2);
+                }//end while
+                errorOutput.close();
+                output.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }//end catc
+            result = proc.waitFor();
+        } catch (IOException | InterruptedException e) {
+            System.err.println("IOException raised: " + e.getMessage());
+        }
+        return result;
+    }
+
+    public String compile() throws IOException {
 
         File source = new File(filename);
 
@@ -43,6 +99,7 @@ public class Compiler {
         CheckClassAdapter.verify(new ClassReader(classWriter.toByteArray()), false, printWriter);
 //        assertTrue(stringWriter.toString().isEmpty());
 
+        return ".compile/Testmain.class";
     }
 
     public void saveByteCodeToClassFile(ImpFile2 impFile) throws IOException {

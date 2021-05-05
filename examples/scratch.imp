@@ -11,7 +11,7 @@ loop val i=0; i<10; i=i+1 {
 if 4+5 == 8 {
     log("reee")
 } else {
-    loop val i=0; i<12000; i=i+1 {
+    loop val i=0; i<12; i=i+1 {
         log("peen")
     }
 }

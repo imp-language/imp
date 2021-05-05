@@ -98,9 +98,9 @@ loopCondition
     ;
 
 
-// return expression
+// return statement
 returnStatement
-    : RETURN expression
+    : RETURN (expression)?
     ;
 
 // if condition { } else if condition { } else { }
