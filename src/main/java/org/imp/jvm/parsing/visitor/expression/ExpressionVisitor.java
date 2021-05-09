@@ -5,6 +5,7 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.expression.Call;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.domain.types.ClassType;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.LocalVariable;
@@ -116,7 +117,13 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
             visited.add(arg.accept(this));
         }
 
-        return new FunctionCall(signature, visited);
+
+        // Function calls withing a single module never are accessed like module.func()
+        // So the owner of each is the static class.
+        var owner = new EmptyExpression(BuiltInType.VOID);
+
+
+        return new FunctionCall(signature, visited, new ClassType("scratch"));
     }
 
     private List<Identifier> getArgumentsForCall(List<ImpParser.ExpressionContext> argumentsListCtx) {

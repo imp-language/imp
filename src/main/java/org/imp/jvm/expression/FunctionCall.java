@@ -14,9 +14,9 @@ import java.util.List;
 public class FunctionCall extends Expression {
     public final FunctionSignature signature;
     public List<Expression> arguments;
-    public final Expression owner;
+    public final Type owner;
 
-    public FunctionCall(FunctionSignature signature, List<Expression> arguments, Expression owner) {
+    public FunctionCall(FunctionSignature signature, List<Expression> arguments, Type owner) {
         this.signature = signature;
         this.arguments = arguments;
         this.owner = owner;
@@ -29,20 +29,23 @@ public class FunctionCall extends Expression {
         if (signature.name.equals("log")) {
             mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
             arguments.get(0).generate(mv, scope);
+
+            // get the variation of println to call
             Type argType = arguments.get(0).type;
+
+
             String descriptor = "(" + argType.getDescriptor() + ")V";
 
             String name = "java.io.PrintStream";
             String fieldDescriptor = "L" + name.replace('.', '/') + ";";
 
-            descriptor = org.objectweb.asm.Type.getDescriptor(java.io.PrintStream.class);
+//            descriptor = org.objectweb.asm.Type.getDescriptor(java.io.PrintStream.class);
 
 
             String owner = "java/io/PrintStream";
             name = "println"; // name of the method we call
-            descriptor = "(Ljava/lang/String;)V";
 
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, "println", descriptor, false);
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, descriptor, false);
             return;
         } else {
             arguments.forEach(argument -> argument.generate(mv, scope));
@@ -50,7 +53,10 @@ public class FunctionCall extends Expression {
 
             // bytecode
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
-            String ownerDescriptor = owner.type.getInternalName();
+
+            // Function calls withing a single module never are accessed like module.func()
+            // So the owner of each is the static class.
+            String ownerDescriptor = owner.getInternalName();
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, signature.name, methodDescriptor, false);
 
         }

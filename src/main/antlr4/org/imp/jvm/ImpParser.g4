@@ -187,7 +187,7 @@ type
     ;
 
 primitiveType
-    : BOOL | INT | FLOAT | CHAR | STRING;
+    : BOOL | INT | FLOAT | CHAR | STRING | VOID;
 
 
 // function acceptsList(words string[])

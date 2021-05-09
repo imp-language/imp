@@ -26,6 +26,7 @@ INT : 'int';
 FLOAT : 'float';
 CHAR : 'char';
 STRING : 'string';
+VOID : 'void';
 
 EXPORT : 'export';
 IMPORT : 'import';

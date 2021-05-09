@@ -1,9 +1,20 @@
+
 function sum(x int, y int) int {
     return x + y
 }
 
 val expected = 8
-val actual = sum(3, 50)
+val actual = sum(3, 5)
+
+function addThenPrint(x int) void {
+    val b = x + 4
+    log(b)
+}
+
+loop val i=0; i<10; i=i+1 {
+    addThenPrint(i)
+
+}
 
 
 if expected == actual {
