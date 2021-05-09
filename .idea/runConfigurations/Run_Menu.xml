@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Menu" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="org.imp.jvm.compiler.Compiler" />
+    <module name="imp" />
+    <option name="PROGRAM_PARAMETERS" value="examples/scratch.imp" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
