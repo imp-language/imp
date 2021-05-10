@@ -1,4 +1,15 @@
 
+struct Person {
+    fname string
+    lname string
+    //dob Date
+}
+
+
+
+
+
+
 function sum(x int, y int) int {
     return x + y
 }

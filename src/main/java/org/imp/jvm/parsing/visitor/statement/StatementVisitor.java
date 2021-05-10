@@ -36,6 +36,23 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         return expressionVisitor.visitCallStatementExpression(ctx);
     }
 
+    @Override
+    public Statement visitStructStatement(ImpParser.StructStatementContext ctx) {
+        var identifiers = ctx.structBlock().identifier();
+        var types = ctx.structBlock().type();
+        assert identifiers.size() == types.size();
+
+        List<Identifier> fields = new ArrayList<>();
+
+        for (int i = 0; i < identifiers.size(); i++) {
+            Type t = TypeResolver.getFromTypeContext(types.get(i));
+            String n = identifiers.get(i).getText();
+            var field = new Identifier(n, t);
+            fields.add(field);
+        }
+
+        return new Struct(new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT), fields);
+    }
 
     @Override
     public Block visitBlock(ImpParser.BlockContext ctx) {

@@ -147,7 +147,7 @@ structStatement
     ;
 
 structBlock
-    : (identifier type COMMA?) *
+    : (identifier type COMMA?)*
     ;
 
 interfaceBlock
