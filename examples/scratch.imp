@@ -7,7 +7,7 @@ val expected = 8
 val actual = sum(3, 5)
 
 function addThenPrint(x int) void {
-    val b = x + 4
+    val b = sum(x, 42)
     log(b)
 }
 
@@ -26,10 +26,9 @@ if expected == actual {
 
 
 
+
+
 /*
-
-
-
 
 
 

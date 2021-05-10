@@ -26,6 +26,7 @@ statement
     : block
     | functionStatement
     | classStatement
+    | structStatement
     | returnStatement
     | ifStatement
     | loopStatement
@@ -140,6 +141,14 @@ classStatement
     | ENUM identifier LBRACE enumBlock RBRACE
     ;
 
+// Structs
+structStatement
+    : STRUCT identifier LBRACE structBlock RBRACE
+    ;
+
+structBlock
+    : (identifier type COMMA?) *
+    ;
 
 interfaceBlock
     : (methodSignature | (property type))*
@@ -181,9 +190,9 @@ exportStatement
 
 // Type
 type
-    : listType                   // lists
-    | primitiveType   // single instances of a type
-    | objectType               // functions passed as parameters to functions
+    : (identifier | primitiveType) LBRACK RBRACK   #TypeList
+    | primitiveType         #TypePrimitive
+    | identifier            #TypeStruct
     ;
 
 primitiveType

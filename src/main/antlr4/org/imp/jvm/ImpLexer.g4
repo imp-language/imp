@@ -38,6 +38,7 @@ CLASS : 'class';
 INTERFACE : 'interface';
 ENUM : 'enum';
 PUBLIC : 'public';
+STRUCT : 'struct';
 
 IN : 'in';
 

@@ -7,14 +7,38 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class TypeResolver {
-    public static Type getFromTypeName(ImpParser.TypeContext typeContext) {
-        if (typeContext.primitiveType() != null) {
-            Optional<BuiltInType> builtInType = getBuiltInType(typeContext.primitiveType().getText());
+    public static Type getFromTypeContext(ImpParser.TypeListContext typeContext) {
+
+        return null;
+    }
+
+    public static Type getFromTypeContext(ImpParser.TypeStructContext typeContext) {
+
+        return new ClassType(typeContext.getText());
+    }
+
+    public static Type getFromTypeContext(ImpParser.TypePrimitiveContext typeContext) {
+        Optional<BuiltInType> builtInType = getBuiltInType(typeContext.getText());
+        if (builtInType.isPresent()) {
+            return builtInType.get();
+        } else {
+            return new ClassType(typeContext.getText());
+        }
+    }
+
+    public static Type getFromTypeContext(ImpParser.TypeContext typeContext) {
+        if (typeContext instanceof ImpParser.TypePrimitiveContext) {
+            Optional<BuiltInType> builtInType = getBuiltInType(typeContext.getText());
             if (builtInType.isPresent()) {
                 return builtInType.get();
-            } else {
-                return new ClassType(typeContext.getText());
             }
+        } else if (typeContext instanceof ImpParser.TypeStructContext) {
+            ImpParser.TypeStructContext a = (ImpParser.TypeStructContext) typeContext;
+            return new ClassType(a.identifier().getText());
+        } else if (typeContext instanceof ImpParser.TypeListContext) {
+            return null;
+        } else {
+            System.err.println("ree");
         }
         return null;
     }

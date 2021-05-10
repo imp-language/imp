@@ -14,7 +14,6 @@ import org.imp.jvm.expression.Expression;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.statement.*;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,7 +77,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         Type returnType = BuiltInType.VOID;
         if (typeContext != null) {
             // ToDo: parse multiple returns
-            returnType = TypeResolver.getFromTypeName(typeContext);
+            returnType = TypeResolver.getFromTypeContext(typeContext);
         }
 
 
@@ -181,7 +180,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             for (var argCtx : argumentsCtx) {
                 var identifier = new Identifier();
                 identifier.name = argCtx.identifier().getText();
-                identifier.type = TypeResolver.getFromTypeName(argCtx.type());
+                identifier.type = TypeResolver.getFromTypeContext(argCtx.type());
                 arguments.add(identifier);
             }
 
