@@ -4,6 +4,8 @@ import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.exception.LocalVariableNotFoundException;
 import org.imp.jvm.exception.MethodSignatureNotFoundException;
 import org.apache.commons.collections4.map.LinkedMap;
+import org.imp.jvm.exception.StructNotFoundException;
+import org.imp.jvm.statement.Struct;
 
 import java.util.*;
 
@@ -19,18 +21,22 @@ public class Scope {
 
     private final List<FunctionSignature> functionSignatures;
 
+    private final List<Struct> structs;
+
     private final String name;
 
     public Scope(String name) {
         this.name = name;
         localVariables = new LinkedMap<>();
         functionSignatures = new ArrayList<>();
+        structs = new ArrayList<>();
     }
 
     public Scope(Scope scope) {
         name = scope.name;
         functionSignatures = scope.functionSignatures;
         localVariables = scope.localVariables;
+        structs = scope.structs;
     }
 
     /**
@@ -85,5 +91,21 @@ public class Scope {
                 .filter(signature -> signature.matches(name, arguments))
                 .findFirst()
                 .orElseThrow(() -> new MethodSignatureNotFoundException(this, name, arguments));
+    }
+
+    /**
+     * @param struct Struct to add to the current scope
+     */
+    public void addStruct(Struct struct) {
+        structs.add(struct);
+    }
+
+    /**
+     * @param name name of the Struct
+     * @return a Struct if one named name exists in the current scope
+     */
+    public Struct getStruct(String name) {
+        return structs.stream().filter(struct -> struct.identifier.name.equals(name)).findFirst()
+                .orElseThrow(() -> new StructNotFoundException(this, name));
     }
 }

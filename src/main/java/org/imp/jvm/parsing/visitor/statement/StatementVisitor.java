@@ -45,13 +45,22 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         List<Identifier> fields = new ArrayList<>();
 
         for (int i = 0; i < identifiers.size(); i++) {
-            Type t = TypeResolver.getFromTypeContext(types.get(i));
+            Type t = TypeResolver.getFromTypeContext(types.get(i), scope);
             String n = identifiers.get(i).getText();
             var field = new Identifier(n, t);
             fields.add(field);
         }
 
-        return new Struct(new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT), fields);
+        // Create struct object
+        Struct struct = new Struct(new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT), fields);
+
+        // Add struct to scope
+        scope.addStruct(struct);
+
+        //
+
+
+        return struct;
     }
 
     @Override
@@ -94,7 +103,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         Type returnType = BuiltInType.VOID;
         if (typeContext != null) {
             // ToDo: parse multiple returns
-            returnType = TypeResolver.getFromTypeContext(typeContext);
+            returnType = TypeResolver.getFromTypeContext(typeContext, scope);
         }
 
 
@@ -188,7 +197,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
 
-    static class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
+    class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
         @Override
         public List<Identifier> visitArguments(ImpParser.ArgumentsContext ctx) {
             var argumentsCtx = ctx.argument();
@@ -197,7 +206,8 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             for (var argCtx : argumentsCtx) {
                 var identifier = new Identifier();
                 identifier.name = argCtx.identifier().getText();
-                identifier.type = TypeResolver.getFromTypeContext(argCtx.type());
+                // todo: must respect scope to find struct types
+                identifier.type = TypeResolver.getFromTypeContext(argCtx.type(), scope);
                 arguments.add(identifier);
             }
 

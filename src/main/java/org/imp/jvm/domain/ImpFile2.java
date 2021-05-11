@@ -2,7 +2,6 @@ package org.imp.jvm.domain;
 
 
 import org.imp.jvm.domain.root.ClassUnit;
-import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.root.StaticUnit2;
 
 import java.util.ArrayList;

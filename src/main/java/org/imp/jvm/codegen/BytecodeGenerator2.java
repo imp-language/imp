@@ -1,8 +1,6 @@
 package org.imp.jvm.codegen;
 
-import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.ImpFile2;
-import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.root.StaticUnit2;
 import org.objectweb.asm.ClassWriter;
 

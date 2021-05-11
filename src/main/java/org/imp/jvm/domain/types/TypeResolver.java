@@ -2,39 +2,24 @@ package org.imp.jvm.domain.types;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
+import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.statement.Struct;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 public class TypeResolver {
-    public static Type getFromTypeContext(ImpParser.TypeListContext typeContext) {
 
-        return null;
-    }
-
-    public static Type getFromTypeContext(ImpParser.TypeStructContext typeContext) {
-
-        return new ClassType(typeContext.getText());
-    }
-
-    public static Type getFromTypeContext(ImpParser.TypePrimitiveContext typeContext) {
-        Optional<BuiltInType> builtInType = getBuiltInType(typeContext.getText());
-        if (builtInType.isPresent()) {
-            return builtInType.get();
-        } else {
-            return new ClassType(typeContext.getText());
-        }
-    }
-
-    public static Type getFromTypeContext(ImpParser.TypeContext typeContext) {
+    public static Type getFromTypeContext(ImpParser.TypeContext typeContext, Scope scope) {
         if (typeContext instanceof ImpParser.TypePrimitiveContext) {
             Optional<BuiltInType> builtInType = getBuiltInType(typeContext.getText());
             if (builtInType.isPresent()) {
                 return builtInType.get();
             }
         } else if (typeContext instanceof ImpParser.TypeStructContext) {
-            ImpParser.TypeStructContext a = (ImpParser.TypeStructContext) typeContext;
-            return new ClassType(a.identifier().getText());
+            ImpParser.TypeStructContext tsc = (ImpParser.TypeStructContext) typeContext;
+            Struct struct = scope.getStruct(tsc.identifier().getText());
+            return new StructType(struct);
         } else if (typeContext instanceof ImpParser.TypeListContext) {
             return null;
         } else {

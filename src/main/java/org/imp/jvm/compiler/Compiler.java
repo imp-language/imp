@@ -1,15 +1,12 @@
 package org.imp.jvm.compiler;
 
-import org.imp.jvm.codegen.BytecodeGenerator;
 import org.imp.jvm.codegen.BytecodeGenerator2;
-import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.ImpFile2;
 
 import org.imp.jvm.parsing.Parser;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.util.CheckClassAdapter;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;

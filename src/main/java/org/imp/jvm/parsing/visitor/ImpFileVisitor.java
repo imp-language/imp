@@ -2,15 +2,11 @@ package org.imp.jvm.parsing.visitor;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
-import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.ImpFile2;
-import org.imp.jvm.domain.root.ClassUnit;
-import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.root.StaticUnit2;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.statement.VariableDeclaration;
 import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;

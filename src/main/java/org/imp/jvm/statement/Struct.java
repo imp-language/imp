@@ -6,6 +6,7 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.expression.EmptyExpression;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -26,11 +27,12 @@ public class Struct extends Statement {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        throw new NotImplementedException("ree");
+        // Generate a new class for each Struct statement
+//        throw new NotImplementedException("ree");
     }
 
 
     public void generate(ClassWriter cw) {
-        throw new NotImplementedException("ree");
+//        throw new NotImplementedException("ree");
     }
 }

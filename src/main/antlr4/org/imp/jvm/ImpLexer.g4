@@ -16,7 +16,7 @@ CommentMultiLine : '/*' .*? '*/' -> skip;
 LOOP : 'loop';
 IF : 'if';
 ELSE : 'else';
-FUNCTION : 'function';
+FUNCTION : 'function' | 'func';
 RETURN : 'return';
 VAL : 'val';
 MUT : 'mut';

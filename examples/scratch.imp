@@ -1,13 +1,16 @@
+/*
+
+func greet(p Person) {
+    log("Hello.")
+}
+
+*/
 
 struct Person {
     fname string
     lname string
     //dob Date
 }
-
-
-
-
 
 
 function sum(x int, y int) int {

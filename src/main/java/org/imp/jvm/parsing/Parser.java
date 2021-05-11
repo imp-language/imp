@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.ImpLexer;
 import org.imp.jvm.ImpParser;
-import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.ImpFile2;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
 
@@ -29,7 +28,7 @@ public class Parser {
         ImpFile2 impFile = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(file.getName())));
 
 
-//        parser.addErrorListener(null);
+//        parser.addErrorListener(new SyntaxErrorListener());
 
 
         // ToDo: figure out how to split parsed file into StaticUnit and ClassUnits
