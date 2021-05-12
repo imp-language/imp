@@ -32,8 +32,7 @@ public class ForLoop extends Loop {
         mv.visitLabel(conditionLabel);
         condition.generate(mv, scope);
         mv.visitJumpInsn(Opcodes.IFEQ, endLoopLabel);
-
-//        mv.visitMethodInsn(Opcodes.GOTO, );
+//
         mv.visitLabel(bodyLabel);
         this.body.generate(mv, scope);
         if (incrementer != null) {

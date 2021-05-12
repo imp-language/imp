@@ -4,7 +4,6 @@ func greet(p Person) {
     log("Hello.")
 }
 
-*/
 
 struct Person {
     fname string
@@ -20,22 +19,22 @@ function sum(x int, y int) int {
 val expected = 8
 val actual = sum(3, 5)
 
+*/
+
 function addThenPrint(x int) void {
-    val b = sum(x, 42)
-    log(b)
+    //val b = sum(x, 42)
+    //val b = x + 36
+    //log(b)
+    log(x)
 }
 
-loop val i=0; i<10; i=i+1 {
+log("pajeebus")
+loop val i=0; i<800; i=i+1 {
     addThenPrint(i)
 
 }
+log("yaheejus")
 
-
-if expected == actual {
-    log("equal")
-} else {
-    log("not equal")
-}
 
 
 
@@ -43,6 +42,12 @@ if expected == actual {
 
 
 /*
+
+if expected == actual {
+    log("equal")
+} else {
+    log("not equal")
+}
 
 
 

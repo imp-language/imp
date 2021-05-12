@@ -22,6 +22,5 @@ public class IfStatement implements Statement {
 
     @Override
     public void accept(StatementGenerator generator) {
-        generator.generate(this);
     }
 }

@@ -25,7 +25,6 @@ public class FunctionCall extends Call {
 
     @Override
     public void accept(StatementGenerator generator) {
-        generator.generate(this);
     }
 
 }

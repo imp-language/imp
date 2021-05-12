@@ -16,6 +16,5 @@ public class Loop implements Statement {
 
     @Override
     public void accept(StatementGenerator generator) {
-        generator.generate(this);
     }
 }

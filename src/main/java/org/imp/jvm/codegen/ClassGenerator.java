@@ -39,9 +39,7 @@ public class ClassGenerator {
 //        classWriter.visit(CLASS_VERSION, Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
 
-        FunctionGenerator functionGenerator = new FunctionGenerator(classWriter, Opcodes.ACC_STATIC);
         List<org.imp.jvm.statement.Function> functions = staticUnit.functions;
-//        functions.forEach(p -> p.accept(functionGenerator));
         functions.forEach(f -> f.generate(classWriter));
 
         FieldGenerator fieldGenerator = new FieldGenerator(classWriter, Opcodes.ACC_STATIC);

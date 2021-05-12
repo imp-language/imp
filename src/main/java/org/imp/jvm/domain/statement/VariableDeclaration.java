@@ -18,6 +18,6 @@ public class VariableDeclaration implements Statement {
 
     @Override
     public void accept(StatementGenerator generator) {
-        generator.generate(this);
+//        generator.generate(this);
     }
 }

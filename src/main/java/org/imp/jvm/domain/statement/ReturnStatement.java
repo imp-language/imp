@@ -14,7 +14,6 @@ public class ReturnStatement implements Statement {
 
     @Override
     public void accept(StatementGenerator generator) {
-        generator.generate(this);
     }
 
     public Expression getExpression() {
