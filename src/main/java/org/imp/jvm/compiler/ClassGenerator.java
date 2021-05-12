@@ -1,6 +1,5 @@
-package org.imp.jvm.codegen;
+package org.imp.jvm.compiler;
 
-import org.imp.jvm.codegen.statement.FunctionGenerator;
 import org.imp.jvm.domain.root.RootUnit;
 import org.imp.jvm.domain.root.StaticUnit2;
 import org.imp.jvm.domain.scope.Identifier;

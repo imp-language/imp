@@ -1,4 +1,4 @@
-package org.imp.jvm.codegen;
+package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.scope.Identifier;
 import org.objectweb.asm.ClassWriter;

@@ -1,4 +1,4 @@
-package org.imp.jvm.codegen;
+package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.ImpFile2;
 import org.imp.jvm.domain.root.StaticUnit2;

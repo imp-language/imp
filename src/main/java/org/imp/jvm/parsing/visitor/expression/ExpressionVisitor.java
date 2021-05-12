@@ -3,7 +3,6 @@ package org.imp.jvm.parsing.visitor.expression;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.CompareSign;
-import org.imp.jvm.domain.expression.Call;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.ClassType;
 import org.imp.jvm.expression.*;

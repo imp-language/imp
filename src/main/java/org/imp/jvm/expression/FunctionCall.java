@@ -1,14 +1,12 @@
 package org.imp.jvm.expression;
 
-import org.imp.jvm.codegen.DescriptorFactory;
+import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.scope.FunctionSignature;
-import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.io.PrintStream;
 import java.util.List;
 
 public class FunctionCall extends Expression {

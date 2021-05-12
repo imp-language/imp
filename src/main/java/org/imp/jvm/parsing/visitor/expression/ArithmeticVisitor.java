@@ -3,7 +3,6 @@ package org.imp.jvm.parsing.visitor.expression;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.Operator;
-import org.imp.jvm.domain.expression.AdditiveExpression;
 import org.imp.jvm.expression.Arithmetic;
 
 public class ArithmeticVisitor extends ImpParserBaseVisitor<Arithmetic> {

@@ -1,6 +1,5 @@
 package org.imp.jvm.compiler;
 
-import org.imp.jvm.codegen.BytecodeGenerator2;
 import org.imp.jvm.domain.ImpFile2;
 
 import org.imp.jvm.parsing.Parser;

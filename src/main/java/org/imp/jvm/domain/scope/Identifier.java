@@ -1,6 +1,6 @@
 package org.imp.jvm.domain.scope;
 
-import org.imp.jvm.codegen.FieldGenerator;
+import org.imp.jvm.compiler.FieldGenerator;
 import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.domain.types.Type;
 
