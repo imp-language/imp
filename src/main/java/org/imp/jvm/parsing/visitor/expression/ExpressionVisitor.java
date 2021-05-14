@@ -150,12 +150,17 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public StructInit visitNewObjectExpression(ImpParser.NewObjectExpressionContext ctx) {
         String structName = ctx.identifier().getText();
-        var expressionContexts = ctx.expressionList().expression();
         List<Expression> expressions = new ArrayList<>();
 
-        for (var expCtx : expressionContexts) {
-            Expression exp = expCtx.accept(this);
-            expressions.add(exp);
+        var expressionList = ctx.expressionList();
+        if (expressionList != null) {
+            var expressionContexts = ctx.expressionList().expression();
+
+            for (var expCtx : expressionContexts) {
+                Expression exp = expCtx.accept(this);
+                expressions.add(exp);
+            }
+
         }
 
         Struct struct = scope.getStruct(structName);

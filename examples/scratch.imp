@@ -18,8 +18,9 @@ struct Siblings {
     b Person
 }
 
-
-val matt = new Person("Matt", "Hall")
+val matt = new Person()
+log(matt)
+/*
 val peter = new Person("Peter", "Hall")
 
 val brothers = new Siblings(matt, peter)

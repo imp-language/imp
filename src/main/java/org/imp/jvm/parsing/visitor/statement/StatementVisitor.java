@@ -57,9 +57,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         // Add struct to scope
         scope.addStruct(struct);
 
-        //
-
-
         return struct;
     }
 

@@ -12,8 +12,6 @@ public class StaticUnit extends RootUnit {
     public List<Statement> staticInitializations = new ArrayList<>();
     public final List<Function> functions = new ArrayList<>();
 
-    public final List<Struct> structs = new ArrayList<>();
-
     public StaticUnit(String name) {
         super(name);
     }

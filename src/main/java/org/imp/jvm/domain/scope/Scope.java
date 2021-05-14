@@ -13,7 +13,7 @@ import java.util.*;
  * Describes the entities available to expressions and statements in
  * the current block.
  * <p>
- * New Scopes can "inherit" entities from higher scopes. Methods defined
+ * New Scopes "inherit" entities from higher scopes. Methods defined
  * outside the current block are accessible inside this block, for example.
  */
 public class Scope {
