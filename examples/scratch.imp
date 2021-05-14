@@ -13,11 +13,16 @@ struct Person {
     //dob Date
 }
 
-struct Couple {
+struct Siblings {
     a Person
     b Person
 }
 
+
+val matt = new Person("Matt", "Hall")
+val peter = new Person("Peter", "Hall")
+
+val brothers = new Siblings(matt, peter)
 
 
 function sum(x int, y int) int {

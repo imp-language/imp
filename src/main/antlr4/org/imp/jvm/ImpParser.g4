@@ -56,7 +56,8 @@ expressionList
     ;
 
 expression
-    : identifier                                       #IdentifierReferenceExpression
+    : callStatement                                    #CallStatementExpression
+    | identifier                                       #IdentifierReferenceExpression
     | literal                                          #LiteralExpression
     | (BANG | NOT) expression                          #UnaryNotExpression
     | (ADD | SUB) expression                           #UnaryAdditiveExpression
@@ -68,9 +69,9 @@ expression
     | expression DOT expression                        #PropertyAccessExpression
     | expression DOT callStatement                     #MethodCallExpression
     | expression (INC | DEC)                           #PostIncrementExpression
-    | callStatement                                    #CallStatementExpression
-    | newObjectStatement                               #NewObjectExpression
+    | NEW identifier LPAREN (expressionList)? RPAREN   #NewObjectExpression
     | expression LBRACK expression RBRACK              #MemberIndexExpression
+    | LPAREN expression RPAREN                         #WrappedExpression
     ;
 
 
@@ -129,10 +130,7 @@ callStatement
     : identifier LPAREN (expressionList)? RPAREN
     ;
 
-// New Object
-newObjectStatement
-    : NEW identifier LPAREN (expressionList)? RPAREN
-    ;
+
 
 // Classes
 classStatement

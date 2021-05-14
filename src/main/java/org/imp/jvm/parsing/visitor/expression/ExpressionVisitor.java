@@ -10,6 +10,7 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.statement.Struct;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +61,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public IdentifierReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
 
+        // Todo: Struct vs StructType
         LocalVariable local = scope.getLocalVariable(name);
         if (scope.variableExists(name)) {
 
@@ -143,5 +145,26 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Arithmetic visitAdditiveExpression(ImpParser.AdditiveExpressionContext ctx) {
         return arithmeticVisitor.visitAdditiveExpression(ctx);
+    }
+
+    @Override
+    public StructInit visitNewObjectExpression(ImpParser.NewObjectExpressionContext ctx) {
+        String structName = ctx.identifier().getText();
+        var expressionContexts = ctx.expressionList().expression();
+        List<Expression> expressions = new ArrayList<>();
+
+        for (var expCtx : expressionContexts) {
+            Expression exp = expCtx.accept(this);
+            expressions.add(exp);
+        }
+
+        Struct struct = scope.getStruct(structName);
+
+        return new StructInit(struct, expressions, null);
+    }
+
+    @Override
+    public Expression visitPropertyAccessExpression(ImpParser.PropertyAccessExpressionContext ctx) {
+        return super.visitPropertyAccessExpression(ctx);
     }
 }
