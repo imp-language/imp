@@ -1,9 +1,10 @@
 package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.root.RootUnit;
-import org.imp.jvm.domain.root.StaticUnit2;
+import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Method;
+import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
@@ -33,7 +34,13 @@ public class ClassGenerator {
         return classWriter;
     }
 
-    public ClassWriter generate(StaticUnit2 staticUnit) {
+    /**
+     * Generate JVM static class from an Imp file
+     *
+     * @param staticUnit StaticUnit
+     * @return bytecode
+     */
+    public ClassWriter generate(StaticUnit staticUnit) {
         String name = staticUnit.name;
 //        classWriter.visit(CLASS_VERSION, Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
@@ -49,5 +56,15 @@ public class ClassGenerator {
         classWriter.visitEnd();
 
         return classWriter;
+    }
+
+    /**
+     * Generate JVM class from an Imp struct definition
+     *
+     * @param struct Struct type
+     * @return bytecode
+     */
+    public ClassWriter generate(Struct struct) {
+        return null;
     }
 }

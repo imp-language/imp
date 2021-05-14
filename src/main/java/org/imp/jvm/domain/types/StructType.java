@@ -16,8 +16,13 @@ public class StructType implements Type {
     }
 
     @Override
+    public String toString() {
+        return getName();
+    }
+
+    @Override
     public String getName() {
-        return null;
+        return struct.identifier.name;
     }
 
     @Override

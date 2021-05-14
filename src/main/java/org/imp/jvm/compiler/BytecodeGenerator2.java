@@ -1,7 +1,7 @@
 package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.ImpFile2;
-import org.imp.jvm.domain.root.StaticUnit2;
+import org.imp.jvm.domain.root.StaticUnit;
 import org.objectweb.asm.ClassWriter;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ public class BytecodeGenerator2 {
         var code = new HashMap<String, byte[]>();
 
         // Generate bytecode for impFile.StaticUnit
-        StaticUnit2 staticUnit = impFile.staticUnit;
+        StaticUnit staticUnit = impFile.staticUnit;
         ClassGenerator classGenerator = new ClassGenerator();
         ClassWriter staticWriter = classGenerator.generate(staticUnit);
         code.put("main", staticWriter.toByteArray());

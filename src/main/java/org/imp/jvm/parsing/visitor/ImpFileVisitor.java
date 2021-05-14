@@ -3,7 +3,7 @@ package org.imp.jvm.parsing.visitor;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.ImpFile2;
-import org.imp.jvm.domain.root.StaticUnit2;
+import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
@@ -39,7 +39,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
 
 
         // static unit for all non-class statements in the file
-        var staticUnit = new StaticUnit2(filename);
+        var staticUnit = new StaticUnit(filename);
         var main = new Function(mainSignature, new Block());
         Identifier varArgs = new Identifier();
         varArgs.type = BuiltInType.STRING_ARR;
@@ -58,8 +58,9 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
 
 
             // Split classes out to their own files
-            if (false) {
-
+            if (s instanceof Struct) {
+                Struct struct = (Struct) s;
+                staticUnit.structs.add(struct);
             } else {
                 // For everything else, add to the static class.
                 if (s instanceof org.imp.jvm.statement.Declaration) {

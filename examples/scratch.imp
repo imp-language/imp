@@ -4,11 +4,17 @@ func greet(p Person) {
     log("Hello.")
 }
 
+*/
 
 struct Person {
     fname string
     lname string
     //dob Date
+}
+
+struct Couple {
+    a Person
+    b Person
 }
 
 
@@ -18,23 +24,6 @@ function sum(x int, y int) int {
 
 val expected = 8
 val actual = sum(3, 5)
-
-*/
-
-function addThenPrint(x int) void {
-    //val b = sum(x, 42)
-    //val b = x + 36
-    //log(b)
-    log(x)
-}
-
-log("pajeebus")
-loop val i=0; i<800; i=i+1 {
-    addThenPrint(i)
-
-}
-log("yaheejus")
-
 
 
 
