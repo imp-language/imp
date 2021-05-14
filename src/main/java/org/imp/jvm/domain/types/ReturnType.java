@@ -2,6 +2,7 @@ package org.imp.jvm.domain.types;
 
 import org.objectweb.asm.Opcodes;
 
+// Todo: remove, unneeded.
 public class ReturnType implements Type {
 
     private final String name;
@@ -92,6 +93,11 @@ public class ReturnType implements Type {
     @Override
     public int getDividOpcode() {
         throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return null;
     }
 
     @Override

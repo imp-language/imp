@@ -1,6 +1,6 @@
 package org.imp.jvm.compiler;
 
-import org.imp.jvm.domain.ImpFile2;
+import org.imp.jvm.domain.ImpFile;
 
 import org.imp.jvm.parsing.Parser;
 import org.objectweb.asm.ClassReader;
@@ -11,6 +11,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 import java.io.*;
+import java.nio.file.Files;
 
 @CommandLine.Command(name = "imp")
 public class Compiler {
@@ -77,7 +78,7 @@ public class Compiler {
         File source = new File(filename);
 
         startTime = System.currentTimeMillis();
-        ImpFile2 impFile = Parser.getImpFile(source);
+        ImpFile impFile = Parser.getImpFile(source);
 
 
         saveByteCodeToClassFile(impFile);
@@ -97,8 +98,8 @@ public class Compiler {
         return impFile.name;
     }
 
-    public void saveByteCodeToClassFile(ImpFile2 impFile) throws IOException {
-        BytecodeGenerator2 bytecodeGenerator = new BytecodeGenerator2();
+    public void saveByteCodeToClassFile(ImpFile impFile) throws IOException {
+        BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         var byteUnits = bytecodeGenerator.generate(impFile);
 
         long endTime = System.currentTimeMillis();
@@ -114,6 +115,12 @@ public class Compiler {
                 qualifiedName = byteUnit.getKey();
             }
             String fileName = ".compile/" + qualifiedName + ".class";
+
+
+            File tmp = new File(fileName);
+            tmp.getParentFile().mkdirs();
+
+
             OutputStream output = new FileOutputStream(fileName);
             output.write(byteUnit.getValue());
             output.flush();

@@ -29,6 +29,10 @@ public class Constructor extends Function {
         String description = DescriptorFactory.getMethodDescriptor(this);
         int access = Opcodes.ACC_PUBLIC;
 
+        // Todo: remove
+        description = "()V";
+        
+
         MethodVisitor mv = cw.visitMethod(access, "<init>", description, null, null);
         mv.visitCode();
         callSuper(mv, block.scope);

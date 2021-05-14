@@ -2,7 +2,7 @@ package org.imp.jvm.parsing.visitor;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
-import org.imp.jvm.domain.ImpFile2;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
+public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
     private final String filename;
 
 
@@ -30,7 +30,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
     );
 
     @Override
-    public ImpFile2 visitProgram(ImpParser.ProgramContext ctx) {
+    public ImpFile visitProgram(ImpParser.ProgramContext ctx) {
         // get all top level statements in the file
         List<ImpParser.StatementContext> statementContexts = ctx.statement();
 
@@ -48,7 +48,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
         main.block.scope = staticScope;
 
         // create an ImpFile node with appropriate children
-        var impFile = new ImpFile2(staticUnit, filename);
+        var impFile = new ImpFile(staticUnit, filename);
 
         // handle each statement appropriately
         StatementVisitor statementVisitor = new StatementVisitor(staticScope);
@@ -60,7 +60,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
             // Split classes out to their own files
             if (s instanceof Struct) {
                 Struct struct = (Struct) s;
-                staticUnit.structs.add(struct);
+                impFile.structs.add(struct);
             } else {
                 // For everything else, add to the static class.
                 if (s instanceof org.imp.jvm.statement.Declaration) {
@@ -87,6 +87,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile2> {
         }
 
         staticUnit.functions.add(main);
+        // Todo: name parameter is irrelevant for constructors. Remove?
         var constructorSignature = new FunctionSignature("Testmain", Collections.emptyList(), BuiltInType.VOID);
         staticUnit.functions.add(new Constructor(constructorSignature, new Block()));
         System.out.println(staticUnit);

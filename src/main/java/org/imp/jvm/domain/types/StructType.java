@@ -32,12 +32,12 @@ public class StructType implements Type {
 
     @Override
     public String getDescriptor() {
-        return null;
+        return "L" + getInternalName() + ";";
     }
 
     @Override
     public String getInternalName() {
-        return null;
+        return getName().replace(".", "/");
     }
 
     @Override
@@ -73,5 +73,10 @@ public class StructType implements Type {
     @Override
     public int getDividOpcode() {
         return 0;
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return null;
     }
 }

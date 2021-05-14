@@ -1,12 +1,12 @@
 package org.imp.jvm.domain.types;
 
 public enum BuiltInType implements Type {
-    BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT),
-    INT("int", int.class, "I", TypeSpecificOpcodes.INT),
-    FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT),
-    DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE),
-    STRING("string", String.class, "Ljava/lang/String;", TypeSpecificOpcodes.OBJECT),
-    VOID("void", void.class, "V", TypeSpecificOpcodes.VOID),
+    BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT, false),
+    INT("int", int.class, "I", TypeSpecificOpcodes.INT, 0),
+    FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT, 0.0f),
+    DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE, 0.0d),
+    STRING("string", String.class, "Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, ""),
+    VOID("void", void.class, "V", TypeSpecificOpcodes.VOID, null),
 
     BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT),
     INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT),
@@ -20,13 +20,22 @@ public enum BuiltInType implements Type {
     private final Class<?> typeClass;
     private final String descriptor;
     private final TypeSpecificOpcodes opcodes;
+    private final Object defaultValue;
 
+    BuiltInType(String name, Class<?> typeClass, String descriptor, TypeSpecificOpcodes opcodes, Object defaultValue) {
+        this.name = name;
+        this.typeClass = typeClass;
+        this.descriptor = descriptor;
+        this.opcodes = opcodes;
+        this.defaultValue = defaultValue;
+    }
 
     BuiltInType(String name, Class<?> typeClass, String descriptor, TypeSpecificOpcodes opcodes) {
         this.name = name;
         this.typeClass = typeClass;
         this.descriptor = descriptor;
         this.opcodes = opcodes;
+        this.defaultValue = null;
     }
 
     @Override
@@ -87,5 +96,10 @@ public enum BuiltInType implements Type {
     @Override
     public int getDividOpcode() {
         return opcodes.getDivide();
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return this.name;
     }
 }
