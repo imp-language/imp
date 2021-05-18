@@ -2,6 +2,7 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.domain.types.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -38,5 +39,14 @@ public class Struct extends Statement {
         s += fields.stream().map(field -> field.name + " " + field.type).collect(Collectors.joining(", "));
         s += " }";
         return s;
+    }
+
+    /**
+     * @param fieldName String name
+     * @return type of struct field if fieldName exists in this struct
+     */
+    public Type findStructField(String fieldName) {
+        Identifier identifier = fields.stream().filter(id -> id.name.equals(fieldName)).findFirst().orElseThrow();
+        return identifier.type;
     }
 }

@@ -5,6 +5,7 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.ClassType;
+import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.LocalVariable;
@@ -170,6 +171,17 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
     @Override
     public Expression visitPropertyAccessExpression(ImpParser.PropertyAccessExpressionContext ctx) {
-        return super.visitPropertyAccessExpression(ctx);
+        Expression structExpr = ctx.expression().accept(this);
+        IdentifierReference structRef = (IdentifierReference) structExpr;
+        Struct struct = scope.getStruct(structRef.type.getName());
+
+        ImpParser.IdentifierContext fieldCtx = ctx.identifier();
+
+        String fieldName = fieldCtx.getText();
+        Type fieldType = struct.findStructField(fieldName);
+        Identifier field = new Identifier(fieldName, fieldType);
+
+
+        return new StructPropertyAccess(struct, field);
     }
 }

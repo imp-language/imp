@@ -14,6 +14,7 @@ public enum BuiltInType implements Type {
     DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT),
     STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT),
 
+    // Todo: find a meaningful descriptor for `struct`
     STRUCT("struct", null, "", TypeSpecificOpcodes.OBJECT);;
 
     private final String name;
@@ -94,7 +95,7 @@ public enum BuiltInType implements Type {
     }
 
     @Override
-    public int getDividOpcode() {
+    public int getDivideOpcode() {
         return opcodes.getDivide();
     }
 

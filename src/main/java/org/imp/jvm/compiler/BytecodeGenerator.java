@@ -17,7 +17,7 @@ public class BytecodeGenerator {
         // Generate bytecode for impFile.StaticUnit
         StaticUnit staticUnit = impFile.staticUnit;
         ClassWriter staticWriter = classGenerator.generate(staticUnit);
-        code.put(impFile.packageName + "/" + staticUnit.name, staticWriter.toByteArray());
+        code.put(impFile.packageName + "/" + "Entry", staticWriter.toByteArray());
 
         // Generate bytecode for each Struct defined in the imp file
         for (var struct : impFile.structs) {

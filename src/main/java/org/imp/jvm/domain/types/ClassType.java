@@ -93,7 +93,7 @@ public class ClassType implements Type {
     }
 
     @Override
-    public int getDividOpcode() {
+    public int getDivideOpcode() {
         throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
     }
 

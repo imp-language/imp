@@ -52,6 +52,7 @@ public class ClassGenerator {
     public ClassWriter generate(StaticUnit staticUnit) {
         classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
         String name = staticUnit.name;
+        name = "Entry";
         String qualifiedName = packageName + "/" + name;
 
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);

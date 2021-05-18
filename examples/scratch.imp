@@ -1,11 +1,60 @@
-/*
 
-func greet(p Person) {
-    log("Hello.")
+val fizzcount = 0
+val buzzcount = 0
+
+loop val i=1; i<=50; i=i+1 {
+    fizzcount = fizzcount + 1
+    buzzcount = buzzcount + 1
+
+    if fizzcount == 3 {
+        if buzzcount == 5 {
+            fizzcount = 0
+            buzzcount = 0
+            log("FizzBuzz")
+        } else {
+            fizzcount = 0
+            log("Fizz")
+        }
+    } else if buzzcount == 5 {
+        buzzcount = 0
+        log("Buzz")
+    } else {
+        log(i)
+    }
 }
 
 
-*/
+/*
+val fifteen = 0
+val five = 0
+val three = 0
+
+loop val i=1; i<=50; i=i+1 {
+    fifteen = fifteen + 1
+    five = five + 1
+    three = three + 1
+
+    if fifteen == 15 {
+        log("FizzBuzz")
+        fifteen = 0
+    } else if three == 3 {
+        log("Fizz")
+        three = 0
+    }
+    else if five == 5 {
+        log("Buzz")
+        five = 0
+    } else {
+        log(i)
+    }
+    log(" ")
+}
+
+log(fifteen)
+
+
+
+
 
 struct Person {
     fname string
@@ -13,84 +62,17 @@ struct Person {
     //dob Date
 }
 
-struct Siblings {
-    a Person
-    b Person
-}
-
 val matt = new Person()
+// matt.fname = "matt"
+
 log(matt)
-/*
-val peter = new Person("Peter", "Hall")
-
-val brothers = new Siblings(matt, peter)
 
 
-function sum(x int, y int) int {
-    return x + y
-}
+val a = "a"
+val b = "b"
+b = "c"
 
-val expected = 8
-val actual = sum(3, 5)
-
-
+log(a)
+*/
 
 
-
-
-
-if expected == actual {
-    log("equal")
-} else {
-    log("not equal")
-}
-
-/*
-
-
-loop val i=0; i<10; i=i+1 {
-    if i==4 {
-        log("b")
-    }
-    log("aaa")
-}
-
-if 4+5 == 8 {
-    log("reee")
-} else {
-    loop val i=0; i<12; i=i+1 {
-        log("peen")
-    }
-}
-
-/*
-b = sum(a,b)
-b = sum(a, b)
-
-if a > b {
-    val p = 4
-}
-
-
-/*
-
-
-val expected = 80000000
-val actual = sum(40000,50000)
-
-
-val actual = sum(3, 5)
-val s = expected + actual + 4
-
-if actual == expected {
-    //val a = sum(2,4)
-}
-
-
-val actual = sum(3, 5)
-
-sum(1,sum(2,4))
-
- /*else {
-    log("test failed")
-}*/

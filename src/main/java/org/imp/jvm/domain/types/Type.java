@@ -21,7 +21,7 @@ public interface Type {
 
     int getMultiplyOpcode();
 
-    int getDividOpcode();
+    int getDivideOpcode();
 
     Object getDefaultValue();
 }

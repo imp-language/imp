@@ -215,9 +215,16 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Assignment visitAssignment(ImpParser.AssignmentContext ctx) {
-        String name = ctx.identifier().getText();
-        Expression expression = ctx.expression().accept(expressionVisitor);
-        return new Assignment(name, expression);
+        Expression recipient = ctx.expression(0).accept(expressionVisitor);
+        Expression provider = ctx.expression(1).accept(expressionVisitor);
+
+        // recipient must be an identifier or a property access expression
+
+
+//        String name = ctx.identifier().getText();
+//        Expression expression = ctx.expression().accept(expressionVisitor);
+//        return new Assignment(name, expression);
+        return new Assignment(recipient, provider);
     }
 
 

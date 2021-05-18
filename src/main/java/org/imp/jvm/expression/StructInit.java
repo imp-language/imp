@@ -28,15 +28,14 @@ public class StructInit extends Expression {
     public void generate(MethodVisitor mv, Scope scope) {
         // generate arguments
 
-        // Kinda like FunctionCall
 
 //        String ownerDescriptor = scope.getClassInternalName(); //example : java/lang/String
-        String ownerDescriptor = "main/Person";
+        String ownerDescriptor = "scratch/Person";
         mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor); //NEW instruction takes object decriptor as an input
         mv.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our brand new object
 
 //        FunctionSignature methodCallSignature = scope.getMethodCallSignature(constructorCall.getIdentifier(), constructorCall.getArguments());
-        FunctionSignature constructorSignature = new FunctionSignature("main/person", Collections.emptyList(), BuiltInType.VOID);
+        FunctionSignature constructorSignature = new FunctionSignature("todo: unused", Collections.emptyList(), BuiltInType.VOID);
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(constructorSignature);
 //        String methodDescriptor = "main/Person.<init>:()V";
 

@@ -42,37 +42,37 @@ public class StructType implements Type {
 
     @Override
     public int getLoadVariableOpcode() {
-        return 0;
+        return Opcodes.ALOAD;
     }
 
     @Override
     public int getStoreVariableOpcode() {
-        return 0;
+        return Opcodes.ASTORE;
     }
 
     @Override
     public int getReturnOpcode() {
-        return 0;
+        return Opcodes.ARETURN;
     }
 
     @Override
     public int getAddOpcode() {
-        return 0;
+        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
     public int getSubstractOpcode() {
-        return 0;
+        throw new RuntimeException("Substraction operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
     public int getMultiplyOpcode() {
-        return 0;
+        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
-    public int getDividOpcode() {
-        return 0;
+    public int getDivideOpcode() {
+        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
