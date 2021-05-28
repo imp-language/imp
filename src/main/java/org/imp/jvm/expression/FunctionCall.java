@@ -3,6 +3,7 @@ package org.imp.jvm.expression;
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.domain.types.StructType;
 import org.imp.jvm.domain.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -33,6 +34,11 @@ public class FunctionCall extends Expression {
 
 
             String descriptor = "(" + argType.getDescriptor() + ")V";
+
+            // Todo: account for custom toString methods on structs
+            if (argType instanceof StructType) {
+                descriptor = "(Ljava/lang/Object;)V";
+            }
 
             String name = "java.io.PrintStream";
             String fieldDescriptor = "L" + name.replace('.', '/') + ";";

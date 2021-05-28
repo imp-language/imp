@@ -99,6 +99,7 @@ public class ClassGenerator {
                 defaultValue = ((BuiltInType) type).getDefaultValue();
             }
 
+            defaultValue = null;
 
             FieldVisitor fieldVisitor = classWriter.visitField(Opcodes.ACC_PUBLIC, field.name, descriptor, null, defaultValue);
             fieldVisitor.visitEnd();

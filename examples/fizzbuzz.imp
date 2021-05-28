@@ -1,0 +1,23 @@
+val fizzcount = 0
+val buzzcount = 0
+
+loop val i=1; i<=50; i=i+1 {
+    fizzcount = fizzcount + 1
+    buzzcount = buzzcount + 1
+
+    if fizzcount == 3 {
+        if buzzcount == 5 {
+            fizzcount = 0
+            buzzcount = 0
+            log("FizzBuzz")
+        } else {
+            fizzcount = 0
+            log("Fizz")
+        }
+    } else if buzzcount == 5 {
+        buzzcount = 0
+        log("Buzz")
+    } else {
+        log(i)
+    }
+}
