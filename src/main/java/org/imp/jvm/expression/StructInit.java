@@ -30,7 +30,7 @@ public class StructInit extends Expression {
 
 
 //        String ownerDescriptor = scope.getClassInternalName(); //example : java/lang/String
-        String ownerDescriptor = "scratch/Matt";
+        String ownerDescriptor = "scratch/Person";
         mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor); //NEW instruction takes object decriptor as an input
         mv.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our brand new object
 

@@ -66,7 +66,7 @@ expression
     | expression (ADD | SUB) expression                #AdditiveExpression
     | expression cmp=(LE | LT | GE | GT | EQUAL | NOTEQUAL) expression        #RelationalExpression
     | expression (AND | OR) expression                 #LogicalExpression
-    | expression DOT identifier                        #PropertyAccessExpression
+    | expression (DOT identifier)+                     #PropertyAccessExpression
     | expression DOT callStatement                     #MethodCallExpression
     | expression (INC | DEC)                           #PostIncrementExpression
     | NEW identifier LPAREN (expressionList)? RPAREN   #NewObjectExpression

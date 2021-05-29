@@ -49,4 +49,16 @@ public class Struct extends Statement {
         Identifier identifier = fields.stream().filter(id -> id.name.equals(fieldName)).findFirst().orElseThrow();
         return identifier.type;
     }
+
+
+    /**
+     * Recursively attempt to find the type of a method access expression.
+     *
+     * @param fieldPath list of strings
+     * @return type of struct field if fieldPath is valid
+     */
+    public Type findStructField(List<String> fieldPath) {
+
+        return null;
+    }
 }

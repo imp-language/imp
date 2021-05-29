@@ -1,34 +1,32 @@
-
-
-
-
-
-
-
-
-
 struct Person {
     fname string
     lname string
-    //dob Date
+    dob Date
 }
 
-struct Matt {
-
+struct Date {
+    year int
+    month int
+    day int
 }
 
-val matt = new Matt()
-// matt.fname = "matt"
+
+val matt = new Person()
+matt.fname = "matt"
+
+
+log(matt.dob)
 
 log(matt)
 
-val m = "matt"
-log(m)
 
 
 
 
 /*
+val m = "matt"
+log(m)
+
 val a = "a"
 val b = "b"
 b = "c"

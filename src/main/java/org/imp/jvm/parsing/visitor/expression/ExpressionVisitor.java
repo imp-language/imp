@@ -1,5 +1,6 @@
 package org.imp.jvm.parsing.visitor.expression;
 
+import org.antlr.v4.runtime.RuleContext;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.CompareSign;
@@ -175,7 +176,12 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         IdentifierReference structRef = (IdentifierReference) structExpr;
         Struct struct = scope.getStruct(structRef.type.getName());
 
-        ImpParser.IdentifierContext fieldCtx = ctx.identifier();
+        List<ImpParser.IdentifierContext> fieldPathCtx = ctx.identifier(); // list of identifiers in the chain
+        ImpParser.IdentifierContext fieldCtx = fieldPathCtx.get(0);
+
+        List<String> fieldPath = fieldPathCtx.stream().map(RuleContext::getText).collect(Collectors.toList());
+        Type f = struct.findStructField(fieldPath);
+
 
         String fieldName = fieldCtx.getText();
         Type fieldType = struct.findStructField(fieldName);
