@@ -15,7 +15,7 @@ import java.io.IOException;
 
 
 public class Parser {
-    public static ImpFile getImpFile(File file) throws IOException {
+    public static ImpFile getAbstractSyntaxTree(File file) throws IOException {
 
         CharStream charStream = CharStreams.fromFileName(file.getAbsolutePath());
         ImpLexer impLexer = new ImpLexer(charStream);
@@ -25,16 +25,17 @@ public class Parser {
         parser.setBuildParseTree(true);
 
         ParseTree parseTree = parser.program();
-        ImpFile impFile = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(file.getName())));
+        ImpFile ast = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(file.getName())));
 
 
 //        parser.addErrorListener(new SyntaxErrorListener());
 
 
-        // ToDo: figure out how to split parsed file into StaticUnit and ClassUnits
 //        impParser.addErrorListener(new ImpFile);
 //        parser.
 
-        return impFile;
+        return ast;
     }
+
+
 }

@@ -12,11 +12,13 @@ import java.util.stream.Collectors;
 public class Struct extends Statement {
     public final Identifier identifier;
     public final List<Identifier> fields;
+    public final Scope scope;
 
-    public Struct(Identifier identifier, List<Identifier> fields) {
+    public Struct(Identifier identifier, List<Identifier> fields, Scope scope) {
         super();
         this.identifier = identifier;
         this.fields = fields;
+        this.scope = scope;
     }
 
 

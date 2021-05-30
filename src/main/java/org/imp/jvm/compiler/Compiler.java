@@ -3,15 +3,10 @@ package org.imp.jvm.compiler;
 import org.imp.jvm.domain.ImpFile;
 
 import org.imp.jvm.parsing.Parser;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.CheckClassAdapter;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 import java.io.*;
-import java.nio.file.Files;
 
 @CommandLine.Command(name = "imp")
 public class Compiler {
@@ -78,10 +73,20 @@ public class Compiler {
         File source = new File(filename);
 
         startTime = System.currentTimeMillis();
-        ImpFile impFile = Parser.getImpFile(source);
 
+        // "registration" pass for custom types
+        ImpFile ast = Parser.getAbstractSyntaxTree(source);
 
-        saveByteCodeToClassFile(impFile);
+        if (Logger.getSyntaxErrors().size() > 0) {
+            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
+            System.out.println("Correct parse errors before type checking and compilation can continue.");
+            System.exit(1);
+        }
+
+        // "validation" pass for custom types
+        ast.validate();
+
+        saveByteCodeToClassFile(ast);
 
 
 //        InputStream inputStream = new FileInputStream(".compile/" + impFile.name + ".class");
@@ -95,7 +100,7 @@ public class Compiler {
 //        CheckClassAdapter.verify(new ClassReader(classWriter.toByteArray()), false, printWriter);
 //        assertTrue(stringWriter.toString().isEmpty());
 
-        return impFile.name;
+        return ast.name;
     }
 
     public void saveByteCodeToClassFile(ImpFile impFile) throws IOException {

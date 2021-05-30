@@ -3,6 +3,8 @@ package org.imp.jvm.domain;
 
 import org.imp.jvm.domain.root.ClassUnit;
 import org.imp.jvm.domain.root.StaticUnit;
+import org.imp.jvm.domain.types.Type;
+import org.imp.jvm.domain.types.TypeResolver;
 import org.imp.jvm.statement.Struct;
 
 import java.util.ArrayList;
@@ -33,5 +35,25 @@ public class ImpFile {
 
     public String getClassName() {
         return name;
+    }
+
+
+    public void validate() {
+        System.out.println(this);
+//        System.out.println(this.structs.get(1).toString());
+
+        // 0. Ensure all struct fields have valid types
+        for (var s : structs) {
+            for (var f : s.fields) {
+                Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
+                f.type = t;
+            }
+        }
+
+        System.out.println(this);
+
+        // 1. Recursively check property access expressions
+//        Type f = struct.findStructField(fieldPath);
+//        Struct struct = scope.getStruct(structRef.type.getName());
     }
 }

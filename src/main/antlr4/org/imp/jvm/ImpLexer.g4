@@ -2,14 +2,19 @@ lexer grammar ImpLexer;
 // remember: lexer rules are uppercase
 
 
+channels {
+    WHITESPACE_CHANNEL
+}
+
 //
 // Whitespace and comments
 //
-WhiteSpace : [ \t\r\n\u000C]+ -> skip;
+EOL : '\r'? '\n';
+//WhiteSpace : [ \t\r\n\u000C]+ -> channel(WHITESPACE_CHANNEL);
+WhiteSpace : [ \t\u000C]+ -> skip;
 Comment: '//' ~[\r\n]* -> skip;
 CommentMultiLine : '/*' .*? '*/' -> skip;
-
-
+//Space : [ \t\r\n\u000C]+;
 
 
 // Keywords

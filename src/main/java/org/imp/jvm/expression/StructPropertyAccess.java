@@ -6,14 +6,18 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.MethodVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StructPropertyAccess extends Expression {
 
-    public final Struct struct;
-    public final Identifier field;
+    public final IdentifierReference parent;
+    public final List<Identifier> fieldPath;
 
-    public StructPropertyAccess(Struct struct, Identifier field) {
-        this.struct = struct;
-        this.field = field;
+
+    public StructPropertyAccess(IdentifierReference parent, List<Identifier> fieldPath) {
+        this.parent = parent;
+        this.fieldPath = fieldPath;
     }
 
     @Override

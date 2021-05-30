@@ -14,7 +14,7 @@ options {
 //    package org.imp.jvm
 //}
 
-program : statement* EOF;
+program : EOL* (statement EOL*)* EOF;
 
 /*
  * Core
@@ -39,12 +39,12 @@ statement
 
 
 statementList
-    : statement+
+    : (statement EOL*)+
     ;
 
 
 block
-    : LBRACE statementList? RBRACE
+    : LBRACE EOL* statementList? RBRACE EOL*
     ;
 
 /*
@@ -141,11 +141,15 @@ classStatement
 
 // Structs
 structStatement
-    : STRUCT identifier LBRACE structBlock RBRACE
+    : STRUCT identifier LBRACE structBlock EOL* RBRACE
     ;
 
 structBlock
-    : (identifier type COMMA?)*
+    : (EOL* fieldDef COMMA* EOL)*
+    ;
+
+fieldDef
+    : identifier type?
     ;
 
 interfaceBlock

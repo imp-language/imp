@@ -4,6 +4,7 @@ import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 
+// Todo: combine with Identifier
 public class IdentifierReference extends Expression {
 
     public final LocalVariable localVariable;

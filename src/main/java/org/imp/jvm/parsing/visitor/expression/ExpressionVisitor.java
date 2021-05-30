@@ -7,6 +7,7 @@ import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.ClassType;
 import org.imp.jvm.domain.types.Type;
+import org.imp.jvm.domain.types.UnknownType;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.LocalVariable;
@@ -174,20 +175,21 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public Expression visitPropertyAccessExpression(ImpParser.PropertyAccessExpressionContext ctx) {
         Expression structExpr = ctx.expression().accept(this);
         IdentifierReference structRef = (IdentifierReference) structExpr;
-        Struct struct = scope.getStruct(structRef.type.getName());
+
 
         List<ImpParser.IdentifierContext> fieldPathCtx = ctx.identifier(); // list of identifiers in the chain
-        ImpParser.IdentifierContext fieldCtx = fieldPathCtx.get(0);
-
-        List<String> fieldPath = fieldPathCtx.stream().map(RuleContext::getText).collect(Collectors.toList());
-        Type f = struct.findStructField(fieldPath);
 
 
-        String fieldName = fieldCtx.getText();
-        Type fieldType = struct.findStructField(fieldName);
-        Identifier field = new Identifier(fieldName, fieldType);
+        // Types on struct fields have not settled yet, so all we know is a list of field names.
+        List<Identifier> fieldPath = fieldPathCtx.stream().map(e -> {
+            return new Identifier(e.getText(), new UnknownType(e.getText()));
+        }).collect(Collectors.toList());
 
 
-        return new StructPropertyAccess(struct, field);
+        // This could be an attempt to reference fields that do not exist.
+        // Validation of the field path is performed later.
+        StructPropertyAccess access = new StructPropertyAccess(structRef, fieldPath);
+        access.setLine(ctx.start);
+        return access;
     }
 }

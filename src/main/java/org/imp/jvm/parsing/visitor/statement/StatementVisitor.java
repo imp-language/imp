@@ -2,6 +2,7 @@ package org.imp.jvm.parsing.visitor.statement;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
@@ -10,6 +11,8 @@ import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.domain.types.Mutability;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.domain.types.TypeResolver;
+import org.imp.jvm.exception.SyntacticalException;
+import org.imp.jvm.exception.SyntaxErrors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.statement.*;
@@ -38,21 +41,31 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Statement visitStructStatement(ImpParser.StructStatementContext ctx) {
-        var identifiers = ctx.structBlock().identifier();
-        var types = ctx.structBlock().type();
-        assert identifiers.size() == types.size();
+        var fieldCtx = ctx.structBlock().fieldDef();
+
 
         List<Identifier> fields = new ArrayList<>();
 
-        for (int i = 0; i < identifiers.size(); i++) {
-            Type t = TypeResolver.getFromTypeContext(types.get(i), scope);
-            String n = identifiers.get(i).getText();
+        // At this point we do not know of any custom types that exist.
+        for (var fCtx : fieldCtx) {
+//            Type t = TypeResolver.getFromTypeContext(types.get(i), scope);
+            ImpParser.TypeContext typeContext = fCtx.type();
+            ImpParser.IdentifierContext identifierContext = fCtx.identifier();
+
+            if (typeContext == null || typeContext.getText().length() < 1) {
+                Logger.syntaxError(SyntaxErrors.MissingFieldType, identifierContext.getStart());
+            }
+            Type t = TypeResolver.getTemporaryType(typeContext);
+
+
+            String n = identifierContext.getText();
             var field = new Identifier(n, t);
             fields.add(field);
         }
 
         // Create struct object
-        Struct struct = new Struct(new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT), fields);
+        Struct struct = new Struct(new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT), fields, scope);
+        struct.setLine(ctx.start);
 
         // Add struct to scope
         scope.addStruct(struct);

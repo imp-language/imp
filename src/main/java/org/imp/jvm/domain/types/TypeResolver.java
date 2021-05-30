@@ -1,5 +1,6 @@
 package org.imp.jvm.domain.types;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.scope.Scope;
@@ -24,6 +25,29 @@ public class TypeResolver {
             return null;
         } else {
             System.err.println("ree");
+        }
+        return null;
+    }
+
+    public static Type getFromName(String name, Scope scope) {
+        Optional<BuiltInType> builtInType = getBuiltInType(name);
+        if (builtInType.isPresent()) return builtInType.get();
+
+        Struct struct = scope.getStruct(name);
+        return new StructType(struct);
+
+    }
+
+    public static Type getTemporaryType(ImpParser.TypeContext typeContext) {
+        if (typeContext == null) return null;
+        String text = typeContext.getText();
+        if (typeContext instanceof ImpParser.TypePrimitiveContext) {
+            Optional<BuiltInType> builtInType = getBuiltInType(text);
+            if (builtInType.isPresent()) {
+                return builtInType.get();
+            }
+        } else if (text.length() > 0) {
+            return new StructType(text);
         }
         return null;
     }

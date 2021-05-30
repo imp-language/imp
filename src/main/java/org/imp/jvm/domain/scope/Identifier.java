@@ -5,6 +5,7 @@ import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.domain.types.Type;
 
 
+// Todo: combine with IdentifierReference
 public class Identifier {
     public String name;
     public Type type;
@@ -25,6 +26,7 @@ public class Identifier {
 
     @Override
     public String toString() {
+        // Todo: can this be replaced with "(name:type)"?
         return type.getDescriptor();
     }
 }

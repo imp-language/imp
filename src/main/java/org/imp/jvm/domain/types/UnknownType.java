@@ -3,25 +3,18 @@ package org.imp.jvm.domain.types;
 import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.Opcodes;
 
-public class StructType implements Type {
+public class UnknownType implements Type {
 
-    private final Struct struct;
-
-    private final String name;
 
 //
 //    private static final Map<String, String> shortcuts = HashMap.of(
 //            "List", "java.util.ArrayList"
 //    );
 
-    public StructType(Struct struct) {
-        this.struct = struct;
-        this.name = struct.identifier.name;
-    }
+    public final String name;
 
-    public StructType(String structName) {
-        this.name = structName;
-        this.struct = null;
+    public UnknownType(String name) {
+        this.name = name;
     }
 
     @Override
@@ -31,8 +24,7 @@ public class StructType implements Type {
 
     @Override
     public String getName() {
-        if (struct == null) return this.name;
-        return struct.identifier.name;
+        return name;
     }
 
     @Override

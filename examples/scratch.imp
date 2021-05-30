@@ -1,21 +1,21 @@
+
+
+
+
 struct Person {
     fname string
-    lname string
-    dob Date
+    lname
+    peen int
+    //dob Date
 }
 
-struct Date {
-    year int
-    month int
-    day int
-}
+
 
 
 val matt = new Person()
-matt.fname = "matt"
+matt.fname.f.g.haa = "matt"
 
 
-log(matt.dob)
 
 log(matt)
 
@@ -24,6 +24,18 @@ log(matt)
 
 
 /*
+struct Date {
+    year int
+    month int
+    day int
+}
+
+struct Node {
+    data string
+    next Node
+}
+
+
 val m = "matt"
 log(m)
 
