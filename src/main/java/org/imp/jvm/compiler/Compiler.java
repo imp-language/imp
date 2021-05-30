@@ -86,6 +86,12 @@ public class Compiler {
         // "validation" pass for custom types
         ast.validate();
 
+        if (Logger.getSyntaxErrors().size() > 0) {
+            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
+            System.out.println("Correct semantic errors before compilation can continue.");
+            System.exit(1);
+        }
+
         saveByteCodeToClassFile(ast);
 
 

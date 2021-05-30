@@ -106,6 +106,6 @@ public class Scope {
      */
     public Struct getStruct(String name) {
         return structs.stream().filter(struct -> struct.identifier.name.equals(name)).findFirst()
-                .orElseThrow(() -> new StructNotFoundException(this, name));
+                .orElse(null);
     }
 }

@@ -7,17 +7,21 @@ interface TemplateFunction {
     String run(Token token);
 }
 
-public enum SyntaxErrors implements ErrorContext {
+public enum SemanticErrors implements ErrorContext {
     MissingFieldType(0, "Each struct field must have a type. Consider adding 'string' or another primitive type after the field name.",
             token -> "Missing type declaration on struct field '" + token.getText() + "' near " + getLocation(token)
-    );
+    ),
+    TypeNotFound(1, "Make sure all types you are referencing have been defined.",
+            token -> "Type '" + token.getText() + "' does not exist in the current scope.")
+    //
+    ;
 
     public String suggestion;
     public int code;
     public TemplateFunction template;
 
 
-    SyntaxErrors(int code, String suggestion, TemplateFunction template) {
+    SemanticErrors(int code, String suggestion, TemplateFunction template) {
         this.suggestion = suggestion;
         this.code = code;
         this.template = template;

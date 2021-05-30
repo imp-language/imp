@@ -1,10 +1,12 @@
 package org.imp.jvm.domain;
 
 
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.root.ClassUnit;
 import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.domain.types.TypeResolver;
+import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.statement.Struct;
 
 import java.util.ArrayList;
@@ -46,6 +48,8 @@ public class ImpFile {
         for (var s : structs) {
             for (var f : s.fields) {
                 Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
+                // todo: error when no type found
+//                Logger.syntaxError(SemanticErrors.TypeNotFound, s.getLine());
                 f.type = t;
             }
         }

@@ -11,8 +11,7 @@ import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.domain.types.Mutability;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.domain.types.TypeResolver;
-import org.imp.jvm.exception.SyntacticalException;
-import org.imp.jvm.exception.SyntaxErrors;
+import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.statement.*;
@@ -53,7 +52,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             ImpParser.IdentifierContext identifierContext = fCtx.identifier();
 
             if (typeContext == null || typeContext.getText().length() < 1) {
-                Logger.syntaxError(SyntaxErrors.MissingFieldType, identifierContext.getStart());
+                Logger.syntaxError(SemanticErrors.MissingFieldType, identifierContext.getStart());
             }
             Type t = TypeResolver.getTemporaryType(typeContext);
 
