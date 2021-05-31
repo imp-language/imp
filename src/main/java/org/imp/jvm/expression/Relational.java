@@ -32,6 +32,13 @@ public class Relational extends Expression {
         mv.visitLabel(endLabel);
     }
 
+    @Override
+    public void validate() {
+        left.validate();
+        right.validate();
+        // Todo: make sure operation is compatible
+    }
+
     private void generatePrimitivesComparison(MethodVisitor mv, Scope scope, Expression left, Expression right, CompareSign compareSign) {
         left.generate(mv, scope);
         right.generate(mv, scope);

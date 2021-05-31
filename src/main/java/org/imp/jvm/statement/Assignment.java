@@ -10,8 +10,6 @@ import org.objectweb.asm.Opcodes;
 public class Assignment extends Statement {
     public Expression recipient;
     public Expression provider;
-//    public String name;
-//    public Expression expression;
 
     public Assignment(Expression recepient, Expression provider) {
         this.recipient = recepient;
@@ -50,7 +48,8 @@ public class Assignment extends Statement {
 
     @Override
     public void validate() {
-
+        recipient.validate();
+        provider.validate();
     }
 
     private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {

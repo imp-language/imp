@@ -35,6 +35,11 @@ public class Declaration extends Statement {
         }
     }
 
+    @Override
+    public void validate() {
+        expression.validate();
+    }
+
     private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {
         if (!expressionType.equals(variableType)) {
             mv.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());

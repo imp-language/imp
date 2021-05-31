@@ -29,4 +29,11 @@ public class Block extends Statement {
         }
     }
 
+    @Override
+    public void validate() {
+        for (var statement : statements) {
+            statement.validate();
+        }
+    }
+
 }

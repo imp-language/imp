@@ -5,6 +5,7 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.StructType;
 import org.imp.jvm.domain.types.Type;
+import org.imp.jvm.statement.Statement;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -20,6 +21,11 @@ public class FunctionCall extends Expression {
         this.arguments = arguments;
         this.owner = owner;
         this.type = signature.type;
+    }
+
+    @Override
+    public void validate() {
+        arguments.forEach(Statement::validate);
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
@@ -67,5 +73,6 @@ public class FunctionCall extends Expression {
 
 
     }
+
 
 }

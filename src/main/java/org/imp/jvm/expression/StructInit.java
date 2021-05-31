@@ -6,6 +6,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.domain.types.StructType;
 import org.imp.jvm.domain.types.Type;
+import org.imp.jvm.statement.Statement;
 import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -44,6 +45,12 @@ public class StructInit extends Expression {
 
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
 
+    }
+
+    @Override
+    public void validate() {
+        struct.validate();
+        arguments.forEach(Statement::validate);
     }
 
 }

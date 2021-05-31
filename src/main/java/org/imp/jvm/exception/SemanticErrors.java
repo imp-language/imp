@@ -12,7 +12,11 @@ public enum SemanticErrors implements ErrorContext {
             token -> "Missing type declaration on struct field '" + token.getText() + "' near " + getLocation(token)
     ),
     TypeNotFound(1, "Make sure all types you are referencing have been defined.",
-            token -> "Type '" + token.getText() + "' does not exist in the current scope.")
+            token -> "Type '" + token.getText() + "' does not exist in the current scope."),
+    PrimitiveTypePropertyAccess(2, "Property access cannot be used on variables with primitive types like int, float, or bool.",
+            token -> "Variable '" + token.getText() + "' does not support property access as it has a primitive type."),
+    StructFieldNotFound(3, "Check the type definition of custom types to find the correct field name, or to add a field of this name.",
+            token -> "Identifier '" + token.getText() + "' does not exist as a field on the parent struct.")
     //
     ;
 
@@ -35,7 +39,8 @@ public enum SemanticErrors implements ErrorContext {
     }
 
     public String template(Token token) {
-        String s = "SyntaxError[" + code + "]: ";
+        String s = "filename@" + getLocation(token);
+        s += " SyntaxError[" + code + "]: ";
         s += template.run(token);
         s += "\n\t" + suggestion;
         return s;

@@ -8,7 +8,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import java.util.Optional;
 
-public class Loop extends Statement {
+public abstract class Loop extends Statement {
     public final Block body;
     public LoopKind loopKind;
 
@@ -27,6 +27,7 @@ public class Loop extends Statement {
     public void generate(MethodVisitor mv, Scope scope) {
         throw new NotImplementedException("todo");
     }
+
 
 }
 

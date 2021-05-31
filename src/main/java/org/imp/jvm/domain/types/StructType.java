@@ -5,7 +5,7 @@ import org.objectweb.asm.Opcodes;
 
 public class StructType implements Type {
 
-    private final Struct struct;
+    public final Struct struct;
 
     private final String name;
 

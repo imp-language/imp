@@ -1,19 +1,31 @@
 
 
+struct PersonalData {
+    dob Date
+
+}
 
 
 struct Person {
     fname string
     lname string
-    //dob Date
+    dob Date
+    data PersonalData
+}
+
+struct Date {
+    year int
+    month int
+    day int
 }
 
 
 
 
 val matt = new Person()
-matt.fname.f.g.haa = "matt"
+// matt.fname.f.g.haa = "matt"
 
+matt.data.dob.year = 1999
 
 
 log(matt)

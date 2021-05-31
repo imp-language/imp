@@ -19,12 +19,12 @@ public class UnknownType implements Type {
 
     @Override
     public String toString() {
-        return getName();
+        return "<unknown>";
     }
 
     @Override
     public String getName() {
-        return name;
+        return "<unknown>";
     }
 
     @Override

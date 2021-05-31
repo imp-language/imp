@@ -23,4 +23,9 @@ public class Literal extends Expression {
         mv.visitLdcInsn(transformed);
     }
 
+    @Override
+    public void validate() {
+        
+    }
+
 }

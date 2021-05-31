@@ -32,6 +32,13 @@ public class Arithmetic extends Expression {
 
     }
 
+    @Override
+    public void validate() {
+        left.validate();
+        right.validate();
+        // Todo: ensure types are compatible
+    }
+
     private static Type getCommonType(Expression left, Expression right) {
         if (right.type == BuiltInType.STRING) return BuiltInType.STRING;
         return left.type;

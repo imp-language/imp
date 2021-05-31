@@ -42,4 +42,11 @@ public class If extends Statement {
 
     }
 
+    @Override
+    public void validate() {
+        condition.validate();
+        trueStatement.validate();
+        falseStatement.validate();
+    }
+
 }

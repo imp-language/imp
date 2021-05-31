@@ -26,6 +26,11 @@ public class Function extends Statement {
         throw new NotImplementedException("ree");
     }
 
+    @Override
+    public void validate() {
+        block.validate();
+    }
+
 
     public void generate(ClassWriter cw) {
         String name = signature.name;

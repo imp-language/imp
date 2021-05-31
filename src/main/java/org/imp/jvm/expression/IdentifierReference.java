@@ -22,4 +22,9 @@ public class IdentifierReference extends Expression {
         mv.visitVarInsn(type.getLoadVariableOpcode(), index);
     }
 
+    @Override
+    public void validate() {
+        
+    }
+
 }

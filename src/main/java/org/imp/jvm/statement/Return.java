@@ -21,4 +21,9 @@ public class Return extends Statement {
         expression.generate(mv, scope);
         mv.visitInsn(type.getReturnOpcode());
     }
+
+    @Override
+    public void validate() {
+        expression.validate();
+    }
 }

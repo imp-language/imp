@@ -181,9 +181,12 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
 
         // Types on struct fields have not settled yet, so all we know is a list of field names.
-        List<Identifier> fieldPath = fieldPathCtx.stream().map(e -> {
-            return new Identifier(e.getText(), new UnknownType(e.getText()));
-        }).collect(Collectors.toList());
+        List<Identifier> fieldPath = new ArrayList<>();
+        for (var e : fieldPathCtx) {
+            var ident = new Identifier(e.getText(), new UnknownType(e.getText()));
+            ident.setLine(e.start);
+            fieldPath.add(ident);
+        }
 
 
         // This could be an attempt to reference fields that do not exist.

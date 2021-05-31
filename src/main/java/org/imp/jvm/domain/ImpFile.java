@@ -58,20 +58,22 @@ public class ImpFile {
 
         // 1. Recursively type-check property access expressions
         staticUnit.functions.forEach(function -> {
-            function.block.statements.forEach(statement -> {
-                if (statement instanceof Assignment) {
-                    Assignment assignment = (Assignment) statement;
-                    // Property access expressions could be found in the recipient or the provider of an Assignment statement
-                    if (assignment.recipient instanceof StructPropertyAccess) {
-                        StructPropertyAccess access = (StructPropertyAccess) assignment.recipient;
+            function.block.validate();
 
-                    }
-
-                    if (assignment.provider instanceof StructPropertyAccess) {
-                        // Todo: this has to recurse somehow.
-                    }
-                }
-            });
+//            function.block.statements.forEach(statement -> {
+//                if (statement instanceof Assignment) {
+//                    Assignment assignment = (Assignment) statement;
+//                    // Property access expressions could be found in the recipient or the provider of an Assignment statement
+//                    if (assignment.recipient instanceof StructPropertyAccess) {
+//                        StructPropertyAccess access = (StructPropertyAccess) assignment.recipient;
+//
+//                    }
+//
+//                    if (assignment.provider instanceof StructPropertyAccess) {
+//                        // Todo: this has to recurse somehow.
+//                    }
+//                }
+//            });
         });
 
 

@@ -14,4 +14,9 @@ public class EmptyExpression extends Expression {
         // Do nothing
     }
 
+    @Override
+    public void validate() {
+        // Do nothing
+    }
+
 }

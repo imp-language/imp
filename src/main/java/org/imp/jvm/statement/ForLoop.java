@@ -20,6 +20,14 @@ public class ForLoop extends Loop {
     }
 
     @Override
+    public void validate() {
+        declaration.validate();
+        condition.validate();
+        incrementer.validate();
+        body.validate();
+    }
+
+    @Override
     public void generate(MethodVisitor mv, Scope scope) {
         declaration.generate(mv, scope);
 
