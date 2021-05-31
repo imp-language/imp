@@ -12,7 +12,7 @@ struct Person {
 
 
 val matt = new Person()
-//matt.fname.f.g.haa = "matt"
+matt.fname.f.g.haa = "matt"
 
 
 

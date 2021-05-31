@@ -1,12 +1,12 @@
 package org.imp.jvm.domain;
 
 
-import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.root.ClassUnit;
 import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.domain.types.TypeResolver;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.expression.StructPropertyAccess;
+import org.imp.jvm.statement.Assignment;
 import org.imp.jvm.statement.Struct;
 
 import java.util.ArrayList;
@@ -56,8 +56,29 @@ public class ImpFile {
 
         System.out.println(this);
 
-        // 1. Recursively check property access expressions
+        // 1. Recursively type-check property access expressions
+        staticUnit.functions.forEach(function -> {
+            function.block.statements.forEach(statement -> {
+                if (statement instanceof Assignment) {
+                    Assignment assignment = (Assignment) statement;
+                    // Property access expressions could be found in the recipient or the provider of an Assignment statement
+                    if (assignment.recipient instanceof StructPropertyAccess) {
+                        StructPropertyAccess access = (StructPropertyAccess) assignment.recipient;
+
+                    }
+
+                    if (assignment.provider instanceof StructPropertyAccess) {
+                        // Todo: this has to recurse somehow.
+                    }
+                }
+            });
+        });
+
+
 //        Type f = struct.findStructField(fieldPath);
 //        Struct struct = scope.getStruct(structRef.type.getName());
+
+
+        // 2. Secure variable mutability
     }
 }

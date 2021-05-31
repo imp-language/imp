@@ -20,5 +20,6 @@ public abstract class Statement {
 
     public abstract void generate(MethodVisitor mv, Scope scope);
 
+    public abstract void validate();
 
 }
