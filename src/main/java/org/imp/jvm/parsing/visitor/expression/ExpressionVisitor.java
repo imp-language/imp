@@ -104,7 +104,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         // Identifier
         String functionName = callCtx.identifier().getText();
 
-        // Todo: error handling for nonexistent function signatures
+        // Todo: error handling for nonexistent function signatures. integrate into new error handling pass
         // Function Signature
         var arguments = callCtx.expressionList().expression();
         var argTypes = getArgumentsForCall(arguments);
@@ -127,7 +127,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         var owner = new EmptyExpression(BuiltInType.VOID);
 
 
-        return new FunctionCall(signature, visited, new ClassType("scratch"));
+        return new FunctionCall(signature, visited, new ClassType("Entry"));
     }
 
     private List<Identifier> getArgumentsForCall(List<ImpParser.ExpressionContext> argumentsListCtx) {

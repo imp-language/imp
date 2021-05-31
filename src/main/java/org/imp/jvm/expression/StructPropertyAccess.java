@@ -9,6 +9,7 @@ import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class StructPropertyAccess extends Expression {
 
     public final IdentifierReference parent;
     public final List<Identifier> fieldPath;
-
+    public List<Identifier> validatedPath = null;
 
     public StructPropertyAccess(IdentifierReference parent, List<Identifier> fieldPath) {
         this.parent = parent;
@@ -27,7 +28,22 @@ public class StructPropertyAccess extends Expression {
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
         // ToDo
-        // https://github.com/JakubDziworski/Enkel-JVM-language/blob/1527076545f7402a279db2c19f1e28ba7f084585/compiler/src/main/java/com/kubadziworski/bytecodegeneration/expression/ReferenceExpressionGenerator.java#L11
+        Identifier last = validatedPath.get(validatedPath.size() - 1);
+        String name = last.name;
+        Type type = last.type;
+//        String ownerInternalName = fieldReference.getOwnerInternalName();
+        // Todo: make generic for all structs
+        String ownerInternalName = "scratch/Person";
+        String descriptor = type.getDescriptor();
+
+        int index = scope.getLocalVariableIndex(parent.localVariable.name);
+        if (parent.localVariable.name.equals("p")) {
+            // Todo: BAD- need to decide how scope will work
+            index = 0;
+        }
+        mv.visitVarInsn(Opcodes.ALOAD, index);
+
+        mv.visitFieldInsn(Opcodes.GETFIELD, ownerInternalName, name, descriptor);
     }
 
     @Override
@@ -40,8 +56,14 @@ public class StructPropertyAccess extends Expression {
             // Todo: assert parentStruct != null
             assert parentStruct != null;
 
-            List<Identifier> validatedPath = parentStruct.findStructField(parentStruct, fieldPath);
-            System.out.println(validatedPath);
+            int originalSize = fieldPath.size();
+            validatedPath = parentStruct.findStructField(parentStruct, fieldPath);
+
+            if (validatedPath.size() == originalSize) {
+                // The type of this expression is the type of the last node of validated path
+                this.type = validatedPath.get(validatedPath.size() - 1).type;
+            }
+
 
         } else {
             Logger.syntaxError(SemanticErrors.PrimitiveTypePropertyAccess, getLine());
@@ -49,9 +71,11 @@ public class StructPropertyAccess extends Expression {
             // Will need to use boxing and unboxing probably
         }
 
-        System.out.println(fieldPath);
-//        Type f = struct.findStructField(fieldPath);
-//        Struct struct = scope.getStruct(structRef.type.getName());
+        System.out.println();
+    }
+
+    public Identifier getLast() {
+        return validatedPath.get(validatedPath.size() - 1);
     }
 
 }

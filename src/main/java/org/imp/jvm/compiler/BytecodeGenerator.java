@@ -24,12 +24,6 @@ public class BytecodeGenerator {
             code.put(impFile.packageName + "/" + struct.identifier.name, classGenerator.generate(struct).toByteArray());
         }
 
-        // Todo: remove, this is replaced by structs
-        // Generate bytecode for each impFile.ClassUnit[]
-        for (var classUnit : impFile.classUnits) {
-            code.put("", classGenerator.generate(classUnit).toByteArray());
-        }
-
         return code;
     }
 }

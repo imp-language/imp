@@ -17,6 +17,7 @@ import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.statement.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -116,7 +117,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         }
 
 
-        // Todo: scope.addLocalVariable(new LocalVariable("this",scope.getClassType()));
         // Todo: addParametersAsLocalVariables(signature);
         FunctionSignature signature = new FunctionSignature(name, arguments, returnType);
         scope.addSignature(signature);
@@ -198,8 +198,8 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             scope.addLocalVariable(new LocalVariable(name, expression.type));
 
         } else {
-            // ToDo: parser error
             System.err.println("Parser error.");
+            System.err.println(Arrays.toString(Thread.currentThread().getStackTrace()));
             System.exit(1);
         }
         return declaration;

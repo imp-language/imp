@@ -25,6 +25,17 @@ public class StructType implements Type {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj instanceof StructType) {
+            StructType o = (StructType) obj;
+            return this.name.equals(o.name);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString() {
         return getName();
     }

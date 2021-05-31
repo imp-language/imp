@@ -49,7 +49,7 @@ public class Constructor extends Function {
 //        generateArguments(superCall);
 //        String ownerDescriptor = scope.getSuperClassInternalName();
         String ownerDescriptor = "java/lang/Object";
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V" /*TODO Handle super calls with arguments*/, false);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V", false);
 
     }
 

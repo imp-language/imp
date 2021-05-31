@@ -90,13 +90,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         // Todo: name parameter is irrelevant for constructors. Remove?
         var constructorSignature = new FunctionSignature("Testmain", Collections.emptyList(), BuiltInType.VOID);
         staticUnit.functions.add(new Constructor(constructorSignature, new Block()));
-        System.out.println(staticUnit);
 
-        // Visit the Static Unit
-//        StaticUnitVisitor staticUnitVisitor = new StaticUnitVisitor();
-//        StaticUnit staticUnit = staticUnitVisitor.
-
-        // Visit each Class Unit
 
         return impFile;
     }

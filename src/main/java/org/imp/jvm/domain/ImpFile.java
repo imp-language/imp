@@ -41,7 +41,6 @@ public class ImpFile {
 
 
     public void validate() {
-        System.out.println(this);
 //        System.out.println(this.structs.get(1).toString());
 
         // 0. Ensure all struct fields have valid types
@@ -54,9 +53,8 @@ public class ImpFile {
             }
         }
 
-        System.out.println(this);
 
-        // 1. Recursively type-check property access expressions
+        // 1. Recursively type-check each function
         staticUnit.functions.forEach(function -> {
             function.block.validate();
 

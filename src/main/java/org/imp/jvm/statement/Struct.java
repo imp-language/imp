@@ -35,7 +35,8 @@ public class Struct extends Statement {
 
     @Override
     public void validate() {
-        // Todo: struct validation happens before this right?
+        // Struct validation happens before this is called, so types are
+        // accessible by the validation pass on all other statements.
     }
 
 
@@ -79,16 +80,16 @@ public class Struct extends Statement {
             validatedPath.add(found);
 
             // recurse if the found field is another struct
-            if (found.type instanceof StructType) {
+            if (found.type instanceof StructType && fieldPath.size() > 0) {
                 StructType foundStructType = (StructType) found.type;
                 var rescursedPath = findStructField(foundStructType.struct, fieldPath);
                 validatedPath.addAll(rescursedPath);
+            } else if (fieldPath.size() > 0) {
+                Logger.syntaxError(SemanticErrors.StructFieldNotFound, fieldPath.get(0).getLine());
             }
         } else {
             Logger.syntaxError(SemanticErrors.StructFieldNotFound, first.getLine());
         }
-
-        System.out.println(parent);
 
         return validatedPath;
     }

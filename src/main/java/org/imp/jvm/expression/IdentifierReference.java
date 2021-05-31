@@ -19,6 +19,9 @@ public class IdentifierReference extends Expression {
         // ToDo: refactor IdentifierReference to inherit from Identifier
         String varName = localVariable.getName();
         int index = scope.getLocalVariableIndex(varName);
+        if (localVariable.name.equals("p")) {
+            index = 0;
+        }
         mv.visitVarInsn(type.getLoadVariableOpcode(), index);
     }
 

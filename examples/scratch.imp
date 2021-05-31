@@ -23,14 +23,23 @@ struct Date {
 
 
 val matt = new Person()
-// matt.fname.f.g.haa = "matt"
+matt.fname = "matt"
 
-matt.data.dob.year = 1999
+val peter = new Person()
+peter.fname = "peter"
 
+log(matt.fname)
+log(peter.fname)
 
-log(matt)
-
-
+function greet(p Person) {
+    log("Hello, ")
+    log(p.fname)
+    //log(p)
+}
+greet(peter)
+greet(matt)
+/*
+*/
 
 
 

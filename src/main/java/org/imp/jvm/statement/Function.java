@@ -35,6 +35,10 @@ public class Function extends Statement {
     public void generate(ClassWriter cw) {
         String name = signature.name;
         String description = DescriptorFactory.getMethodDescriptor(this);
+        if (!name.equals("main")) {
+            description = "(Lscratch/Person;)V";
+
+        }
         int access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
 
         MethodVisitor mv = cw.visitMethod(access, name, description, null, null);
