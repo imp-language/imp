@@ -3,6 +3,7 @@ package org.imp.jvm.parsing.visitor.expression;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.CompareSign;
+import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.ClassType;
 import org.imp.jvm.domain.types.UnknownType;
@@ -11,7 +12,9 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.statement.AssignmentStatement;
 import org.imp.jvm.statement.Struct;
+import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -149,6 +152,25 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     }
 
     @Override
+    public Expression visitPostIncrementExpression(ImpParser.PostIncrementExpressionContext ctx) {
+        Operator op = Operator.ADD;
+        if (ctx.DEC() != null) {
+            op = Operator.SUBTRACT;
+        }
+        var expression = ctx.expression().accept(this);
+        var incrementer = new Arithmetic(expression, new Literal(BuiltInType.INT, "1"), op);
+
+        return new AssignmentExpression(expression, incrementer);
+    }
+
+    @Override
+    public Expression visitAssignmentExpression(ImpParser.AssignmentExpressionContext ctx) {
+        Expression recipient = ctx.expression(0).accept(this);
+        Expression provider = ctx.expression(1).accept(this);
+        return new AssignmentExpression(recipient, provider);
+    }
+
+    @Override
     public StructInit visitNewObjectExpression(ImpParser.NewObjectExpressionContext ctx) {
         String structName = ctx.identifier().getText();
         List<Expression> expressions = new ArrayList<>();
@@ -193,4 +215,6 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         access.setLine(ctx.start);
         return access;
     }
+
+
 }

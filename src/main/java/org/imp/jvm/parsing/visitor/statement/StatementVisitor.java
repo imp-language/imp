@@ -153,8 +153,10 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             // loop val i = 0; i < 10; i++ { }
             ImpParser.ForLoopConditionContext cond = (ImpParser.ForLoopConditionContext) conditionContext;
             Declaration declaration = (Declaration) cond.variableStatement().accept(this);
-            Expression condition = cond.expression().accept(expressionVisitor);
-            Statement incrementer = cond.statement().accept(this);
+            Expression condition = cond.expression(0).accept(expressionVisitor);
+            var incrementerCtx = cond.expression(1);
+            Expression incrementer = incrementerCtx.accept(expressionVisitor);
+
             Block block = (Block) ctx.block().accept(this);
             block.scope = new Scope(scope);
 
@@ -226,7 +228,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
 
     @Override
-    public Assignment visitAssignment(ImpParser.AssignmentContext ctx) {
+    public AssignmentStatement visitAssignment(ImpParser.AssignmentContext ctx) {
         Expression recipient = ctx.expression(0).accept(expressionVisitor);
         Expression provider = ctx.expression(1).accept(expressionVisitor);
 
@@ -236,7 +238,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 //        String name = ctx.identifier().getText();
 //        Expression expression = ctx.expression().accept(expressionVisitor);
 //        return new Assignment(name, expression);
-        return new Assignment(recipient, provider);
+        return new AssignmentStatement(recipient, provider);
     }
 
 

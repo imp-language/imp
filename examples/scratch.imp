@@ -11,9 +11,9 @@ log(f)
 
 val b = false
 log(b)
+val s = "string"
 */
 
-val s = "string"
 
 
 /*
@@ -30,9 +30,13 @@ log(f)
 b = true
 log(b)
 
-*/
 s = s + " variable" + " a"
-log(s + " a")
+log(s + 1)
+*/
+
+loop val i = 10; i > 0; i-- {
+    log("iteration " + i)
+}
 
 
 /*

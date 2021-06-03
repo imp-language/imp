@@ -71,6 +71,7 @@ expression
     | expression (INC | DEC)                           #PostIncrementExpression
     | NEW identifier LPAREN (expressionList)? RPAREN   #NewObjectExpression
     | expression LBRACK expression RBRACK              #MemberIndexExpression
+    | expression ASSIGN expression                     #AssignmentExpression
     | LPAREN expression RPAREN                         #WrappedExpression
     ;
 
@@ -94,7 +95,7 @@ loopStatement
     ;
 
 loopCondition
-    : variableStatement SEMICOLON expression SEMICOLON statement SEMICOLON? #ForLoopCondition // val i = 0; i < 10; i++
+    : variableStatement SEMICOLON expression SEMICOLON expression SEMICOLON? #ForLoopCondition // val i = 0; i < 10; i++
     | variableStatement IN expression #ForInLoopCondition // val item, idx in list
     | expression #WhileLoopCondition
     ;

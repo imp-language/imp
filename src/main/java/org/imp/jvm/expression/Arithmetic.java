@@ -13,10 +13,10 @@ import org.objectweb.asm.Opcodes;
 public class Arithmetic extends Expression {
     public final Expression left;
     public final Expression right;
-    public final Operator op;
+    public final Operator operator;
 
-    public Arithmetic(Expression left, Expression right, Operator op) {
-        this.op = op;
+    public Arithmetic(Expression left, Expression right, Operator operator) {
+        this.operator = operator;
         this.type = getCommonType(left, right);
         this.left = left;
         this.right = right;
@@ -61,7 +61,15 @@ public class Arithmetic extends Expression {
         } else {
             left.generate(mv, scope);
             right.generate(mv, scope);
-            int op = type.getAddOpcode();
+            type.getAddOpcode();
+            int op = switch (operator) {
+                case ADD -> type.getAddOpcode();
+                case SUBTRACT -> type.getSubstractOpcode();
+                case MULTIPLY -> type.getMultiplyOpcode();
+                case DIVIDE -> type.getDivideOpcode();
+                
+                default -> type.getAddOpcode();
+            };
             mv.visitInsn(op);
         }
     }

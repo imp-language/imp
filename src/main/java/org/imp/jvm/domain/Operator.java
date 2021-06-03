@@ -7,6 +7,8 @@ import java.util.Arrays;
 public enum Operator {
     ADD("+", Opcodes.IFEQ),
     SUBTRACT("-", Opcodes.IFNE),
+    MULTIPLY("*", Opcodes.IFEQ),
+    DIVIDE("/", Opcodes.IFEQ),
     LESS("<", Opcodes.IFLT),
     GREATER(">", Opcodes.IFGT),
     LESS_OR_EQUAL("<=", Opcodes.IFLE),

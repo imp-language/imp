@@ -9,11 +9,11 @@ import org.imp.jvm.expression.StructPropertyAccess;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class Assignment extends Statement {
+public class AssignmentStatement extends Statement {
     public Expression recipient;
     public Expression provider;
 
-    public Assignment(Expression recipient, Expression provider) {
+    public AssignmentStatement(Expression recipient, Expression provider) {
         this.recipient = recipient;
         this.provider = provider;
     }

@@ -5,8 +5,6 @@ import org.imp.jvm.domain.root.ClassUnit;
 import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.domain.types.TypeResolver;
-import org.imp.jvm.expression.StructPropertyAccess;
-import org.imp.jvm.statement.Assignment;
 import org.imp.jvm.statement.Struct;
 
 import java.util.ArrayList;
