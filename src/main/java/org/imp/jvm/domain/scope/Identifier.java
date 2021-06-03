@@ -7,7 +7,6 @@ import org.imp.jvm.expression.Expression;
 import org.objectweb.asm.MethodVisitor;
 
 
-// Todo: combine with IdentifierReference
 public class Identifier extends Expression {
     public String name;
 

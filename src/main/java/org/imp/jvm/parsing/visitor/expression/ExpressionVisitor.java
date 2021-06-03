@@ -1,12 +1,10 @@
 package org.imp.jvm.parsing.visitor.expression;
 
-import org.antlr.v4.runtime.RuleContext;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.ClassType;
-import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.domain.types.UnknownType;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.FunctionSignature;
@@ -61,7 +59,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     }
 
     @Override
-    public IdentifierReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
+    public LocalVariableReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
 
         // Todo: Struct vs StructType
@@ -72,7 +70,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         // ToDo: reference type parsing
         LocalVariable localVariable = new LocalVariable(name, BuiltInType.INT);
 
-        return new IdentifierReference(local);
+        return new LocalVariableReference(local);
     }
 
 
@@ -174,7 +172,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitPropertyAccessExpression(ImpParser.PropertyAccessExpressionContext ctx) {
         Expression structExpr = ctx.expression().accept(this);
-        IdentifierReference structRef = (IdentifierReference) structExpr;
+        LocalVariableReference structRef = (LocalVariableReference) structExpr;
 
 
         List<ImpParser.IdentifierContext> fieldPathCtx = ctx.identifier(); // list of identifiers in the chain

@@ -29,11 +29,9 @@ public class FunctionSignature extends Identifier {
         for (int i = 0; i < a.size(); i++) {
             Identifier aIdent = a.get(i);
             Identifier bIdent = b.get(i);
-//            if (!aIdent.name.equals(bIdent.name)) {
             if (!aIdent.type.equals(bIdent.type)) {
                 return false;
             }
-//            }
         }
         return true;
     }

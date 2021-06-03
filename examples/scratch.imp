@@ -1,69 +1,43 @@
 
+/*
+log("declarations")
+log("")
 
-struct PersonalData {
-    dob Date
+val i = 0
+log(i)
 
-}
+val f = 0.0
+log(f)
 
+val b = false
+log(b)
+*/
 
-struct Person {
-    fname string
-    lname string
-    dob Date
-    data PersonalData
-}
-
-struct Date {
-    year int
-    month int
-    day int
-}
+val s = "string"
 
 
+/*
+log(s)
+log("operations")
+log("")
+
+i = i + 1
+log(i)
+
+f = f + 1.0
+log(f)
+
+b = true
+log(b)
+
+*/
+s = s + " variable" + " a"
+log(s + " a")
 
 
-val matt = new Person()
-matt.fname = "matt"
-
-val peter = new Person()
-peter.fname = "peter"
-
-log(matt.fname)
-log(peter.fname)
-
-function greet(p Person) {
-    log("Hello, ")
-    log(p.fname)
-    //log(p)
-}
-greet(peter)
-greet(matt)
 /*
 */
 
 
-
-/*
-struct Date {
-    year int
-    month int
-    day int
-}
-
-struct Node {
-    data string
-    next Node
-}
-
-
-val m = "matt"
-log(m)
-
-val a = "a"
-val b = "b"
-b = "c"
-
-log(a)
-*/
 
 

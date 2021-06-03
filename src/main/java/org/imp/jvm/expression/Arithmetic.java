@@ -5,6 +5,7 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.domain.types.Type;
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -25,11 +26,44 @@ public class Arithmetic extends Expression {
 
         // ToDo: currently only addition is implemented
 
-        left.generate(mv, scope);
-        right.generate(mv, scope);
 
-        mv.visitInsn(type.getAddOpcode());
+        if (type.equals(BuiltInType.STRING)) {
 
+            /*
+            left.generate(mv, scope);
+//            right.generate(mv, scope);
+            String owner = "java/lang/invoke/StringConcatFactory";
+            String name = "makeConcatWithConstants";
+            String descriptor = "(Ljava/lang/String;)Ljava/lang/String;";
+//            mv.visitMethodInsn(Opcodes.INVOKEDYNAMIC, owner, name, descriptor, false);
+
+            Handle handle = new Handle(Opcodes.H_INVOKEVIRTUAL, owner, name, descriptor, false);
+            mv.visitInvokeDynamicInsn(name, descriptor, handle, "penis");
+            */
+
+
+            mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+            mv.visitInsn(Opcodes.DUP);
+            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+
+            left.generate(mv, scope);
+
+            String leftExprDescriptor = left.type.getDescriptor();
+            String descriptor = "(" + leftExprDescriptor + ")Ljava/lang/StringBuilder;";
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
+
+            right.generate(mv, scope);
+
+            String rightExprDescriptor = right.type.getDescriptor();
+            descriptor = "(" + rightExprDescriptor + ")Ljava/lang/StringBuilder;";
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+        } else {
+            left.generate(mv, scope);
+            right.generate(mv, scope);
+            int op = type.getAddOpcode();
+            mv.visitInsn(op);
+        }
     }
 
     @Override

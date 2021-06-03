@@ -42,6 +42,7 @@ public class ImpFile {
 
     public void validate() {
 //        System.out.println(this.structs.get(1).toString());
+        System.out.println(this.staticUnit.functions);
 
         // 0. Ensure all struct fields have valid types
         for (var s : structs) {

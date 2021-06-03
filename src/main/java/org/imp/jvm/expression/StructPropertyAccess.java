@@ -2,7 +2,6 @@ package org.imp.jvm.expression;
 
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.StructType;
 import org.imp.jvm.domain.types.Type;
@@ -11,16 +10,15 @@ import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StructPropertyAccess extends Expression {
 
-    public final IdentifierReference parent;
+    public final LocalVariableReference parent;
     public final List<Identifier> fieldPath;
     public List<Identifier> validatedPath = null;
 
-    public StructPropertyAccess(IdentifierReference parent, List<Identifier> fieldPath) {
+    public StructPropertyAccess(LocalVariableReference parent, List<Identifier> fieldPath) {
         this.parent = parent;
         this.fieldPath = fieldPath;
     }

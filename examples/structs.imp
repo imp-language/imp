@@ -1,30 +1,25 @@
-/*
-func getPeople() List.[Person]  {
-    return [Person{"Matt", "Hall"}, Person{"John", "Doe"}]
-}
-
-
-
-val people = getPeople()
-
-
-for val p in people {
-    greet(p)
-}
-
-
-
-*/
-
 
 struct Person {
     fname string
     lname string
-    //dob Date
+    dob Date
 }
 
-func greet(p Person) {
-    log("Hello " + p.fname + " " + p.lname + ".")
+struct Date {
+    year int
+    month int
+    day int
 }
 
+val matt = new Person()
+matt.fname = "matt"
 
+val peter = new Person()
+peter.fname = "peter"
+
+function greet(p Person) {
+    log("Hello, ")
+    log(p.fname)
+}
+greet(peter)
+greet(matt)
