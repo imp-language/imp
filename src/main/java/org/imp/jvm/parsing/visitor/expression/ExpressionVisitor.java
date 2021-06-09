@@ -100,14 +100,25 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
     @Override
     public FunctionCall visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
+        // Todo: At this point we do not know of any functions that exist.
+        // Todo: error handling for nonexistent function signatures. integrate into new error handling pass
+
         ImpParser.CallStatementContext callCtx = ctx.callStatement();
 
-        // Identifier
+        // Function name
         String functionName = callCtx.identifier().getText();
 
-        // Todo: error handling for nonexistent function signatures. integrate into new error handling pass
-        // Function Signature
+        // Function argument expressions
         var arguments = callCtx.expressionList().expression();
+        var argExpressions = arguments.stream().map(a -> a.accept(this)).collect(Collectors.toList());
+
+        // Function Call
+        FunctionCall call = new FunctionCall(functionName, argExpressions);
+
+        return call;
+
+/*
+        // Function Signature
         var argTypes = getArgumentsForCall(arguments);
         FunctionSignature signature;
         if (functionName.equals("log")) {
@@ -128,7 +139,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         var owner = new EmptyExpression(BuiltInType.VOID);
 
 
-        return new FunctionCall(signature, visited, new ClassType("Entry"));
+        return new FunctionCall(signature, visited, new ClassType("Entry"));*/
     }
 
     private List<Identifier> getArgumentsForCall(List<ImpParser.ExpressionContext> argumentsListCtx) {

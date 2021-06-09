@@ -13,6 +13,8 @@ public class Declaration extends Statement {
     public final String name;
     public final Expression expression;
 
+    public LocalVariable localVariable;
+
     public Declaration(Mutability mutability, String name, Expression expression) {
         this.mutability = mutability;
         this.name = name;
@@ -28,7 +30,10 @@ public class Declaration extends Statement {
         if (scope.variableExists(name)) {
             int index = scope.getLocalVariableIndex(name);
             LocalVariable localVariable = scope.getLocalVariable(name);
-            Type localVariableType = localVariable.getType();
+            localVariable.type = expression.type;
+            //Type localVariableType = localVariable.getType();
+            // Todo: for now no casting is supported
+            Type localVariableType = expression.type;
             castIfNecessary(type, localVariableType, mv);
             mv.visitVarInsn(type.getStoreVariableOpcode(), index);
 //          return;
@@ -38,6 +43,7 @@ public class Declaration extends Statement {
     @Override
     public void validate() {
         expression.validate();
+
     }
 
     private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {

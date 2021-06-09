@@ -52,26 +52,16 @@ public class ImpFile {
             }
         }
 
+        // 1. Validate and store all function signatures
+        for (var f : staticUnit.functions) {
 
-        // 1. Recursively type-check each function
-        staticUnit.functions.forEach(function -> {
-            function.block.validate();
+        }
 
-//            function.block.statements.forEach(statement -> {
-//                if (statement instanceof Assignment) {
-//                    Assignment assignment = (Assignment) statement;
-//                    // Property access expressions could be found in the recipient or the provider of an Assignment statement
-//                    if (assignment.recipient instanceof StructPropertyAccess) {
-//                        StructPropertyAccess access = (StructPropertyAccess) assignment.recipient;
-//
-//                    }
-//
-//                    if (assignment.provider instanceof StructPropertyAccess) {
-//                        // Todo: this has to recurse somehow.
-//                    }
-//                }
-//            });
-        });
+
+        // 2. Recursively type-check the body of each function
+        for (var f : staticUnit.functions) {
+            f.block.validate();
+        }
 
 
 //        Type f = struct.findStructField(fieldPath);

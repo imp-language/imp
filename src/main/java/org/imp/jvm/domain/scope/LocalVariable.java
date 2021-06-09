@@ -4,7 +4,7 @@ import org.imp.jvm.domain.types.Type;
 
 public class LocalVariable implements Variable {
     public final String name;
-    private final Type type;
+    public Type type;
 
     public LocalVariable(String name, Type type) {
         this.type = type;
@@ -19,5 +19,10 @@ public class LocalVariable implements Variable {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " " + getType();
     }
 }

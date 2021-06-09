@@ -5,9 +5,11 @@ import org.imp.jvm.exception.LocalVariableNotFoundException;
 import org.imp.jvm.exception.MethodSignatureNotFoundException;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.exception.StructNotFoundException;
+import org.imp.jvm.statement.Function;
 import org.imp.jvm.statement.Struct;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Describes the entities available to expressions and statements in
@@ -91,6 +93,11 @@ public class Scope {
                 .filter(signature -> signature.matches(name, arguments))
                 .findFirst()
                 .orElseThrow(() -> new MethodSignatureNotFoundException(this, name, arguments));
+    }
+
+    public FunctionSignature getSignatureByTypes(String name, List<Type> argTypes) {
+        var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
+        return getSignature(name, identifiers);
     }
 
     /**

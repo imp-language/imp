@@ -32,8 +32,8 @@ public class StructInit extends Expression {
 
         // Todo: make generic for all structs
 //        String ownerDescriptor = scope.getClassInternalName(); //example : java/lang/String
-        String ow = new StructType(struct).getInternalName();
-        String ownerDescriptor = "scratch/" + ow;
+        String ownerDescriptor = new StructType(struct).getInternalName();
+//        String ownerDescriptor = "scratch/" + ow;
         mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor); //NEW instruction takes object decriptor as an input
         mv.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our brand new object
 

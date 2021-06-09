@@ -43,7 +43,7 @@ public class StructType implements Type {
     @Override
     public String getName() {
         if (struct == null) return this.name;
-        return struct.identifier.name;
+        return "scratch/" + struct.identifier.name;
     }
 
     @Override

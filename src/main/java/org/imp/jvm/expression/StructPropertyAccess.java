@@ -28,11 +28,10 @@ public class StructPropertyAccess extends Expression {
         // ToDo
         Identifier last = validatedPath.get(validatedPath.size() - 1);
         String name = last.name;
-        Type type = last.type;
 //        String ownerInternalName = fieldReference.getOwnerInternalName();
         // Todo: make generic for all structs
         String ownerInternalName = "scratch/Person";
-        String descriptor = type.getDescriptor();
+        String descriptor = last.type.getDescriptor();
 
         int index = scope.getLocalVariableIndex(parent.localVariable.name);
         if (parent.localVariable.name.equals("p")) {

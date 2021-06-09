@@ -30,9 +30,9 @@ statement
     | returnStatement
     | ifStatement
     | loopStatement
+    | assignment
     | expression
     | variableStatement
-    | assignment
     | importStatement
     | exportStatement
     ;

@@ -30,8 +30,8 @@ public class AssignmentExpression extends Expression {
 
         } else if (recipient instanceof StructPropertyAccess) {
             StructPropertyAccess access = (StructPropertyAccess) recipient;
-            String parentName = access.parent.type.getName();
-            String ownerInternalName = "scratch/" + parentName;
+            String ownerInternalName = access.parent.type.getName();
+//            String ownerInternalName = "scratch/" + parentName;
             Identifier field = access.getLast();
 
             int index = scope.getLocalVariableIndex(access.parent.localVariable.name);

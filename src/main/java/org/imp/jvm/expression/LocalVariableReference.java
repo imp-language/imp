@@ -21,7 +21,8 @@ public class LocalVariableReference extends Expression {
         if (localVariable.name.equals("p")) {
             index = 0;
         }
-        mv.visitVarInsn(type.getLoadVariableOpcode(), index);
+        this.type = localVariable.type; // Todo: this should be designed as to make this redundant. Both LocalVariable and LocalVariableReference shouldn't need type
+        mv.visitVarInsn(localVariable.type.getLoadVariableOpcode(), index);
     }
 
     @Override
