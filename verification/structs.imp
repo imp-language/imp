@@ -1,0 +1,28 @@
+// Creates instances of the Person type and
+// accesses their fields. Calls a function
+// with parameter type of Person.
+
+struct Person {
+    fname string
+    lname string
+    dob Date
+}
+
+struct Date {
+    year int
+    month int
+    day int
+}
+
+val matt = new Person()
+matt.fname = "matt"
+
+val peter = new Person()
+peter.fname = "peter"
+
+function greet(p Person) {
+    log("Hello, ")
+    log(p.fname)
+}
+greet(peter)
+greet(matt)

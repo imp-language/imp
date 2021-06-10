@@ -25,7 +25,6 @@ public class StructPropertyAccess extends Expression {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        // ToDo
         Identifier last = validatedPath.get(validatedPath.size() - 1);
         String name = last.name;
 
@@ -49,7 +48,6 @@ public class StructPropertyAccess extends Expression {
         if (parentType instanceof StructType) {
             var structType = (StructType) parentType;
             Struct parentStruct = structType.struct;
-            // Todo: assert parentStruct != null
             assert parentStruct != null;
 
             int originalSize = fieldPath.size();

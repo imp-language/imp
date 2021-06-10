@@ -27,11 +27,10 @@ public class Constructor extends Function {
     public void generate(ClassWriter cw) {
         String name = signature.name;
         String description = DescriptorFactory.getMethodDescriptor(this);
-        int access = Opcodes.ACC_PUBLIC;
-
-        // Todo: remove
         description = "()V";
-        
+        // Todo: better constructors
+
+        int access = Opcodes.ACC_PUBLIC;
 
         MethodVisitor mv = cw.visitMethod(access, "<init>", description, null, null);
         mv.visitCode();

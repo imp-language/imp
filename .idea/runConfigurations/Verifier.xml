@@ -2,6 +2,7 @@
   <configuration default="false" name="Verifier" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="org.imp.test.Verifier" />
     <module name="imp" />
+    <option name="VM_PARAMETERS" value="-ea" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.imp.test.*" />

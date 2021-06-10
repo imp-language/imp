@@ -87,8 +87,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         }
 
         staticUnit.functions.add(main);
-        // Todo: name parameter is irrelevant for constructors. Remove?
-        var constructorSignature = new FunctionSignature("Testmain", Collections.emptyList(), BuiltInType.VOID);
+        var constructorSignature = new FunctionSignature(Collections.emptyList(), BuiltInType.VOID);
         staticUnit.functions.add(new Constructor(constructorSignature, new Block()));
 
 

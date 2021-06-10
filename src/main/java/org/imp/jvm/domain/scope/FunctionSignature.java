@@ -17,6 +17,13 @@ public class FunctionSignature extends Identifier {
 
     }
 
+    public FunctionSignature(List<Identifier> parameters, Type returnType) {
+        this.name = "<init>";
+        this.parameters = parameters;
+        this.type = returnType;
+
+    }
+
     public boolean matches(String otherSignatureName, List<Identifier> otherSignatureParameters) {
         boolean namesAreEqual = this.name.equals(otherSignatureName);
         if (!namesAreEqual) return false;

@@ -3,6 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="org.imp.jvm.compiler.Compiler" />
     <module name="imp" />
     <option name="PROGRAM_PARAMETERS" value="examples/scratch.imp" />
+    <option name="VM_PARAMETERS" value="-ea" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

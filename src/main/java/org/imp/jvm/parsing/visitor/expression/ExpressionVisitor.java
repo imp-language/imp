@@ -37,12 +37,10 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public LocalVariableReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
 
-        // Todo: Struct vs StructType
         LocalVariable local = scope.getLocalVariable(name);
         if (scope.variableExists(name)) {
 
         }
-        // ToDo: reference type parsing
         LocalVariable localVariable = new LocalVariable(name, BuiltInType.INT);
 
         return new LocalVariableReference(local);

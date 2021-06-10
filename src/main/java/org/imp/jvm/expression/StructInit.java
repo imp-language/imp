@@ -32,7 +32,7 @@ public class StructInit extends Expression {
         mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor); //NEW instruction takes object decriptor as an input
         mv.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our brand new object
 
-        FunctionSignature constructorSignature = new FunctionSignature("todo: unused", Collections.emptyList(), BuiltInType.VOID);
+        FunctionSignature constructorSignature = new FunctionSignature(Collections.emptyList(), BuiltInType.VOID);
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(constructorSignature);
 
         arguments.forEach(argument -> argument.generate(mv, scope));

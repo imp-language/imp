@@ -96,11 +96,16 @@ public class Verifier {
         System.out.println("");
 
         // 4. Compare results
-        assert solutionLines.size() == stdOutLines.size();
+        if (solutionLines.size() > stdOutLines.size()) {
+            flawsList.add(name);
+            System.out.println("Output is too short.");
+            System.out.println();
+            return;
+        }
         int flaws = 0;
-        for (int i = 0; i < solutionLines.size(); i++) {
+        for (int i = 0; i < stdOutLines.size(); i++) {
             String solution = solutionLines.get(i);
-            String stdOut = stdOutLines.get(i); // Todo: this doesn't get caught by the above assertion
+            String stdOut = stdOutLines.get(i);
 
             if (solution.equals(stdOut)) {
                 System.out.println(solution);
