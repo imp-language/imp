@@ -1,10 +1,10 @@
 package org.imp.jvm.statement;
 
 import org.imp.jvm.compiler.Logger;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.StructType;
-import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.exception.SemanticErrors;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -18,12 +18,14 @@ public class Struct extends Statement {
     public final Identifier identifier;
     public final List<Identifier> fields;
     public final Scope scope;
+    public final ImpFile parent;
 
-    public Struct(Identifier identifier, List<Identifier> fields, Scope scope) {
+    public Struct(Identifier identifier, List<Identifier> fields, Scope scope, ImpFile parent) {
         super();
         this.identifier = identifier;
         this.fields = fields;
         this.scope = scope;
+        this.parent = parent;
     }
 
 

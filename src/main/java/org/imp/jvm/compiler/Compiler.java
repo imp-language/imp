@@ -38,14 +38,39 @@ public class Compiler {
         }
     }
 
+    public Process spawn(String className) throws IOException {
+        String cmd = "java -cp .compile " + className;
+        Process proc = Runtime.getRuntime().exec(cmd);
+        return proc;
+    }
+
     public int run(String className) {
         int result = 0;
 
         try {
-            System.out.println("command output:");
             String cmd = "java -cp .compile " + className;
             Process proc = Runtime.getRuntime().exec(cmd);
 
+            BufferedReader stdInput = new BufferedReader(new
+                    InputStreamReader(proc.getInputStream()));
+
+            BufferedReader stdError = new BufferedReader(new
+                    InputStreamReader(proc.getErrorStream()));
+
+// Read the output from the command
+            System.out.println("Here is the standard output of the command:\n");
+            String s = null;
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
+            }
+
+// Read any errors from the attempted command
+            System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+
+            /*
             InputStream errin = proc.getErrorStream();
             InputStream in = proc.getInputStream();
             BufferedReader errorOutput = new BufferedReader(new InputStreamReader(errin));
@@ -64,7 +89,9 @@ public class Compiler {
                 e.printStackTrace();
             }//end catc
             result = proc.waitFor();
-        } catch (IOException | InterruptedException e) {
+
+             */
+        } catch (IOException e) {
             System.err.println("IOException raised: " + e.getMessage());
         }
         return result;

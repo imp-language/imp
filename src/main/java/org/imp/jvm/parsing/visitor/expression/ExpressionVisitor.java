@@ -3,18 +3,15 @@ package org.imp.jvm.parsing.visitor.expression;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.CompareSign;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.types.ClassType;
 import org.imp.jvm.domain.types.UnknownType;
 import org.imp.jvm.expression.*;
-import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.BuiltInType;
-import org.imp.jvm.statement.AssignmentStatement;
 import org.imp.jvm.statement.Struct;
-import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,43 +19,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
-    //    private final IdentifierReferenceVisitor identifierReferenceVisitor;
     private final LiteralVisitor literalVisitor;
-    //    private final UnaryNotVisitor unaryNotVisitor;
-//
-//    private final UnaryAdditiveVisitor unaryAdditiveVisitor;
-//    private final PowerVisitor powerVisitor;
-//    private final MultiplicativeVisitor multiplicativeVisitor;
     private final ArithmeticVisitor arithmeticVisitor;
-//    private final RelationalVisitor relationalVisitor;
-//    private final LogicalVisitor logicalVisitor;
-//    private final PropertyAccessVisitor propertyAccessVisitor;
-//    private final MethodCallVisitor methodCallVisitor;
-//    private final PostIncrementVisitor postIncrementVisitor;
-//    private final CallVisitor callStatementVisitor;
-//    private final NewObjectVisitor newObjectVisitor;
-//    private final MemberIndexVisitor memberIndexVisitor;
 
     private final Scope scope;
+    private final ImpFile parent;
 
 
-    public ExpressionVisitor(Scope scope) {
+    public ExpressionVisitor(Scope scope, ImpFile parent) {
         this.scope = scope;
-//        identifierReferenceVisitor = new IdentifierReferenceVisitor(scope);
+        this.parent = parent;
         literalVisitor = new LiteralVisitor(this);
-//        unaryNotVisitor = new UnaryNotVisitor();
-//        unaryAdditiveVisitor = new UnaryAdditiveVisitor();
-//        powerVisitor = new PowerVisitor();
-//        multiplicativeVisitor = new MultiplicativeVisitor();
         arithmeticVisitor = new ArithmeticVisitor(this);
-//        relationalVisitor = new RelationalVisitor(this);
-//        logicalVisitor = new LogicalVisitor();
-//        propertyAccessVisitor = new PropertyAccessVisitor();
-//        methodCallVisitor = new MethodCallVisitor();
-//        postIncrementVisitor = new PostIncrementVisitor();
-//        callStatementVisitor = new CallVisitor(scope, this);
-//        newObjectVisitor = new NewObjectVisitor();
-//        memberIndexVisitor = new MemberIndexVisitor();
     }
 
     @Override
@@ -113,7 +85,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         var argExpressions = arguments.stream().map(a -> a.accept(this)).collect(Collectors.toList());
 
         // Function Call
-        FunctionCall call = new FunctionCall(functionName, argExpressions);
+        FunctionCall call = new FunctionCall(functionName, argExpressions, parent);
 
         return call;
 

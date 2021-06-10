@@ -1,6 +1,7 @@
 package org.imp.jvm.expression;
 
 import org.imp.jvm.compiler.DescriptorFactory;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.ClassType;
@@ -16,24 +17,24 @@ import java.util.stream.Collectors;
 public class FunctionCall extends Expression {
     public final FunctionSignature signature;
     public List<Expression> arguments;
-    public final Type owner;
+    public final ImpFile owner;
 
     public List<Type> argTypes;
     public String name;
 
-    public FunctionCall(FunctionSignature signature, List<Expression> arguments, Type owner) {
+    public FunctionCall(FunctionSignature signature, List<Expression> arguments, ImpFile owner) {
         this.signature = signature;
         this.arguments = arguments;
         this.owner = owner;
         this.type = signature.type;
     }
 
-    public FunctionCall(String name, List<Expression> arguments) {
+    public FunctionCall(String name, List<Expression> arguments, ImpFile owner) {
         this.name = name;
         this.arguments = arguments;
 
         this.signature = null;
-        this.owner = new ClassType("Entry");
+        this.owner = owner;
     }
 
     @Override
@@ -85,8 +86,8 @@ public class FunctionCall extends Expression {
 
             // Function calls withing a single module never are accessed like module.func()
             // So the owner of each is the static class.
-            String ownerDescriptor = owner.getInternalName();
-            ownerDescriptor = "scratch/Entry";
+//            String ownerDescriptor = owner.getInternalName();
+            String ownerDescriptor = owner.name + "/Entry";
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, signature.name, methodDescriptor, false);
 
         }

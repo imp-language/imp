@@ -51,7 +51,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         var impFile = new ImpFile(staticUnit, filename);
 
         // handle each statement appropriately
-        StatementVisitor statementVisitor = new StatementVisitor(staticScope);
+        StatementVisitor statementVisitor = new StatementVisitor(staticScope, impFile);
         for (var statement : statementContexts) {
             Statement s = statement.accept(statementVisitor);
 //            System.out.println(s);

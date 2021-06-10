@@ -67,7 +67,6 @@ public class StructPropertyAccess extends Expression {
             // Will need to use boxing and unboxing probably
         }
 
-        System.out.println();
     }
 
     public Identifier getLast() {

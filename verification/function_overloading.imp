@@ -1,4 +1,5 @@
-
+// Tests calling functions of the same name with
+// different argument types.
 
 struct Person {
     fname string
@@ -24,7 +25,3 @@ hello("Kyle")
 val payton = new Person()
 payton.fname = "Payton"
 hello(payton)
-
-
-
-

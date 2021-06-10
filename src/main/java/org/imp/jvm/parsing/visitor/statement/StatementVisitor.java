@@ -3,6 +3,7 @@ package org.imp.jvm.parsing.visitor.statement;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.compiler.Logger;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
@@ -28,10 +29,12 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     private final ExpressionVisitor expressionVisitor;
 
     private final Scope scope;
+    private final ImpFile parent;
 
-    public StatementVisitor(Scope scope) {
+    public StatementVisitor(Scope scope, ImpFile parent) {
         this.scope = scope;
-        expressionVisitor = new ExpressionVisitor(scope);
+        expressionVisitor = new ExpressionVisitor(scope, parent);
+        this.parent = parent;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         }
 
         // Create struct object
-        Struct struct = new Struct(new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT), fields, scope);
+        Struct struct = new Struct(new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT), fields, scope, parent);
         struct.setLine(ctx.start);
 
         // Add struct to scope
@@ -81,7 +84,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             // Child blocks inherit the parent block's scope
             Scope newScope = new Scope(scope);
 
-            StatementVisitor statementVisitor = new StatementVisitor(newScope);
+            StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
             List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
             return new Block(statements, newScope);
         }
