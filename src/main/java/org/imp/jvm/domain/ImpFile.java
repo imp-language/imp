@@ -19,17 +19,12 @@ public class ImpFile {
     // Top-level entities in the source file.
     public final StaticUnit staticUnit;
 
-    // Todo: remove, this is replaced by structs
-    // All classes defined in the source file.
-    public final List<ClassUnit> classUnits = new ArrayList<>();
-
     // All structs defined in the source file.
     public final List<Struct> structs = new ArrayList<>();
 
     public ImpFile(StaticUnit staticUnit, String name) {
         this.name = name;
         this.packageName = name;
-//        this.name = FilenameUtils.getBaseName(file.getName());
         this.staticUnit = staticUnit;
     }
 
@@ -43,7 +38,7 @@ public class ImpFile {
         for (var s : structs) {
             for (var f : s.fields) {
                 Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
-                // todo: error when no type found
+                // Todo: error when no type found
 //                Logger.syntaxError(SemanticErrors.TypeNotFound, s.getLine());
                 f.type = t;
             }

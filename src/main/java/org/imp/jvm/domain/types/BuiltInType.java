@@ -14,8 +14,7 @@ public enum BuiltInType implements Type {
     DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT),
     STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT),
 
-    // Todo: find a meaningful descriptor for `struct`
-    STRUCT("struct", null, "", TypeSpecificOpcodes.OBJECT);;
+    STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT);;
 
     private final String name;
     private final Class<?> typeClass;

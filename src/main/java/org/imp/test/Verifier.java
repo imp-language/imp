@@ -28,6 +28,8 @@ public class Verifier {
 
         var pathnames = path.list();
 
+        long startTime = System.currentTimeMillis();
+
 
         // For each pathname in the pathnames array
         for (String pathname : pathnames) {
@@ -46,7 +48,9 @@ public class Verifier {
         } else {
             System.out.println("No flaws found.");
         }
-        System.out.println("Finished.");
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime);
+        System.out.printf("Finished all tests in %.0f ms.", (float) duration);
     }
 
     private static void validate(String name) throws IOException {
@@ -77,11 +81,11 @@ public class Verifier {
         BufferedReader stdError = new BufferedReader(new
                 InputStreamReader(proc.getErrorStream()));
 
-        System.out.println("Here is the standard output of the command:\n");
+//        System.out.println("Here is the standard output of the command:\n");
         List<String> stdOutLines = new ArrayList<>();
         String s = null;
         while ((s = stdInput.readLine()) != null) {
-            System.out.println(s);
+//            System.out.println(s);
             stdOutLines.add(s);
         }
 

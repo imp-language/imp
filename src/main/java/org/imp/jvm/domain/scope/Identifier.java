@@ -26,9 +26,7 @@ public class Identifier extends Expression {
 
     @Override
     public String toString() {
-        // Todo: can this be replaced with "(name:type)"?
         return name + " " + type.getName();
-//        return type.getDescriptor();
     }
 
     @Override
