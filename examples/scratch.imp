@@ -1,5 +1,35 @@
+log("declarations")
+
+val i = 0
+log(i)
+
+val f = 0.0
+log(f)
+
+val b = false
+log(b)
+
+val s = "string"
+log(s)
+
+log("")
+log("operations")
+
+i = i + 1
+log(i)
+
+f = f + 1.0
+log(f)
+
+b = true
+log(b)
+
+s = s + " variable" + " a"
+log(s)
 
 
+
+/*
 // log("a")
 
 struct Person {

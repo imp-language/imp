@@ -43,7 +43,8 @@ public class Compiler {
 
         try {
             System.out.println("command output:");
-            Process proc = Runtime.getRuntime().exec("java -cp " + className);
+            String cmd = "java -cp .compile " + className;
+            Process proc = Runtime.getRuntime().exec(cmd);
 
             InputStream errin = proc.getErrorStream();
             InputStream in = proc.getInputStream();
@@ -106,7 +107,7 @@ public class Compiler {
 //        CheckClassAdapter.verify(new ClassReader(classWriter.toByteArray()), false, printWriter);
 //        assertTrue(stringWriter.toString().isEmpty());
 
-        return ast.name;
+        return ast.getClassName() + "/Entry";
     }
 
     public void saveByteCodeToClassFile(ImpFile impFile) throws IOException {

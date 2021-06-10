@@ -82,7 +82,6 @@ public class FunctionCall extends Expression {
 
             // bytecode
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
-//            methodDescriptor = "(Lscratch/Person;)V";
 
             // Function calls withing a single module never are accessed like module.func()
             // So the owner of each is the static class.

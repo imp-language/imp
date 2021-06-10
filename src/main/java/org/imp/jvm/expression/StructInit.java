@@ -27,20 +27,13 @@ public class StructInit extends Expression {
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
-        // generate arguments
 
-
-        // Todo: make generic for all structs
-//        String ownerDescriptor = scope.getClassInternalName(); //example : java/lang/String
         String ownerDescriptor = new StructType(struct).getInternalName();
-//        String ownerDescriptor = "scratch/" + ow;
         mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor); //NEW instruction takes object decriptor as an input
         mv.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our brand new object
 
-//        FunctionSignature methodCallSignature = scope.getMethodCallSignature(constructorCall.getIdentifier(), constructorCall.getArguments());
         FunctionSignature constructorSignature = new FunctionSignature("todo: unused", Collections.emptyList(), BuiltInType.VOID);
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(constructorSignature);
-//        String methodDescriptor = "main/Person.<init>:()V";
 
         arguments.forEach(argument -> argument.generate(mv, scope));
 
