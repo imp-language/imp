@@ -1,5 +1,6 @@
 package org.imp.jvm.parsing.visitor.expression;
 
+import org.antlr.v4.runtime.misc.Interval;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.types.BuiltInType;
@@ -45,7 +46,10 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
 
     @Override
     public Literal visitStringLiteral(ImpParser.StringLiteralContext ctx) {
-        return new Literal(BuiltInType.STRING, ctx.STRING_LITERAL().getText());
+        var lit = ctx.STRING_LITERAL();
+        var stringLiteralWithEscapes = lit.getText().translateEscapes();
+
+        return new Literal(BuiltInType.STRING, stringLiteralWithEscapes);
     }
 
 //    @Override

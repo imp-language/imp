@@ -7,6 +7,8 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @CommandLine.Command(name = "imp")
 public class Compiler {
@@ -33,7 +35,7 @@ public class Compiler {
         } else {
             String outputClassName = compiler.compile();
             if (!compiler.compile) {
-                compiler.run(".compile " + outputClassName);
+                compiler.run(outputClassName);
             }
         }
     }
@@ -44,57 +46,30 @@ public class Compiler {
         return proc;
     }
 
-    public int run(String className) {
-        int result = 0;
+    public int run(String className) throws IOException {
+        String cmd = "java -cp .compile " + className;
+        Process proc = Runtime.getRuntime().exec(cmd);
 
-        try {
-            String cmd = "java -cp .compile " + className;
-            Process proc = Runtime.getRuntime().exec(cmd);
+        // 3. Watch standard out
+        BufferedReader stdInput = new BufferedReader(new
+                InputStreamReader(proc.getInputStream()));
 
-            BufferedReader stdInput = new BufferedReader(new
-                    InputStreamReader(proc.getInputStream()));
+        BufferedReader stdError = new BufferedReader(new
+                InputStreamReader(proc.getErrorStream()));
 
-            BufferedReader stdError = new BufferedReader(new
-                    InputStreamReader(proc.getErrorStream()));
-
-// Read the output from the command
-            System.out.println("Here is the standard output of the command:\n");
-            String s = null;
-            while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
-            }
-
-// Read any errors from the attempted command
-            System.out.println("Here is the standard error of the command (if any):\n");
-            while ((s = stdError.readLine()) != null) {
-                System.out.println(s);
-            }
-
-            /*
-            InputStream errin = proc.getErrorStream();
-            InputStream in = proc.getInputStream();
-            BufferedReader errorOutput = new BufferedReader(new InputStreamReader(errin));
-            BufferedReader output = new BufferedReader(new InputStreamReader(in));
-            String line1 = null;
-            String line2 = null;
-            try {
-                while ((line1 = errorOutput.readLine()) != null ||
-                        (line2 = output.readLine()) != null) {
-                    if (line1 != null) System.out.println(line1);
-                    if (line2 != null) System.out.println(line2);
-                }//end while
-                errorOutput.close();
-                output.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }//end catc
-            result = proc.waitFor();
-
-             */
-        } catch (IOException e) {
-            System.err.println("IOException raised: " + e.getMessage());
+        String s = null;
+        String b = "some\ntext\tbitch";
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
         }
-        return result;
+
+        System.out.println("\nErrors (if any):");
+        while ((s = stdError.readLine()) != null) {
+            System.out.println(s);
+        }
+        System.out.println("");
+
+        return 0;
     }
 
     public String compile() throws IOException {
@@ -144,7 +119,7 @@ public class Compiler {
         long endTime = System.currentTimeMillis();
 
         long duration = (endTime - startTime);
-        System.out.printf("Duration: %.0f ms.", (float) duration);
+        System.out.printf("Duration: %.0f ms.\n", (float) duration);
 
 
         String className = impFile.getClassName();

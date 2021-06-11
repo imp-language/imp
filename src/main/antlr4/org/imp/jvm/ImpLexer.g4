@@ -106,16 +106,21 @@ IDENTIFIER : ALPHA (ALPHA | DECIMALS)*;
 // String literals
 RAW_STRING_LIT         : '`' ~'`'*                      '`';
 
-STRING_LITERAL : ('"' DoubleStringCharacter* '"');
+//STRING_LITERAL : ('"' DoubleStringCharacter* '"');
+
+STRING_LITERAL
+ : '"' ( '\\' [btnfr"'\\] | ~[\r\n\\"] )* '"'
+ ;
 
 // Fragments
 
+/*
 fragment DoubleStringCharacter
     : ~["\\\r\n]
     // | '\\' EscapeSequence
     // | LineContinuation
     ;
-
+*/
 
 fragment DECIMALS
     : [0-9]+
