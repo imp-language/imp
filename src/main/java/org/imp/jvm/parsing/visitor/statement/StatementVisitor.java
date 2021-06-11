@@ -39,7 +39,14 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Statement visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
+        // Todo: is this ever called?
+//        System.out.println("hmm... surprise!");
         return expressionVisitor.visitCallStatementExpression(ctx);
+    }
+
+    @Override
+    public Statement visitPostIncrementExpression(ImpParser.PostIncrementExpressionContext ctx) {
+        return expressionVisitor.visitPostIncrementExpression(ctx);
     }
 
     @Override

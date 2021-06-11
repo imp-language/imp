@@ -1,3 +1,12 @@
+// Testing increment and decrement operators
+// on various numeric types.
 
-val a = "some\ntext\n\tbitch"
-log(a)
+val i = 0
+log(i)
+i++
+log(i)
+
+val f = 0.0
+log(f)
+f++
+log(f)

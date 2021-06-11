@@ -87,29 +87,6 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         return call;
 
-/*
-        // Function Signature
-        var argTypes = getArgumentsForCall(arguments);
-        FunctionSignature signature;
-        if (functionName.equals("log")) {
-            signature = new FunctionSignature("log", null, null);
-        } else {
-            signature = scope.getSignature(functionName, argTypes);
-        }
-
-        // Visit Arguments
-        List<Expression> visited = new ArrayList<>();
-        for (var arg : arguments) {
-            visited.add(arg.accept(this));
-        }
-
-
-        // Function calls withing a single module never are accessed like module.func()
-        // So the owner of each is the static class.
-        var owner = new EmptyExpression(BuiltInType.VOID);
-
-
-        return new FunctionCall(signature, visited, new ClassType("Entry"));*/
     }
 
     private List<Identifier> getArgumentsForCall(List<ImpParser.ExpressionContext> argumentsListCtx) {
