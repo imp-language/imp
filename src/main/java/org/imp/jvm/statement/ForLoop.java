@@ -1,6 +1,5 @@
 package org.imp.jvm.statement;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Expression;
 import org.objectweb.asm.Label;
@@ -20,11 +19,11 @@ public class ForLoop extends Loop {
     }
 
     @Override
-    public void validate() {
-        declaration.validate();
-        condition.validate();
-        incrementer.validate();
-        body.validate();
+    public void validate(Scope scope) {
+        declaration.validate(scope);
+        condition.validate(scope);
+        incrementer.validate(scope);
+        body.validate(scope);
     }
 
     @Override

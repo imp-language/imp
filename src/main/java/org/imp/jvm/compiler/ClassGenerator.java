@@ -6,6 +6,7 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Method;
 import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.domain.types.StructType;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Constructor;
@@ -78,10 +79,10 @@ public class ClassGenerator {
      * @param struct Struct type
      * @return bytecode
      */
-    public ClassWriter generate(Struct struct) {
+    public ClassWriter generate(StructType struct) {
         classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
         String name = struct.identifier.name;
-        
+
         String qualifiedName = packageName + "/" + name;
 
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);

@@ -4,7 +4,6 @@ import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.StructType;
-import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.MethodVisitor;
@@ -42,16 +41,13 @@ public class StructPropertyAccess extends Expression {
     }
 
     @Override
-    public void validate() {
+    public void validate(Scope scope) {
         // Given the path, set the final type of this property access
         var parentType = parent.type;
-        if (parentType instanceof StructType) {
-            var structType = (StructType) parentType;
-            Struct parentStruct = structType.struct;
-            assert parentStruct != null;
+        if (parentType instanceof StructType parentStructType) {
 
             int originalSize = fieldPath.size();
-            validatedPath = parentStruct.findStructField(parentStruct, fieldPath);
+            validatedPath = parentStructType.findStructField(parentStructType, fieldPath);
 
             if (validatedPath.size() == originalSize) {
                 // The type of this expression is the type of the last node of validated path
@@ -60,7 +56,7 @@ public class StructPropertyAccess extends Expression {
 
 
         } else {
-            Logger.syntaxError(SemanticErrors.PrimitiveTypePropertyAccess, getLine());
+            Logger.syntaxError(SemanticErrors.PrimitiveTypePropertyAccess, getCtx());
             // Todo: property access on primitive types
             // Will need to use boxing and unboxing probably
         }

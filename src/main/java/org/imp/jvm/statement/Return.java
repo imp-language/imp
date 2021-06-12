@@ -1,10 +1,8 @@
 package org.imp.jvm.statement;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.expression.Expression;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
 public class Return extends Statement {
@@ -23,7 +21,7 @@ public class Return extends Statement {
     }
 
     @Override
-    public void validate() {
-        expression.validate();
+    public void validate(Scope scope) {
+        expression.validate(scope);
     }
 }

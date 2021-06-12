@@ -237,6 +237,7 @@ literal
     | integerLiteral
     | floatLiteral
     | booleanLiteral
+    | doubleLiteral
     ;
 
 identifier
@@ -254,6 +255,10 @@ booleanLiteral
 
 floatLiteral
     : FLOAT_LIT
+    ;
+
+doubleLiteral
+    : DOUBLE_LIT
     ;
 
 

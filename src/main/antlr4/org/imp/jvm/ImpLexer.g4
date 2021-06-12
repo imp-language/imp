@@ -94,14 +94,19 @@ BooleanLiteral
 	|	'false'
 	;
 
+IDENTIFIER : ALPHA (ALPHA | DECIMALS)*;
+
 // Decimal Literals
 DECIMAL_LIT : ([1-9] [0-9]*) | '0'; // number that doesn't start with 0, or just 0
 FLOAT_LIT : DECIMALS ('.' DECIMALS? EXPONENT? | EXPONENT)
                        | '.' DECIMALS EXPONENT?
                        ;
+DOUBLE_LIT
+    : DECIMALS ('.' DECIMALS? EXPONENT? | EXPONENT) DOUBLE_SUFFIX
+    | '.' DECIMALS EXPONENT? DOUBLE_SUFFIX
+    ;
 
-
-IDENTIFIER : ALPHA (ALPHA | DECIMALS)*;
+DOUBLE_SUFFIX : 'd';
 
 // String literals
 RAW_STRING_LIT         : '`' ~'`'*                      '`';

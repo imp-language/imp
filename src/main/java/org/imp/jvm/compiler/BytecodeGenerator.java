@@ -20,7 +20,7 @@ public class BytecodeGenerator {
         code.put(impFile.packageName + "/" + "Entry", staticWriter.toByteArray());
 
         // Generate bytecode for each Struct defined in the imp file
-        for (var struct : impFile.structs) {
+        for (var struct : impFile.structTypes) {
             code.put(impFile.packageName + "/" + struct.identifier.name, classGenerator.generate(struct).toByteArray());
         }
 

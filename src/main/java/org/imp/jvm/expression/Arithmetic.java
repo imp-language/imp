@@ -1,12 +1,9 @@
 package org.imp.jvm.expression;
 
-import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.BuiltInType;
 import org.imp.jvm.domain.types.Type;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -75,9 +72,9 @@ public class Arithmetic extends Expression {
     }
 
     @Override
-    public void validate() {
-        left.validate();
-        right.validate();
+    public void validate(Scope scope) {
+        left.validate(scope);
+        right.validate(scope);
         // Todo: ensure types are compatible
     }
 

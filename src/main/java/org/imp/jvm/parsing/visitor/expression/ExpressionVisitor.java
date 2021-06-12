@@ -2,11 +2,13 @@ package org.imp.jvm.parsing.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.types.UnknownType;
+import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
@@ -31,6 +33,11 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         this.parent = parent;
         literalVisitor = new LiteralVisitor(this);
         arithmeticVisitor = new ArithmeticVisitor(this);
+    }
+
+    @Override
+    public Expression visitWrappedExpression(ImpParser.WrappedExpressionContext ctx) {
+        return ctx.expression().accept(this);
     }
 
     @Override
@@ -116,9 +123,18 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
             op = Operator.SUBTRACT;
         }
         var expression = ctx.expression().accept(this);
-        var incrementer = new Arithmetic(expression, new Literal(BuiltInType.INT, "1"), op);
+        var postType = expression.type;
+        if (postType.isNumeric()) {
+            var incrementer = new Arithmetic(expression, new Literal(postType, "1"), op);
+            return new AssignmentExpression(expression, incrementer);
 
-        return new AssignmentExpression(expression, incrementer);
+        } else {
+            Logger.syntaxError(SemanticErrors.IncrementInvalidType, ctx.expression());
+            return new EmptyExpression(postType);
+        }
+
+        // Todo: maybe this should be moved to the Validation pass?
+        // But then we'd need a class for IncrementExpression
     }
 
     @Override
@@ -144,9 +160,12 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         }
 
-        Struct struct = scope.getStruct(structName);
-
-        return new StructInit(struct, expressions, null);
+//        Struct struct = new Struct()
+//        if (struct.)
+        // Todo: use SemanticErrors
+        var si = new StructInit(structName, expressions, null);
+        si.setCtx(ctx.identifier());
+        return si;
     }
 
     @Override
@@ -162,7 +181,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         List<Identifier> fieldPath = new ArrayList<>();
         for (var e : fieldPathCtx) {
             var ident = new Identifier(e.getText(), new UnknownType(e.getText()));
-            ident.setLine(e.start);
+            ident.setCtx(e);
             fieldPath.add(ident);
         }
 
@@ -170,7 +189,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         // This could be an attempt to reference fields that do not exist.
         // Validation of the field path is performed later.
         StructPropertyAccess access = new StructPropertyAccess(structRef, fieldPath);
-        access.setLine(ctx.start);
+        access.setCtx(ctx);
         return access;
     }
 

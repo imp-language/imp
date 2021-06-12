@@ -1,8 +1,6 @@
 package org.imp.jvm.statement;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.domain.scope.Scope;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
@@ -30,9 +28,9 @@ public class Block extends Statement {
     }
 
     @Override
-    public void validate() {
+    public void validate(Scope scope) {
         for (var statement : statements) {
-            statement.validate();
+            statement.validate(scope);
         }
     }
 

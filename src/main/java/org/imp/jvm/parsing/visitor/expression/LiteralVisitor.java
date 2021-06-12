@@ -33,6 +33,11 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
     }
 
     @Override
+    public Literal visitDoubleLiteral(ImpParser.DoubleLiteralContext ctx) {
+        return new Literal(BuiltInType.DOUBLE, ctx.DOUBLE_LIT().getText());
+    }
+
+    @Override
     public Literal visitListLiteral(ImpParser.ListLiteralContext ctx) {
 //        // List literals are converted to collections
 //        var elements = ctx.elementList().expression();

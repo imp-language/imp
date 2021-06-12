@@ -8,10 +8,7 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.types.BuiltInType;
-import org.imp.jvm.domain.types.Mutability;
-import org.imp.jvm.domain.types.Type;
-import org.imp.jvm.domain.types.TypeResolver;
+import org.imp.jvm.domain.types.*;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
@@ -39,8 +36,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Statement visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
-        // Todo: is this ever called?
-//        System.out.println("hmm... surprise!");
         return expressionVisitor.visitCallStatementExpression(ctx);
     }
 
@@ -63,7 +58,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             ImpParser.IdentifierContext identifierContext = fCtx.identifier();
 
             if (typeContext == null || typeContext.getText().length() < 1) {
-                Logger.syntaxError(SemanticErrors.MissingFieldType, identifierContext.getStart());
+                Logger.syntaxError(SemanticErrors.MissingFieldType, identifierContext);
             }
             Type t = TypeResolver.getTemporaryType(typeContext);
 
@@ -73,12 +68,17 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             fields.add(field);
         }
 
+        var id = new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT);
+
+        // Create struct type object
+        StructType structType = new StructType(id, fields, parent, scope);
+
         // Create struct object
-        Struct struct = new Struct(new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT), fields, scope, parent);
-        struct.setLine(ctx.start);
+        Struct struct = new Struct(structType);
+        struct.setCtx(ctx);
 
         // Add struct to scope
-        scope.addStruct(struct);
+        scope.addStruct(structType);
 
         return struct;
     }
@@ -111,12 +111,14 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             arguments = argumentsContext.accept(new ArgumentsVisitor());
         }
 //        addParametersAsLocalVariables(arguments);
-        arguments.forEach(param -> scope.addLocalVariable(new LocalVariable(param.name, param.type)));
 
         // Block
         ImpParser.BlockContext blockContext = ctx.block();
         Block block = (Block) Optional.ofNullable(blockContext.accept(this)).orElse(new Block());
 
+
+        // Add parameters as local variables to the scope of the function block
+        arguments.forEach(param -> block.scope.addLocalVariable(new LocalVariable(param.name, param.type)));
 
         // Return type
         ImpParser.TypeContext typeContext = ctx.type();

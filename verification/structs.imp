@@ -21,8 +21,8 @@ val peter = new Person()
 peter.fname = "peter"
 
 function greet(p Person) {
-    log("Hello, ")
-    log(p.fname)
+    val name = p.fname
+    log("Hello, " + name)
 }
 greet(peter)
 greet(matt)

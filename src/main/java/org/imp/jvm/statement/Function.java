@@ -27,8 +27,8 @@ public class Function extends Statement {
     }
 
     @Override
-    public void validate() {
-        block.validate();
+    public void validate(Scope scope) {
+        block.validate(scope);
     }
 
 

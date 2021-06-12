@@ -1,12 +1,45 @@
-// Testing increment and decrement operators
-// on various numeric types.
+/*val s = "s"
+log(s)
+//(s+"a")++
+log(s)
 
-val i = 0
-log(i)
-i++
-log(i)
+struct P {
+    field int
+}
 
-val f = 0.0
-log(f)
-f++
-log(f)
+val p = new Pa()
+
+log(p.f)
+
+log(s.f)
+*/
+
+
+
+// Tests calling functions of the same name with
+// different argument types.
+
+struct Person {
+    fname string
+    lname string
+}
+
+function hello(name string) void {
+    log("hello, " + name)
+}
+
+function hello(p Person) void {
+    val fname = p.fname
+    log("HELLO, " + fname)
+}
+
+
+
+hello("Matt")
+hello("Kyle")
+
+
+
+val payton = new Person()
+payton.fname = "Payton"
+hello(payton)

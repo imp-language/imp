@@ -26,8 +26,8 @@ public class LocalVariableReference extends Expression {
     }
 
     @Override
-    public void validate() {
-        
+    public void validate(Scope scope) {
+
     }
 
 }

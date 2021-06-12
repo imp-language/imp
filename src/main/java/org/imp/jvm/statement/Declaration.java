@@ -41,8 +41,8 @@ public class Declaration extends Statement {
     }
 
     @Override
-    public void validate() {
-        expression.validate();
+    public void validate(Scope scope) {
+        expression.validate(scope);
 
     }
 

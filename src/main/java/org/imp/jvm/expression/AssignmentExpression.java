@@ -3,7 +3,6 @@ package org.imp.jvm.expression;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.domain.types.Type;
-import org.imp.jvm.statement.Statement;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -45,9 +44,9 @@ public class AssignmentExpression extends Expression {
     }
 
     @Override
-    public void validate() {
-        recipient.validate();
-        provider.validate();
+    public void validate(Scope scope) {
+        recipient.validate(scope);
+        provider.validate(scope);
     }
 
     private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {

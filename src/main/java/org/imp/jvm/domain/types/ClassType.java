@@ -103,6 +103,11 @@ public class ClassType implements Type {
     }
 
     @Override
+    public boolean isNumeric() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

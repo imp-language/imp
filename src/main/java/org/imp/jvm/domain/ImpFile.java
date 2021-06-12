@@ -1,8 +1,8 @@
 package org.imp.jvm.domain;
 
 
-import org.imp.jvm.domain.root.ClassUnit;
 import org.imp.jvm.domain.root.StaticUnit;
+import org.imp.jvm.domain.types.StructType;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.domain.types.TypeResolver;
 import org.imp.jvm.statement.Struct;
@@ -20,7 +20,7 @@ public class ImpFile {
     public final StaticUnit staticUnit;
 
     // All structs defined in the source file.
-    public final List<Struct> structs = new ArrayList<>();
+    public final List<StructType> structTypes = new ArrayList<>();
 
     public ImpFile(StaticUnit staticUnit, String name) {
         this.name = name;
@@ -35,7 +35,7 @@ public class ImpFile {
 
     public void validate() {
         // 0. Ensure all struct fields have valid types
-        for (var s : structs) {
+        for (var s : structTypes) {
             for (var f : s.fields) {
                 Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
                 // Todo: error when no type found
@@ -52,7 +52,7 @@ public class ImpFile {
 
         // 2. Recursively type-check the body of each function
         for (var f : staticUnit.functions) {
-            f.block.validate();
+            f.block.validate(f.block.scope);
         }
 
 

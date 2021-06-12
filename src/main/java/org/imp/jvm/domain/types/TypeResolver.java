@@ -1,6 +1,5 @@
 package org.imp.jvm.domain.types;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.scope.Scope;
@@ -19,8 +18,8 @@ public class TypeResolver {
             }
         } else if (typeContext instanceof ImpParser.TypeStructContext) {
             ImpParser.TypeStructContext tsc = (ImpParser.TypeStructContext) typeContext;
-            Struct struct = scope.getStruct(tsc.identifier().getText());
-            return new StructType(struct);
+            StructType structType = scope.getStruct(tsc.identifier().getText());
+            return structType;
         } else if (typeContext instanceof ImpParser.TypeListContext) {
             return null;
         } else {
@@ -33,8 +32,8 @@ public class TypeResolver {
         Optional<BuiltInType> builtInType = getBuiltInType(name);
         if (builtInType.isPresent()) return builtInType.get();
 
-        Struct struct = scope.getStruct(name);
-        return new StructType(struct);
+        StructType structType = scope.getStruct(name);
+        return structType;
 
     }
 
@@ -47,7 +46,7 @@ public class TypeResolver {
                 return builtInType.get();
             }
         } else if (text.length() > 0) {
-            return new StructType(text);
+            return new StructType();
         }
         return null;
     }

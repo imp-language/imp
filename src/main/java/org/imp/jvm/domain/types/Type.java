@@ -24,4 +24,6 @@ public interface Type {
     int getDivideOpcode();
 
     Object getDefaultValue();
+
+    boolean isNumeric();
 }

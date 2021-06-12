@@ -1,5 +1,6 @@
 package org.imp.jvm.domain.scope;
 
+import org.imp.jvm.domain.types.StructType;
 import org.imp.jvm.domain.types.Type;
 import org.imp.jvm.exception.LocalVariableNotFoundException;
 import org.imp.jvm.exception.MethodSignatureNotFoundException;
@@ -23,7 +24,7 @@ public class Scope {
 
     private final List<FunctionSignature> functionSignatures;
 
-    private final List<Struct> structs;
+    private final List<StructType> structs;
 
     private final String name;
 
@@ -92,7 +93,7 @@ public class Scope {
         return functionSignatures.stream()
                 .filter(signature -> signature.matches(name, arguments))
                 .findFirst()
-                .orElseThrow(() -> new MethodSignatureNotFoundException(this, name, arguments));
+                .orElse(null);
     }
 
     public FunctionSignature getSignatureByTypes(String name, List<Type> argTypes) {
@@ -103,7 +104,7 @@ public class Scope {
     /**
      * @param struct Struct to add to the current scope
      */
-    public void addStruct(Struct struct) {
+    public void addStruct(StructType struct) {
         structs.add(struct);
     }
 
@@ -111,7 +112,7 @@ public class Scope {
      * @param name name of the Struct
      * @return a Struct if one named name exists in the current scope
      */
-    public Struct getStruct(String name) {
+    public StructType getStruct(String name) {
         return structs.stream().filter(struct -> struct.identifier.name.equals(name)).findFirst()
                 .orElse(null);
     }

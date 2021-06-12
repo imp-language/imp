@@ -33,9 +33,9 @@ public class Relational extends Expression {
     }
 
     @Override
-    public void validate() {
-        left.validate();
-        right.validate();
+    public void validate(Scope scope) {
+        left.validate(scope);
+        right.validate(scope);
         // Todo: make sure operation is compatible
     }
 

@@ -52,9 +52,9 @@ public class AssignmentStatement extends Statement {
     }
 
     @Override
-    public void validate() {
-        recipient.validate();
-        provider.validate();
+    public void validate(Scope scope) {
+        recipient.validate(scope);
+        provider.validate(scope);
 
         recipient.type = provider.type;
     }

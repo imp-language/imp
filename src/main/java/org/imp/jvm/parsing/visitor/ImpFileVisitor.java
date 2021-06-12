@@ -60,7 +60,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
             // Split classes out to their own files
             if (s instanceof Struct) {
                 Struct struct = (Struct) s;
-                impFile.structs.add(struct);
+                impFile.structTypes.add(struct.structType);
             } else {
                 // For everything else, add to the static class.
                 if (s instanceof org.imp.jvm.statement.Declaration) {

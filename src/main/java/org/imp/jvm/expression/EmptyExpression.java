@@ -15,7 +15,7 @@ public class EmptyExpression extends Expression {
     }
 
     @Override
-    public void validate() {
+    public void validate(Scope scope) {
         // Do nothing
     }
 

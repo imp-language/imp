@@ -1,15 +1,10 @@
 package org.imp.jvm.statement;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Expression;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import javax.swing.plaf.nimbus.State;
-import java.util.Optional;
 
 public class If extends Statement {
     public final Expression condition;
@@ -43,10 +38,10 @@ public class If extends Statement {
     }
 
     @Override
-    public void validate() {
-        condition.validate();
-        trueStatement.validate();
-        falseStatement.validate();
+    public void validate(Scope scope) {
+        condition.validate(scope);
+        trueStatement.validate(scope);
+        falseStatement.validate(scope);
     }
 
 }

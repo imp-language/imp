@@ -81,4 +81,9 @@ public class UnknownType implements Type {
     public Object getDefaultValue() {
         return null;
     }
+
+    @Override
+    public boolean isNumeric() {
+        return false;
+    }
 }

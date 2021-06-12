@@ -35,7 +35,7 @@ public class Identifier extends Expression {
     }
 
     @Override
-    public void validate() {
+    public void validate(Scope scope) {
 
     }
 }

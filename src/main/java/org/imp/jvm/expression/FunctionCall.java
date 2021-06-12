@@ -4,10 +4,8 @@ import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.types.ClassType;
 import org.imp.jvm.domain.types.StructType;
 import org.imp.jvm.domain.types.Type;
-import org.imp.jvm.statement.Statement;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -15,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FunctionCall extends Expression {
-    public final FunctionSignature signature;
+    public FunctionSignature signature;
     public List<Expression> arguments;
     public final ImpFile owner;
 
@@ -38,13 +36,18 @@ public class FunctionCall extends Expression {
     }
 
     @Override
-    public void validate() {
+    public void validate(Scope scope) {
         // Find the types of each of the arguments
-        arguments.forEach(Statement::validate);
+        for (var arg : arguments) {
+            arg.validate(scope);
+        }
         argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
 
         // Find a function that exists in the current scope that matches the FunctionSignature
-
+        signature = scope.getSignatureByTypes(this.name, this.argTypes);
+        if (signature == null) {
+            // Todo: Logger error
+        }
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
@@ -77,10 +80,6 @@ public class FunctionCall extends Expression {
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, descriptor, false);
             return;
         } else {
-            FunctionSignature signature = scope.getSignatureByTypes(this.name, this.argTypes);
-            arguments.forEach(argument -> argument.generate(mv, scope));
-
-
             // bytecode
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
 
