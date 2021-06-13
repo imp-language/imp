@@ -1,16 +1,7 @@
 
-log("\n negatives")
-val neg_i = -1
-log(neg_i)
-neg_i = neg_i + -23
-log(neg_i)
+val a = 4
+val b = -2
 
-val neg_f = -1.0
-log(neg_f)
-neg_f++
-log(neg_f)
-
-val neg_d = -1.0d
-log(neg_d)
-neg_d = neg_d + 346.0d
-log(neg_d)
+if a == 4 /*and b == -22*/ {
+    log("a")
+}

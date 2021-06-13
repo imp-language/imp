@@ -41,7 +41,10 @@ public class If extends Statement {
     public void validate(Scope scope) {
         condition.validate(scope);
         trueStatement.validate(scope);
-        falseStatement.validate(scope);
+        if (falseStatement != null) {
+
+            falseStatement.validate(scope);
+        }
     }
 
 }

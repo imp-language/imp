@@ -74,6 +74,17 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         return new Relational(left, right, compareSign);
     }
 
+    @Override
+    public Expression visitLogicalExpression(ImpParser.LogicalExpressionContext ctx) {
+        Expression left = ctx.expression(0).accept(this);
+        Expression right = ctx.expression(1).accept(this);
+        Logical.Operator operator = Logical.Operator.AND;
+        if (ctx.OR() != null) {
+            operator = Logical.Operator.OR;
+        }
+
+        return new Logical(left, right, operator);
+    }
 
     @Override
     public FunctionCall visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
