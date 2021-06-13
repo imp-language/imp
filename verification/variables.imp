@@ -29,3 +29,19 @@ log(b)
 
 s = s + " variable" + " a"
 log(s)
+
+log("\nnegatives")
+val neg_i = -1
+log(neg_i)
+neg_i = neg_i + -23
+log(neg_i)
+
+val neg_f = -1.0
+log(neg_f)
+neg_f++
+log(neg_f)
+
+val neg_d = -1.0d
+log(neg_d)
+neg_d = neg_d + 346.0d
+log(neg_d)

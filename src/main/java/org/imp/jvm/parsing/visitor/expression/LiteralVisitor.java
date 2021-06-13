@@ -19,7 +19,7 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
 
     @Override
     public Literal visitIntegerLiteral(ImpParser.IntegerLiteralContext ctx) {
-        return new Literal(BuiltInType.INT, ctx.DECIMAL_LIT().getText());
+        return new Literal(BuiltInType.INT, ctx.getText());
     }
 
     @Override
@@ -29,12 +29,12 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
 
     @Override
     public Literal visitFloatLiteral(ImpParser.FloatLiteralContext ctx) {
-        return new Literal(BuiltInType.FLOAT, ctx.FLOAT_LIT().getText());
+        return new Literal(BuiltInType.FLOAT, ctx.getText());
     }
 
     @Override
     public Literal visitDoubleLiteral(ImpParser.DoubleLiteralContext ctx) {
-        return new Literal(BuiltInType.DOUBLE, ctx.DOUBLE_LIT().getText());
+        return new Literal(BuiltInType.DOUBLE, ctx.getText());
     }
 
     @Override

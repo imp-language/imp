@@ -1,16 +1,16 @@
-/*val s = "s"
-log(s)
-//(s+"a")++
-log(s)
 
-struct P {
-    field int
-}
+log("\n negatives")
+val neg_i = -1
+log(neg_i)
+neg_i = neg_i + -23
+log(neg_i)
 
-val p = new Pa()
+val neg_f = -1.0
+log(neg_f)
+neg_f++
+log(neg_f)
 
-log(p.f)
-
-log(s.f)
-*/
-
+val neg_d = -1.0d
+log(neg_d)
+neg_d = neg_d + 346.0d
+log(neg_d)

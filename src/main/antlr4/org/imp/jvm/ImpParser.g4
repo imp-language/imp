@@ -246,7 +246,7 @@ identifier
 
 // Integers and booleans
 integerLiteral
-    : DECIMAL_LIT
+    : (SUB)? DECIMAL_LIT
     ;
 
 booleanLiteral
@@ -254,11 +254,11 @@ booleanLiteral
     ;
 
 floatLiteral
-    : FLOAT_LIT
+    : (SUB)? FLOAT_LIT
     ;
 
 doubleLiteral
-    : DOUBLE_LIT
+    : (SUB)? DOUBLE_LIT
     ;
 
 

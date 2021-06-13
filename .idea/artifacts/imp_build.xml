@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="imp-build">
+    <output-path>$PROJECT_DIR$/out/artifacts/imp_build</output-path>
+    <root id="archive" name="imp-build.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
