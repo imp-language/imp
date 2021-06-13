@@ -43,6 +43,8 @@ public class Declaration extends Statement {
     @Override
     public void validate(Scope scope) {
         expression.validate(scope);
+        localVariable = scope.getLocalVariable(name);
+        localVariable.type = expression.type;
 
     }
 

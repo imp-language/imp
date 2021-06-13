@@ -30,10 +30,10 @@ public class StructType implements Type {
         this.scope = scope;
     }
 
-    public StructType() {
+    public StructType(String temporaryName) {
         this.unknown = true;
         this.scope = null;
-        this.identifier = null;
+        this.identifier = new Identifier(temporaryName, this);
         this.fields = null;
         this.parent = null;
     }
@@ -97,6 +97,7 @@ public class StructType implements Type {
     @Override
     public String getName() {
 //        if (struct == null) return this.name;
+        if (unknown == true) return this.identifier.name;
         return this.parent.name + "/" + identifier.name;
     }
 

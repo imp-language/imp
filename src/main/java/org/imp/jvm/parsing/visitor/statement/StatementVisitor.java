@@ -112,13 +112,20 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         }
 //        addParametersAsLocalVariables(arguments);
 
+
         // Block
         ImpParser.BlockContext blockContext = ctx.block();
-        Block block = (Block) Optional.ofNullable(blockContext.accept(this)).orElse(new Block());
+        List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
 
-
+        // Child blocks inherit the parent block's scope
         // Add parameters as local variables to the scope of the function block
-        arguments.forEach(param -> block.scope.addLocalVariable(new LocalVariable(param.name, param.type)));
+        Scope newScope = new Scope(scope);
+        arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
+
+        StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
+        List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
+        Block block = new Block(statements, newScope);
+
 
         // Return type
         ImpParser.TypeContext typeContext = ctx.type();

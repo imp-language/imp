@@ -38,7 +38,7 @@ public class Scope {
     public Scope(Scope scope) {
         name = scope.name;
         functionSignatures = scope.functionSignatures;
-        localVariables = scope.localVariables;
+        localVariables = scope.localVariables.clone();
         structs = scope.structs;
     }
 

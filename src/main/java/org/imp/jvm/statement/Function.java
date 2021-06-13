@@ -20,6 +20,13 @@ public class Function extends Statement {
         this.signature = signature;
     }
 
+    @Override
+    public String toString() {
+        if (signature != null) {
+            return signature.toString();
+        }
+        return "null signature";
+    }
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {

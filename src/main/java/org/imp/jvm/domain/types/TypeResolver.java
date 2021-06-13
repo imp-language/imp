@@ -46,7 +46,7 @@ public class TypeResolver {
                 return builtInType.get();
             }
         } else if (text.length() > 0) {
-            return new StructType();
+            return new StructType(text);
         }
         return null;
     }

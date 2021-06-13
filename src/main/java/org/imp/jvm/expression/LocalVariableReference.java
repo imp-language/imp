@@ -27,7 +27,7 @@ public class LocalVariableReference extends Expression {
 
     @Override
     public void validate(Scope scope) {
-
+        this.type = localVariable.type;
     }
 
 }

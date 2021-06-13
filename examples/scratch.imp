@@ -14,32 +14,3 @@ log(p.f)
 log(s.f)
 */
 
-
-
-// Tests calling functions of the same name with
-// different argument types.
-
-struct Person {
-    fname string
-    lname string
-}
-
-function hello(name string) void {
-    log("hello, " + name)
-}
-
-function hello(p Person) void {
-    val fname = p.fname
-    log("HELLO, " + fname)
-}
-
-
-
-hello("Matt")
-hello("Kyle")
-
-
-
-val payton = new Person()
-payton.fname = "Payton"
-hello(payton)

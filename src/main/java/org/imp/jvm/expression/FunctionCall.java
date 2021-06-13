@@ -82,6 +82,11 @@ public class FunctionCall extends Expression {
         } else {
             // bytecode
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
+            // Todo: error for missing function signatures
+
+            for (var arg : arguments) {
+                arg.generate(mv, scope);
+            }
 
             // Function calls withing a single module never are accessed like module.func()
             // So the owner of each is the static class.

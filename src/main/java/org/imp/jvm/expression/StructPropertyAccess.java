@@ -42,6 +42,9 @@ public class StructPropertyAccess extends Expression {
 
     @Override
     public void validate(Scope scope) {
+        // Find the type of the parent reference
+        parent.validate(scope);
+
         // Given the path, set the final type of this property access
         var parentType = parent.type;
         if (parentType instanceof StructType parentStructType) {
