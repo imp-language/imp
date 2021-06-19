@@ -2,6 +2,7 @@ package org.imp.jvm.expression;
 
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.domain.types.BuiltInType;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -15,7 +16,7 @@ public class Relational extends Expression {
         this.left = left;
         this.right = right;
         this.compareSign = compareSign;
-        this.type = left.type;
+        this.type = BuiltInType.BOOLEAN;
     }
 
     public void generate(MethodVisitor mv, Scope scope) {

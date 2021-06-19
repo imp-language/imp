@@ -89,7 +89,7 @@ public class Verifier {
             stdOutLines.add(s);
         }
 
-        System.out.println("Here is the standard error of the command (if any):\n");
+//        System.out.println("Here is the standard error of the command (if any):\n");
         while ((s = stdError.readLine()) != null) {
             System.out.println(s);
         }
@@ -98,7 +98,7 @@ public class Verifier {
         // 4. Compare results
         if (solutionLines.size() > stdOutLines.size()) {
             flawsList.add(name);
-            System.out.println("Output is too short.");
+            System.out.println("Verifier: Solution output is longer than execution output.");
             System.out.println();
             return;
         }

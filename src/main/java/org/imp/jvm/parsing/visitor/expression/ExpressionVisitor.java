@@ -77,7 +77,10 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitLogicalExpression(ImpParser.LogicalExpressionContext ctx) {
         Expression left = ctx.expression(0).accept(this);
+        left.setCtx(ctx.expression(0));
         Expression right = ctx.expression(1).accept(this);
+        right.setCtx(ctx.expression(1));
+        
         Logical.Operator operator = Logical.Operator.AND;
         if (ctx.OR() != null) {
             operator = Logical.Operator.OR;

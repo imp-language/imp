@@ -9,6 +9,7 @@ interface TemplateFunction {
 }
 
 public enum SemanticErrors implements ErrorContext {
+    ImplementationError(-1, "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers.", ctx -> "This error message should never occur. "),
     MissingFieldType(0, "Each struct field must have a type. Consider adding 'string' or another primitive type after the field name.",
             ctx -> "Missing type declaration on struct field '" + ctx.getText() + "' near " + getLocation(ctx.getStart())
     ),
@@ -19,7 +20,9 @@ public enum SemanticErrors implements ErrorContext {
     StructFieldNotFound(3, "Check the type definition of custom types to find the correct field name, or to add a field of this name.",
             ctx -> "Identifier '" + ctx.getText() + "' does not exist as a field on the parent struct."),
     IncrementInvalidType(4, "Increment and decrement operations can only be called on numeric types",
-            ctx -> "Expression '" + ctx.getText() + "' cannot be incremented or decremented.")
+            ctx -> "Expression '" + ctx.getText() + "' cannot be incremented or decremented."),
+    LogicalOperationInvalidType(5, "Logical operations such as 'and' and 'or' can only be applied on expressions that evaluate to booleans.",
+            ctx -> "Expression '" + ctx.getText() + "' does not evaluate to a boolean value.")
     //
     ;
 
@@ -42,12 +45,15 @@ public enum SemanticErrors implements ErrorContext {
     }
 
     public String template(ParserRuleContext ctx) {
-        Token token = ctx.getStart();
-        String s = "filename@" + getLocation(token);
-        s += " SyntaxError[" + code + "]: ";
-        s += template.run(ctx);
-        s += "\n\t" + suggestion;
-        return s;
+        if (ctx != null) {
+            Token token = ctx.getStart();
+            String s = "filename@" + getLocation(token);
+            s += " SyntaxError[" + code + "]: ";
+            s += template.run(ctx);
+            s += "\n\t" + suggestion;
+            return s;
+        }
+        return "filename@[null] SyntaxError[" + code + "]: [null]";
     }
 
     @Override

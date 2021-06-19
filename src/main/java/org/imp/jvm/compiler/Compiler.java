@@ -97,6 +97,12 @@ public class Compiler {
 
         saveByteCodeToClassFile(ast);
 
+        if (Logger.getSyntaxErrors().size() > 0) {
+            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
+            System.out.println("Errored during bytecode generation.");
+            System.exit(1);
+        }
+
 
 //        InputStream inputStream = new FileInputStream(".compile/" + impFile.name + ".class");
 //        ClassReader classReader = new ClassReader(inputStream);
