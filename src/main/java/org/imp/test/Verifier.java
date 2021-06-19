@@ -3,16 +3,14 @@ package org.imp.test;
 import name.fraser.neil.plaintext.diff_match_patch;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.compiler.Compiler;
+import org.imp.jvm.tool.Compiler;
 import picocli.CommandLine;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Verifier {
 

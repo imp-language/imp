@@ -1,5 +1,7 @@
-package org.imp.jvm.compiler;
+package org.imp.jvm.tool;
 
+import org.imp.jvm.compiler.BytecodeGenerator;
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 
 import org.imp.jvm.parsing.Parser;
@@ -7,8 +9,6 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @CommandLine.Command(name = "imp")
 public class Compiler {
