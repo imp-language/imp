@@ -1,13 +1,9 @@
 package org.imp.jvm.parsing.visitor.expression;
 
-import org.antlr.v4.runtime.misc.Interval;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
-import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.expression.Literal;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
     private final ExpressionVisitor expressionVisitor;

@@ -1,2 +1,11 @@
 
 // java interop time
+
+struct Person {
+    fname string
+    lname string
+}
+
+
+val p = new Person("Matt", "Hall")
+log(p.fname)

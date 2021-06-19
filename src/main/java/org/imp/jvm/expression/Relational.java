@@ -2,7 +2,7 @@ package org.imp.jvm.expression;
 
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.types.BuiltInType;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

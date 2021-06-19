@@ -7,13 +7,12 @@ import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.types.UnknownType;
+import org.imp.jvm.types.UnknownType;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.types.BuiltInType;
-import org.imp.jvm.statement.Struct;
+import org.imp.jvm.types.BuiltInType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +79,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         left.setCtx(ctx.expression(0));
         Expression right = ctx.expression(1).accept(this);
         right.setCtx(ctx.expression(1));
-        
+
         Logical.Operator operator = Logical.Operator.AND;
         if (ctx.OR() != null) {
             operator = Logical.Operator.OR;

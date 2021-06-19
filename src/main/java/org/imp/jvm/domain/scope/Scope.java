@@ -1,13 +1,9 @@
 package org.imp.jvm.domain.scope;
 
-import org.imp.jvm.domain.types.StructType;
-import org.imp.jvm.domain.types.Type;
+import org.imp.jvm.types.StructType;
+import org.imp.jvm.types.Type;
 import org.imp.jvm.exception.LocalVariableNotFoundException;
-import org.imp.jvm.exception.MethodSignatureNotFoundException;
 import org.apache.commons.collections4.map.LinkedMap;
-import org.imp.jvm.exception.StructNotFoundException;
-import org.imp.jvm.statement.Function;
-import org.imp.jvm.statement.Struct;
 
 import java.util.*;
 import java.util.stream.Collectors;

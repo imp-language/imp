@@ -7,7 +7,7 @@ import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;
 

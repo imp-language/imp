@@ -3,9 +3,8 @@ package org.imp.jvm.expression;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.types.StructType;
+import org.imp.jvm.types.StructType;
 import org.imp.jvm.exception.SemanticErrors;
-import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 

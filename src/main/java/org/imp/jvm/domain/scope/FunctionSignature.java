@@ -1,9 +1,7 @@
 package org.imp.jvm.domain.scope;
 
-import org.imp.jvm.domain.types.Type;
+import org.imp.jvm.types.Type;
 
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -8,7 +8,7 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.types.*;
+import org.imp.jvm.types.*;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
@@ -17,7 +17,6 @@ import org.imp.jvm.statement.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 // http://www.ist.tugraz.at/_attach/Publish/Cb/typechecker_2017.pdf

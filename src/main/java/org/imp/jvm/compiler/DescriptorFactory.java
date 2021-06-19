@@ -2,11 +2,9 @@ package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.types.Type;
+import org.imp.jvm.types.Type;
 
-import java.lang.reflect.Parameter;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 //According to https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.3

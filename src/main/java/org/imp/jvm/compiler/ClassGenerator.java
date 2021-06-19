@@ -5,16 +5,14 @@ import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Method;
-import org.imp.jvm.domain.types.BuiltInType;
-import org.imp.jvm.domain.types.StructType;
-import org.imp.jvm.domain.types.Type;
+import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.StructType;
+import org.imp.jvm.types.Type;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Constructor;
 import org.imp.jvm.statement.Function;
-import org.imp.jvm.statement.Struct;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.ModuleVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
@@ -88,8 +86,13 @@ public class ClassGenerator {
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
         List<Function> functions = new ArrayList<>();
-        var constructorSignature = new FunctionSignature(name, Collections.emptyList(), BuiltInType.VOID);
-        functions.add(new Constructor(constructorSignature, new Block()));
+
+        assert struct.fields != null; // Todo: code smell
+        var constructorSignature = new FunctionSignature(name, struct.fields, BuiltInType.VOID);
+        Constructor constructor = new Constructor(constructorSignature, new Block());
+        constructor.assignFields(struct.fields);
+
+        functions.add(constructor);
         functions.forEach(f -> f.generate(classWriter));
 
         for (var field : struct.fields) {

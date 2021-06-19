@@ -1,4 +1,4 @@
-package org.imp.jvm.domain.types;
+package org.imp.jvm.types;
 
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;

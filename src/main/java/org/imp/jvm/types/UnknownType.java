@@ -1,55 +1,34 @@
-package org.imp.jvm.domain.types;
+package org.imp.jvm.types;
 
 import org.objectweb.asm.Opcodes;
 
-import java.util.HashMap;
-import java.util.Map;
+public class UnknownType implements Type {
 
-public class ClassType implements Type {
 
-    private final String name;
 //
 //    private static final Map<String, String> shortcuts = HashMap.of(
 //            "List", "java.util.ArrayList"
 //    );
 
-    public ClassType(String name) {
+    public final String name;
+
+    public UnknownType(String name) {
         this.name = name;
     }
 
-    public static ClassType Integer() {
-        return new ClassType("java.lang.Integer");
-    }
-
-
-    public static ClassType Double() {
-        return new ClassType("java.lang.Double");
-    }
-
-    public static ClassType Boolean() {
-        return new ClassType("java.lang.Boolean");
-    }
-
-    public static ClassType Float() {
-        return new ClassType("java.lang.Float");
-    }
-
-    public static Type String() {
-        return new ClassType("java.lang.String");
+    @Override
+    public String toString() {
+        return "<unknown>";
     }
 
     @Override
     public String getName() {
-        return name;
+        return "<unknown>";
     }
 
     @Override
     public Class<?> getTypeClass() {
-        try {
-            return Class.forName(name);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException();
-        }
+        return null;
     }
 
     @Override
@@ -59,7 +38,7 @@ public class ClassType implements Type {
 
     @Override
     public String getInternalName() {
-        return name.replace(".", "/");
+        return getName().replace(".", "/");
     }
 
     @Override
@@ -105,21 +84,5 @@ public class ClassType implements Type {
     @Override
     public boolean isNumeric() {
         return false;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ClassType classType = (ClassType) o;
-
-        return !(name != null ? !name.equals(classType.name) : classType.name != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return name != null ? name.hashCode() : 0;
     }
 }

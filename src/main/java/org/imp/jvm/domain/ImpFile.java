@@ -2,10 +2,9 @@ package org.imp.jvm.domain;
 
 
 import org.imp.jvm.domain.root.StaticUnit;
-import org.imp.jvm.domain.types.StructType;
-import org.imp.jvm.domain.types.Type;
-import org.imp.jvm.domain.types.TypeResolver;
-import org.imp.jvm.statement.Struct;
+import org.imp.jvm.types.StructType;
+import org.imp.jvm.types.Type;
+import org.imp.jvm.types.TypeResolver;
 
 import java.util.ArrayList;
 import java.util.List;

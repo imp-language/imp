@@ -1,9 +1,8 @@
-package org.imp.jvm.domain.types;
+package org.imp.jvm.types;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.statement.Struct;
 
 import java.util.Arrays;
 import java.util.Optional;

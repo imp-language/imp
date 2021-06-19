@@ -4,7 +4,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.domain.types.BuiltInType;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.expression.EmptyExpression;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;

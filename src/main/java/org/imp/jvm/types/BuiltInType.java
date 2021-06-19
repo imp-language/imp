@@ -1,4 +1,4 @@
-package org.imp.jvm.domain.types;
+package org.imp.jvm.types;
 
 public enum BuiltInType implements Type {
     BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT, false, false),
