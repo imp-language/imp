@@ -44,6 +44,9 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         String name = ctx.getText();
 
         LocalVariable local = scope.getLocalVariable(name);
+        if (local == null) {
+//            local = scope.ge
+        }
         if (scope.variableExists(name)) {
 
         }

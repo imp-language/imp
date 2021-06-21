@@ -5,6 +5,7 @@ import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Method;
+import org.imp.jvm.expression.LocalVariableReference;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
@@ -90,7 +91,8 @@ public class ClassGenerator {
         assert struct.fields != null; // Todo: code smell
         var constructorSignature = new FunctionSignature(name, struct.fields, BuiltInType.VOID);
         Constructor constructor = new Constructor(constructorSignature, new Block());
-        constructor.assignFields(struct.fields);
+
+//        constructor.assignFields(struct.fields);
 
         functions.add(constructor);
         functions.forEach(f -> f.generate(classWriter));

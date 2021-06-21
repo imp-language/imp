@@ -39,7 +39,22 @@ public class Constructor extends Function {
         MethodVisitor mv = cw.visitMethod(access, "<init>", description, null, null);
         mv.visitCode();
         callSuper(mv, block.scope);
+
+
         block.generate(mv, block.scope);
+
+        int i = 1;
+        for (var param : signature.parameters) {
+
+            mv.visitVarInsn(Opcodes.ALOAD, 0); // loads 'this'
+            mv.visitVarInsn(param.type.getLoadVariableOpcode(), i);
+            i++; // Todo: a more robust solution might be needed for larger constructors
+
+            String ownerInternalName = "scratch/Person";
+            mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, param.name, param.type.getDescriptor());
+
+        }
+
 
         appendReturn(mv, block.scope);
 
@@ -49,8 +64,6 @@ public class Constructor extends Function {
 
     private void callSuper(MethodVisitor mv, Scope scope) {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
-//        generateArguments(superCall);
-//        String ownerDescriptor = scope.getSuperClassInternalName();
         String ownerDescriptor = "java/lang/Object";
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V", false);
 
@@ -67,6 +80,8 @@ public class Constructor extends Function {
             List<Expression> expressions = new ArrayList<>();
             expressions.add(new Literal(BuiltInType.STRING, "a"));
             this.block.statements.add(new FunctionCall("log", expressions, null));
+
+
 //            StructPropertyAccess fieldAccess = new StructPropertyAccess();
 //
 //            AssignmentStatement assignment = new AssignmentStatement();

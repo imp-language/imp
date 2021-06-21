@@ -39,9 +39,12 @@ public class AssignmentStatement extends Statement {
             Identifier field = access.getLast();
 
             int index = scope.getLocalVariableIndex(access.parent.localVariable.name);
+
+            // Todo: this is big fucked up fix this
             if (access.parent.localVariable.name.equals("p")) {
                 index = 0;
             }
+
             mv.visitVarInsn(Opcodes.ALOAD, index);
             provider.generate(mv, scope);
             castIfNecessary(providerType, recipientType, mv);

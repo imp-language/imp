@@ -65,6 +65,9 @@ public class StructPropertyAccess extends Expression {
 
     }
 
+    /**
+     * @return the last element in this.validatedPath
+     */
     public Identifier getLast() {
         return validatedPath.get(validatedPath.size() - 1);
     }

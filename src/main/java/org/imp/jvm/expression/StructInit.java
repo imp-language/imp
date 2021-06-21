@@ -62,6 +62,10 @@ public class StructInit extends Expression {
         } else {
             this.type = st;
             arguments.forEach(expression -> expression.validate(scope));
+
+            if (arguments.size() != st.fields.size()) {
+                Logger.syntaxError(SemanticErrors.StructConstructorMismatch, getCtx());
+            }
         }
     }
 

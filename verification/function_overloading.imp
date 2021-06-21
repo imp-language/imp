@@ -11,8 +11,7 @@ function hello(name string) void {
 }
 
 function hello(p Person) void {
-    val fname = p.fname
-    log("HELLO, " + fname)
+    log("hello, " + p.fname)
 }
 
 

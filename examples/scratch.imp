@@ -7,5 +7,12 @@ struct Person {
 }
 
 
-val p = new Person("Matt", "Hall")
-log(p.fname)
+function run(p Person) {
+    log(p)
+}
+
+val person = new Person("Matt", "Hall")
+
+run(person)
+
+val functionRef = run

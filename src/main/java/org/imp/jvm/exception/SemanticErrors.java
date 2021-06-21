@@ -22,7 +22,9 @@ public enum SemanticErrors implements ErrorContext {
     IncrementInvalidType(4, "Increment and decrement operations can only be called on numeric types",
             ctx -> "Expression '" + ctx.getText() + "' cannot be incremented or decremented."),
     LogicalOperationInvalidType(5, "Logical operations such as 'and' and 'or' can only be applied on expressions that evaluate to booleans.",
-            ctx -> "Expression '" + ctx.getText() + "' does not evaluate to a boolean value.")
+            ctx -> "Expression '" + ctx.getText() + "' does not evaluate to a boolean value."),
+    StructConstructorMismatch(6, "Check the struct definition to make sure you are providing a value for all fields in the struct.",
+            ctx -> "Constructor call for struct '" + ctx.getText() + "' does not provide values for all fields in the struct.")
     //
     ;
 
