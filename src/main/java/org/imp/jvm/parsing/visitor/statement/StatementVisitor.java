@@ -99,8 +99,16 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
     @Override
     public Function visitFunctionStatement(ImpParser.FunctionStatementContext ctx) {
-        // Identifier
         String name = ctx.identifier().getText();
+
+        FunctionType functionType = scope.findFunctionType(name);
+
+        // If no FunctionTypes of name exist on the current scope,
+        if (functionType == null) {
+            // Create a new FunctionType and add it to the scope
+            functionType = new FunctionType(name);
+            scope.functionTypes.add(functionType);
+        }
 
 
         // Arguments
@@ -109,8 +117,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         if (argumentsContext != null) {
             arguments = argumentsContext.accept(new ArgumentsVisitor());
         }
-//        addParametersAsLocalVariables(arguments);
-
 
         // Block
         ImpParser.BlockContext blockContext = ctx.block();
@@ -136,8 +142,9 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
 
         // Todo: addParametersAsLocalVariables(signature);
-        FunctionSignature signature = new FunctionSignature(name, arguments, returnType);
+        FunctionSignature signature = new FunctionSignature(functionType, arguments, returnType);
         scope.addSignature(signature);
+        functionType.signatures.add(signature);
 
         return new Function(signature, block);
     }

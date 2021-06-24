@@ -1,5 +1,6 @@
 package org.imp.jvm.domain.scope;
 
+import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.Type;
 
 import java.util.List;
@@ -8,8 +9,11 @@ import java.util.stream.Collectors;
 public class FunctionSignature extends Identifier {
     public final List<Identifier> parameters;
 
-    public FunctionSignature(String name, List<Identifier> parameters, Type returnType) {
-        this.name = name;
+    public final FunctionType functionType;
+
+    public FunctionSignature(FunctionType functionType, List<Identifier> parameters, Type returnType) {
+        this.name = functionType.name;
+        this.functionType = functionType;
         this.parameters = parameters;
         this.type = returnType;
 
@@ -19,6 +23,7 @@ public class FunctionSignature extends Identifier {
         this.name = "<init>";
         this.parameters = parameters;
         this.type = returnType;
+        this.functionType = null;
 
     }
 

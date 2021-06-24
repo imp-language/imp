@@ -6,7 +6,9 @@ import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
+import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.UnknownType;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.*;
@@ -44,13 +46,21 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         String name = ctx.getText();
 
         LocalVariable local = scope.getLocalVariable(name);
+        if (local != null) {
+            return new LocalVariableReference(local);
+        }
+
+        FunctionType functionType = scope.findFunctionType(name);
+        if (functionType != null) {
+//            return new LocalVariableReference(functionType);
+        }
+
         if (local == null) {
-//            local = scope.ge
+
         }
         if (scope.variableExists(name)) {
 
         }
-        LocalVariable localVariable = new LocalVariable(name, BuiltInType.INT);
 
         return new LocalVariableReference(local);
     }

@@ -6,6 +6,7 @@ import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.expression.EmptyExpression;
+import org.imp.jvm.types.FunctionType;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -13,6 +14,7 @@ import org.objectweb.asm.Opcodes;
 public class Function extends Statement {
     public final Block block;
     public final FunctionSignature signature;
+
 
     public Function(FunctionSignature signature, Block block) {
         super();

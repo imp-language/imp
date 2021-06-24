@@ -10,6 +10,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;
+import org.imp.jvm.types.FunctionType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,8 +24,12 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         this.filename = filename;
     }
 
-    private FunctionSignature mainSignature = new FunctionSignature(
-            "main",
+    private final FunctionType mainFunctionType = new FunctionType(
+            "main"
+    );
+
+    private final FunctionSignature mainSignature = new FunctionSignature(
+            mainFunctionType,
             new ArrayList<>(),
             BuiltInType.VOID
     );
@@ -40,7 +45,9 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         // static unit for all non-class statements in the file
         var staticUnit = new StaticUnit(filename);
+        var mainFunctionType = new FunctionType("main");
         var main = new Function(mainSignature, new Block());
+
         Identifier varArgs = new Identifier();
         varArgs.type = BuiltInType.STRING_ARR;
         varArgs.name = "args";
@@ -88,7 +95,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         staticUnit.functions.add(main);
         var constructorSignature = new FunctionSignature(Collections.emptyList(), BuiltInType.VOID);
-        staticUnit.functions.add(new Constructor(constructorSignature, new Block()));
+        staticUnit.functions.add(new Constructor(null, constructorSignature, new Block()));
 
 
         return impFile;

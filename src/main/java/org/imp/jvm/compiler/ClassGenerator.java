@@ -7,6 +7,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Method;
 import org.imp.jvm.expression.LocalVariableReference;
 import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.statement.Block;
@@ -75,12 +76,12 @@ public class ClassGenerator {
      * Eventually these should be compiled to value types inlined for the JVM.
      * For now it's just a class.
      *
-     * @param struct Struct type
+     * @param structType Struct type
      * @return bytecode
      */
-    public ClassWriter generate(StructType struct) {
+    public ClassWriter generate(StructType structType) {
         classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
-        String name = struct.identifier.name;
+        String name = structType.identifier.name;
 
         String qualifiedName = packageName + "/" + name;
 
@@ -88,16 +89,16 @@ public class ClassGenerator {
 
         List<Function> functions = new ArrayList<>();
 
-        assert struct.fields != null; // Todo: code smell
-        var constructorSignature = new FunctionSignature(name, struct.fields, BuiltInType.VOID);
-        Constructor constructor = new Constructor(constructorSignature, new Block());
+        assert structType.fields != null; // Todo: code smell
+        var constructorType = new FunctionType("<init>");
+        var constructorSignature = new FunctionSignature(constructorType, structType.fields, BuiltInType.VOID);
+        Constructor constructor = new Constructor(structType, constructorSignature, new Block());
 
-//        constructor.assignFields(struct.fields);
 
         functions.add(constructor);
         functions.forEach(f -> f.generate(classWriter));
 
-        for (var field : struct.fields) {
+        for (var field : structType.fields) {
             Type type = field.type;
             String descriptor = type.getDescriptor();
             Object defaultValue = null;

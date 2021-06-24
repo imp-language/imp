@@ -7,12 +7,26 @@ struct Person {
 }
 
 
+
 function run(p Person) {
-    log(p)
+    log("heelo, " + p.fname)
 }
 
+function run(p string) void {
+    log("hello, " + p)
+}
+
+
+
 val person = new Person("Matt", "Hall")
-
 run(person)
+run("aaaaa")
 
-val functionRef = run
+// Todo: make this work
+//val functionRef = run
+
+/*
+
+
+
+*/

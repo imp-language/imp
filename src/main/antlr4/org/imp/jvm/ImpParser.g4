@@ -57,31 +57,34 @@ expressionList
 
 expression
     : callStatement                                    #CallStatementExpression
+    | expression (DOT identifier)+                     #PropertyAccessExpression
+    | expression LBRACK expression RBRACK              #MemberIndexExpression
     | identifier                                       #IdentifierReferenceExpression
     | literal                                          #LiteralExpression
+    | LPAREN expression RPAREN                         #WrappedExpression
     | (BANG | NOT) expression                          #UnaryNotExpression
     | (ADD | SUB) expression                           #UnaryAdditiveExpression
     | <assoc=right> expression POW expression          #PowerExpression
     | expression (MUL | DIV | MOD) expression          #MultiplicativeExpression
     | expression (ADD | SUB) expression                #AdditiveExpression
     | expression cmp=(LE | LT | GE | GT | EQUAL | NOTEQUAL) expression        #RelationalExpression
-    | expression cmp=(AND | OR) expression                 #LogicalExpression
-    | expression (DOT identifier)+                     #PropertyAccessExpression
+    | expression cmp=(AND | OR) expression             #LogicalExpression
     | expression DOT callStatement                     #MethodCallExpression
     | expression (INC | DEC)                           #PostIncrementExpression
-    | NEW identifier LPAREN (expressionList)? RPAREN   #NewObjectExpression
-    | expression LBRACK expression RBRACK              #MemberIndexExpression
     | expression ASSIGN expression                     #AssignmentExpression
-    | LPAREN expression RPAREN                         #WrappedExpression
+    | NEW identifier LPAREN (expressionList)? RPAREN   #NewObjectExpression
     ;
 
+propertyAccess
+    : (DOT identifier)+
+    ;
 
 /*
  * Statements
  */
 
-assignment
 //    : expressionList assign_op expressionList
+assignment
     : expression assign_op expression;
 
 // +=, -=, *=, /=, ^=, %=, or of course =

@@ -1,5 +1,6 @@
 package org.imp.jvm.domain.scope;
 
+import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.exception.LocalVariableNotFoundException;
@@ -20,6 +21,8 @@ public class Scope {
 
     private final List<FunctionSignature> functionSignatures;
 
+    public final List<FunctionType> functionTypes;
+
     private final List<StructType> structs;
 
     private final String name;
@@ -29,6 +32,7 @@ public class Scope {
         localVariables = new LinkedMap<>();
         functionSignatures = new ArrayList<>();
         structs = new ArrayList<>();
+        functionTypes = new ArrayList<>();
     }
 
     public Scope(Scope scope) {
@@ -36,6 +40,15 @@ public class Scope {
         functionSignatures = scope.functionSignatures;
         localVariables = scope.localVariables.clone();
         structs = scope.structs;
+        functionTypes = scope.functionTypes;
+    }
+
+    /**
+     * @param f string name to search for
+     * @return FunctionType if any functions of name `f` exist in the current scope
+     */
+    public FunctionType findFunctionType(String f) {
+        return functionTypes.stream().filter(fType -> fType.name.equals(f)).findFirst().orElse(null);
     }
 
     /**

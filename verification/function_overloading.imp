@@ -11,7 +11,7 @@ function hello(name string) void {
 }
 
 function hello(p Person) void {
-    log("hello, " + p.fname)
+    log("HELLO, " + p.fname)
 }
 
 
@@ -21,6 +21,5 @@ hello("Kyle")
 
 
 
-val payton = new Person()
-payton.fname = "Payton"
+val payton = new Person("Payton", "Kramer")
 hello(payton)

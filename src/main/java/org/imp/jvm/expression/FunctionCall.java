@@ -4,6 +4,7 @@ import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
@@ -43,10 +44,23 @@ public class FunctionCall extends Expression {
         }
         argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
 
+        if (name.equals("log")) {
+            return;
+        }
+
+        // Find a FunctionType in the current scope by name
+        FunctionType functionType = scope.findFunctionType(this.name);
+        if (functionType == null) {
+            System.err.println("Error! no functions of name " + this.name);
+            System.exit(11);
+        }
+
         // Find a function that exists in the current scope that matches the FunctionSignature
-        signature = scope.getSignatureByTypes(this.name, this.argTypes);
+
+        signature = functionType.getSignatureByTypes(this.name, this.argTypes);
         if (signature == null) {
-            // Todo: Logger error
+            System.err.println("Error! no matching parameters for function " + this.name);
+            System.exit(12);
         }
     }
 

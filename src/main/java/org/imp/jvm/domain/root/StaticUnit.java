@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StaticUnit extends RootUnit {
-    public List<Statement> staticInitializations = new ArrayList<>();
     public final List<Function> functions = new ArrayList<>();
 
     public StaticUnit(String name) {

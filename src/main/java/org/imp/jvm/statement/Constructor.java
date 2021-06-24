@@ -7,6 +7,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.StructType;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -14,10 +15,14 @@ import org.objectweb.asm.Opcodes;
 import java.util.ArrayList;
 import java.util.List;
 
+// Todo: generate constructor alternates, including empty constructors
 public class Constructor extends Function {
 
-    public Constructor(FunctionSignature signature, Block block) {
+    public final StructType structType;
+
+    public Constructor(StructType structType, FunctionSignature signature, Block block) {
         super(signature, block);
+        this.structType = structType;
         this.signature.type = BuiltInType.VOID;
     }
 
@@ -31,8 +36,6 @@ public class Constructor extends Function {
     public void generate(ClassWriter cw) {
         String name = signature.name;
         String description = DescriptorFactory.getMethodDescriptor(this);
-//        description = "()V";
-        // Todo: better constructors
 
         int access = Opcodes.ACC_PUBLIC;
 
@@ -50,7 +53,7 @@ public class Constructor extends Function {
             mv.visitVarInsn(param.type.getLoadVariableOpcode(), i);
             i++; // Todo: a more robust solution might be needed for larger constructors
 
-            String ownerInternalName = "scratch/Person";
+            String ownerInternalName = structType.getInternalName();
             mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, param.name, param.type.getDescriptor());
 
         }
@@ -74,7 +77,11 @@ public class Constructor extends Function {
         r.generate(mv, scope);
     }
 
-    public void assignFields(List<Identifier> fields) {
+    public void assignFields(StructType structType) {
+
+
+
+        /*
         System.out.println("f");
         for (var field : fields) {
             List<Expression> expressions = new ArrayList<>();
@@ -85,6 +92,6 @@ public class Constructor extends Function {
 //            StructPropertyAccess fieldAccess = new StructPropertyAccess();
 //
 //            AssignmentStatement assignment = new AssignmentStatement();
-        }
+        }*/
     }
 }

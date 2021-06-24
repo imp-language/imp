@@ -1,2 +1,2 @@
-Hello, peter
-Hello, matt
+Hello, Peter
+Hello, Matt

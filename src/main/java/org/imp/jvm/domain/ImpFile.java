@@ -2,6 +2,7 @@ package org.imp.jvm.domain;
 
 
 import org.imp.jvm.domain.root.StaticUnit;
+import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.types.TypeResolver;
@@ -20,6 +21,7 @@ public class ImpFile {
 
     // All structs defined in the source file.
     public final List<StructType> structTypes = new ArrayList<>();
+
 
     public ImpFile(StaticUnit staticUnit, String name) {
         this.name = name;
