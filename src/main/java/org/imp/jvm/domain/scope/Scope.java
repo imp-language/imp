@@ -65,7 +65,7 @@ public class Scope {
      */
     public LocalVariable getLocalVariable(String varName) {
         return Optional.ofNullable(localVariables.get(varName))
-                .orElseThrow(() -> new LocalVariableNotFoundException(this, varName));
+                .orElse(null);
     }
 
     /**

@@ -64,6 +64,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
             String n = identifierContext.getText();
             var field = new Identifier(n, t);
+            field.setCtx(fCtx);
             fields.add(field);
         }
 
@@ -97,6 +98,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         return new Block();
     }
 
+    // Todo: don't allow multiple definitions with same signature
     @Override
     public Function visitFunctionStatement(ImpParser.FunctionStatementContext ctx) {
         String name = ctx.identifier().getText();
@@ -141,7 +143,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         }
 
 
-        // Todo: addParametersAsLocalVariables(signature);
         FunctionSignature signature = new FunctionSignature(functionType, arguments, returnType);
         scope.addSignature(signature);
         functionType.signatures.add(signature);

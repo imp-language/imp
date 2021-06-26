@@ -52,17 +52,12 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         FunctionType functionType = scope.findFunctionType(name);
         if (functionType != null) {
-//            return new LocalVariableReference(functionType);
+            return new LocalVariableReference(functionType);
         }
 
-        if (local == null) {
-
-        }
-        if (scope.variableExists(name)) {
-
-        }
-
-        return new LocalVariableReference(local);
+        System.err.println("Bad!");
+        System.exit(17);
+        return null;
     }
 
 
@@ -81,7 +76,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public Relational visitRelationalExpression(ImpParser.RelationalExpressionContext ctx) {
         Expression left = ctx.expression(0).accept(this);
         Expression right = ctx.expression(1).accept(this);
-        // ToDo: operator overloading for comparison
+
         CompareSign compareSign = CompareSign.fromString(ctx.cmp.getText());
         return new Relational(left, right, compareSign);
     }
@@ -103,8 +98,6 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
     @Override
     public FunctionCall visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
-        // Todo: At this point we do not know of any functions that exist.
-        // Todo: error handling for nonexistent function signatures. integrate into new error handling pass
 
         ImpParser.CallStatementContext callCtx = ctx.callStatement();
 
@@ -117,6 +110,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         // Function Call
         FunctionCall call = new FunctionCall(functionName, argExpressions, parent);
+        call.setCtx(ctx);
 
         return call;
 
@@ -159,7 +153,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
             return new EmptyExpression(postType);
         }
 
-        // Todo: maybe this should be moved to the Validation pass?
+        // Maybe this should be moved to the Validation pass?
         // But then we'd need a class for IncrementExpression
     }
 
@@ -186,9 +180,6 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         }
 
-//        Struct struct = new Struct()
-//        if (struct.)
-        // Todo: use SemanticErrors
         var si = new StructInit(structName, expressions, null);
         si.setCtx(ctx.identifier());
         return si;

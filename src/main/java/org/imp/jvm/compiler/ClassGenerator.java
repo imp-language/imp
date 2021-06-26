@@ -1,5 +1,6 @@
 package org.imp.jvm.compiler;
 
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.root.RootUnit;
 import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.FunctionSignature;
@@ -47,23 +48,24 @@ public class ClassGenerator {
     /**
      * Generate JVM static class from an Imp file
      *
-     * @param staticUnit StaticUnit
+     * @param impFile Imp source file
      * @return bytecode
      */
-    public ClassWriter generate(StaticUnit staticUnit) {
+    public ClassWriter generate(ImpFile impFile) {
         classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
-        String name = staticUnit.name;
+        String name = impFile.name;
         name = "Entry";
         String qualifiedName = packageName + "/" + name;
 
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
-        List<Function> functions = staticUnit.functions;
+        List<Function> functions = impFile.functions;
         functions.forEach(f -> f.generate(classWriter));
 
         FieldGenerator fieldGenerator = new FieldGenerator(classWriter, Opcodes.ACC_STATIC);
-        List<Identifier> properties = staticUnit.properties;
+        List<Identifier> properties = impFile.staticUnit.properties;
         for (var prop : properties) {
+            System.out.println("hmmmm");
             prop.accept(fieldGenerator);
         }
         classWriter.visitEnd();

@@ -1,7 +1,10 @@
 package org.imp.jvm.domain;
 
 
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.root.StaticUnit;
+import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.statement.Function;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
@@ -18,6 +21,9 @@ public class ImpFile {
 
     // Top-level entities in the source file.
     public final StaticUnit staticUnit;
+
+    // All first-class functions defined in the source file.
+    public final List<Function> functions = new ArrayList<>();
 
     // All structs defined in the source file.
     public final List<StructType> structTypes = new ArrayList<>();
@@ -39,20 +45,17 @@ public class ImpFile {
         for (var s : structTypes) {
             for (var f : s.fields) {
                 Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
-                // Todo: error when no type found
-//                Logger.syntaxError(SemanticErrors.TypeNotFound, s.getLine());
+                if (t == null) {
+                    Logger.syntaxError(SemanticErrors.TypeNotFound, f.getCtx());
+
+                }
                 f.type = t;
             }
         }
 
-        // 1. Validate and store all function signatures
-        for (var f : staticUnit.functions) {
 
-        }
-
-
-        // 2. Recursively type-check the body of each function
-        for (var f : staticUnit.functions) {
+        // 1. Recursively type-check the body of each function
+        for (var f : functions) {
             f.block.validate(f.block.scope);
         }
 

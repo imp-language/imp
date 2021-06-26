@@ -6,24 +6,23 @@ struct Person {
     lname string
 }
 
+val counter = 0
 
-
-function run(p Person) {
-    log("heelo, " + p.fname)
+function run(p int) {
+    log(p)
+}
+function run(p float) {
+    log(p)
 }
 
-function run(p string) void {
-    log("hello, " + p)
-}
 
+run(42)
 
+//log(run)
 
-val person = new Person("Matt", "Hall")
-run(person)
-run("aaaaa")
 
 // Todo: make this work
-//val functionRef = run
+// val functionRef = run
 
 /*
 

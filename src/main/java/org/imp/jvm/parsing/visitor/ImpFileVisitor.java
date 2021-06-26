@@ -82,7 +82,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
                     Function f = (Function) s;
 
                     // add function to static class methods
-                    staticUnit.functions.add(f);
+                    impFile.functions.add(f);
                 } else {
                     // All other root level nodes go in the main method
                     main.block.statements.add(s);
@@ -93,9 +93,9 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         }
 
-        staticUnit.functions.add(main);
+        impFile.functions.add(main);
         var constructorSignature = new FunctionSignature(Collections.emptyList(), BuiltInType.VOID);
-        staticUnit.functions.add(new Constructor(null, constructorSignature, new Block()));
+        impFile.functions.add(new Constructor(null, constructorSignature, new Block()));
 
 
         return impFile;

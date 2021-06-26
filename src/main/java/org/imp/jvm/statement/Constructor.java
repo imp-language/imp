@@ -51,7 +51,7 @@ public class Constructor extends Function {
 
             mv.visitVarInsn(Opcodes.ALOAD, 0); // loads 'this'
             mv.visitVarInsn(param.type.getLoadVariableOpcode(), i);
-            i++; // Todo: a more robust solution might be needed for larger constructors
+            i++; // a more robust solution might be needed for larger constructors
 
             String ownerInternalName = structType.getInternalName();
             mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, param.name, param.type.getDescriptor());

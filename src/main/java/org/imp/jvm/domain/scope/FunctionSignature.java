@@ -51,6 +51,13 @@ public class FunctionSignature extends Identifier {
         // ToDo: this throws an exception, probably something with null parameters or return type
         String params = parameters.stream().map(Object::toString)
                 .collect(Collectors.joining(", "));
-        return name + " (" + String.join(", ", params) + ") " + type;
+        return "(" + String.join(", ", params) + ") " + type;
+    }
+
+    public String toStringRepr() {
+        // ToDo: this throws an exception, probably something with null parameters or return type
+        String params = parameters.stream().map(parameters -> parameters.type.toString())
+                .collect(Collectors.joining(", "));
+        return "(" + String.join(", ", params) + ") " + type;
     }
 }

@@ -3,9 +3,14 @@ package org.imp.jvm.exception;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.imp.jvm.statement.Struct;
 
 interface TemplateFunction {
     String run(ParserRuleContext token);
+}
+
+interface StringTemplateFunction {
+    String run(String message);
 }
 
 public enum SemanticErrors implements ErrorContext {
@@ -13,8 +18,8 @@ public enum SemanticErrors implements ErrorContext {
     MissingFieldType(0, "Each struct field must have a type. Consider adding 'string' or another primitive type after the field name.",
             ctx -> "Missing type declaration on struct field '" + ctx.getText() + "' near " + getLocation(ctx.getStart())
     ),
-    TypeNotFound(1, "Make sure all types you are referencing have been defined.",
-            ctx -> "Type '" + ctx.getText() + "' does not exist in the current scope."),
+    TypeNotFound(1, "Make sure all types are defined or builtin.",
+            ctx -> "Type '" + ctx.getStop().getText() + "' does not exist in the current scope."),
     PrimitiveTypePropertyAccess(2, "Property access cannot be used on variables with primitive types like int, float, or bool.",
             ctx -> "Variable '" + ctx.getStart().getText() + "' does not support property access as it has a primitive type."),
     StructFieldNotFound(3, "Check the type definition of custom types to find the correct field name, or to add a field of this name.",
@@ -24,13 +29,21 @@ public enum SemanticErrors implements ErrorContext {
     LogicalOperationInvalidType(5, "Logical operations such as 'and' and 'or' can only be applied on expressions that evaluate to booleans.",
             ctx -> "Expression '" + ctx.getText() + "' does not evaluate to a boolean value."),
     StructConstructorMismatch(6, "Check the struct definition to make sure you are providing a value for all fields in the struct.",
-            ctx -> "Constructor call for struct '" + ctx.getText() + "' does not provide values for all fields in the struct.")
+            ctx -> "Constructor call for struct '" + ctx.getText() + "' does not provide values for all fields in the struct."),
+    FunctionNotFound(7, "Make sure to define or import all functions being called.",
+            ctx -> "No functions named '" + ctx.getStart().getText() + "' exist in the current scope."),
+    // Todo: print attempted signature or available signatures instead
+    FunctionSignatureMismatch(8, "Check the parameter positions and types of the called function.",
+            ctx -> "No function overloads exist on '" + ctx.getStart().getText() + "' that match the parameters '" + ctx.getText() + "'."),
+    LocalVariableNotFound(9, "Make sure all variables referenced in this file are defined or imported.",
+            ctx -> "No variable named '" + ctx.getText() + "' exists in the current scope.")
     //
     ;
 
     public String suggestion;
     public int code;
     public TemplateFunction template;
+    public StringTemplateFunction stringTemplate;
 
 
     SemanticErrors(int code, String suggestion, TemplateFunction template) {
@@ -39,9 +52,10 @@ public enum SemanticErrors implements ErrorContext {
         this.template = template;
     }
 
+
     private static String getLocation(Token token) {
         int line = token.getLine();
-        int col = token.getTokenIndex();
+        int col = token.getCharPositionInLine() + 1;
         String location = line + ":" + col;
         return location;
     }

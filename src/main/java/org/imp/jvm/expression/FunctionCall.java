@@ -1,9 +1,12 @@
 package org.imp.jvm.expression;
 
 import org.imp.jvm.compiler.DescriptorFactory;
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
@@ -51,16 +54,16 @@ public class FunctionCall extends Expression {
         // Find a FunctionType in the current scope by name
         FunctionType functionType = scope.findFunctionType(this.name);
         if (functionType == null) {
-            System.err.println("Error! no functions of name " + this.name);
-            System.exit(11);
+            Logger.syntaxError(SemanticErrors.FunctionNotFound, getCtx());
+            return;
         }
 
         // Find a function that exists in the current scope that matches the FunctionSignature
 
         signature = functionType.getSignatureByTypes(this.name, this.argTypes);
         if (signature == null) {
-            System.err.println("Error! no matching parameters for function " + this.name);
-            System.exit(12);
+            Logger.syntaxError(SemanticErrors.FunctionSignatureMismatch, getCtx());
+            return;
         }
     }
 
@@ -73,6 +76,10 @@ public class FunctionCall extends Expression {
 
             // get the variation of println to call
             Type argType = arguments.get(0).type;
+
+            if (argType instanceof FunctionType) {
+                argType = BuiltInType.STRING;
+            }
 
 
             String descriptor = "(" + argType.getDescriptor() + ")V";
@@ -96,7 +103,6 @@ public class FunctionCall extends Expression {
         } else {
             // bytecode
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
-            // Todo: error for missing function signatures
 
             for (var arg : arguments) {
                 arg.generate(mv, scope);
