@@ -126,9 +126,10 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         if (blockContext.statementList() != null) {
             List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
 
-            // Child blocks inherit the parent block's scope
+            // Todo: Child blocks inherit the parent block's scope
             // Add parameters as local variables to the scope of the function block
-            Scope newScope = new Scope(scope);
+//            Scope newScope = new Scope(scope);
+            Scope newScope = new Scope(name);
             arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
 
             StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);

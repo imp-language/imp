@@ -11,11 +11,11 @@ struct Date {
     day int
 }
 
-val matt = new Person()
-matt.fname = "matt"
+val matt = new Person("matt", "hall", new Date(0, 0, 0))
+//matt.fname = "matt"
 
-val peter = new Person()
-peter.fname = "peter"
+val peter = new Person("peter", "hall", new Date(0, 0, 0))
+//peter.fname = "peter"
 
 function greet(p Person) {
     log("Hello, ")

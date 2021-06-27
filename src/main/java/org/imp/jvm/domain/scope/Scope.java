@@ -74,7 +74,8 @@ public class Scope {
      * @return index of local variable in frame
      */
     public int getLocalVariableIndex(String varName) {
-        return localVariables.indexOf(varName);
+        // `this` and `super` usually occupy position 0 so we start at position 1?
+        return localVariables.indexOf(varName) + 1;
     }
 
     /**

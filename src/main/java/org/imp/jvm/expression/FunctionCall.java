@@ -4,6 +4,7 @@ import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.statement.Function;
@@ -115,10 +116,15 @@ public class FunctionCall extends Expression {
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
 
-            mv.visitVarInsn(Opcodes.ASTORE, function.functionType.callSites);
+            // 2. Store the function closure as a local variable.
+            // Todo: this doesn't always need to happen. Think about closures.
+            String localVariableName = ownerDescriptor + function.functionType.callSites;
+            scope.addLocalVariable(new LocalVariable(localVariableName, function.functionType));
+            mv.visitVarInsn(Opcodes.ASTORE, scope.getLocalVariableIndex(localVariableName));
             function.functionType.callSites++;
 
-            mv.visitVarInsn(Opcodes.ALOAD, function.functionType.callSites - 1);
+            int index = scope.getLocalVariableIndex(localVariableName);
+            mv.visitVarInsn(Opcodes.ALOAD, index);
 
             // 2. Generate arguments
             for (var arg : arguments) {

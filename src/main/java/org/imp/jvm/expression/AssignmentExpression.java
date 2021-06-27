@@ -34,7 +34,8 @@ public class AssignmentExpression extends Expression {
 
             int index = scope.getLocalVariableIndex(access.parent.localVariable.name);
             if (access.parent.localVariable.name.equals("p")) {
-                index = 0;
+//                index = 0;
+                System.out.println("reee");
             }
             mv.visitVarInsn(Opcodes.ALOAD, index);
             provider.generate(mv, scope);
