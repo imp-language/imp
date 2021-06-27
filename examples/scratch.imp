@@ -6,17 +6,32 @@ struct Person {
     lname string
 }
 
-val counter = 0
+val counter = "a"
 
-function run(p int) {
+func run(p int) {
     log(p)
 }
-function run(p float) {
+func run(p float) {
     log(p)
 }
 
+func aaaa(b int) {
+
+}
+
+func ded(b string) {
+
+
+}
+
+func ded(b Person) {
+
+}
+
+//ded("a")
 
 run(42)
+run(69.420)
 
 //log(run)
 

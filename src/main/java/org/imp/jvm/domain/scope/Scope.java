@@ -1,5 +1,6 @@
 package org.imp.jvm.domain.scope;
 
+import org.imp.jvm.statement.Function;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 public class Scope {
     private final LinkedMap<String, LocalVariable> localVariables;
 
-    private final List<FunctionSignature> functionSignatures;
+    private final List<Function> functionSignatures;
 
     public final List<FunctionType> functionTypes;
 
@@ -89,7 +90,7 @@ public class Scope {
     /**
      * @param signature FunctionSignature to add to the current scope
      */
-    public void addSignature(FunctionSignature signature) {
+    public void addSignature(Function signature) {
         functionSignatures.add(signature);
     }
 
@@ -98,14 +99,14 @@ public class Scope {
      * @param arguments list of arguments in the function call
      * @return a FunctionSignature if such a function exists in the current scope.
      */
-    public FunctionSignature getSignature(String name, List<Identifier> arguments) {
+    public Function getSignature(String name, List<Identifier> arguments) {
         return functionSignatures.stream()
                 .filter(signature -> signature.matches(name, arguments))
                 .findFirst()
                 .orElse(null);
     }
 
-    public FunctionSignature getSignatureByTypes(String name, List<Type> argTypes) {
+    public Function getSignatureByTypes(String name, List<Type> argTypes) {
         var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
         return getSignature(name, identifiers);
     }

@@ -1,7 +1,8 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.domain.scope.FunctionSignature;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.statement.Function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +11,17 @@ import java.util.stream.Collectors;
 public class FunctionType implements Type {
 
     public final String name;
-    public final List<FunctionSignature> signatures;
+    public final List<Function> signatures;
+    public final ImpFile parent;
+    public int callSites = 1;
 
-    public FunctionType(String name) {
+    public FunctionType(String name, ImpFile parent) {
         this.name = name;
         this.signatures = new ArrayList<>();
+        this.parent = parent;
     }
 
-    public FunctionSignature getSignatureByTypes(String name, List<Type> argTypes) {
+    public Function getSignatureByTypes(String name, List<Type> argTypes) {
         var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
         return getSignature(name, identifiers);
     }
@@ -25,9 +29,9 @@ public class FunctionType implements Type {
     /**
      * @param name      scoped name of the method
      * @param arguments list of arguments in the function call
-     * @return a FunctionSignature if such a function exists in the current scope.
+     * @return a Function if such a function exists in the current scope.
      */
-    public FunctionSignature getSignature(String name, List<Identifier> arguments) {
+    public Function getSignature(String name, List<Identifier> arguments) {
         return signatures.stream()
                 .filter(signature -> signature.matches(name, arguments))
                 .findFirst()
@@ -44,7 +48,7 @@ public class FunctionType implements Type {
 
     @Override
     public String getName() {
-        return name;
+        return this.parent.name + "/Function_" + name;
     }
 
     @Override
@@ -59,7 +63,7 @@ public class FunctionType implements Type {
 
     @Override
     public String getInternalName() {
-        return null;
+        return getName().replace(".", "/");
     }
 
     @Override

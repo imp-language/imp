@@ -24,15 +24,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         this.filename = filename;
     }
 
-    private final FunctionType mainFunctionType = new FunctionType(
-            "main"
-    );
 
-    private final FunctionSignature mainSignature = new FunctionSignature(
-            mainFunctionType,
-            new ArrayList<>(),
-            BuiltInType.VOID
-    );
 
     @Override
     public ImpFile visitProgram(ImpParser.ProgramContext ctx) {
@@ -42,20 +34,25 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         // Root Scope for Static Unit
         Scope staticScope = new Scope("static");
 
-
         // static unit for all non-class statements in the file
         var staticUnit = new StaticUnit(filename);
-        var mainFunctionType = new FunctionType("main");
-        var main = new Function(mainSignature, new Block());
+        // Todo: remove StaticUnits
+
+        // create an ImpFile node with appropriate children
+        var impFile = new ImpFile(staticUnit, filename);
+
+
+        var mainFunctionType = new FunctionType("main", impFile);
+        var main = new Function(mainFunctionType,
+                new ArrayList<>(),
+                BuiltInType.VOID, new Block());
 
         Identifier varArgs = new Identifier();
         varArgs.type = BuiltInType.STRING_ARR;
         varArgs.name = "args";
-        main.signature.parameters.add(varArgs);
+        main.parameters.add(varArgs);
         main.block.scope = staticScope;
 
-        // create an ImpFile node with appropriate children
-        var impFile = new ImpFile(staticUnit, filename);
 
         // handle each statement appropriately
         StatementVisitor statementVisitor = new StatementVisitor(staticScope, impFile);
@@ -94,8 +91,9 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         }
 
         impFile.functions.add(main);
+        var constructorType = new FunctionType("<init>", impFile);
         var constructorSignature = new FunctionSignature(Collections.emptyList(), BuiltInType.VOID);
-        impFile.functions.add(new Constructor(null, constructorSignature, new Block()));
+        impFile.functions.add(new Constructor(null, constructorType, Collections.emptyList(), new Block()));
 
 
         return impFile;

@@ -108,7 +108,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         // If no FunctionTypes of name exist on the current scope,
         if (functionType == null) {
             // Create a new FunctionType and add it to the scope
-            functionType = new FunctionType(name);
+            functionType = new FunctionType(name, parent);
             scope.functionTypes.add(functionType);
         }
 
@@ -122,16 +122,21 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
         // Block
         ImpParser.BlockContext blockContext = ctx.block();
-        List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
+        Block block;
+        if (blockContext.statementList() != null) {
+            List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
 
-        // Child blocks inherit the parent block's scope
-        // Add parameters as local variables to the scope of the function block
-        Scope newScope = new Scope(scope);
-        arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
+            // Child blocks inherit the parent block's scope
+            // Add parameters as local variables to the scope of the function block
+            Scope newScope = new Scope(scope);
+            arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
 
-        StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
-        List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
-        Block block = new Block(statements, newScope);
+            StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
+            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
+            block = new Block(statements, newScope);
+        } else {
+            block = new Block();
+        }
 
 
         // Return type
@@ -143,11 +148,15 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         }
 
 
-        FunctionSignature signature = new FunctionSignature(functionType, arguments, returnType);
-        scope.addSignature(signature);
-        functionType.signatures.add(signature);
+//        FunctionSignature signature = new FunctionSignature(functionType, arguments, returnType);
+//        functionType.signatures.add(signature);
 
-        return new Function(signature, block);
+        Function function = new Function(functionType, arguments, returnType, block);
+        functionType.signatures.add(function);
+        scope.addSignature(function);
+        function.setCtx(ctx);
+
+        return function;
     }
 
     @Override

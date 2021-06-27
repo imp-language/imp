@@ -40,7 +40,7 @@ public class LocalVariableReference extends Expression {
             String varName = localVariable.getName();
             int index = scope.getLocalVariableIndex(varName);
             if (localVariable.name.equals("p")) { // Todo: this is AWFUL
-                index = 0;
+//                index = 0;
             }
             this.type = localVariable.type; // Todo: this should be designed as to make this redundant. Both LocalVariable and LocalVariableReference shouldn't need type
             mv.visitVarInsn(localVariable.type.getLoadVariableOpcode(), index);

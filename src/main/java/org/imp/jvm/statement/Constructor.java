@@ -7,7 +7,9 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
+import org.imp.jvm.types.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -20,10 +22,9 @@ public class Constructor extends Function {
 
     public final StructType structType;
 
-    public Constructor(StructType structType, FunctionSignature signature, Block block) {
-        super(signature, block);
+    public Constructor(StructType structType, FunctionType functionType, List<Identifier> parameters, Block block) {
+        super(functionType, parameters, BuiltInType.VOID, block);
         this.structType = structType;
-        this.signature.type = BuiltInType.VOID;
     }
 
 
@@ -34,7 +35,7 @@ public class Constructor extends Function {
 
 
     public void generate(ClassWriter cw) {
-        String name = signature.name;
+        String name = functionType.name;
         String description = DescriptorFactory.getMethodDescriptor(this);
 
         int access = Opcodes.ACC_PUBLIC;
@@ -46,16 +47,19 @@ public class Constructor extends Function {
 
         block.generate(mv, block.scope);
 
-        int i = 1;
-        for (var param : signature.parameters) {
+        if (structType != null) {
 
-            mv.visitVarInsn(Opcodes.ALOAD, 0); // loads 'this'
-            mv.visitVarInsn(param.type.getLoadVariableOpcode(), i);
-            i++; // a more robust solution might be needed for larger constructors
+            int i = 1;
+            for (var param : parameters) {
 
-            String ownerInternalName = structType.getInternalName();
-            mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, param.name, param.type.getDescriptor());
+                mv.visitVarInsn(Opcodes.ALOAD, 0); // loads 'this'
+                mv.visitVarInsn(param.type.getLoadVariableOpcode(), i);
+                i++; // a more robust solution might be needed for larger constructors
 
+                String ownerInternalName = structType.getInternalName();
+                mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, param.name, param.type.getDescriptor());
+
+            }
         }
 
 

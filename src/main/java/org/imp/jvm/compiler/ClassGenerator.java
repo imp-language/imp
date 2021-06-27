@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClassGenerator {
     private static final int CLASS_VERSION = 52;
@@ -32,18 +33,6 @@ public class ClassGenerator {
         this.packageName = packageName;
     }
 
-    public ClassWriter generate(RootUnit classDeclaration) {
-        String name = classDeclaration.name;
-        classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
-        List<Method> methods = classDeclaration.methods;
-        Collection<Identifier> fields = classDeclaration.properties;
-//        FieldGenerator fieldGenerator = new FieldGenerator(classWriter);
-//        fields.forEach(f -> f.accept(fieldGenerator));
-//        MethodGenerator methodGenerator = new MethodGenerator(classWriter);
-//        methods.forEach(f -> f.accept(methodGenerator));
-        classWriter.visitEnd();
-        return classWriter;
-    }
 
     /**
      * Generate JVM static class from an Imp file
@@ -60,7 +49,12 @@ public class ClassGenerator {
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
         List<Function> functions = impFile.functions;
-        functions.forEach(f -> f.generate(classWriter));
+        for (var function : functions) {
+            if (function.functionType.name.equals("main") || function.functionType.name.equals("<init>")) {
+                function.generate(classWriter);
+            }
+        }
+//        functions.forEach(f -> f.generate(classWriter));
 
         FieldGenerator fieldGenerator = new FieldGenerator(classWriter, Opcodes.ACC_STATIC);
         List<Identifier> properties = impFile.staticUnit.properties;
@@ -68,6 +62,45 @@ public class ClassGenerator {
             System.out.println("hmmmm");
             prop.accept(fieldGenerator);
         }
+        classWriter.visitEnd();
+
+        return classWriter;
+    }
+
+    /**
+     * Generate JVM class for an Imp function type
+     *
+     * @param functionType Imp function type
+     * @return bytecode
+     */
+    public ClassWriter generate(FunctionType functionType) {
+        classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
+        String name = "Function_" + functionType.name;
+        String qualifiedName = packageName + "/" + name;
+
+        classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
+
+        List<Function> functionSignatures = functionType.signatures;
+        for (var signature : functionSignatures) {
+            signature.generate(classWriter);
+        }
+
+        var constructorType = new FunctionType("<init>", functionType.parent);
+        var constructorSignature = new FunctionSignature(constructorType, Collections.emptyList(), BuiltInType.VOID);
+
+        Constructor constructor = new Constructor(null, constructorType, Collections.emptyList(), new Block());
+
+        constructor.generate(classWriter);
+
+//        List<Function> functions = functionType.functions;
+//        functions.forEach(f -> f.generate(classWriter));
+
+//        FieldGenerator fieldGenerator = new FieldGenerator(classWriter, Opcodes.ACC_STATIC);
+//        List<Identifier> properties = functionType.staticUnit.properties;
+//        for (var prop : properties) {
+//            System.out.println("hmmmm");
+//            prop.accept(fieldGenerator);
+//        }
         classWriter.visitEnd();
 
         return classWriter;
@@ -92,9 +125,10 @@ public class ClassGenerator {
         List<Function> functions = new ArrayList<>();
 
         assert structType.fields != null; // Todo: code smell
-        var constructorType = new FunctionType("<init>");
+        var constructorType = new FunctionType("<init>", structType.parent);
         var constructorSignature = new FunctionSignature(constructorType, structType.fields, BuiltInType.VOID);
-        Constructor constructor = new Constructor(structType, constructorSignature, new Block());
+
+        Constructor constructor = new Constructor(structType, constructorType, structType.fields, new Block());
 
 
         functions.add(constructor);

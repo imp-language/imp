@@ -45,11 +45,11 @@ public class StructInit extends Expression {
 
         List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
         FunctionSignature constructorSignature = new FunctionSignature(params, BuiltInType.VOID);
-        String methodDescriptor = DescriptorFactory.getMethodDescriptor(constructorSignature);
+        String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
 
         arguments.forEach(argument -> argument.generate(mv, scope));
 
-
+        // Call struct constructor
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
 
     }
