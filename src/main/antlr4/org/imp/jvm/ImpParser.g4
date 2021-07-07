@@ -287,6 +287,6 @@ identifierList
 // Strings
 stringLiteral
     : RAW_STRING_LIT
-    | STRING_LITERALget
+    | STRING_LITERAL
     ;
     // TODO: template string literals?
