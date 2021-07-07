@@ -68,7 +68,8 @@ public class ClassGenerator {
     }
 
     /**
-     * Generate JVM class for an Imp function type
+     * Generate JVM class for an Imp function type,
+     * including closures.
      *
      * @param functionType Imp function type
      * @return bytecode

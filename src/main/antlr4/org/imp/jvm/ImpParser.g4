@@ -59,8 +59,8 @@ expression
     : callStatement                                    #CallStatementExpression
     | expression (DOT identifier)+                     #PropertyAccessExpression
     | expression LBRACK expression RBRACK              #MemberIndexExpression
-    | identifier                                       #IdentifierReferenceExpression
     | literal                                          #LiteralExpression
+    | identifier                                       #IdentifierReferenceExpression
     | LPAREN expression RPAREN                         #WrappedExpression
     | (BANG | NOT) expression                          #UnaryNotExpression
     | (ADD | SUB) expression                           #UnaryAdditiveExpression
@@ -235,7 +235,7 @@ iteratorDestructuring
  * Literals
  */
 literal
-    : listLiteral
+    : collectionLiteral
     | stringLiteral
     | integerLiteral
     | floatLiteral
@@ -270,8 +270,8 @@ doubleLiteral
 //    Star stands for: zero or more
 
 // Lists
-listLiteral
-    : (LBRACK elementList RBRACK)
+collectionLiteral
+    : identifier? LBRACK (type | expressionList)? RBRACK
     ;
 
 elementList

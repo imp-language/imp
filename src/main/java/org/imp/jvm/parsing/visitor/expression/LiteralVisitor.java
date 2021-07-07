@@ -33,8 +33,9 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
         return new Literal(BuiltInType.DOUBLE, ctx.getText());
     }
 
+
     @Override
-    public Literal visitListLiteral(ImpParser.ListLiteralContext ctx) {
+    public Literal visitCollectionLiteral(ImpParser.CollectionLiteralContext ctx) {
 //        // List literals are converted to collections
 //        var elements = ctx.elementList().expression();
 //        List<Expression> expressions = elements.stream().map(expressionVisitor::visit).collect(Collectors.toList());

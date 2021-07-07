@@ -4,6 +4,7 @@ package org.imp.jvm.domain;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.runtime.Box;
 import org.imp.jvm.statement.Function;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
@@ -41,6 +42,8 @@ public class ImpFile {
 
 
     public void validate() {
+        
+
         // 0. Ensure all struct fields have valid types
         for (var s : structTypes) {
             for (var f : s.fields) {

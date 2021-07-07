@@ -16,30 +16,57 @@ func run(p float) {
     log(p)
 }
 
-func aaaa(b int) {
-
+struct StringClosure {
+    t string
 }
 
-func ded(b string) {
-    log("hmm: " + b)
+val iValue = 42
 
+log(iValue)
+
+
+val sValue = "iValue = "
+
+
+func closureExample(env StringClosure, addVal int) {
+    env.t = env.t + addVal
 }
 
-func ded(b Person) {
+val env = new StringClosure(sValue)
+closureExample(env, iValue)
 
-}
+log(sValue)
+log(env.t)
 
-//ded("a")
 
-run(42)
-ded("ope")
-run(69.420)
+//run(42)
+//run(69.420)
 
 //log(run)
 
 
 // Todo: make this work
 // val functionRef = run
+
+
+func loadFromDatabase(success (str)=>void, failure (str)=>void) {
+    if true {
+        success("heheeheheh")
+    } else {
+        func("reeeee")
+    }
+}
+
+func printSuccess(message str) {
+    log(message)
+}
+
+func logError(message str) {
+    log("Error: " + str)
+}
+
+loadFromDatabase(printSuccess, logError)
+
 
 
 

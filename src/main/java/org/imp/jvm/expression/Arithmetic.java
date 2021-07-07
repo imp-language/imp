@@ -76,6 +76,8 @@ public class Arithmetic extends Expression {
         left.validate(scope);
         right.validate(scope);
         // Todo: ensure types are compatible
+
+        this.type = getCommonType(left, right);
     }
 
     private static Type getCommonType(Expression left, Expression right) {
