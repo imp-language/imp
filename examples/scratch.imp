@@ -2,17 +2,23 @@
 
 // java interop time
 
-struct Person {
-    fname string
-    lname string
+
+// What we want to type
+val g = 42
+log(g)
+func modifyG() {
+    g = 14
+    log(g)
 }
+modifyG()
+log(g)
 
 
+
+// What we have to generate
 struct IntRef {
     value int
 }
-
-
 val global = new IntRef(42)
 log("global: " + global.value + " (start)")
 

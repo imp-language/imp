@@ -17,9 +17,19 @@ import java.util.function.Function;
 
 public class LocalVariableReference extends Expression {
 
-    public final LocalVariable localVariable;
-    public final FunctionType functionType;
+    public LocalVariable localVariable;
+    public FunctionType functionType;
     // Todo
+    public String name;
+
+    /**
+     * Pass 0 constructor
+     */
+    public LocalVariableReference(String name) {
+        this.name = name;
+        localVariable = null;
+        functionType = null;
+    }
 
 
     public LocalVariableReference(LocalVariable localVariable) {
@@ -55,11 +65,27 @@ public class LocalVariableReference extends Expression {
 
     @Override
     public void validate(Scope scope) {
-        if (localVariable != null) {
+        // Now we actually resolve the name to a variable.
+
+        // First check the scope for local variables,
+        LocalVariable local = scope.getLocalVariable(name);
+        if (local != null) {
+            this.localVariable = local;
             this.type = localVariable.type;
-        } else {
+            return;
+        }
+
+        // If that fails, look for function names,
+        FunctionType functionType = scope.findFunctionType(name);
+        if (functionType != null) {
+            this.functionType = functionType;
             this.type = functionType;
         }
+
+        // If we can't find the variable make a closure in the outer scope
+        System.out.println("Closure time!");
+
+
     }
 
 }

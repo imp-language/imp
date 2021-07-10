@@ -6,15 +6,11 @@ import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
-import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.UnknownType;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.*;
-import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.types.BuiltInType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,19 +41,33 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public LocalVariableReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
 
+        return new LocalVariableReference(name);
+
+        /*
+        // First check the local scope,
         LocalVariable local = scope.getLocalVariable(name);
         if (local != null) {
             return new LocalVariableReference(local);
         }
 
+        // Then look for function names,
         FunctionType functionType = scope.findFunctionType(name);
         if (functionType != null) {
             return new LocalVariableReference(functionType);
         }
 
+        // If we can't find the variable make a closure in the outer scope
+        System.out.println("Closure time!");
+        System.exit(17);
+
+        // If that doesn't work, look in the Java standard lib
+        // Todo: JVM interop
+
         System.err.println("Bad!");
         System.exit(17);
         return null;
+
+         */
     }
 
 
@@ -88,12 +98,12 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         Expression right = ctx.expression(1).accept(this);
         right.setCtx(ctx.expression(1));
 
-        Logical.Operator operator = Logical.Operator.AND;
+        Logical.LogicalOperator logicalOperator = Logical.LogicalOperator.AND;
         if (ctx.OR() != null) {
-            operator = Logical.Operator.OR;
+            logicalOperator = Logical.LogicalOperator.OR;
         }
 
-        return new Logical(left, right, operator);
+        return new Logical(left, right, logicalOperator);
     }
 
     @Override
@@ -146,18 +156,11 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
             op = Operator.SUBTRACT;
         }
         var expression = ctx.expression().accept(this);
-        var postType = expression.type;
-        if (postType.isNumeric()) {
-            var incrementer = new Arithmetic(expression, new Literal(postType, "1"), op);
-            return new AssignmentExpression(expression, incrementer);
 
-        } else {
-            Logger.syntaxError(SemanticErrors.IncrementInvalidType, ctx.expression());
-            return new EmptyExpression(postType);
-        }
+        var postIncrementExpression = new PostIncrement(expression, op);
+        postIncrementExpression.setCtx(ctx.expression());
+        return postIncrementExpression;
 
-        // Maybe this should be moved to the Validation pass?
-        // But then we'd need a class for IncrementExpression
     }
 
     @Override
