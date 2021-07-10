@@ -1,0 +1,17 @@
+func loadFromDatabase(success (str)=>void, failure (str)=>void) {
+    if true {
+        success("heheeheheh")
+    } else {
+        func("reeeee")
+    }
+}
+
+func printSuccess(message str) {
+    log(message)
+}
+
+func logError(message str) {
+    log("Error: " + str)
+}
+
+loadFromDatabase(printSuccess, logError)

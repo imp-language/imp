@@ -274,9 +274,6 @@ collectionLiteral
     : identifier? LBRACK (type | expressionList)? RBRACK
     ;
 
-elementList
-    : COMMA* expression? (COMMA+ expression)* COMMA* // Yes, everything is optional
-    ;
 
 // used in imports/exports
 identifierList

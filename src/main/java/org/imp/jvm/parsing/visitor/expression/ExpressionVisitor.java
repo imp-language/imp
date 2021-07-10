@@ -105,8 +105,11 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         String functionName = callCtx.identifier().getText();
 
         // Function argument expressions
-        var arguments = callCtx.expressionList().expression();
-        var argExpressions = arguments.stream().map(a -> a.accept(this)).collect(Collectors.toList());
+        List<Expression> argExpressions = new ArrayList<>();
+        if (callCtx.expressionList() != null) {
+            var arguments = callCtx.expressionList().expression();
+            argExpressions = arguments.stream().map(a -> a.accept(this)).collect(Collectors.toList());
+        }
 
         // Function Call
         FunctionCall call = new FunctionCall(functionName, argExpressions, parent);

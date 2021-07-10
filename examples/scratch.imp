@@ -7,66 +7,38 @@ struct Person {
     lname string
 }
 
-val counter = "a"
 
-func run(p int) {
-    log(p)
-}
-func run(p float) {
-    log(p)
+struct IntRef {
+    value int
 }
 
-struct StringClosure {
-    t string
+
+val global = new IntRef(42)
+log("global: " + global.value + " (start)")
+
+func modifyGlobal(scope IntRef) {
+    scope.value = 14
+    log("global: " + scope.value + " (inner)")
 }
 
-val iValue = 42
-
-log(iValue)
-
-
-val sValue = "iValue = "
+modifyGlobal(global)
+log("global: " + global.value + " (end)")
 
 
-func closureExample(env StringClosure, addVal int) {
-    env.t = env.t + addVal
+/*
+
+struct DocumentGenerator {
+    filename string
+    genFunction ()->Buffer
 }
 
-val env = new StringClosure(sValue)
-closureExample(env, iValue)
-
-log(sValue)
-log(env.t)
-
-
-//run(42)
-//run(69.420)
-
-//log(run)
-
-
-// Todo: make this work
-// val functionRef = run
-
-
-func loadFromDatabase(success (str)=>void, failure (str)=>void) {
-    if true {
-        success("heheeheheh")
-    } else {
-        func("reeeee")
-    }
-}
-
-func printSuccess(message str) {
-    log(message)
-}
-
-func logError(message str) {
-    log("Error: " + str)
-}
-
-loadFromDatabase(printSuccess, logError)
+val docGen0 = new DocumentGenerator("template.docx", ()-> {
+    val content = load(filename)
+    val rendered = render(content, "data")
+    return rendered
+})
 
 
 
 
+*/

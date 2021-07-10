@@ -4,7 +4,6 @@ import org.imp.jvm.statement.Function;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
-import org.imp.jvm.exception.LocalVariableNotFoundException;
 import org.apache.commons.collections4.map.LinkedMap;
 
 import java.util.*;
