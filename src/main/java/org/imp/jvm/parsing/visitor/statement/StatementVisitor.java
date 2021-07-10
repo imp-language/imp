@@ -129,7 +129,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             // Todo: Child blocks inherit the parent block's scope
             // Add parameters as local variables to the scope of the function block
 //            Scope newScope = new Scope(scope);
-            Scope newScope = new Scope(name);
+            Scope newScope = new Scope(scope);
             arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
 
             StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
@@ -148,13 +148,8 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             returnType = TypeResolver.getFromTypeContext(typeContext, scope);
         }
 
-
-//        FunctionSignature signature = new FunctionSignature(functionType, arguments, returnType);
-//        functionType.signatures.add(signature);
-
         Function function = new Function(functionType, arguments, returnType, block);
         functionType.signatures.add(function);
-        scope.addSignature(function);
         function.setCtx(ctx);
 
         return function;

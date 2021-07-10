@@ -32,7 +32,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         List<ImpParser.StatementContext> statementContexts = ctx.statement();
 
         // Root Scope for Static Unit
-        Scope staticScope = new Scope("static");
+        Scope staticScope = new Scope();
 
         // static unit for all non-class statements in the file
         var staticUnit = new StaticUnit(filename);

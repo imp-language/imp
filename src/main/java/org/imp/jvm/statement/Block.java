@@ -17,7 +17,7 @@ public class Block extends Statement {
 
     public Block() {
         this.statements = new ArrayList<>();
-        this.scope = new Scope("unnamed");
+        this.scope = new Scope();
     }
 
     @Override

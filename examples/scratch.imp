@@ -10,6 +10,7 @@ func modifyG() {
     g = 14
     log(g)
 }
+/*
 modifyG()
 log(g)
 
@@ -29,7 +30,7 @@ func modifyGlobal(scope IntRef) {
 
 modifyGlobal(global)
 log("global: " + global.value + " (end)")
-
+*/
 
 /*
 

@@ -10,6 +10,7 @@ import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.TypeResolver;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -51,7 +52,12 @@ public class LocalVariableReference extends Expression {
             int index = scope.getLocalVariableIndex(varName);
 
             this.type = localVariable.type; // Todo: this should be designed as to make this redundant. Both LocalVariable and LocalVariableReference shouldn't need type
-            mv.visitVarInsn(localVariable.type.getLoadVariableOpcode(), index);
+
+            if (localVariable.closure) {
+                mv.visitVarInsn(Opcodes.ALOAD, index);
+            } else {
+                mv.visitVarInsn(localVariable.type.getLoadVariableOpcode(), index);
+            }
         } else {
             // LocalVariableReference to a first-class function
             String signature = functionType.toString();
@@ -80,12 +86,24 @@ public class LocalVariableReference extends Expression {
         if (functionType != null) {
             this.functionType = functionType;
             this.type = functionType;
+            return;
         }
 
         // If we can't find the variable make a closure in the outer scope
-        System.out.println("Closure time!");
+        var parentScope = scope.parentScope;
+        if (parentScope != null && parentScope.variableExists(name)) {
+            // Mark this variable as a closed-over variable so we know to Box it everywhere else
+            LocalVariable outerVariable = parentScope.getLocalVariable(name);
+            outerVariable.closure = true;
 
+            this.localVariable = outerVariable;
+            this.type = localVariable.type;
 
+            return;
+        }
+
+        System.err.println("Bad!");
+        System.exit(11);
     }
 
 }

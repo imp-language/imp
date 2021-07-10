@@ -48,7 +48,6 @@ public class StructPropertyAccess extends Expression {
         // Given the path, set the final type of this property access
         var parentType = parent.type;
         if (parentType instanceof StructType parentStructType) {
-
             int originalSize = fieldPath.size();
             validatedPath = parentStructType.findStructField(parentStructType, fieldPath);
 

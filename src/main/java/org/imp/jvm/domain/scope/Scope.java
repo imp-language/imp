@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class Scope {
     private final LinkedMap<String, LocalVariable> localVariables;
 
-    private final List<Function> functionSignatures;
 
     public final List<FunctionType> functionTypes;
 
@@ -27,20 +26,24 @@ public class Scope {
 
     private final String name;
 
-    public Scope(String name) {
-        this.name = name;
+    public final Scope parentScope;
+
+    // Root scopes
+    public Scope() {
+        this.name = "root";
         localVariables = new LinkedMap<>();
-        functionSignatures = new ArrayList<>();
         structs = new ArrayList<>();
         functionTypes = new ArrayList<>();
+        this.parentScope = null;
     }
 
+    // Scopes from parent scopes
     public Scope(Scope scope) {
-        name = scope.name;
-        functionSignatures = scope.functionSignatures;
-        localVariables = scope.localVariables.clone();
+        name = scope.name + "-|";
+        localVariables = new LinkedMap<>();
         structs = scope.structs;
         functionTypes = scope.functionTypes;
+        this.parentScope = scope;
     }
 
     /**
@@ -86,30 +89,6 @@ public class Scope {
         return true;
     }
 
-
-    /**
-     * @param signature FunctionSignature to add to the current scope
-     */
-    public void addSignature(Function signature) {
-        functionSignatures.add(signature);
-    }
-
-    /**
-     * @param name      scoped name of the method
-     * @param arguments list of arguments in the function call
-     * @return a FunctionSignature if such a function exists in the current scope.
-     */
-    public Function getSignature(String name, List<Identifier> arguments) {
-        return functionSignatures.stream()
-                .filter(signature -> signature.matches(name, arguments))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public Function getSignatureByTypes(String name, List<Type> argTypes) {
-        var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
-        return getSignature(name, identifiers);
-    }
 
     /**
      * @param struct Struct to add to the current scope

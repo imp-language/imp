@@ -41,13 +41,13 @@ public class Compiler {
     }
 
     public Process spawn(String className) throws IOException {
-        String cmd = "java -cp .compile " + className;
+        String cmd = "java --enable-preview -cp .compile;target/classes " + className;
         Process proc = Runtime.getRuntime().exec(cmd);
         return proc;
     }
 
     public int run(String className) throws IOException {
-        String cmd = "java -cp .compile " + className;
+        String cmd = "java --enable-preview -cp .compile;target/classes " + className;
         Process proc = Runtime.getRuntime().exec(cmd);
 
         // 3. Watch standard out

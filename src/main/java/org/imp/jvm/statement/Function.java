@@ -40,13 +40,6 @@ public class Function extends Statement {
         return "null signature";
     }
 
-//    @Override
-//    public String toString() {
-//        // ToDo: this throws an exception, probably something with null parameters or return type
-//        String params = parameters.stream().map(Object::toString)
-//                .collect(Collectors.joining(", "));
-//        return "(" + String.join(", ", params) + ") " + returnType;
-//    }
 
     public String toStringRepr() {
         // ToDo: this throws an exception, probably something with null parameters or return type

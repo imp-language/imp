@@ -2,6 +2,7 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Mutability;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.expression.Expression;
@@ -24,12 +25,22 @@ public class Declaration extends Statement {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        expression.generate(mv, scope);
 
-        Type type = expression.type;
-        if (scope.variableExists(name)) {
+        if (localVariable.closure) {
+            // Generate the box
+            String ownerDescriptor = "org/imp/jvm/runtime/Box";
+            mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
+            mv.visitInsn(Opcodes.DUP);
+            expression.generate(mv, scope);
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+
+            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "(Ljava/lang/Object;)V", false);
+
             int index = scope.getLocalVariableIndex(name);
-            LocalVariable localVariable = scope.getLocalVariable(name);
+            mv.visitVarInsn(Opcodes.ASTORE, index);
+        } else {
+            Type type = expression.type;
+            int index = scope.getLocalVariableIndex(name);
             localVariable.type = expression.type;
             //Type localVariableType = localVariable.getType();
             // Todo: for now no casting is supported

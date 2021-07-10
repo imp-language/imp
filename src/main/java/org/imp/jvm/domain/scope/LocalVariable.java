@@ -5,6 +5,7 @@ import org.imp.jvm.types.Type;
 public class LocalVariable implements Variable {
     public final String name;
     public Type type;
+    public boolean closure = false;
 
     public LocalVariable(String name, Type type) {
         this.type = type;

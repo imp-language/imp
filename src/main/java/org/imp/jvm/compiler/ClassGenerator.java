@@ -81,10 +81,17 @@ public class ClassGenerator {
 
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
+        // Generate function closure
+        var closureType = new FunctionType("closure", functionType.parent);
+        var closure = new Function(closureType, Collections.emptyList(), BuiltInType.VOID, new Block());
+        closure.generate(classWriter);
+
+        // Generate function invokers
         List<Function> functionSignatures = functionType.signatures;
         for (var signature : functionSignatures) {
             signature.generate(classWriter);
         }
+
 
         var constructorType = new FunctionType("<init>", functionType.parent);
         var constructorSignature = new FunctionSignature(constructorType, Collections.emptyList(), BuiltInType.VOID);
@@ -93,15 +100,7 @@ public class ClassGenerator {
 
         constructor.generate(classWriter);
 
-//        List<Function> functions = functionType.functions;
-//        functions.forEach(f -> f.generate(classWriter));
 
-//        FieldGenerator fieldGenerator = new FieldGenerator(classWriter, Opcodes.ACC_STATIC);
-//        List<Identifier> properties = functionType.staticUnit.properties;
-//        for (var prop : properties) {
-//            System.out.println("hmmmm");
-//            prop.accept(fieldGenerator);
-//        }
         classWriter.visitEnd();
 
         return classWriter;

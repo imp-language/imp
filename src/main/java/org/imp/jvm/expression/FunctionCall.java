@@ -86,8 +86,12 @@ public class FunctionCall extends Expression {
                 argType = BuiltInType.STRING;
             }
 
-
             String descriptor = "(" + argType.getDescriptor() + ")V";
+
+            if (arguments.get(0) instanceof LocalVariableReference) {
+                descriptor = "(Ljava/lang/Object;)V";
+            }
+
 
             // Todo: account for custom toString methods on structs
             if (argType instanceof StructType) {
