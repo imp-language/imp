@@ -1,1 +1,0 @@
-java -jar antlr-4.9.1-complete.jar %*
