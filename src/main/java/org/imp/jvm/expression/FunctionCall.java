@@ -15,6 +15,7 @@ import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,6 +89,7 @@ public class FunctionCall extends Expression {
 
             String descriptor = "(" + argType.getDescriptor() + ")V";
 
+            // Todo: should unbox closure items to actually print the value
             if (arguments.get(0) instanceof LocalVariableReference) {
                 descriptor = "(Ljava/lang/Object;)V";
             }
@@ -120,34 +122,33 @@ public class FunctionCall extends Expression {
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
 
-            // 2. Store the function closure as a local variable.
+
+            // 2. Store the function object as a local variable.
             // Todo: this doesn't always need to happen. Think about closures.
             String localVariableName = ownerDescriptor + function.functionType.callSites;
             scope.addLocalVariable(new LocalVariable(localVariableName, function.functionType));
             mv.visitVarInsn(Opcodes.ASTORE, scope.getLocalVariableIndex(localVariableName));
             function.functionType.callSites++;
 
+
+            // 3. Update closures
             int index = scope.getLocalVariableIndex(localVariableName);
             mv.visitVarInsn(Opcodes.ALOAD, index);
+            var closureParams = new ArrayList<Identifier>();
+            methodDescriptor = DescriptorFactory.getMethodDescriptor(closureParams, BuiltInType.VOID);
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "closure", methodDescriptor, false);
+            // Todo: pass data into closure() call
 
-            // 2. Generate arguments
+            // 4. Generate arguments and invoke
             for (var arg : arguments) {
                 arg.generate(mv, scope);
             }
-
+            index = scope.getLocalVariableIndex(localVariableName);
+            mv.visitVarInsn(Opcodes.ALOAD, index);
             params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
             methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
 
-            // bytecode
-//            String methodDescriptor = DescriptorFactory.getMethodDescriptor(function);
-
-
-            // Function calls withing a single module never are accessed like module.func()
-            // So the owner of each is the static class.
-//            String ownerDescriptor = owner.getInternalName();
-//            String ownerDescriptor = owner.name + "/Entry";
-//            mv.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, function.functionType.name, methodDescriptor, false);
 
         }
 

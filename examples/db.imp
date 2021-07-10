@@ -15,3 +15,21 @@ func logError(message str) {
 }
 
 loadFromDatabase(printSuccess, logError)
+
+/*
+
+struct DocumentGenerator {
+    filename string
+    genFunction ()->Buffer
+}
+
+val docGen0 = new DocumentGenerator("template.docx", ()-> {
+    val content = load(filename)
+    val rendered = render(content, "data")
+    return rendered
+})
+
+
+
+
+*/

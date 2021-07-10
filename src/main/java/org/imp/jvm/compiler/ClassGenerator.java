@@ -85,11 +85,12 @@ public class ClassGenerator {
         var closureType = new FunctionType("closure", functionType.parent);
         var closure = new Function(closureType, Collections.emptyList(), BuiltInType.VOID, new Block());
         closure.generate(classWriter);
+        // Todo: add fields for closure variables
 
         // Generate function invokers
-        List<Function> functionSignatures = functionType.signatures;
-        for (var signature : functionSignatures) {
-            signature.generate(classWriter);
+        List<Function> functions = functionType.signatures;
+        for (var function : functions) {
+            function.generate(classWriter);
         }
 
 

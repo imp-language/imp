@@ -63,7 +63,9 @@ public class Function extends Statement {
         String name = functionType.name;
         int access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
         if (!name.equals("main")) {
-            name = "invoke";
+            if (!name.equals("closure")) {
+                name = "invoke";
+            }
             access = Opcodes.ACC_PUBLIC;
         }
         String description = DescriptorFactory.getMethodDescriptor(this);

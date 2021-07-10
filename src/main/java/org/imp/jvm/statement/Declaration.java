@@ -39,6 +39,7 @@ public class Declaration extends Statement {
             int index = scope.getLocalVariableIndex(name);
             mv.visitVarInsn(Opcodes.ASTORE, index);
         } else {
+            expression.generate(mv, scope);
             Type type = expression.type;
             int index = scope.getLocalVariableIndex(name);
             localVariable.type = expression.type;

@@ -3,6 +3,26 @@
 // java interop time
 
 
+// What we have to generate
+/*
+struct IntRef {
+    value int
+}
+val global = new IntRef(42)
+log(global.value)
+func modifyGlobal(scope IntRef) {
+    scope.value = 14
+    log(scope.value)
+}
+
+modifyGlobal(global)
+log(global.value)
+*/
+
+
+
+
+
 // What we want to type
 val g = 42
 log(g)
@@ -10,41 +30,9 @@ func modifyG() {
     g = 14
     log(g)
 }
-/*
 modifyG()
-log(g)
-
-
-
-// What we have to generate
-struct IntRef {
-    value int
-}
-val global = new IntRef(42)
-log("global: " + global.value + " (start)")
-
-func modifyGlobal(scope IntRef) {
-    scope.value = 14
-    log("global: " + scope.value + " (inner)")
-}
-
-modifyGlobal(global)
-log("global: " + global.value + " (end)")
-*/
-
 /*
-
-struct DocumentGenerator {
-    filename string
-    genFunction ()->Buffer
-}
-
-val docGen0 = new DocumentGenerator("template.docx", ()-> {
-    val content = load(filename)
-    val rendered = render(content, "data")
-    return rendered
-})
-
+log(g)
 
 
 
