@@ -2,6 +2,10 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.expression.reference.ClosureReference;
+import org.imp.jvm.expression.reference.LocalReference;
+import org.imp.jvm.runtime.Box;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.expression.reference.VariableReference;
@@ -25,13 +29,28 @@ public class AssignmentStatement extends Statement {
         Type recipientType = recipient.type;
 
 
-        if (recipient instanceof VariableReference) {
-            provider.generate(mv, scope);
-            VariableReference idRef = (VariableReference) recipient;
-            String varName = idRef.reference.getName();
-            int index = scope.getLocalVariableIndex(varName);
-            castIfNecessary(providerType, recipientType, mv);
-            mv.visitVarInsn(recipientType.getStoreVariableOpcode(), index);
+        if (recipient instanceof VariableReference variableReference) {
+            if (variableReference.reference instanceof LocalReference reference) {
+                provider.generate(mv, scope);
+                VariableReference idRef = (VariableReference) recipient;
+                String varName = idRef.reference.getName();
+                int index = scope.getLocalVariableIndex(varName);
+                castIfNecessary(providerType, recipientType, mv);
+                mv.visitVarInsn(recipientType.getStoreVariableOpcode(), index);
+            } else if (variableReference.reference instanceof ClosureReference reference) {
+                System.out.println("Boxing");
+                int index = scope.getLocalVariableIndex(reference.getName());
+                mv.visitVarInsn(Opcodes.ALOAD, index);
+                // Todo: change owner based on function name
+                mv.visitFieldInsn(Opcodes.GETFIELD, "scratch/Function_modifyG", "g", "Lorg/imp/jvm/runtime/Box;");
+
+                provider.generate(mv, scope);
+                if (providerType instanceof BuiltInType builtInType) {
+                    builtInType.doBoxing(mv);
+                }
+
+                mv.visitFieldInsn(Opcodes.PUTFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
+            }
 
         } else if (recipient instanceof StructPropertyAccess) {
             StructPropertyAccess access = (StructPropertyAccess) recipient;

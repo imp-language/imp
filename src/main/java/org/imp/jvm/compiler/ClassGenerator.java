@@ -3,6 +3,7 @@ package org.imp.jvm.compiler;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.runtime.Box;
+import org.imp.jvm.statement.AssignmentStatement;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
@@ -86,6 +87,9 @@ public class ClassGenerator {
         }
 //        var closureParams = scope.closures.values().stream().map(lv -> new Identifier(lv.getName(), BuiltInType.BOX)).collect(Collectors.toList());
         var closure = new Function(closureType, closureParams, BuiltInType.VOID, new Block());
+        
+//        var assignment = new AssignmentStatement(null, );
+//        closure.block.statements.add(assignment);
         closure.generate(classWriter);
 
 

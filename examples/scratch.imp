@@ -34,18 +34,20 @@ aa(a)
 //val notBoxed = 42
 //log(notBoxed)
 val g = 42
-val more = "a"
-log(g)
-log(more)
-func modifyG() {
-    g = 14
-    more = "b"
-    log(g)
-}
-modifyG()
 log(g)
 /*
+val more = "a"
+log(more)
 
 */
+func modifyG() {
+    g = 14
+//    more = "b"
+    //log(g)
+}
 
+modifyG()
+/*
+log(g)
+*/
 
