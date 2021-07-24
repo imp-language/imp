@@ -1,5 +1,6 @@
 package org.imp.jvm.domain.scope;
 
+import org.imp.jvm.expression.reference.ClosureReference;
 import org.imp.jvm.statement.Function;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
@@ -20,6 +21,9 @@ public class Scope {
     private final LinkedMap<String, LocalVariable> localVariables;
 
 
+    public final LinkedMap<String, ClosureReference> closures;
+
+
     public final List<FunctionType> functionTypes;
 
     private final List<StructType> structs;
@@ -32,6 +36,7 @@ public class Scope {
     public Scope() {
         this.name = "root";
         localVariables = new LinkedMap<>();
+        closures = new LinkedMap<>();
         structs = new ArrayList<>();
         functionTypes = new ArrayList<>();
         this.parentScope = null;
@@ -41,9 +46,20 @@ public class Scope {
     public Scope(Scope scope) {
         name = scope.name + "-|";
         localVariables = new LinkedMap<>();
+        closures = new LinkedMap<>();
         structs = scope.structs;
         functionTypes = scope.functionTypes;
         this.parentScope = scope;
+    }
+
+
+    public void addClosure(ClosureReference closureReference) {
+        closures.put(closureReference.getName(), closureReference);
+    }
+
+    public ClosureReference getClosure(String name) {
+        return Optional.ofNullable(closures.get(name))
+                .orElse(null);
     }
 
     /**
@@ -86,7 +102,7 @@ public class Scope {
      */
     public boolean variableExists(String varName) {
         // ToDo: decide what happens with scope and local variable overriding by inner scopes.
-        return true;
+        return getLocalVariable(varName) != null;
     }
 
 

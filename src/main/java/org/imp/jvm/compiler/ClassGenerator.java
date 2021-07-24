@@ -1,12 +1,8 @@
 package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.root.RootUnit;
-import org.imp.jvm.domain.root.StaticUnit;
-import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.scope.Method;
-import org.imp.jvm.expression.LocalVariableReference;
+import org.imp.jvm.runtime.Box;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
@@ -19,7 +15,6 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,9 +78,36 @@ public class ClassGenerator {
 
         // Generate function closure
         var closureType = new FunctionType("closure", functionType.parent);
-        var closure = new Function(closureType, Collections.emptyList(), BuiltInType.VOID, new Block());
+        var scope = functionType.signatures.get(0).block.scope;
+        List<Identifier> closureParams = new ArrayList<>();
+        for (var p : scope.closures.values()) {
+            var identifier = new Identifier(p.getName(), BuiltInType.BOX);
+            closureParams.add(identifier);
+        }
+//        var closureParams = scope.closures.values().stream().map(lv -> new Identifier(lv.getName(), BuiltInType.BOX)).collect(Collectors.toList());
+        var closure = new Function(closureType, closureParams, BuiltInType.VOID, new Block());
         closure.generate(classWriter);
+
+
+        System.out.println(Box.class.descriptorString());
+
         // Todo: add fields for closure variables
+        for (var field : closureParams) {
+            Type type = field.type;
+            String descriptor = type.getDescriptor();
+            if (type instanceof BuiltInType builtInType) {
+                descriptor = Box.class.descriptorString();
+            }
+            Object defaultValue = null;
+            if (type instanceof BuiltInType) {
+                defaultValue = ((BuiltInType) type).getDefaultValue();
+            }
+
+            defaultValue = null;
+
+            FieldVisitor fieldVisitor = classWriter.visitField(Opcodes.ACC_PUBLIC, field.name, descriptor, null, defaultValue);
+            fieldVisitor.visitEnd();
+        }
 
         // Generate function invokers
         List<Function> functions = functionType.signatures;
@@ -94,12 +116,7 @@ public class ClassGenerator {
         }
 
 
-        var constructorType = new FunctionType("<init>", functionType.parent);
-        var constructorSignature = new FunctionSignature(constructorType, Collections.emptyList(), BuiltInType.VOID);
-
-        Constructor constructor = new Constructor(null, constructorType, Collections.emptyList(), new Block());
-
-        constructor.generate(classWriter);
+        addConstructor(functionType.parent, classWriter, Collections.emptyList(), null);
 
 
         classWriter.visitEnd();
@@ -126,14 +143,10 @@ public class ClassGenerator {
         List<Function> functions = new ArrayList<>();
 
         assert structType.fields != null; // Todo: code smell
-        var constructorType = new FunctionType("<init>", structType.parent);
-        var constructorSignature = new FunctionSignature(constructorType, structType.fields, BuiltInType.VOID);
 
-        Constructor constructor = new Constructor(structType, constructorType, structType.fields, new Block());
+        addConstructor(structType.parent, classWriter, structType.fields, structType);
 
-
-        functions.add(constructor);
-        functions.forEach(f -> f.generate(classWriter));
+//        functions.forEach(f -> f.generate(classWriter));
 
         for (var field : structType.fields) {
             Type type = field.type;
@@ -143,6 +156,7 @@ public class ClassGenerator {
                 defaultValue = ((BuiltInType) type).getDefaultValue();
             }
 
+            // Todo: fix
             defaultValue = null;
 
             FieldVisitor fieldVisitor = classWriter.visitField(Opcodes.ACC_PUBLIC, field.name, descriptor, null, defaultValue);
@@ -153,5 +167,12 @@ public class ClassGenerator {
         classWriter.visitEnd();
 
         return classWriter;
+    }
+
+    private void addConstructor(ImpFile parent, ClassWriter classWriter, List<Identifier> params, StructType structType) {
+        var constructorType = new FunctionType("<init>", parent);
+        Constructor constructor = new Constructor(structType, constructorType, params, new Block());
+
+        constructor.generate(classWriter);
     }
 }

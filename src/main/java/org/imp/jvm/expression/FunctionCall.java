@@ -7,6 +7,9 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.expression.reference.ClosureReference;
+import org.imp.jvm.expression.reference.LocalReference;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.statement.Function;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
@@ -15,7 +18,6 @@ import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,6 +72,10 @@ public class FunctionCall extends Expression {
             Logger.syntaxError(SemanticErrors.FunctionSignatureMismatch, getCtx());
             return;
         }
+//        var lvr = new VariableReference(scope.getLocalVariable("g"));
+//        lvr.type = BuiltInType.STRUCT;
+//        lvr.localVariable.type = BuiltInType.STRUCT;
+//        functionType.closures.add(lvr);
         this.type = function.functionType;
     }
 
@@ -90,8 +96,14 @@ public class FunctionCall extends Expression {
             String descriptor = "(" + argType.getDescriptor() + ")V";
 
             // Todo: should unbox closure items to actually print the value
-            if (arguments.get(0) instanceof LocalVariableReference) {
-                descriptor = "(Ljava/lang/Object;)V";
+            if (arguments.get(0) instanceof VariableReference local) {
+                if (local.reference instanceof ClosureReference) {
+                    descriptor = "(Ljava/lang/Object;)V";
+                } else if (local.reference instanceof LocalReference localReference) {
+                    if (localReference.localVariable.closure) {
+                        descriptor = "(Ljava/lang/Object;)V";
+                    }
+                }
             }
 
 
@@ -105,55 +117,50 @@ public class FunctionCall extends Expression {
 
 //            descriptor = org.objectweb.asm.Type.getDescriptor(java.io.PrintStream.class);
 
-
             String owner = "java/io/PrintStream";
             name = "println"; // name of the method we call
 
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, descriptor, false);
-            return;
         } else {
-            // 0. Initialize the first-class function closure object
-            String ownerDescriptor = this.type.getInternalName();
-            mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
-            mv.visitInsn(Opcodes.DUP);
+            String localVariableName = this.type.getName();
+            if (scope.getLocalVariable(localVariableName) == null) {
+                // Initialize the first-class function closure object
+                String ownerDescriptor = this.type.getInternalName();
+                mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
+                mv.visitInsn(Opcodes.DUP);
 
-            // 1. Call constructor on first-class function closure object
-            List<Identifier> params = Collections.emptyList();
-            String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
-            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
+                // Call constructor on first-class function closure object
+                List<Identifier> params = Collections.emptyList();
+                String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
+                mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
 
-
-            // 2. Store the function object as a local variable.
-            // Todo: this doesn't always need to happen. Think about closures.
-            String localVariableName = ownerDescriptor + function.functionType.callSites;
-            scope.addLocalVariable(new LocalVariable(localVariableName, function.functionType));
-            mv.visitVarInsn(Opcodes.ASTORE, scope.getLocalVariableIndex(localVariableName));
-            function.functionType.callSites++;
-
+                // Store as new local variable
+                scope.addLocalVariable(new LocalVariable(localVariableName, function.functionType));
+                mv.visitVarInsn(Opcodes.ASTORE, scope.getLocalVariableIndex(localVariableName));
+            }
 
             // 3. Update closures
+            String ownerDescriptor = this.type.getInternalName();
             int index = scope.getLocalVariableIndex(localVariableName);
             mv.visitVarInsn(Opcodes.ALOAD, index);
-            var closureParams = new ArrayList<Identifier>();
-            methodDescriptor = DescriptorFactory.getMethodDescriptor(closureParams, BuiltInType.VOID);
+            var closureParams = function.functionType.closures.stream().map(lv -> new Identifier(lv.name, lv.type)).collect(Collectors.toList());
+            String methodDescriptor = DescriptorFactory.getMethodDescriptor(closureParams, BuiltInType.VOID);
+            for (var arg : function.functionType.closures) {
+                arg.generate(mv, scope);
+            }
+
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "closure", methodDescriptor, false);
             // Todo: pass data into closure() call
 
             // 4. Generate arguments and invoke
+            index = scope.getLocalVariableIndex(localVariableName);
+            mv.visitVarInsn(Opcodes.ALOAD, index);
             for (var arg : arguments) {
                 arg.generate(mv, scope);
             }
-            index = scope.getLocalVariableIndex(localVariableName);
-            mv.visitVarInsn(Opcodes.ALOAD, index);
-            params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
+            List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
             methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
-
-
         }
-
-
     }
-
-
 }

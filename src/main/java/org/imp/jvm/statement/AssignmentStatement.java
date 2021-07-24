@@ -4,7 +4,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.expression.Expression;
-import org.imp.jvm.expression.LocalVariableReference;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.expression.StructPropertyAccess;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -25,10 +25,10 @@ public class AssignmentStatement extends Statement {
         Type recipientType = recipient.type;
 
 
-        if (recipient instanceof LocalVariableReference) {
+        if (recipient instanceof VariableReference) {
             provider.generate(mv, scope);
-            LocalVariableReference idRef = (LocalVariableReference) recipient;
-            String varName = idRef.localVariable.getName();
+            VariableReference idRef = (VariableReference) recipient;
+            String varName = idRef.reference.getName();
             int index = scope.getLocalVariableIndex(varName);
             castIfNecessary(providerType, recipientType, mv);
             mv.visitVarInsn(recipientType.getStoreVariableOpcode(), index);
@@ -38,7 +38,7 @@ public class AssignmentStatement extends Statement {
             String ownerInternalName = access.parent.type.getName();
             Identifier field = access.getLast();
 
-            int index = scope.getLocalVariableIndex(access.parent.localVariable.name);
+            int index = scope.getLocalVariableIndex(access.parent.reference.getName());
 
 
             mv.visitVarInsn(Opcodes.ALOAD, index);

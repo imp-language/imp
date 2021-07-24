@@ -2,6 +2,7 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Mutability;
 import org.imp.jvm.types.Type;
@@ -25,14 +26,22 @@ public class Declaration extends Statement {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-
+        
         if (localVariable.closure) {
             // Generate the box
             String ownerDescriptor = "org/imp/jvm/runtime/Box";
             mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
             mv.visitInsn(Opcodes.DUP);
             expression.generate(mv, scope);
-            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+
+            if (expression.type instanceof BuiltInType builtInType) {
+                builtInType.doBoxing(mv);
+            } else {
+                System.err.println("Boxing isn't supported for custom types.");
+                System.exit(27);
+            }
+
+//            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
 
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "(Ljava/lang/Object;)V", false);
 
@@ -55,8 +64,14 @@ public class Declaration extends Statement {
     @Override
     public void validate(Scope scope) {
         expression.validate(scope);
-        localVariable = scope.getLocalVariable(name);
+        localVariable = new LocalVariable(name, expression.type);
         localVariable.type = expression.type;
+
+//        VariableReference varRef = new VariableReference(name);
+        scope.addLocalVariable(localVariable);
+
+//        varRef.validate(scope);
+
 
     }
 

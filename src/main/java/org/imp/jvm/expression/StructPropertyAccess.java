@@ -3,6 +3,7 @@ package org.imp.jvm.expression;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.exception.SemanticErrors;
 import org.objectweb.asm.MethodVisitor;
@@ -12,11 +13,11 @@ import java.util.List;
 
 public class StructPropertyAccess extends Expression {
 
-    public final LocalVariableReference parent;
+    public final VariableReference parent;
     public final List<Identifier> fieldPath;
     public List<Identifier> validatedPath = null;
 
-    public StructPropertyAccess(LocalVariableReference parent, List<Identifier> fieldPath) {
+    public StructPropertyAccess(VariableReference parent, List<Identifier> fieldPath) {
         this.parent = parent;
         this.fieldPath = fieldPath;
     }
@@ -29,7 +30,7 @@ public class StructPropertyAccess extends Expression {
         String ownerInternalName = this.parent.type.getInternalName();
         String descriptor = last.type.getDescriptor();
 
-        int index = scope.getLocalVariableIndex(parent.localVariable.name);
+        int index = scope.getLocalVariableIndex(parent.reference.getName());
 //        if (parent.localVariable.name.equals("p")) {
 //            // Todo: BAD- need to decide how scope will work
 //            index = 0;

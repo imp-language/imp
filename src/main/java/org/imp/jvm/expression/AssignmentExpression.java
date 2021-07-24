@@ -2,6 +2,7 @@ package org.imp.jvm.expression;
 
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -19,10 +20,10 @@ public class AssignmentExpression extends Expression {
         Type providerType = provider.type;
         Type recipientType = recipient.type;
 
-        if (recipient instanceof LocalVariableReference) {
+        if (recipient instanceof VariableReference) {
             provider.generate(mv, scope);
-            LocalVariableReference idRef = (LocalVariableReference) recipient;
-            String varName = idRef.localVariable.getName();
+            VariableReference idRef = (VariableReference) recipient;
+            String varName = idRef.reference.getName();
             int index = scope.getLocalVariableIndex(varName);
             castIfNecessary(providerType, recipientType, mv);
             mv.visitVarInsn(recipientType.getStoreVariableOpcode(), index);
@@ -32,7 +33,7 @@ public class AssignmentExpression extends Expression {
             String ownerInternalName = access.parent.type.getName();
             Identifier field = access.getLast();
 
-            int index = scope.getLocalVariableIndex(access.parent.localVariable.name);
+            int index = scope.getLocalVariableIndex(access.parent.reference.getName());
 
             mv.visitVarInsn(Opcodes.ALOAD, index);
             provider.generate(mv, scope);

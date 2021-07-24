@@ -2,13 +2,13 @@ package org.imp.jvm.parsing.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
-import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.expression.reference.Reference;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.UnknownType;
-import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.Scope;
 
@@ -38,36 +38,10 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     }
 
     @Override
-    public LocalVariableReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
+    public VariableReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
 
-        return new LocalVariableReference(name);
-
-        /*
-        // First check the local scope,
-        LocalVariable local = scope.getLocalVariable(name);
-        if (local != null) {
-            return new LocalVariableReference(local);
-        }
-
-        // Then look for function names,
-        FunctionType functionType = scope.findFunctionType(name);
-        if (functionType != null) {
-            return new LocalVariableReference(functionType);
-        }
-
-        // If we can't find the variable make a closure in the outer scope
-        System.out.println("Closure time!");
-        System.exit(17);
-
-        // If that doesn't work, look in the Java standard lib
-        // Todo: JVM interop
-
-        System.err.println("Bad!");
-        System.exit(17);
-        return null;
-
-         */
+        return new VariableReference(name);
     }
 
 
@@ -194,7 +168,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitPropertyAccessExpression(ImpParser.PropertyAccessExpressionContext ctx) {
         Expression structExpr = ctx.expression().accept(this);
-        LocalVariableReference structRef = (LocalVariableReference) structExpr;
+        VariableReference structRef = (VariableReference) structExpr;
 
 
         List<ImpParser.IdentifierContext> fieldPathCtx = ctx.identifier(); // list of identifiers in the chain

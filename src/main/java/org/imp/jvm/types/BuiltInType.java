@@ -1,5 +1,8 @@
 package org.imp.jvm.types;
 
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+
 public enum BuiltInType implements Type {
     BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT, false, false),
     INT("int", int.class, "I", TypeSpecificOpcodes.INT, 0, true),
@@ -14,7 +17,9 @@ public enum BuiltInType implements Type {
     DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT, false),
     STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, false),
 
+    BOX("box", null, "Lorg/imp/jvm/runtime/Box;", TypeSpecificOpcodes.OBJECT, false),
     STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false);;
+
 
     private final String name;
     private final Class<?> typeClass;
@@ -103,11 +108,35 @@ public enum BuiltInType implements Type {
 
     @Override
     public Object getDefaultValue() {
-        return this.name;
+        return this.defaultValue;
     }
 
     @Override
     public boolean isNumeric() {
         return isNumeric;
+    }
+
+
+    public void doBoxing(MethodVisitor mv) {
+        switch (this) {
+            case INT:
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+                break;
+            case FLOAT:
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false);
+                break;
+            case BOOLEAN:
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
+                break;
+            case STRING:
+                // No boxing required, String is already an object.
+                break;
+            default:
+                System.err.println("Boxing isn't supported for that type.");
+                System.exit(28);
+                break;
+
+
+        }
     }
 }

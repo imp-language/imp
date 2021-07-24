@@ -17,23 +17,35 @@ func modifyGlobal(scope IntRef) {
 
 modifyGlobal(global)
 log(global.value)
+
+
+val a = 44
+log(a)
+
+function aa(b int) {
+    log(b)
+}
+aa(a)
 */
-
-
 
 
 
 // What we want to type
+//val notBoxed = 42
+//log(notBoxed)
 val g = 42
+val more = "a"
 log(g)
+log(more)
 func modifyG() {
     g = 14
+    more = "b"
     log(g)
 }
 modifyG()
-/*
 log(g)
-
-
+/*
 
 */
+
+

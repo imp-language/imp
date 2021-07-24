@@ -228,7 +228,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             Expression expression = variableInitializeContext.expression().accept(expressionVisitor);
             String name = variableInitializeContext.identifier().getText();
             declaration = new Declaration(mutability, name, expression);
-            scope.addLocalVariable(new LocalVariable(name, expression.type));
+//            scope.addLocalVariable(new LocalVariable(name, expression.type));
 
         } else {
             System.err.println("Parser error.");

@@ -53,6 +53,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         main.parameters.add(varArgs);
         main.block.scope = staticScope;
 
+        impFile.functions.add(main);
 
         // handle each statement appropriately
         StatementVisitor statementVisitor = new StatementVisitor(staticScope, impFile);
@@ -90,7 +91,6 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         }
 
-        impFile.functions.add(main);
         var constructorType = new FunctionType("<init>", impFile);
         var constructorSignature = new FunctionSignature(Collections.emptyList(), BuiltInType.VOID);
         impFile.functions.add(new Constructor(null, constructorType, Collections.emptyList(), new Block()));

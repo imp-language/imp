@@ -13,3 +13,11 @@ personal projects. I'm blogging my progress [here](https://matthall.codes/tags/i
 
 Currently, to test Imp projects I'd recommend you use Intellij. Then you can run the `org.imp.jvm.tool.Compiler` class
 with an input filename to compile and execute Imp code.
+
+### Notes
+
+How to compile Java files using the Imp runtime:
+
+```bash
+javac --enable-preview -source 14 -cp .compile;target/classes .compile/main/Example.java
+```

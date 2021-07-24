@@ -13,6 +13,7 @@ public class Logger {
     private static List<RuntimeException> syntaxErrors = new ArrayList<>();
 
     public static void syntaxError(SemanticErrors error, ParserRuleContext ctx) {
+//        throw new Error();
         syntaxErrors.add(new SyntacticalException(error, ctx));
     }
 

@@ -2,6 +2,7 @@ package org.imp.jvm.types;
 
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.statement.Function;
 
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ public class FunctionType implements Type {
     public final List<Function> signatures;
     public final ImpFile parent;
     public int callSites = 1;
+
+    public final List<VariableReference> closures = new ArrayList<>();
 
     public FunctionType(String name, ImpFile parent) {
         this.name = name;
