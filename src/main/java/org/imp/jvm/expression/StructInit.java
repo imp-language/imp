@@ -2,7 +2,6 @@ package org.imp.jvm.expression;
 
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.compiler.Logger;
-import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;

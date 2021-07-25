@@ -82,14 +82,7 @@ public class ClassGenerator {
             closure.block.statements.add(assignment);
             i++;
         }
-//        var assignment = new AssignmentStatement(null, );
         closure.generate(classWriter);
-
-        /*
-         * Todo: assign fields in body of closure()
-         * Todo: variable reference GETFIELD in function body
-         * Todo: variable
-         */
 
 
         System.out.println(Box.class.descriptorString());

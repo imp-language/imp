@@ -3,7 +3,6 @@ package org.imp.jvm.parsing.visitor;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
@@ -80,7 +79,6 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         }
 
         var constructorType = new FunctionType("<init>", impFile);
-        var constructorSignature = new FunctionSignature(Collections.emptyList(), BuiltInType.VOID);
         impFile.functions.add(new Constructor(null, constructorType, Collections.emptyList(), new Block()));
 
 
