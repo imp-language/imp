@@ -38,7 +38,6 @@ public class AssignmentStatement extends Statement {
                 castIfNecessary(providerType, recipientType, mv);
                 mv.visitVarInsn(recipientType.getStoreVariableOpcode(), index);
             } else if (variableReference.reference instanceof ClosureReference reference) {
-                System.out.println("Boxing");
                 int index = scope.getLocalVariableIndex(reference.getName());
                 mv.visitVarInsn(Opcodes.ALOAD, index);
                 // Todo: change owner based on function name

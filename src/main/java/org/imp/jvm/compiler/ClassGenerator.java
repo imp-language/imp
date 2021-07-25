@@ -2,15 +2,13 @@ package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.expression.StructPropertyAccess;
 import org.imp.jvm.runtime.Box;
-import org.imp.jvm.statement.AssignmentStatement;
+import org.imp.jvm.statement.*;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
-import org.imp.jvm.statement.Block;
-import org.imp.jvm.statement.Constructor;
-import org.imp.jvm.statement.Function;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
@@ -87,10 +85,17 @@ public class ClassGenerator {
         }
 //        var closureParams = scope.closures.values().stream().map(lv -> new Identifier(lv.getName(), BuiltInType.BOX)).collect(Collectors.toList());
         var closure = new Function(closureType, closureParams, BuiltInType.VOID, new Block());
-        
+
+        var assignment = new ClosureAssignment();
 //        var assignment = new AssignmentStatement(null, );
-//        closure.block.statements.add(assignment);
+        closure.block.statements.add(assignment);
         closure.generate(classWriter);
+
+        /*
+         * Todo: assign fields in body of closure()
+         * Todo: variable reference GETFIELD in function body
+         * Todo: variable
+         */
 
 
         System.out.println(Box.class.descriptorString());

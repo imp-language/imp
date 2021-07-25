@@ -18,6 +18,7 @@ import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -99,10 +100,14 @@ public class FunctionCall extends Expression {
             if (arguments.get(0) instanceof VariableReference local) {
                 if (local.reference instanceof ClosureReference) {
                     descriptor = "(Ljava/lang/Object;)V";
+                    mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
+
                 } else if (local.reference instanceof LocalReference localReference) {
                     if (localReference.localVariable.closure) {
                         descriptor = "(Ljava/lang/Object;)V";
                     }
+                    mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
+
                 }
             }
 
@@ -143,10 +148,21 @@ public class FunctionCall extends Expression {
             String ownerDescriptor = this.type.getInternalName();
             int index = scope.getLocalVariableIndex(localVariableName);
             mv.visitVarInsn(Opcodes.ALOAD, index);
-            var closureParams = function.functionType.closures.stream().map(lv -> new Identifier(lv.name, lv.type)).collect(Collectors.toList());
+
+            // Todo: comment
+            var s = function.functionType.signatures.get(0).block.scope;
+            List<Identifier> closureParams = new ArrayList<>();
+            for (var p : s.closures.values()) {
+                var identifier = new Identifier(p.getName(), BuiltInType.BOX);
+                closureParams.add(identifier);
+            }
+
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(closureParams, BuiltInType.VOID);
-            for (var arg : function.functionType.closures) {
-                arg.generate(mv, scope);
+            for (var arg : s.closures.values()) {
+                var o = s.getClosure(arg.getName());
+                var l = new LocalReference(o.localVariable);
+                l.validate(scope);
+                l.generate(mv, scope);
             }
 
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "closure", methodDescriptor, false);
@@ -160,6 +176,7 @@ public class FunctionCall extends Expression {
             }
             List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
             methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
+//            System.out.println(methodDescriptor);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
         }
     }

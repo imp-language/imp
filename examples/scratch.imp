@@ -33,21 +33,33 @@ aa(a)
 // What we want to type
 //val notBoxed = 42
 //log(notBoxed)
-val g = 42
-log(g)
-/*
-val more = "a"
-log(more)
 
-*/
+
+
+
+
+
+
+
+
+val g = 42
+log("before: ")
+log(g)
+
 func modifyG() {
     g = 14
-//    more = "b"
-    //log(g)
+    log("during: ")
+    log(g)
 }
 
 modifyG()
-/*
+log("after: ")
 log(g)
-*/
 
+
+
+
+
+
+/*
+*/

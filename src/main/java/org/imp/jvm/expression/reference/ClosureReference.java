@@ -15,14 +15,16 @@ public class ClosureReference extends Reference {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
+//        System.out.println("ref");
         String varName = localVariable.getName();
-        int index = scope.getLocalVariableIndex(varName);
-
-        // Todo: this should be designed as to make this redundant. Both LocalVariable and LocalVariableReference shouldn't need type
-        this.type = localVariable.type;
-
-        mv.visitVarInsn(localVariable.type.getLoadVariableOpcode(), index);
+        int index = scope.getLocalVariableIndex(this.getName());
         mv.visitVarInsn(Opcodes.ALOAD, index);
+        // Todo: change owner based on function name
+        mv.visitFieldInsn(Opcodes.GETFIELD, "scratch/Function_modifyG", "g", "Lorg/imp/jvm/runtime/Box;");
+
+
+//        mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
+
     }
 
     @Override

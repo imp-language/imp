@@ -14,17 +14,25 @@ public class LocalReference extends Reference {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        String varName = localVariable.getName();
-        int index = scope.getLocalVariableIndex(varName);
-
-        // Todo: this should be designed as to make this redundant. Both LocalVariable and LocalVariableReference shouldn't need type
-        this.type = localVariable.type;
-
         if (localVariable.closure) {
+            String varName = localVariable.getName();
+            int index = scope.getLocalVariableIndex(this.getName());
             mv.visitVarInsn(Opcodes.ALOAD, index);
+            // Todo: change owner based on function name
+//            mv.visitFieldInsn(Opcodes.GETFIELD, "scratch/Function_modifyG", "g", "Lorg/imp/jvm/runtime/Box;");
+
+
+//            mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
+
         } else {
-            mv.visitVarInsn(localVariable.type.getLoadVariableOpcode(), index);
+            String varName = localVariable.getName();
+            int index = scope.getLocalVariableIndex(varName);
+
+            // Todo: this should be designed as to make this redundant. Both LocalVariable and LocalVariableReference shouldn't need type
+            this.type = localVariable.type;
+            mv.visitVarInsn(Opcodes.ALOAD, index);
         }
+
 
     }
 
