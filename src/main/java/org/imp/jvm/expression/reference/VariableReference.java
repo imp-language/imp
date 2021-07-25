@@ -35,7 +35,7 @@ public class VariableReference extends Expression {
         else if (scope.findFunctionType(name) != null) {
             this.reference = new FunctionReference(scope.findFunctionType(name));
         }
-        // Todo: check the Java standard lib
+        // Todo: check the Java interop standard lib
 
         // Maybe the variable is a closure? Search closures in the function object
         else if (scope.getClosure(name) != null) {
