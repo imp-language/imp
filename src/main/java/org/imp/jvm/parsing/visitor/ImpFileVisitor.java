@@ -3,7 +3,6 @@ package org.imp.jvm.parsing.visitor;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
@@ -35,11 +34,10 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         Scope staticScope = new Scope();
 
         // static unit for all non-class statements in the file
-        var staticUnit = new StaticUnit(filename);
         // Todo: remove StaticUnits
 
         // create an ImpFile node with appropriate children
-        var impFile = new ImpFile(staticUnit, filename);
+        var impFile = new ImpFile(filename);
 
 
         var mainFunctionType = new FunctionType("main", impFile);
@@ -63,21 +61,11 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
 
             // Split classes out to their own files
-            if (s instanceof Struct) {
-                Struct struct = (Struct) s;
+            if (s instanceof Struct struct) {
                 impFile.structTypes.add(struct.structType);
             } else {
                 // For everything else, add to the static class.
-                if (s instanceof org.imp.jvm.statement.Declaration) {
-                    Declaration declaration = (Declaration) s;
-
-                    // Add variable signature to static unit
-//                    staticUnit.properties.add(declaration);
-
-                    // Initialize variable in static block
-                    main.block.statements.add(declaration);
-                } else if (s instanceof Function) {
-                    Function f = (Function) s;
+                if (s instanceof Function f) {
 
                     // add function to static class methods
                     impFile.functions.add(f);

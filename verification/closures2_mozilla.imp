@@ -1,0 +1,8 @@
+// A partial implementation of the Javascript Closures example from
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
+
+val name = "Mozilla" // name is a local variable created by init
+func displayName() { // displayName() is the inner function, a closure
+    log(name) // use variable declared in the parent function
+}
+displayName()

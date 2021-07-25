@@ -2,11 +2,8 @@ package org.imp.jvm.domain;
 
 
 import org.imp.jvm.compiler.Logger;
-import org.imp.jvm.domain.root.StaticUnit;
 import org.imp.jvm.exception.SemanticErrors;
-import org.imp.jvm.runtime.Box;
 import org.imp.jvm.statement.Function;
-import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.types.TypeResolver;
@@ -16,12 +13,9 @@ import java.util.List;
 
 public class ImpFile {
     // Filename
-    public String name;
+    public final String name;
 
     public String packageName = "";
-
-    // Top-level entities in the source file.
-    public final StaticUnit staticUnit;
 
     // All first-class functions defined in the source file.
     public final List<Function> functions = new ArrayList<>();
@@ -30,10 +24,9 @@ public class ImpFile {
     public final List<StructType> structTypes = new ArrayList<>();
 
 
-    public ImpFile(StaticUnit staticUnit, String name) {
+    public ImpFile(String name) {
         this.name = name;
         this.packageName = name;
-        this.staticUnit = staticUnit;
     }
 
     public String getClassName() {

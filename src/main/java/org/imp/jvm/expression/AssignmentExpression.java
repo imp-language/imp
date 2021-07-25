@@ -7,9 +7,10 @@ import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+// todo: combine logic with AssignmentStatement
 public class AssignmentExpression extends Expression {
-    public Expression recipient;
-    public Expression provider;
+    public final Expression recipient;
+    public final Expression provider;
 
     public AssignmentExpression(Expression recipient, Expression provider) {
         this.recipient = recipient;
@@ -20,16 +21,14 @@ public class AssignmentExpression extends Expression {
         Type providerType = provider.type;
         Type recipientType = recipient.type;
 
-        if (recipient instanceof VariableReference) {
+        if (recipient instanceof VariableReference idRef) {
             provider.generate(mv, scope);
-            VariableReference idRef = (VariableReference) recipient;
             String varName = idRef.reference.getName();
             int index = scope.getLocalVariableIndex(varName);
             castIfNecessary(providerType, recipientType, mv);
             mv.visitVarInsn(recipientType.getStoreVariableOpcode(), index);
 
-        } else if (recipient instanceof StructPropertyAccess) {
-            StructPropertyAccess access = (StructPropertyAccess) recipient;
+        } else if (recipient instanceof StructPropertyAccess access) {
             String ownerInternalName = access.parent.type.getName();
             Identifier field = access.getLast();
 

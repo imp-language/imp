@@ -2,11 +2,7 @@ package org.imp.jvm.statement;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.expression.Expression;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-
-import java.util.Optional;
 
 public abstract class Loop extends Statement {
     public final Block body;

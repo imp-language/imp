@@ -5,25 +5,18 @@ import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.Expression;
-import org.imp.jvm.types.FunctionType;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 public class VariableReference extends Expression {
 
     public Reference reference;
-    public String name;
+    public final String name;
 
     public VariableReference(String name) {
         this.name = name;
         this.reference = null;
     }
 
-
-    public VariableReference(LocalVariable localVariable) {
-        this.type = localVariable.getType();
-        this.name = localVariable.name;
-    }
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {

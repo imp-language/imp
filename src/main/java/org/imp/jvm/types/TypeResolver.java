@@ -15,8 +15,7 @@ public class TypeResolver {
             if (builtInType.isPresent()) {
                 return builtInType.get();
             }
-        } else if (typeContext instanceof ImpParser.TypeStructContext) {
-            ImpParser.TypeStructContext tsc = (ImpParser.TypeStructContext) typeContext;
+        } else if (typeContext instanceof ImpParser.TypeStructContext tsc) {
             StructType structType = scope.getStruct(tsc.identifier().getText());
             return structType;
         } else if (typeContext instanceof ImpParser.TypeListContext) {

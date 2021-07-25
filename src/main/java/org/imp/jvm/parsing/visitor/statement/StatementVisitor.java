@@ -4,7 +4,6 @@ import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
@@ -181,9 +180,8 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         ImpParser.LoopConditionContext conditionContext = ctx.loopCondition();
 
 
-        if (conditionContext instanceof ImpParser.ForLoopConditionContext) {
+        if (conditionContext instanceof ImpParser.ForLoopConditionContext cond) {
             // loop val i = 0; i < 10; i++ { }
-            ImpParser.ForLoopConditionContext cond = (ImpParser.ForLoopConditionContext) conditionContext;
             Declaration declaration = (Declaration) cond.variableStatement().accept(this);
             Expression condition = cond.expression(0).accept(expressionVisitor);
             var incrementerCtx = cond.expression(1);
@@ -195,9 +193,13 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             return new ForLoop(declaration, condition, incrementer, block);
         } else if (conditionContext instanceof ImpParser.ForInLoopConditionContext) {
             // loop val item, idx in list { }
+            System.err.println("loop val item, idx in list { }");
+            System.exit(122);
 
         } else if (conditionContext instanceof ImpParser.WhileLoopConditionContext) {
             // loop someExpression() == true { }
+            System.err.println("loop someExpression() == true { }");
+            System.exit(123);
         }
 
         System.out.println("ahhh oh no error bad loop syntax");

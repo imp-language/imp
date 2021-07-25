@@ -63,8 +63,7 @@ public class StructType implements Type {
             validatedPath.add(found);
 
             // recurse if the found field is another struct
-            if (found.type instanceof StructType && fieldPath.size() > 0) {
-                StructType foundStructType = (StructType) found.type;
+            if (found.type instanceof StructType foundStructType && fieldPath.size() > 0) {
                 var rescursedPath = findStructField(foundStructType, fieldPath);
                 validatedPath.addAll(rescursedPath);
             } else if (fieldPath.size() > 0) {
@@ -81,8 +80,7 @@ public class StructType implements Type {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
-        if (obj instanceof StructType) {
-            StructType o = (StructType) obj;
+        if (obj instanceof StructType o) {
             return this.identifier.name.equals(o.identifier.name);
         } else {
             return false;
@@ -97,7 +95,7 @@ public class StructType implements Type {
     @Override
     public String getName() {
 //        if (struct == null) return this.name;
-        if (unknown == true) return this.identifier.name;
+        if (unknown) return this.identifier.name;
         return this.parent.name + "/" + identifier.name;
     }
 

@@ -1,6 +1,5 @@
 package org.imp.jvm.domain.scope;
 
-import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.expression.EmptyExpression;
 import org.imp.jvm.statement.Return;
 import org.imp.jvm.types.BuiltInType;

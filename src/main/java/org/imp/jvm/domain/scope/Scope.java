@@ -1,14 +1,11 @@
 package org.imp.jvm.domain.scope;
 
 import org.imp.jvm.expression.reference.ClosureReference;
-import org.imp.jvm.statement.Function;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
-import org.imp.jvm.types.Type;
 import org.apache.commons.collections4.map.LinkedMap;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Describes the entities available to expressions and statements in

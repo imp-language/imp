@@ -2,19 +2,13 @@ package org.imp.jvm.types;
 
 import org.objectweb.asm.Opcodes;
 
-public class UnknownType implements Type {
+public record UnknownType(String name) implements Type {
 
 
 //
 //    private static final Map<String, String> shortcuts = HashMap.of(
 //            "List", "java.util.ArrayList"
 //    );
-
-    public final String name;
-
-    public UnknownType(String name) {
-        this.name = name;
-    }
 
     @Override
     public String toString() {

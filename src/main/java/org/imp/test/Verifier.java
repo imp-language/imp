@@ -16,7 +16,7 @@ public class Verifier {
 
     public static final String verificationPath = "verification";
 
-    public static List<String> flawsList = new ArrayList<>();
+    public static final List<String> flawsList = new ArrayList<>();
 
 
     public static void main(String[] args) throws IOException {
@@ -60,7 +60,6 @@ public class Verifier {
 
 
         // 0. Load result file line-by-line
-        Scanner solutionScanner = new Scanner(new File(solutionPath));
         List<String> solutionLines = FileUtils.readLines(new File(solutionPath), StandardCharsets.UTF_8);
 
         // 1. Compile imp source file
@@ -144,17 +143,11 @@ public class Verifier {
             String text = aDiff.text.replace("&", "&amp;").replace("<", "&lt;")
                     .replace(">", "&gt;").replace("\n", "&para;<br>");
             switch (aDiff.operation) {
-                case INSERT:
-                    html.append("<ins style=\"background:#e6ffe6;\">").append(text)
-                            .append("</ins>");
-                    break;
-                case DELETE:
-                    html.append("<del style=\"background:#ffe6e6;\">").append(text)
-                            .append("</del>");
-                    break;
-                case EQUAL:
-                    html.append("<span>").append(text).append("</span>");
-                    break;
+                case INSERT -> html.append("<ins style=\"background:#e6ffe6;\">").append(text)
+                        .append("</ins>");
+                case DELETE -> html.append("<del style=\"background:#ffe6e6;\">").append(text)
+                        .append("</del>");
+                case EQUAL -> html.append("<span>").append(text).append("</span>");
             }
         }
         return html.toString();

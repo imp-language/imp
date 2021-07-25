@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Struct extends Statement {
 
-    public StructType structType;
+    public final StructType structType;
 
     public Struct(StructType structType) {
         super();

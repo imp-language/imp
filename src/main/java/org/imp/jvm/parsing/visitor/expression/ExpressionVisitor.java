@@ -6,7 +6,6 @@ import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.expression.reference.Reference;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.UnknownType;
 import org.imp.jvm.expression.*;

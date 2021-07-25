@@ -1,8 +1,6 @@
 package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.root.StaticUnit;
-import org.imp.jvm.statement.Function;
 import org.imp.jvm.types.FunctionType;
 import org.objectweb.asm.ClassWriter;
 
@@ -16,7 +14,6 @@ public class BytecodeGenerator {
         var code = new HashMap<String, byte[]>();
 
         // Generate bytecode for impFile.StaticUnit
-        StaticUnit staticUnit = impFile.staticUnit;
         ClassWriter staticWriter = classGenerator.generate(impFile);
         code.put(impFile.packageName + "/" + "Entry", staticWriter.toByteArray());
 

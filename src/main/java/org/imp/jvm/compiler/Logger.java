@@ -1,7 +1,6 @@
 package org.imp.jvm.compiler;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.imp.jvm.exception.SyntacticalException;
 import org.imp.jvm.exception.SemanticErrors;
 
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class Logger {
 
-    private static List<RuntimeException> syntaxErrors = new ArrayList<>();
+    private static final List<RuntimeException> syntaxErrors = new ArrayList<>();
 
     public static void syntaxError(SemanticErrors error, ParserRuleContext ctx) {
 //        throw new Error();

@@ -2,7 +2,6 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Mutability;
 import org.imp.jvm.types.Type;

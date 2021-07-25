@@ -11,14 +11,14 @@ public enum BuiltInType implements Type {
     STRING("string", String.class, "Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, "", false),
     VOID("void", void.class, "V", TypeSpecificOpcodes.VOID, null, false),
 
-    BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT, false),
-    INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT, false),
-    FLOAT_ARR("float[]", float[].class, "[F", TypeSpecificOpcodes.OBJECT, false),
-    DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT, false),
-    STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, false),
+    BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT, false, false),
+    INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT, false, false),
+    FLOAT_ARR("float[]", float[].class, "[F", TypeSpecificOpcodes.OBJECT, false, false),
+    DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT, false, false),
+    STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, false, false),
 
-    BOX("box", null, "Lorg/imp/jvm/runtime/Box;", TypeSpecificOpcodes.OBJECT, false),
-    STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false);;
+    BOX("box", null, "Lorg/imp/jvm/runtime/Box;", TypeSpecificOpcodes.OBJECT, false, false),
+    STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false);
 
 
     private final String name;
@@ -37,14 +37,7 @@ public enum BuiltInType implements Type {
         this.isNumeric = isNumeric;
     }
 
-    BuiltInType(String name, Class<?> typeClass, String descriptor, TypeSpecificOpcodes opcodes, boolean isNumeric) {
-        this.name = name;
-        this.typeClass = typeClass;
-        this.descriptor = descriptor;
-        this.opcodes = opcodes;
-        this.isNumeric = isNumeric;
-        this.defaultValue = null;
-    }
+
 
     @Override
     public String toString() {
@@ -142,30 +135,30 @@ public enum BuiltInType implements Type {
     }
 
     public void doUnboxing(MethodVisitor mv) {
+        // No unboxing required, String is already an object.
+        //                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "valueOf", "()Z", false);
         switch (this) {
-            case INT:
+            case INT -> {
                 mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Integer");
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
-                break;
-            case FLOAT:
+            }
+            case FLOAT -> {
                 mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Integer");
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "floatValue", "()F", false);
-                break;
-            case DOUBLE:
+            }
+            case DOUBLE -> {
                 mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Double");
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false);
-                break;
-            case BOOLEAN:
+            }
+            case BOOLEAN -> {
                 mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Boolean");
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
-                break;
-            case STRING:
-                // No unboxing required, String is already an object.
-                break;
-            default:
+            }
+            case STRING -> mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/String");
+            default -> {
                 System.err.println("Unboxing isn't supported for that type.");
                 System.exit(29);
-
+            }
         }
     }
 }

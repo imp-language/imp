@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class FunctionCall extends Expression {
     public Function function;
-    public List<Expression> arguments;
+    public final List<Expression> arguments;
     public final ImpFile owner;
 
     public List<Type> argTypes;
@@ -96,21 +96,6 @@ public class FunctionCall extends Expression {
 
             String descriptor = "(" + argType.getDescriptor() + ")V";
 
-            // Todo: should unbox closure items to actually print the value
-            if (arguments.get(0) instanceof VariableReference local) {
-                if (local.reference instanceof ClosureReference) {
-//                    descriptor = "(Ljava/lang/Object;)V";
-//                    mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
-
-                } else if (local.reference instanceof LocalReference localReference) {
-                    if (localReference.localVariable.closure) {
-//                        descriptor = "(Ljava/lang/Object;)V";
-                    }
-//                    mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
-
-                }
-            }
-
 
             // Todo: account for custom toString methods on structs
             if (argType instanceof StructType) {
@@ -164,6 +149,9 @@ public class FunctionCall extends Expression {
                 int i = scope.getLocalVariableIndex(arg.getName());
                 mv.visitVarInsn(Opcodes.ALOAD, i);
             }
+
+            Object saa = "a";
+            String ssss = String.valueOf(saa);
 
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "closure", methodDescriptor, false);
             // Todo: pass data into closure() call

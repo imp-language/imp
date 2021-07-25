@@ -2,7 +2,6 @@ package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.expression.StructPropertyAccess;
 import org.imp.jvm.runtime.Box;
 import org.imp.jvm.statement.*;
 import org.imp.jvm.types.BuiltInType;
@@ -16,7 +15,6 @@ import org.objectweb.asm.Opcodes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ClassGenerator {
     private static final int CLASS_VERSION = 52;
@@ -36,8 +34,7 @@ public class ClassGenerator {
      */
     public ClassWriter generate(ImpFile impFile) {
         classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
-        String name = impFile.name;
-        name = "Entry";
+        String name = "Entry";
         String qualifiedName = packageName + "/" + name;
 
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
@@ -48,14 +45,7 @@ public class ClassGenerator {
                 function.generate(classWriter);
             }
         }
-//        functions.forEach(f -> f.generate(classWriter));
 
-        FieldGenerator fieldGenerator = new FieldGenerator(classWriter, Opcodes.ACC_STATIC);
-        List<Identifier> properties = impFile.staticUnit.properties;
-        for (var prop : properties) {
-            System.out.println("hmmmm");
-            prop.accept(fieldGenerator);
-        }
         classWriter.visitEnd();
 
         return classWriter;
@@ -159,7 +149,6 @@ public class ClassGenerator {
 
         addConstructor(structType.parent, classWriter, structType.fields, structType);
 
-//        functions.forEach(f -> f.generate(classWriter));
 
         for (var field : structType.fields) {
             Type type = field.type;

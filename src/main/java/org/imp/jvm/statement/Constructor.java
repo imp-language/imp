@@ -2,19 +2,16 @@ package org.imp.jvm.statement;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.compiler.DescriptorFactory;
-import org.imp.jvm.domain.scope.FunctionSignature;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
-import org.imp.jvm.types.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 // Todo: generate constructor alternates, including empty constructors
@@ -81,21 +78,5 @@ public class Constructor extends Function {
         r.generate(mv, scope);
     }
 
-    public void assignFields(StructType structType) {
 
-
-
-        /*
-        System.out.println("f");
-        for (var field : fields) {
-            List<Expression> expressions = new ArrayList<>();
-            expressions.add(new Literal(BuiltInType.STRING, "a"));
-            this.block.statements.add(new FunctionCall("log", expressions, null));
-
-
-//            StructPropertyAccess fieldAccess = new StructPropertyAccess();
-//
-//            AssignmentStatement assignment = new AssignmentStatement();
-        }*/
-    }
 }

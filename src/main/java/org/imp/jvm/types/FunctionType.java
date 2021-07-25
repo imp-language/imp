@@ -14,7 +14,6 @@ public class FunctionType implements Type {
     public final String name;
     public final List<Function> signatures;
     public final ImpFile parent;
-    public int callSites = 1;
 
     public final List<VariableReference> closures = new ArrayList<>();
 

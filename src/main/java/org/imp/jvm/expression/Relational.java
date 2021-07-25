@@ -22,7 +22,7 @@ public class Relational extends Expression {
     public void generate(MethodVisitor mv, Scope scope) {
 
         // Currently only primitive comparisons are implemented
-        generatePrimitivesComparison(mv, scope, left, right, compareSign);
+        generatePrimitivesComparison(mv, scope, left, right);
         Label endLabel = new Label();
         Label trueLabel = new Label();
         mv.visitJumpInsn(compareSign.getOpcode(), trueLabel);
@@ -40,7 +40,7 @@ public class Relational extends Expression {
         // Todo: make sure operation is compatible
     }
 
-    private void generatePrimitivesComparison(MethodVisitor mv, Scope scope, Expression left, Expression right, CompareSign compareSign) {
+    private void generatePrimitivesComparison(MethodVisitor mv, Scope scope, Expression left, Expression right) {
         left.generate(mv, scope);
         right.generate(mv, scope);
 //        mv.visitInsn(Opcodes.ISUB);

@@ -2,13 +2,6 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.expression.Expression;
-import org.imp.jvm.expression.StructPropertyAccess;
-import org.imp.jvm.expression.reference.ClosureReference;
-import org.imp.jvm.expression.reference.LocalReference;
-import org.imp.jvm.expression.reference.VariableReference;
-import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 

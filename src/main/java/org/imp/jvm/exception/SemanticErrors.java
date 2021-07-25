@@ -3,15 +3,12 @@ package org.imp.jvm.exception;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.imp.jvm.statement.Struct;
 
 interface TemplateFunction {
     String run(ParserRuleContext token);
 }
 
-interface StringTemplateFunction {
-    String run(String message);
-}
+
 
 public enum SemanticErrors implements ErrorContext {
     ImplementationError(-1, "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers.", ctx -> "This error message should never occur. "),
@@ -40,10 +37,9 @@ public enum SemanticErrors implements ErrorContext {
     //
     ;
 
-    public String suggestion;
-    public int code;
-    public TemplateFunction template;
-    public StringTemplateFunction stringTemplate;
+    public final String suggestion;
+    public final int code;
+    public final TemplateFunction template;
 
 
     SemanticErrors(int code, String suggestion, TemplateFunction template) {
@@ -56,8 +52,7 @@ public enum SemanticErrors implements ErrorContext {
     private static String getLocation(Token token) {
         int line = token.getLine();
         int col = token.getCharPositionInLine() + 1;
-        String location = line + ":" + col;
-        return location;
+        return line + ":" + col;
     }
 
     public String template(ParserRuleContext ctx) {
