@@ -17,6 +17,15 @@
 
 
 
+func a(i int) {
+    log(i)
+}
+
+
+func a(f float) {
+    log(f)
+}
+
 
 /*
 */

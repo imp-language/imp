@@ -32,9 +32,6 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         // Root Scope for Static Unit
         Scope staticScope = new Scope();
 
-        // static unit for all non-class statements in the file
-        // Todo: remove StaticUnits
-
         // create an ImpFile node with appropriate children
         var impFile = new ImpFile(filename);
 

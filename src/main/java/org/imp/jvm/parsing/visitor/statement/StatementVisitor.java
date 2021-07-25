@@ -97,7 +97,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         return new Block();
     }
 
-    // Todo: don't allow multiple definitions with same signature
+
     @Override
     public Function visitFunctionStatement(ImpParser.FunctionStatementContext ctx) {
         String name = ctx.identifier().getText();
@@ -125,9 +125,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         if (blockContext.statementList() != null) {
             List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
 
-            // Todo: Child blocks inherit the parent block's scope
             // Add parameters as local variables to the scope of the function block
-//            Scope newScope = new Scope(scope);
             Scope newScope = new Scope(scope);
             newScope.functionType = functionType;
             arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
@@ -148,9 +146,15 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             returnType = TypeResolver.getFromTypeContext(typeContext, scope);
         }
 
+        // Don't allow multiple definitions with same signature
         Function function = new Function(functionType, arguments, returnType, block);
-        functionType.signatures.add(function);
         function.setCtx(ctx);
+        if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
+            Logger.syntaxError(SemanticErrors.DuplicateFunctionOverloads, ctx.identifier());
+        } else {
+            functionType.signatures.put(Function.getDescriptor(function.parameters), function);
+
+        }
 
         return function;
     }
@@ -251,7 +255,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             for (var argCtx : argumentsCtx) {
                 var identifier = new Identifier();
                 identifier.name = argCtx.identifier().getText();
-                // todo: must respect scope to find struct types
                 identifier.type = TypeResolver.getFromTypeContext(argCtx.type(), scope);
                 arguments.add(identifier);
             }

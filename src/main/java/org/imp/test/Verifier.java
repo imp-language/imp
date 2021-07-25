@@ -28,6 +28,7 @@ public class Verifier {
 
         long startTime = System.currentTimeMillis();
 
+        int tests = 0;
 
         // For each pathname in the pathnames array
         for (String pathname : pathnames) {
@@ -35,6 +36,7 @@ public class Verifier {
             String ext = FilenameUtils.getExtension(pathname);
             if (ext.equals("imp")) {
                 validate(pathname);
+                tests++;
 
             }
         }
@@ -48,7 +50,8 @@ public class Verifier {
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime);
-        System.out.printf("Finished all tests in %.0f ms.", (float) duration);
+        float seconds = duration / 1000f;
+        System.out.printf("Finished %d tests in %.3f s.", tests, seconds);
     }
 
     private static void validate(String name) throws IOException {

@@ -33,7 +33,9 @@ public enum SemanticErrors implements ErrorContext {
     FunctionSignatureMismatch(8, "Check the parameter positions and types of the called function.",
             ctx -> "No function overloads exist on '" + ctx.getStart().getText() + "' that match the parameters '" + ctx.getText() + "'."),
     LocalVariableNotFound(9, "Make sure all variables referenced in this file are defined or imported.",
-            ctx -> "No variable named '" + ctx.getText() + "' exists in the current scope.")
+            ctx -> "No variable named '" + ctx.getText() + "' exists in the current scope."),
+    DuplicateFunctionOverloads(10, "Two functions with the same name cannot have the same parameters.",
+            ctx -> "Function '" + ctx.getText() + "' has two or more overloads with the same signature.")
     //
     ;
 

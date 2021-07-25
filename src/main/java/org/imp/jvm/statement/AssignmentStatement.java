@@ -40,7 +40,7 @@ public class AssignmentStatement extends Statement {
                 String varName = reference.getName();
                 int index = scope.getLocalVariableIndex(varName);
                 mv.visitVarInsn(Opcodes.ALOAD, index);
-                // Todo: change owner based on function name
+                
                 String qualifiedFunctionName = scope.functionType.getName();
                 mv.visitFieldInsn(Opcodes.GETFIELD, qualifiedFunctionName, varName, "Lorg/imp/jvm/runtime/Box;");
 

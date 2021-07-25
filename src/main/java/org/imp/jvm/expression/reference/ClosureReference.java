@@ -15,11 +15,10 @@ public class ClosureReference extends Reference {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-//        System.out.println("ref");
         String varName = localVariable.getName();
         int index = scope.getLocalVariableIndex(this.getName());
         mv.visitVarInsn(Opcodes.ALOAD, index);
-        // Todo: change owner based on function name
+
         String currentFunctionName = scope.functionType.getName();
         mv.visitFieldInsn(Opcodes.GETFIELD, currentFunctionName, varName, "Lorg/imp/jvm/runtime/Box;");
 

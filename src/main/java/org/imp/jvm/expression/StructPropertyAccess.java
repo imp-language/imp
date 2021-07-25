@@ -31,11 +31,6 @@ public class StructPropertyAccess extends Expression {
         String descriptor = last.type.getDescriptor();
 
         int index = scope.getLocalVariableIndex(parent.reference.getName());
-//        if (parent.localVariable.name.equals("p")) {
-//            // Todo: BAD- need to decide how scope will work
-//            index = 0;
-//        }
-//        index++;
         mv.visitVarInsn(Opcodes.ALOAD, index);
 
         mv.visitFieldInsn(Opcodes.GETFIELD, ownerInternalName, name, descriptor);

@@ -31,6 +31,12 @@ public class Function extends Statement {
         this.returnType = returnType;
     }
 
+    static public String getDescriptor(List<Identifier> identifiers) {
+        String params = identifiers.stream().map(parameters -> parameters.type.getDescriptor())
+                .collect(Collectors.joining(", "));
+        return params;
+    }
+
     @Override
     public String toString() {
         if (functionType != null) {
@@ -41,7 +47,6 @@ public class Function extends Statement {
 
 
     public String toStringRepr() {
-        // ToDo: this throws an exception, probably something with null parameters or return type
         String params = parameters.stream().map(parameters -> parameters.type.toString())
                 .collect(Collectors.joining(", "));
         return "(" + String.join(", ", params) + ") " + returnType;

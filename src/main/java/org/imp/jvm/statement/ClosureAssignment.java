@@ -22,7 +22,7 @@ public class ClosureAssignment extends Statement {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         // Load the parameter to this.closure(var1, var2)
         mv.visitVarInsn(Opcodes.ALOAD, index);
-        // Todo: change owner based on function name
+        // Store the box
         mv.visitFieldInsn(Opcodes.PUTFIELD, qualifiedFunctionName, closureParam.name, "Lorg/imp/jvm/runtime/Box;");
     }
 
