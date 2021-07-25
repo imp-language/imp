@@ -1,0 +1,22 @@
+// Tests closing over external scope inside a function body.
+// These are simple examples, more complicated tests to follow.
+
+val g = 42
+val h = 17
+log("g before: " + g)
+log("h before: " + h)
+
+func modifyG() {
+    g = 14
+    h = 2
+    log("g during: " + g)
+    log("h during: " + h)
+}
+
+modifyG()
+
+log("g after: " + g)
+log("h after: " + h)
+
+val k = 2 + g
+log(k)

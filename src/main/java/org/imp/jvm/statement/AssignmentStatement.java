@@ -38,10 +38,12 @@ public class AssignmentStatement extends Statement {
                 castIfNecessary(providerType, recipientType, mv);
                 mv.visitVarInsn(recipientType.getStoreVariableOpcode(), index);
             } else if (variableReference.reference instanceof ClosureReference reference) {
-                int index = scope.getLocalVariableIndex(reference.getName());
+                String varName = reference.getName();
+                int index = scope.getLocalVariableIndex(varName);
                 mv.visitVarInsn(Opcodes.ALOAD, index);
                 // Todo: change owner based on function name
-                mv.visitFieldInsn(Opcodes.GETFIELD, "scratch/Function_modifyG", "g", "Lorg/imp/jvm/runtime/Box;");
+                String qualifiedFunctionName = scope.functionType.getName();
+                mv.visitFieldInsn(Opcodes.GETFIELD, qualifiedFunctionName, varName, "Lorg/imp/jvm/runtime/Box;");
 
                 provider.generate(mv, scope);
                 if (providerType instanceof BuiltInType builtInType) {
@@ -64,7 +66,6 @@ public class AssignmentStatement extends Statement {
             castIfNecessary(providerType, recipientType, mv);
             mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, field.name, field.type.getDescriptor());
         }
-
 
     }
 

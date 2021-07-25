@@ -1,0 +1,7 @@
+g before: 42
+h before: 17
+g during: 14
+h during: 2
+g after: 14
+h after: 2
+16

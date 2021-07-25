@@ -130,6 +130,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             // Add parameters as local variables to the scope of the function block
 //            Scope newScope = new Scope(scope);
             Scope newScope = new Scope(scope);
+            newScope.functionType = functionType;
             arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
 
             StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);

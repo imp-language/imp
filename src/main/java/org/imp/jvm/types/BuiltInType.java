@@ -125,6 +125,9 @@ public enum BuiltInType implements Type {
             case FLOAT:
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false);
                 break;
+            case DOUBLE:
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false);
+                break;
             case BOOLEAN:
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
                 break;
@@ -135,7 +138,33 @@ public enum BuiltInType implements Type {
                 System.err.println("Boxing isn't supported for that type.");
                 System.exit(28);
                 break;
+        }
+    }
 
+    public void doUnboxing(MethodVisitor mv) {
+        switch (this) {
+            case INT:
+                mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Integer");
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
+                break;
+            case FLOAT:
+                mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Integer");
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "floatValue", "()F", false);
+                break;
+            case DOUBLE:
+                mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Double");
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false);
+                break;
+            case BOOLEAN:
+                mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Boolean");
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
+                break;
+            case STRING:
+                // No unboxing required, String is already an object.
+                break;
+            default:
+                System.err.println("Unboxing isn't supported for that type.");
+                System.exit(29);
 
         }
     }

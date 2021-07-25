@@ -86,9 +86,13 @@ public class ClassGenerator {
 //        var closureParams = scope.closures.values().stream().map(lv -> new Identifier(lv.getName(), BuiltInType.BOX)).collect(Collectors.toList());
         var closure = new Function(closureType, closureParams, BuiltInType.VOID, new Block());
 
-        var assignment = new ClosureAssignment();
+        int i = 1;
+        for (var c : closureParams) {
+            var assignment = new ClosureAssignment(qualifiedName, c, i);
+            closure.block.statements.add(assignment);
+            i++;
+        }
 //        var assignment = new AssignmentStatement(null, );
-        closure.block.statements.add(assignment);
         closure.generate(classWriter);
 
         /*

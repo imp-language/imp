@@ -1,0 +1,28 @@
+// A more complicated closures test.
+// This test has two functions, each has a closure over one variable.
+// Both functions also shared a closure over the shared variable.
+
+
+val a = 14
+val b = 28
+val shared = 19
+
+
+func closureA() {
+    a = 100 + a
+    shared = 12
+}
+
+
+func closureB() {
+    b = 100 + b
+    shared = 19782
+}
+
+closureA()
+log(shared)
+closureB()
+log(shared)
+
+log(a)
+log(b)

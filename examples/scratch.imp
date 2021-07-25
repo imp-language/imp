@@ -2,59 +2,8 @@
 
 // java interop time
 
-
-// What we have to generate
 /*
-struct IntRef {
-    value int
-}
-val global = new IntRef(42)
-log(global.value)
-func modifyGlobal(scope IntRef) {
-    scope.value = 14
-    log(scope.value)
-}
-
-modifyGlobal(global)
-log(global.value)
-
-
-val a = 44
-log(a)
-
-function aa(b int) {
-    log(b)
-}
-aa(a)
 */
-
-
-
-// What we want to type
-//val notBoxed = 42
-//log(notBoxed)
-
-
-
-
-
-
-
-
-
-val g = 42
-log("before: ")
-log(g)
-
-func modifyG() {
-    g = 14
-    log("during: ")
-    log(g)
-}
-
-modifyG()
-log("after: ")
-log(g)
 
 
 
@@ -63,3 +12,7 @@ log(g)
 
 /*
 */
+
+
+
+

@@ -23,6 +23,7 @@ public class Scope {
 
     public final LinkedMap<String, ClosureReference> closures;
 
+    public FunctionType functionType = null;
 
     public final List<FunctionType> functionTypes;
 
@@ -49,6 +50,7 @@ public class Scope {
         closures = new LinkedMap<>();
         structs = scope.structs;
         functionTypes = scope.functionTypes;
+        functionType = scope.functionType;
         this.parentScope = scope;
     }
 

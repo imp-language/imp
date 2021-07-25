@@ -99,14 +99,14 @@ public class FunctionCall extends Expression {
             // Todo: should unbox closure items to actually print the value
             if (arguments.get(0) instanceof VariableReference local) {
                 if (local.reference instanceof ClosureReference) {
-                    descriptor = "(Ljava/lang/Object;)V";
-                    mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
+//                    descriptor = "(Ljava/lang/Object;)V";
+//                    mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
 
                 } else if (local.reference instanceof LocalReference localReference) {
                     if (localReference.localVariable.closure) {
-                        descriptor = "(Ljava/lang/Object;)V";
+//                        descriptor = "(Ljava/lang/Object;)V";
                     }
-                    mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
+//                    mv.visitFieldInsn(Opcodes.GETFIELD, "org/imp/jvm/runtime/Box", "t", Object.class.descriptorString());
 
                 }
             }
@@ -157,12 +157,12 @@ public class FunctionCall extends Expression {
                 closureParams.add(identifier);
             }
 
+
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(closureParams, BuiltInType.VOID);
             for (var arg : s.closures.values()) {
-                var o = s.getClosure(arg.getName());
-                var l = new LocalReference(o.localVariable);
-                l.validate(scope);
-                l.generate(mv, scope);
+                // Load the boxed value, not box.t
+                int i = scope.getLocalVariableIndex(arg.getName());
+                mv.visitVarInsn(Opcodes.ALOAD, i);
             }
 
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "closure", methodDescriptor, false);

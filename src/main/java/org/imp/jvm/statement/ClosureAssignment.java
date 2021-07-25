@@ -13,21 +13,24 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class ClosureAssignment extends Statement {
-//    public Expression recipient;
-//    public Expression provider;
+    public final String qualifiedFunctionName;
+    public final Identifier closureParam;
+    public final int index;
 
-    public ClosureAssignment() {
-//        this.recipient = recipient;
-//        this.provider = provider;
+    public ClosureAssignment(String qualifiedFunctionName, Identifier closureParam, int index) {
+        this.qualifiedFunctionName = qualifiedFunctionName;
+        this.closureParam = closureParam;
+        this.index = index;
     }
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        int index = 0;
+        // Load 'this'
         mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        // Load the parameter to this.closure(var1, var2)
+        mv.visitVarInsn(Opcodes.ALOAD, index);
         // Todo: change owner based on function name
-        mv.visitFieldInsn(Opcodes.PUTFIELD, "scratch/Function_modifyG", "g", "Lorg/imp/jvm/runtime/Box;");
+        mv.visitFieldInsn(Opcodes.PUTFIELD, qualifiedFunctionName, closureParam.name, "Lorg/imp/jvm/runtime/Box;");
     }
 
     @Override
