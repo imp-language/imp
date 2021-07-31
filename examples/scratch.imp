@@ -1,35 +1,16 @@
 
 
-// java interop time
-
-/*
-*/
-
-//func init() {
-  val name = "Mozilla" // name is a local variable created by init
-  func displayName() { // displayName() is the inner function, a closure
-    log(name) // use variable declared in the parent function
-  }
-  displayName()
-//}
-//init()
+// import "lib/io"
 
 
+function a() {
+    log("aa")
 
-
-func a(i int) {
-    log(i)
 }
 
-
-func a(f float) {
-    log(f)
-}
-
-
-/*
-*/
+a()
 
 
 
+log(4)
 

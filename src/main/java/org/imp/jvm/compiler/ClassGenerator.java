@@ -2,6 +2,7 @@ package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.expression.Function;
 import org.imp.jvm.runtime.Box;
 import org.imp.jvm.statement.*;
 import org.imp.jvm.types.BuiltInType;

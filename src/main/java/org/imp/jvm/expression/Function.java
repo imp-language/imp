@@ -1,9 +1,12 @@
-package org.imp.jvm.statement;
+package org.imp.jvm.expression;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.expression.Expression;
+import org.imp.jvm.statement.Block;
+import org.imp.jvm.statement.Return;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.expression.EmptyExpression;
 import org.imp.jvm.types.FunctionType;
@@ -15,7 +18,7 @@ import org.objectweb.asm.Opcodes;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Function extends Statement {
+public class Function extends Expression {
     public final Block block;
     public final List<Identifier> parameters;
     public final Type returnType;

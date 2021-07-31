@@ -14,7 +14,10 @@ options {
 //    package org.imp.jvm
 //}
 
-program : EOL* (statement EOL*)* EOF;
+program : EOL* (importStatement EOL*)* (statement EOL*)* EOF;
+
+
+
 
 /*
  * Core
@@ -24,7 +27,6 @@ program : EOL* (statement EOL*)* EOF;
 // If statements, Loops, Returns, Switch, etc
 statement
     : block
-    | functionStatement
     | classStatement
     | structStatement
     | returnStatement
@@ -33,7 +35,7 @@ statement
     | assignment
     | expression
     | variableStatement
-    | importStatement
+//    | importStatement
     | exportStatement
     ;
 
@@ -57,6 +59,7 @@ expressionList
 
 expression
     : callStatement                                    #CallStatementExpression
+    | function                                         #FunctionDefinition
     | expression (DOT identifier)+                     #PropertyAccessExpression
     | expression LBRACK expression RBRACK              #MemberIndexExpression
     | literal                                          #LiteralExpression
@@ -116,7 +119,7 @@ ifStatement
 
 
 // Function definition
-functionStatement
+function
     : FUNCTION identifier LPAREN (arguments)? RPAREN (type)? block
     | LPAREN (arguments)? RPAREN FATARROW block
     ;
@@ -183,11 +186,13 @@ enumMember: identifier (ASSIGN expression)?;
 
 // Import/Export
 importStatement
-    : IMPORT identifier (AS identifier)?
-    | IMPORT identifierList FROM identifier;
+    : IMPORT stringLiteral                       #ImportFile // import io
+    | IMPORT stringLiteral AS identifier         #ImportFileAsIdentifier // import io as fs
+    | FROM stringLiteral IMPORT identifierList   #ImportFromFile // from io import read, write
+;
 
 exportStatement
-    : EXPORT (classStatement | functionStatement) // class, function, interface, enum
+    : EXPORT (function | structStatement) // class, function, interface, enum
     | EXPORT identifierList // identifiers
     ;
 

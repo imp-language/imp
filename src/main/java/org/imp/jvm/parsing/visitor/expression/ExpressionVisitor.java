@@ -2,12 +2,20 @@ package org.imp.jvm.parsing.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.domain.scope.LocalVariable;
+import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.reference.VariableReference;
-import org.imp.jvm.types.UnknownType;
+import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
+import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
+import org.imp.jvm.statement.Block;
+import org.imp.jvm.expression.Function;
+import org.imp.jvm.statement.Statement;
+import org.imp.jvm.types.*;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.domain.scope.Scope;
 
@@ -189,6 +197,67 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         StructPropertyAccess access = new StructPropertyAccess(structRef, fieldPath);
         access.setCtx(ctx);
         return access;
+    }
+
+    @Override
+    public Function visitFunction(ImpParser.FunctionContext ctx) {
+        String name = ctx.identifier().getText();
+
+        FunctionType functionType = scope.findFunctionType(name);
+
+        // If no FunctionTypes of name exist on the current scope,
+        if (functionType == null) {
+            // Create a new FunctionType and add it to the scope
+            functionType = new FunctionType(name, parent);
+            scope.functionTypes.add(functionType);
+        }
+
+
+        // Arguments
+        List<Identifier> arguments = new ArrayList<>();
+        ImpParser.ArgumentsContext argumentsContext = ctx.arguments();
+        if (argumentsContext != null) {
+            arguments = argumentsContext.accept(new ArgumentsVisitor(scope));
+        }
+
+        // Block
+        ImpParser.BlockContext blockContext = ctx.block();
+        Block block;
+        if (blockContext.statementList() != null) {
+            List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
+
+            // Add parameters as local variables to the scope of the function block
+            Scope newScope = new Scope(scope);
+            newScope.functionType = functionType;
+            arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
+
+            StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
+            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
+            block = new Block(statements, newScope);
+        } else {
+            block = new Block();
+        }
+
+
+        // Return type
+        ImpParser.TypeContext typeContext = ctx.type();
+        Type returnType = BuiltInType.VOID;
+        if (typeContext != null) {
+            // ToDo: parse multiple returns
+            returnType = TypeResolver.getFromTypeContext(typeContext, scope);
+        }
+
+        // Don't allow multiple definitions with same signature
+        Function function = new Function(functionType, arguments, returnType, block);
+        function.setCtx(ctx);
+        if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
+            Logger.syntaxError(SemanticErrors.DuplicateFunctionOverloads, ctx.identifier());
+        } else {
+            functionType.signatures.put(Function.getDescriptor(function.parameters), function);
+
+        }
+
+        return function;
     }
 
 

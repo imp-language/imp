@@ -7,6 +7,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
 import org.imp.jvm.types.*;
 import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.expression.Expression;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 // https://web.stanford.edu/class/archive/cs/cs143/cs143.1128/lectures/09/Slides09.pdf
 public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     private final ExpressionVisitor expressionVisitor;
+    private final LiteralVisitor literalVisitor;
 
     private final Scope scope;
     private final ImpFile parent;
@@ -29,7 +31,32 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     public StatementVisitor(Scope scope, ImpFile parent) {
         this.scope = scope;
         expressionVisitor = new ExpressionVisitor(scope, parent);
+        literalVisitor = new LiteralVisitor(expressionVisitor);
         this.parent = parent;
+    }
+
+
+    @Override
+    public Statement visitExportStatement(ImpParser.ExportStatementContext ctx) {
+        if (ctx.function() != null) {
+
+            return new Export(null, scope);
+        } else {
+            System.err.println("Exports not yet implemented.");
+            return null;
+        }
+    }
+
+    @Override
+    public Statement visitFunctionDefinition(ImpParser.FunctionDefinitionContext ctx) {
+        return ctx.function().accept(expressionVisitor);
+    }
+
+    @Override
+    public Statement visitImportFile(ImpParser.ImportFileContext ctx) {
+        var modulePath = ctx.stringLiteral().accept(literalVisitor);
+
+        return new Import(modulePath, scope);
     }
 
     @Override
@@ -98,66 +125,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
 
-    @Override
-    public Function visitFunctionStatement(ImpParser.FunctionStatementContext ctx) {
-        String name = ctx.identifier().getText();
 
-        FunctionType functionType = scope.findFunctionType(name);
-
-        // If no FunctionTypes of name exist on the current scope,
-        if (functionType == null) {
-            // Create a new FunctionType and add it to the scope
-            functionType = new FunctionType(name, parent);
-            scope.functionTypes.add(functionType);
-        }
-
-
-        // Arguments
-        List<Identifier> arguments = new ArrayList<>();
-        ImpParser.ArgumentsContext argumentsContext = ctx.arguments();
-        if (argumentsContext != null) {
-            arguments = argumentsContext.accept(new ArgumentsVisitor());
-        }
-
-        // Block
-        ImpParser.BlockContext blockContext = ctx.block();
-        Block block;
-        if (blockContext.statementList() != null) {
-            List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
-
-            // Add parameters as local variables to the scope of the function block
-            Scope newScope = new Scope(scope);
-            newScope.functionType = functionType;
-            arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
-
-            StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
-            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
-            block = new Block(statements, newScope);
-        } else {
-            block = new Block();
-        }
-
-
-        // Return type
-        ImpParser.TypeContext typeContext = ctx.type();
-        Type returnType = BuiltInType.VOID;
-        if (typeContext != null) {
-            // ToDo: parse multiple returns
-            returnType = TypeResolver.getFromTypeContext(typeContext, scope);
-        }
-
-        // Don't allow multiple definitions with same signature
-        Function function = new Function(functionType, arguments, returnType, block);
-        function.setCtx(ctx);
-        if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
-            Logger.syntaxError(SemanticErrors.DuplicateFunctionOverloads, ctx.identifier());
-        } else {
-            functionType.signatures.put(Function.getDescriptor(function.parameters), function);
-
-        }
-
-        return function;
-    }
 
     @Override
     public Return visitReturnStatement(ImpParser.ReturnStatementContext ctx) {
@@ -246,22 +214,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
 
-    class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
-        @Override
-        public List<Identifier> visitArguments(ImpParser.ArgumentsContext ctx) {
-            var argumentsCtx = ctx.argument();
-
-            var arguments = new ArrayList<Identifier>();
-            for (var argCtx : argumentsCtx) {
-                var identifier = new Identifier();
-                identifier.name = argCtx.identifier().getText();
-                identifier.type = TypeResolver.getFromTypeContext(argCtx.type(), scope);
-                arguments.add(identifier);
-            }
-
-            return arguments;
-        }
-    }
 
 
     @Override
@@ -284,15 +236,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         return super.visitClassStatement(ctx);
     }
 
-    @Override
-    public Statement visitImportStatement(ImpParser.ImportStatementContext ctx) {
-        return super.visitImportStatement(ctx);
-    }
 
-    @Override
-    public Statement visitExportStatement(ImpParser.ExportStatementContext ctx) {
-        return super.visitExportStatement(ctx);
-    }
 
 
 }

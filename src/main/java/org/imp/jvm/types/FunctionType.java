@@ -4,7 +4,7 @@ import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.expression.reference.VariableReference;
-import org.imp.jvm.statement.Function;
+import org.imp.jvm.expression.Function;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.statement.Function;
+import org.imp.jvm.expression.Function;
 import org.imp.jvm.types.Type;
 
 import java.util.Collection;

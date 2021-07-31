@@ -5,6 +5,7 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.expression.Function;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;
@@ -59,17 +60,15 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
             // Split classes out to their own files
             if (s instanceof Struct struct) {
                 impFile.structTypes.add(struct.structType);
+            } else if (s instanceof Function f) {
+
+                // add function to static class methods
+                impFile.functions.add(f);
+            } else if (s instanceof Import i) {
+                impFile.imports.add(i);
             } else {
-                // For everything else, add to the static class.
-                if (s instanceof Function f) {
-
-                    // add function to static class methods
-                    impFile.functions.add(f);
-                } else {
-                    // All other root level nodes go in the main method
-                    main.block.statements.add(s);
-                }
-
+                // All other root level nodes go in the main method
+                main.block.statements.add(s);
             }
 
 

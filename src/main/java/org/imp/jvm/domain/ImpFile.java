@@ -3,7 +3,9 @@ package org.imp.jvm.domain;
 
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.exception.SemanticErrors;
-import org.imp.jvm.statement.Function;
+import org.imp.jvm.statement.Export;
+import org.imp.jvm.expression.Function;
+import org.imp.jvm.statement.Import;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.types.TypeResolver;
@@ -23,6 +25,9 @@ public class ImpFile {
     // All structs defined in the source file.
     public final List<StructType> structTypes = new ArrayList<>();
 
+    public final List<Import> imports = new ArrayList<>();
+    public final List<Export> exports = new ArrayList<>();
+
 
     public ImpFile(String name) {
         this.name = name;
@@ -35,9 +40,14 @@ public class ImpFile {
 
 
     public void validate() {
-        
+        // 0. Export validation
+        for (var e : exports) {
+            // Add a structure to the scope of this Imp file
+            // that is the imported other file.
+            System.out.println(e);
+        }
 
-        // 0. Ensure all struct fields have valid types
+        // 1. Ensure all struct fields have valid types
         for (var s : structTypes) {
             for (var f : s.fields) {
                 Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
@@ -50,16 +60,13 @@ public class ImpFile {
         }
 
 
-        // 1. Recursively type-check the body of each function
+        // 2. Recursively type-check the body of each function
         for (var f : functions) {
             f.block.validate(f.block.scope);
         }
 
 
-//        Type f = struct.findStructField(fieldPath);
-//        Struct struct = scope.getStruct(structRef.type.getName());
-
-
-        // 2. Secure variable mutability
+        // 3. Secure variable mutability
+        // Todo: immutability
     }
 }
