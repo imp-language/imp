@@ -1,21 +1,19 @@
 
 
-// import "lib/io"
+import "module"
 
-/*
-export func read(filename string) string {
-    log(filename)
-}
+import "io"
 
-read("file.txt")
+
+// read("file.txt")
 
 
 
 log(4)
 
-*/
 
 
+/*
 struct Person {
     fname string
     lname string
@@ -38,3 +36,4 @@ hello("Kyle")
 
 val payton = new Person("Payton", "Kramer")
 hello(payton)
+*/

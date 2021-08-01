@@ -1,0 +1,5 @@
+
+
+func read(filename string) string {
+    log("hello, modules")
+}

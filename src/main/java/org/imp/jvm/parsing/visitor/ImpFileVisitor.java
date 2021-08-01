@@ -27,6 +27,8 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
     @Override
     public ImpFile visitProgram(ImpParser.ProgramContext ctx) {
+
+
         // get all top level statements in the file
         List<ImpParser.StatementContext> statementContexts = ctx.statement();
 
@@ -50,8 +52,18 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         impFile.functions.add(main);
 
+
         // handle each statement appropriately
         StatementVisitor statementVisitor = new StatementVisitor(staticScope, impFile);
+
+        // Parse all imports
+        List<ImpParser.ImportStatementContext> importStatementContexts = ctx.importStatement();
+        for (var importStatement : importStatementContexts) {
+            Import i = (Import) importStatement.accept(statementVisitor);
+            impFile.imports.add(i);
+        }
+
+
         for (var statement : statementContexts) {
             Statement s = statement.accept(statementVisitor);
 //            System.out.println(s);
@@ -65,6 +77,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
                 // add function to static class methods
                 impFile.functions.add(f);
             } else if (s instanceof Import i) {
+                // Todo: remove
                 impFile.imports.add(i);
             } else if (s instanceof Export e) {
                 impFile.exports.add(e);
