@@ -7,6 +7,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.expression.Function;
 import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
 import org.imp.jvm.types.*;
 import org.imp.jvm.exception.SemanticErrors;
@@ -39,8 +40,8 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     @Override
     public Statement visitExportStatement(ImpParser.ExportStatementContext ctx) {
         if (ctx.function() != null) {
-
-            return new Export(null, scope);
+            Function function = (Function) ctx.function().accept(expressionVisitor);
+            return new Export(function, scope);
         } else {
             System.err.println("Exports not yet implemented.");
             return null;

@@ -7,6 +7,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Return;
+import org.imp.jvm.statement.Statement;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.expression.EmptyExpression;
 import org.imp.jvm.types.FunctionType;
@@ -15,6 +16,8 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,11 @@ public class Function extends Expression {
         this.functionType = functionType;
         this.parameters = parameters;
         this.returnType = returnType;
+    }
+
+    @Override
+    public List<Statement> getChildren() {
+        return Arrays.asList(block);
     }
 
     static public String getDescriptor(List<Identifier> identifiers) {

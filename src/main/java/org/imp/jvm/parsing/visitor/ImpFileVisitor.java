@@ -66,6 +66,8 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
                 impFile.functions.add(f);
             } else if (s instanceof Import i) {
                 impFile.imports.add(i);
+            } else if (s instanceof Export e) {
+                impFile.exports.add(e);
             } else {
                 // All other root level nodes go in the main method
                 main.block.statements.add(s);

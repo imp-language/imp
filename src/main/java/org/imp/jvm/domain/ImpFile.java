@@ -3,6 +3,8 @@ package org.imp.jvm.domain;
 
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.parsing.Node;
+import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Export;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.statement.Import;
@@ -40,11 +42,18 @@ public class ImpFile {
 
 
     public void validate() {
+        // WIP: convert to AST
+        Function main = functions.get(0);
+
+        Node<Block> block = new Node<>(main.block);
+
+
         // 0. Export validation
         for (var e : exports) {
             // Add a structure to the scope of this Imp file
             // that is the imported other file.
             System.out.println(e);
+            e.validate(e.scope);
         }
 
         // 1. Ensure all struct fields have valid types
@@ -60,6 +69,15 @@ public class ImpFile {
         }
 
 
+        // Move all functions to the top level for compilation
+        List<Function> functionList = new ArrayList<>();
+        for (var f : functions) {
+            functionList.add(f);
+
+
+        }
+
+
         // 2. Recursively type-check the body of each function
         for (var f : functions) {
             f.block.validate(f.block.scope);
@@ -68,5 +86,8 @@ public class ImpFile {
 
         // 3. Secure variable mutability
         // Todo: immutability
+
+        // 4. Validate imports
+
     }
 }

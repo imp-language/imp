@@ -2,15 +2,39 @@
 
 // import "lib/io"
 
-
-function a() {
-    log("aa")
-
+/*
+export func read(filename string) string {
+    log(filename)
 }
 
-a()
+read("file.txt")
 
 
 
 log(4)
 
+*/
+
+
+struct Person {
+    fname string
+    lname string
+}
+
+function hello(name string) void {
+    log("hello, " + name)
+}
+
+function hello(p Person) void {
+    log("HELLO, " + p.fname)
+}
+
+
+
+hello("Matt")
+hello("Kyle")
+
+
+
+val payton = new Person("Payton", "Kramer")
+hello(payton)
