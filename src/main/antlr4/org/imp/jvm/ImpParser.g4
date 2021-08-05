@@ -186,9 +186,9 @@ enumMember: identifier (ASSIGN expression)?;
 
 // Import/Export
 importStatement
-    : IMPORT stringLiteral                       #ImportFile // import io
-    | IMPORT stringLiteral AS identifier         #ImportFileAsIdentifier // import io as fs
-    | FROM stringLiteral IMPORT identifierList   #ImportFromFile // from io import read, write
+    : IMPORT stringLiteral                       #ImportFile // import "io"
+    | IMPORT stringLiteral AS identifier         #ImportFileAsIdentifier // import "io" as fs
+    | FROM stringLiteral IMPORT identifierList   #ImportFromFile // from "io" import read, write
 ;
 
 exportStatement

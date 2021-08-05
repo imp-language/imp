@@ -13,6 +13,7 @@ func modifyG() {
     log("h during: " + h)
 }
 
+
 modifyG()
 
 log("g after: " + g)
