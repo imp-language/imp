@@ -2,6 +2,7 @@ package org.imp.jvm.parsing.visitor;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
@@ -10,6 +11,7 @@ import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;
 import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.Modifier;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,6 +70,12 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
             Statement s = statement.accept(statementVisitor);
 //            System.out.println(s);
 
+            if (s == null) {
+                System.err.println("Parser error: " + s + " is null.");
+                System.exit(1);
+
+            }
+
 
             // Split classes out to their own files
             if (s instanceof Struct struct) {
@@ -76,6 +84,11 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
                 // add function to static class methods
                 impFile.functions.add(f);
+
+                if (f.modifier == Modifier.EXPORT) {
+                    impFile.exports.add(new Export(f, staticScope));
+                }
+
             } else if (s instanceof Import i) {
                 // Todo: remove
                 impFile.imports.add(i);

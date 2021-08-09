@@ -120,8 +120,12 @@ ifStatement
 
 // Function definition
 function
-    : FUNCTION identifier LPAREN (arguments)? RPAREN (type)? block
+    : modifiers? FUNCTION identifier LPAREN (arguments)? RPAREN (type)? block
     | LPAREN (arguments)? RPAREN FATARROW block
+    ;
+
+modifiers
+    : EXPORT
     ;
 
 arguments

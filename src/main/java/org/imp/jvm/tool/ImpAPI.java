@@ -7,12 +7,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.ImpLexer;
 import org.imp.jvm.ImpParser;
+import org.imp.jvm.compiler.BytecodeGenerator;
+import org.imp.jvm.compiler.ClassGenerator;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Program;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class ImpAPI {
@@ -42,7 +43,10 @@ public class ImpAPI {
 
             System.out.println("Found file " + filePath);
             ImpFile ast = createSourceFile(filePath);
+            ast.validate();
             impFileMap.put(filePath, ast);
+            entry.qualifiedImports.add(ast);
+
 
             var children = gatherImports(ast);
 
@@ -51,7 +55,33 @@ public class ImpAPI {
         return impFileMap;
     }
 
-    public static Program createProgram(List<ImpFile> files) {
+    public static Program createProgram(Map<String, ImpFile> files) throws IOException {
+        BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
+        for (var key : files.keySet()) {
+            var value = files.get(key);
+            var byteUnits = bytecodeGenerator.generate(value);
+            String className = value.getClassName();
+            for (var byteUnit : byteUnits.entrySet()) {
+                String qualifiedName = className;
+                if (!byteUnit.getKey().equals("main")) {
+                    qualifiedName = byteUnit.getKey();
+                }
+                String fileName = ".compile/" + qualifiedName + ".class";
+
+                System.out.println("Writing: " + fileName);
+
+                File tmp = new File(fileName);
+                tmp.getParentFile().mkdirs();
+
+
+                OutputStream output = new FileOutputStream(fileName);
+                output.write(byteUnit.getValue());
+                output.flush();
+                output.close();
+
+            }
+        }
+
         return null;
     }
 

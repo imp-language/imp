@@ -35,7 +35,8 @@ public class BytecodeGenerator {
 
         for (var functionType : functionTypes) {
             String className = "Function_" + functionType.name;
-            code.put(impFile.packageName + "/" + className, classGenerator.generate(functionType).toByteArray());
+            var a = classGenerator.generate(functionType).toByteArray();
+            code.put(impFile.packageName + "/" + className, a);
 
         }
 

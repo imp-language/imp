@@ -1,5 +1,22 @@
 
 
-func read(filename string) string {
+
+export func write(filename string, data string) {
+    log("write: " + filename)
+}
+
+
+
+
+
+
+
+
+
+
+
+export func read(filename string) string {
     log("hello, modules")
+    // todo: error when fail to return
+    return "a"
 }

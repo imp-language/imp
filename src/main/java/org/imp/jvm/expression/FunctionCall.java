@@ -50,6 +50,14 @@ public class FunctionCall extends Expression {
 
         // Find a FunctionType in the current scope by name
         FunctionType functionType = scope.findFunctionType(this.name);
+
+        // If not found in current scope, search in imported files
+        if (functionType == null) {
+            var fType = this.getFunctionType(this.name);
+            functionType = fType;
+        }
+
+        // If not found at all, error
         if (functionType == null) {
             Logger.syntaxError(SemanticErrors.FunctionNotFound, getCtx());
             return;
@@ -147,5 +155,16 @@ public class FunctionCall extends Expression {
             methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
         }
+    }
+
+    private FunctionType getFunctionType(String name) {
+        for (var imported : this.owner.qualifiedImports) {
+            for (var func : imported.functions) {
+                if (func.functionType.name.equals(name)) {
+                    return func.functionType;
+                }
+            }
+        }
+        return null;
     }
 }

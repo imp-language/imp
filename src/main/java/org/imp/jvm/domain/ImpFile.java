@@ -28,6 +28,7 @@ public class ImpFile {
     public final List<StructType> structTypes = new ArrayList<>();
 
     public final List<Import> imports = new ArrayList<>();
+    public final List<ImpFile> qualifiedImports = new ArrayList<>();
     public final List<Export> exports = new ArrayList<>();
 
 

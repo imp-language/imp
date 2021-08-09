@@ -21,6 +21,10 @@ public class Imp {
             var entryFile = ImpAPI.createSourceFile(filename);
             // 1. Recursively generate ASTs for all files imported
             var imports = ImpAPI.gatherImports(entryFile);
+            imports.put("main", entryFile);
+
+            entryFile.validate();
+            var program = ImpAPI.createProgram(imports);
 
         } catch (IOException e) {
             e.printStackTrace();

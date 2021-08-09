@@ -247,8 +247,10 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
             returnType = TypeResolver.getFromTypeContext(typeContext, scope);
         }
 
+        Modifier modifier = Modifier.fromString(ctx.modifiers().getText());
+
         // Don't allow multiple definitions with same signature
-        Function function = new Function(functionType, arguments, returnType, block);
+        Function function = new Function(functionType, arguments, returnType, block, modifier);
         function.setCtx(ctx);
         if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
             Logger.syntaxError(SemanticErrors.DuplicateFunctionOverloads, ctx.identifier());

@@ -1,39 +1,9 @@
 
 
-import "module"
-
 import "io"
 
 
-// read("file.txt")
-
+write("a.txt", "data")
 
 
 log(4)
-
-litl
-
-/*
-struct Person {
-    fname string
-    lname string
-}
-
-function hello(name string) void {
-    log("hello, " + name)
-}
-
-function hello(p Person) void {
-    log("HELLO, " + p.fname)
-}
-
-
-
-hello("Matt")
-hello("Kyle")
-
-
-
-val payton = new Person("Payton", "Kramer")
-hello(payton)
-*/
