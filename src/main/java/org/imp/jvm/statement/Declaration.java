@@ -32,6 +32,7 @@ public class Declaration extends Statement {
             mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
             mv.visitInsn(Opcodes.DUP);
             expression.generate(mv, scope);
+            scope.addLocalVariable(localVariable);
 
             if (expression.type instanceof BuiltInType builtInType) {
                 builtInType.doBoxing(mv);
@@ -48,6 +49,7 @@ public class Declaration extends Statement {
             mv.visitVarInsn(Opcodes.ASTORE, index);
         } else {
             expression.generate(mv, scope);
+            scope.addLocalVariable(localVariable);
             Type type = expression.type;
             int index = scope.getLocalVariableIndex(name);
             localVariable.type = expression.type;
@@ -67,7 +69,6 @@ public class Declaration extends Statement {
         localVariable.type = expression.type;
 
 //        VariableReference varRef = new VariableReference(name);
-        scope.addLocalVariable(localVariable);
 
 //        varRef.validate(scope);
 

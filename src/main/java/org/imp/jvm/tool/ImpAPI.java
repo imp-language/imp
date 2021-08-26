@@ -85,4 +85,30 @@ public class ImpAPI {
         return null;
     }
 
+    public static int run(String className) throws IOException {
+        String cmd = "java --enable-preview -cp .compile;target/classes " + className;
+        Process proc = Runtime.getRuntime().exec(cmd);
+
+        // 3. Watch standard out
+        BufferedReader stdInput = new BufferedReader(new
+                InputStreamReader(proc.getInputStream()));
+
+        BufferedReader stdError = new BufferedReader(new
+                InputStreamReader(proc.getErrorStream()));
+
+        String s = null;
+        String b = "some\ntext\tbitch";
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+        }
+
+        System.out.println("\nErrors (if any):");
+        while ((s = stdError.readLine()) != null) {
+            System.out.println(s);
+        }
+        System.out.println("");
+
+        return 0;
+    }
+
 }

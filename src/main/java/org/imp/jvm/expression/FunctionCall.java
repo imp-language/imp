@@ -65,8 +65,8 @@ public class FunctionCall extends Expression {
 
         // Find a function that exists in the current scope that matches the FunctionSignature
 
-        function = functionType.getSignatureByTypes(this.argTypes);
-        if (function == null) {
+        this.function = functionType.getSignatureByTypes(this.argTypes);
+        if (this.function == null) {
             Logger.syntaxError(SemanticErrors.FunctionSignatureMismatch, getCtx());
             return;
         }
@@ -74,7 +74,7 @@ public class FunctionCall extends Expression {
 //        lvr.type = BuiltInType.STRUCT;
 //        lvr.localVariable.type = BuiltInType.STRUCT;
 //        functionType.closures.add(lvr);
-        this.type = function.functionType;
+        this.type = function.returnType;
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
@@ -107,10 +107,10 @@ public class FunctionCall extends Expression {
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, descriptor, false);
         } else {
             // 0. If the First Class Function has not been initialized, do so.
-            String localVariableName = this.type.getName();
+            String localVariableName = this.name;
             if (scope.getLocalVariable(localVariableName) == null) {
                 // Initialize the first-class function closure object
-                String ownerDescriptor = this.type.getInternalName();
+                String ownerDescriptor = this.function.functionType.getInternalName();
                 mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
                 mv.visitInsn(Opcodes.DUP);
 
@@ -125,7 +125,7 @@ public class FunctionCall extends Expression {
             }
 
             // 1. Load the First Class Function object
-            String ownerDescriptor = this.type.getInternalName();
+            String ownerDescriptor = this.function.functionType.getInternalName();
             int index = scope.getLocalVariableIndex(localVariableName);
             mv.visitVarInsn(Opcodes.ALOAD, index);
 
@@ -152,8 +152,12 @@ public class FunctionCall extends Expression {
 
             // 5. Call the appropriate invoke method on the First Class Function object
             List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
-            methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
+
+            Type returnType = this.function.returnType;
+            methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
+
+
         }
     }
 

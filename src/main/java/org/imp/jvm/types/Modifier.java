@@ -6,6 +6,7 @@ import org.objectweb.asm.Opcodes;
 import java.util.Arrays;
 
 public enum Modifier {
+    NONE(""),
     EXPORT("export");
 
     private final String modifier;

@@ -26,6 +26,8 @@ public class Imp {
             entryFile.validate();
             var program = ImpAPI.createProgram(imports);
 
+            int result = ImpAPI.run("examples.scratch.Entry");
+
         } catch (IOException e) {
             e.printStackTrace();
         }

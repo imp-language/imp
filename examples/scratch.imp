@@ -3,7 +3,23 @@
 import "io"
 
 
-write("a.txt", "data")
+// write("a.txt", "data")
+
+val a = read2("reee")
+
+// log(a)
+
+// log(4)
+
+voidFunc("ree")
 
 
-log(4)
+func voidFunc(s string) {
+    log("from void")
+}
+
+func read2(s string) string {
+    log("hello, not modules")
+    // todo: error when fail to return
+    return "a"
+}
