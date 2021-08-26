@@ -60,9 +60,15 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         return new Import(modulePath, scope);
     }
 
+
     @Override
     public Statement visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
         return expressionVisitor.visitCallStatementExpression(ctx);
+    }
+
+    @Override
+    public Statement visitMethodCallExpression(ImpParser.MethodCallExpressionContext ctx) {
+        return expressionVisitor.visitMethodCallExpression(ctx);
     }
 
     @Override

@@ -9,8 +9,10 @@ import org.imp.jvm.ImpLexer;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.compiler.BytecodeGenerator;
 import org.imp.jvm.compiler.ClassGenerator;
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Program;
+import org.imp.jvm.parsing.Parser;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
 
 import java.io.*;
@@ -18,15 +20,14 @@ import java.util.*;
 
 public class ImpAPI {
     public static ImpFile createSourceFile(String filename) throws IOException {
-        CharStream charStream = CharStreams.fromFileName(filename);
-        ImpLexer impLexer = new ImpLexer(charStream);
-        CommonTokenStream tokenStream = new CommonTokenStream(impLexer);
+        ImpFile ast = Parser.getAbstractSyntaxTree(filename);
 
-        ImpParser parser = new ImpParser(tokenStream);
-        parser.setBuildParseTree(true);
+        if (Logger.hasErrors()) {
+            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
+            System.out.println("Correct parse errors before type checking and compilation can continue.");
+            System.exit(1);
+        }
 
-        ParseTree parseTree = parser.program();
-        ImpFile ast = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(filename)));
         return ast;
     }
 
@@ -41,9 +42,15 @@ public class ImpAPI {
             String filePath = FilenameUtils.concat(basePath, relativeFileName + ".imp");
             filePath = FilenameUtils.separatorsToUnix(filePath);
 
-            System.out.println("Found file " + filePath);
+//            System.out.println("Found file " + filePath);
             ImpFile ast = createSourceFile(filePath);
             ast.validate();
+            if (Logger.hasErrors()) {
+                Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
+                System.out.println("Correct semantic errors before compilation can continue.");
+                System.exit(1);
+            }
+
             impFileMap.put(filePath, ast);
             entry.qualifiedImports.add(ast);
 
@@ -68,7 +75,7 @@ public class ImpAPI {
                 }
                 String fileName = ".compile/" + qualifiedName + ".class";
 
-                System.out.println("Writing: " + fileName);
+//                System.out.println("Writing: " + fileName);
 
                 File tmp = new File(fileName);
                 tmp.getParentFile().mkdirs();
@@ -80,6 +87,12 @@ public class ImpAPI {
                 output.close();
 
             }
+        }
+
+        if (Logger.hasErrors()) {
+            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
+            System.out.println("Errored during bytecode generation.");
+            System.exit(1);
         }
 
         return null;

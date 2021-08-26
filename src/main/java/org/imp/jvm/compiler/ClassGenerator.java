@@ -86,7 +86,6 @@ public class ClassGenerator {
         closure.generate(classWriter);
 
 
-        System.out.println(Box.class.descriptorString());
 
         // Todo: add fields for closure variables
         for (var field : closureParams) {

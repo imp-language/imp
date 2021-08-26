@@ -35,7 +35,9 @@ public enum SemanticErrors implements ErrorContext {
     LocalVariableNotFound(9, "Make sure all variables referenced in this file are defined or imported.",
             ctx -> "No variable named '" + ctx.getText() + "' exists in the current scope."),
     DuplicateFunctionOverloads(10, "Two functions with the same name cannot have the same parameters.",
-            ctx -> "Function '" + ctx.getText() + "' has two or more overloads with the same signature.")
+            ctx -> "Function '" + ctx.getText() + "' has two or more overloads with the same signature."),
+    ModuleNotImported(11, "Make sure to import all modules referenced in the file.",
+            ctx -> "Module '" + ctx.getText() + "' has not been imported.")
     //
     ;
 

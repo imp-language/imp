@@ -90,17 +90,15 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     }
 
     @Override
-    public FunctionCall visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
-
-        ImpParser.CallStatementContext callCtx = ctx.callStatement();
+    public FunctionCall visitCallStatement(ImpParser.CallStatementContext ctx) {
 
         // Function name
-        String functionName = callCtx.identifier().getText();
+        String functionName = ctx.identifier().getText();
 
         // Function argument expressions
         List<Expression> argExpressions = new ArrayList<>();
-        if (callCtx.expressionList() != null) {
-            var arguments = callCtx.expressionList().expression();
+        if (ctx.expressionList() != null) {
+            var arguments = ctx.expressionList().expression();
             argExpressions = arguments.stream().map(a -> a.accept(this)).collect(Collectors.toList());
         }
 
@@ -109,6 +107,15 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         call.setCtx(ctx);
 
         return call;
+
+    }
+
+    @Override
+    public FunctionCall visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
+
+        ImpParser.CallStatementContext callCtx = ctx.callStatement();
+
+        return visitCallStatement(callCtx);
 
     }
 
@@ -267,4 +274,11 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     }
 
 
+    @Override
+    public Expression visitMethodCallExpression(ImpParser.MethodCallExpressionContext ctx) {
+        var owner = ctx.expression().accept(this);
+        var callStatement = visitCallStatement(ctx.callStatement());
+        callStatement.setOwner(owner);
+        return callStatement;
+    }
 }

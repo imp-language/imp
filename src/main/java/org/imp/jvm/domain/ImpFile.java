@@ -53,7 +53,7 @@ public class ImpFile {
         for (var e : exports) {
             // Add a structure to the scope of this Imp file
             // that is the imported other file.
-            System.out.println(e);
+//            System.out.println(e);
             e.validate(e.scope);
         }
 
@@ -90,5 +90,11 @@ public class ImpFile {
 
         // 4. Validate imports
 
+
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -22,7 +22,7 @@ public class Export extends Statement {
 
     @Override
     public void validate(Scope scope) {
-        System.out.println("re");
+//        System.out.println("re");
     }
 
     @Override

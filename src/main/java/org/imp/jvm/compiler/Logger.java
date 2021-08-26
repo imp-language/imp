@@ -19,4 +19,8 @@ public class Logger {
     public static List<RuntimeException> getSyntaxErrors() {
         return syntaxErrors;
     }
+
+    public static boolean hasErrors() {
+        return syntaxErrors.size() > 0;
+    }
 }

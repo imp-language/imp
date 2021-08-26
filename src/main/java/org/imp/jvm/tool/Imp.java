@@ -1,5 +1,6 @@
 package org.imp.jvm.tool;
 
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 
 import java.io.IOException;
@@ -24,6 +25,13 @@ public class Imp {
             imports.put("main", entryFile);
 
             entryFile.validate();
+
+            if (Logger.hasErrors()) {
+                Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
+                System.out.println("Correct semantic errors before compilation can continue.");
+                System.exit(1);
+            }
+
             var program = ImpAPI.createProgram(imports);
 
             int result = ImpAPI.run("examples.scratch.Entry");

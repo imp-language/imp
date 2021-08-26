@@ -7,6 +7,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
@@ -27,6 +28,10 @@ public class FunctionCall extends Expression {
     public List<Type> argTypes;
     public String name;
 
+    private boolean hasBeenInitialized = false;
+
+    private Expression module;
+
 
     public FunctionCall(String name, List<Expression> arguments, ImpFile owner) {
         this.name = name;
@@ -34,6 +39,10 @@ public class FunctionCall extends Expression {
 
         this.function = null;
         this.owner = owner;
+    }
+
+    public void setOwner(Expression owner) {
+        this.module = owner;
     }
 
     @Override
@@ -50,6 +59,28 @@ public class FunctionCall extends Expression {
 
         // Find a FunctionType in the current scope by name
         FunctionType functionType = scope.findFunctionType(this.name);
+
+        // Potentially override if ainother name is imported
+        if (this.module != null) {
+            if (this.module instanceof VariableReference variableReference) {
+                String modulePath = variableReference.name;
+                var importedFile = this.owner.qualifiedImports.stream().filter(e -> e.name.contains(modulePath)).findFirst();
+                if (importedFile.isPresent()) {
+                    var i = importedFile.get();
+                    var func = i.functions.stream().filter(e -> e.functionType.name.equals(this.name)).findFirst();
+                    if (func.isPresent()) {
+                        functionType = func.get().functionType;
+                    }
+                } else {
+                    Logger.syntaxError(SemanticErrors.ModuleNotImported, module.getCtx());
+                }
+
+            } else {
+                System.err.println("Bad namespace on:" + module);
+                System.exit(81);
+            }
+        }
+
 
         // If not found in current scope, search in imported files
         if (functionType == null) {
@@ -75,6 +106,10 @@ public class FunctionCall extends Expression {
 //        lvr.localVariable.type = BuiltInType.STRUCT;
 //        functionType.closures.add(lvr);
         this.type = function.returnType;
+
+
+        // Store as new local variable
+        scope.addLocalVariable(new LocalVariable(function.functionType.name, function.functionType));
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
@@ -108,7 +143,7 @@ public class FunctionCall extends Expression {
         } else {
             // 0. If the First Class Function has not been initialized, do so.
             String localVariableName = this.name;
-            if (scope.getLocalVariable(localVariableName) == null) {
+            if (!hasBeenInitialized) {
                 // Initialize the first-class function closure object
                 String ownerDescriptor = this.function.functionType.getInternalName();
                 mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
@@ -118,10 +153,11 @@ public class FunctionCall extends Expression {
                 List<Identifier> params = Collections.emptyList();
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
                 mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
-
-                // Store as new local variable
-                scope.addLocalVariable(new LocalVariable(localVariableName, function.functionType));
+//
+//                // Store as new local variable
+//                scope.addLocalVariable(new LocalVariable(localVariableName, function.functionType));
                 mv.visitVarInsn(Opcodes.ASTORE, scope.getLocalVariableIndex(localVariableName));
+                hasBeenInitialized = true;
             }
 
             // 1. Load the First Class Function object
