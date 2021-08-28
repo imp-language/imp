@@ -1,19 +1,25 @@
 
 
+import "util/strings"
+
 import "io"
+import "net"
+
 
 
 io.write("a.txt", "data")
 
-/*
+
 val a = read("reee")
 
 log(a)
 
-// log(4)
+log(4)
+
+write("e", "v")
 
 voidFunc("ree")
-*/
+
 
 func write(s string, d string) {
     log("reeeeeee")

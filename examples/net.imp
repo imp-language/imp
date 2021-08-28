@@ -1,0 +1,6 @@
+
+import "iosd"
+
+export func ping(ip string) string {
+    log("ping")
+}

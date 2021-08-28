@@ -12,15 +12,52 @@ import org.imp.jvm.compiler.ClassGenerator;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Program;
+import org.imp.jvm.exception.SemanticErrors;
 import org.imp.jvm.parsing.Parser;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.DefaultAttribute;
+import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class ImpAPI {
+
+    public static void dependencyGraph(String filename) throws URISyntaxException, IOException {
+
+
+        ImpFile entry = createSourceFile(filename);
+        var walker = new DependencyWalker();
+        var dependencies = walker.walkDependencies(entry);
+
+        DOTExporter<ImpFile, DefaultEdge> exporter =
+                new DOTExporter<>(v -> v.name.replace('.', '_').replace('/', '_'));
+        exporter.setVertexAttributeProvider((v) -> {
+            Map<String, Attribute> map = new LinkedHashMap<>();
+            map.put("label", DefaultAttribute.createAttribute(v.toString()));
+            return map;
+        });
+        Writer writer = new StringWriter();
+        exporter.exportGraph(dependencies, writer);
+        System.out.println(writer.toString());
+
+
+    }
+
     public static ImpFile createSourceFile(String filename) throws IOException {
-        ImpFile ast = Parser.getAbstractSyntaxTree(filename);
+        ImpFile ast = null;
+        if (new File(filename).exists()) {
+            ast = Parser.getAbstractSyntaxTree(filename);
+            return ast;
+        } else {
+//            Logger.syntaxError(SemanticErrors.);
+        }
 
         if (Logger.hasErrors()) {
             Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
@@ -110,12 +147,11 @@ public class ImpAPI {
                 InputStreamReader(proc.getErrorStream()));
 
         String s = null;
-        String b = "some\ntext\tbitch";
         while ((s = stdInput.readLine()) != null) {
             System.out.println(s);
         }
 
-        System.out.println("\nErrors (if any):");
+//        System.out.println("\nErrors (if any):");
         while ((s = stdError.readLine()) != null) {
             System.out.println(s);
         }

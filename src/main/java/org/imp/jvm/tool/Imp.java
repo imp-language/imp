@@ -4,6 +4,7 @@ import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class Imp {
@@ -17,6 +18,14 @@ public class Imp {
     }
 
     public void compile() {
+        try {
+            ImpAPI.dependencyGraph(filename);
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+
+        System.exit(0);
+
         try {
             // 0. Generate ASTs for the first file
             var entryFile = ImpAPI.createSourceFile(filename);
@@ -34,6 +43,7 @@ public class Imp {
 
             var program = ImpAPI.createProgram(imports);
 
+            System.out.println("");
             int result = ImpAPI.run("examples.scratch.Entry");
 
         } catch (IOException e) {

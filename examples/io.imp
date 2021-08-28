@@ -1,5 +1,5 @@
 
-
+import "util/strings"
 
 export func write(filename string, data string) {
     log("write: " + filename)
