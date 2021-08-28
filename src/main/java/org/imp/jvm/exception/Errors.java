@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
 import java.text.MessageFormat;
-import java.util.Map;
 
 
 public enum Errors implements ErrorContext {

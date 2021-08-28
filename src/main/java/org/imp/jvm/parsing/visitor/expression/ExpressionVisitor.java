@@ -13,7 +13,6 @@ import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.Block;
-import org.imp.jvm.expression.Function;
 import org.imp.jvm.statement.Statement;
 import org.imp.jvm.types.*;
 import org.imp.jvm.expression.*;

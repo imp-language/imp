@@ -3,7 +3,6 @@ package org.imp.jvm.parsing;
 import org.imp.jvm.statement.Statement;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Node<T extends Statement> {

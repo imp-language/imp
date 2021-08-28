@@ -1,8 +1,5 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.domain.CompareSign;
-import org.objectweb.asm.Opcodes;
-
 import java.util.Arrays;
 
 public enum Modifier {

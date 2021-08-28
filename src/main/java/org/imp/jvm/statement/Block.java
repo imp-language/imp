@@ -4,7 +4,6 @@ import org.imp.jvm.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Block extends Statement {

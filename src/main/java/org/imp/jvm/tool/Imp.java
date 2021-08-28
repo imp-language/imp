@@ -1,10 +1,8 @@
 package org.imp.jvm.tool;
 
 import org.imp.jvm.compiler.Logger;
-import org.imp.jvm.domain.ImpFile;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 public class Imp {

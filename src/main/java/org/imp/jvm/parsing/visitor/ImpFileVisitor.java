@@ -2,7 +2,6 @@ package org.imp.jvm.parsing.visitor;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
-import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
