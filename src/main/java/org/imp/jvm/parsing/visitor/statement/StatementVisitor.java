@@ -5,12 +5,11 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
 import org.imp.jvm.types.*;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.statement.*;
@@ -57,7 +56,9 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     public Statement visitImportFile(ImpParser.ImportFileContext ctx) {
         var modulePath = ctx.stringLiteral().accept(literalVisitor);
 
-        return new Import(modulePath, scope);
+        var importStatement = new Import(modulePath, scope);
+        importStatement.setCtx(ctx);
+        return importStatement;
     }
 
 
@@ -90,7 +91,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             ImpParser.IdentifierContext identifierContext = fCtx.identifier();
 
             if (typeContext == null || typeContext.getText().length() < 1) {
-                Logger.syntaxError(SemanticErrors.MissingFieldType, identifierContext);
+                Logger.syntaxError(Errors.MissingFieldType, parent.name, identifierContext, ctx.getText(), Errors.getLocation(ctx.getStart()));
             }
             Type t = TypeResolver.getTemporaryType(typeContext);
 

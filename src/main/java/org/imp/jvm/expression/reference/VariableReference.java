@@ -3,7 +3,7 @@ package org.imp.jvm.expression.reference;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
 import org.objectweb.asm.MethodVisitor;
 
@@ -52,7 +52,7 @@ public class VariableReference extends Expression {
         }
 
         if (reference == null) {
-            Logger.syntaxError(SemanticErrors.LocalVariableNotFound, getCtx());
+            Logger.syntaxError(Errors.LocalVariableNotFound, "no filename", getCtx(), name);
             return;
         }
 

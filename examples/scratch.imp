@@ -12,6 +12,7 @@ io.write("a.txt", "data")
 
 val a = read("reee")
 
+
 log(a)
 
 log(4)

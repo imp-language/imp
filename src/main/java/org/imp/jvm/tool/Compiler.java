@@ -80,29 +80,18 @@ public class Compiler {
         // "registration" pass for custom types
         ImpFile ast = Parser.getAbstractSyntaxTree(source);
 
-        if (Logger.getSyntaxErrors().size() > 0) {
-            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-            System.out.println("Correct parse errors before type checking and compilation can continue.");
-            System.exit(1);
-        }
+
+        Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");
 
         // "validation" pass for custom types
         ast.validate();
 
-        if (Logger.getSyntaxErrors().size() > 0) {
-            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-            System.out.println("Correct semantic errors before compilation can continue.");
-            System.exit(1);
-        }
+        Logger.killIfErrors("Correct semantic errors before compilation can continue.");
 
         saveByteCodeToClassFile(ast);
 
-        if (Logger.getSyntaxErrors().size() > 0) {
-            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-            System.out.println("Errored during bytecode generation.");
-            System.exit(1);
-        }
 
+        Logger.killIfErrors("Errored during bytecode generation.");
 
 
         return ast.getClassName() + "/Entry";

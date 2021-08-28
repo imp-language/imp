@@ -7,7 +7,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -49,14 +49,15 @@ public class StructInit extends Expression {
     public void validate(Scope scope) {
         var st = scope.getStruct(structName);
         if (st == null) {
-            Logger.syntaxError(SemanticErrors.TypeNotFound, getCtx());
+            Logger.syntaxError(Errors.TypeNotFound, "no filename", getCtx(), getCtx().getStop().getText());
+
         } else {
             this.type = st;
             arguments.forEach(expression -> expression.validate(scope));
 
             assert st.fields != null;
             if (arguments.size() != st.fields.size()) {
-                Logger.syntaxError(SemanticErrors.StructConstructorMismatch, getCtx());
+                Logger.syntaxError(Errors.StructConstructorMismatch, "no filename", getCtx(), getCtx().getText());
             }
         }
     }

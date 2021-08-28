@@ -3,7 +3,7 @@ package org.imp.jvm.expression;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.objectweb.asm.MethodVisitor;
 
 public class PostIncrement extends Expression {
@@ -29,7 +29,7 @@ public class PostIncrement extends Expression {
             var incrementer = new Arithmetic(expression, new Literal(expression.type, "1"), op);
             this.assignmentExpression = new AssignmentExpression(expression, incrementer);
         } else {
-            Logger.syntaxError(SemanticErrors.IncrementInvalidType, getCtx());
+            Logger.syntaxError(Errors.IncrementInvalidType, "no filename", getCtx(), getCtx().getText());
         }
     }
 }

@@ -6,7 +6,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
@@ -72,7 +72,7 @@ public class FunctionCall extends Expression {
                         functionType = func.get().functionType;
                     }
                 } else {
-                    Logger.syntaxError(SemanticErrors.ModuleNotImported, module.getCtx());
+                    Logger.syntaxError(Errors.ModuleNotImported, owner.name, module.getCtx(), module.getCtx().getText());
                 }
 
             } else {
@@ -90,7 +90,7 @@ public class FunctionCall extends Expression {
 
         // If not found at all, error
         if (functionType == null) {
-            Logger.syntaxError(SemanticErrors.FunctionNotFound, getCtx());
+            Logger.syntaxError(Errors.FunctionNotFound, owner.name, getCtx(), getCtx().getStart().getText());
             return;
         }
 
@@ -98,7 +98,7 @@ public class FunctionCall extends Expression {
 
         this.function = functionType.getSignatureByTypes(this.argTypes);
         if (this.function == null) {
-            Logger.syntaxError(SemanticErrors.FunctionSignatureMismatch, getCtx());
+            Logger.syntaxError(Errors.FunctionSignatureMismatch, owner.name, getCtx(), getCtx().getStart().getText(), getCtx().getText());
             return;
         }
 //        var lvr = new VariableReference(scope.getLocalVariable("g"));

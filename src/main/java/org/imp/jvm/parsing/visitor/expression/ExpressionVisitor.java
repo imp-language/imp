@@ -8,7 +8,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
@@ -264,7 +264,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         Function function = new Function(functionType, arguments, returnType, block, modifier);
         function.setCtx(ctx);
         if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
-            Logger.syntaxError(SemanticErrors.DuplicateFunctionOverloads, ctx.identifier());
+            Logger.syntaxError(Errors.DuplicateFunctionOverloads, parent.name, ctx.identifier(), ctx.identifier().getText());
         } else {
             functionType.signatures.put(Function.getDescriptor(function.parameters), function);
 

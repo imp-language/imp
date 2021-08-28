@@ -4,7 +4,7 @@ import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
@@ -67,10 +67,10 @@ public class StructType implements Type {
                 var rescursedPath = findStructField(foundStructType, fieldPath);
                 validatedPath.addAll(rescursedPath);
             } else if (fieldPath.size() > 0) {
-                Logger.syntaxError(SemanticErrors.StructFieldNotFound, fieldPath.get(0).getCtx());
+                Logger.syntaxError(Errors.StructFieldNotFound, parent.parent.name, fieldPath.get(0).getCtx(), fieldPath.get(0).getCtx().getText());
             }
         } else {
-            Logger.syntaxError(SemanticErrors.StructFieldNotFound, first.getCtx());
+            Logger.syntaxError(Errors.StructFieldNotFound, parent.parent.name, first.getCtx(), first.getCtx().getText());
         }
 
         return validatedPath;

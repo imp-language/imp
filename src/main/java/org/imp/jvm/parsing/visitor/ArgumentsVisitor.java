@@ -5,7 +5,7 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.types.TypeResolver;
 
 import java.util.ArrayList;
@@ -37,7 +37,8 @@ public class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
             }
         } catch (Error err) {
             arguments = new ArrayList<Identifier>();
-            Logger.syntaxError(SemanticErrors.TypeNotFound, ctx);
+            Logger.syntaxError(Errors.TypeNotFound, "no filename", ctx, ctx.getStop().getText());
+
         }
 
 

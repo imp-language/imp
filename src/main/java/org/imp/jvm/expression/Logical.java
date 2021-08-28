@@ -3,7 +3,7 @@ package org.imp.jvm.expression;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -72,7 +72,7 @@ public class Logical extends Expression {
             mv.visitLabel(endLabel);
 
         } else {
-            Logger.syntaxError(SemanticErrors.ImplementationError, left.getCtx());
+            Logger.syntaxError(Errors.ImplementationError, "no filename", left.getCtx());
         }
 
     }
@@ -83,10 +83,10 @@ public class Logical extends Expression {
         right.validate(scope);
 
         if (left.type != BuiltInType.BOOLEAN) {
-            Logger.syntaxError(SemanticErrors.LogicalOperationInvalidType, left.getCtx());
+            Logger.syntaxError(Errors.LogicalOperationInvalidType, "no filename", left.getCtx(), left.getCtx().getText());
         }
         if (right.type != BuiltInType.BOOLEAN) {
-            Logger.syntaxError(SemanticErrors.LogicalOperationInvalidType, right.getCtx());
+            Logger.syntaxError(Errors.LogicalOperationInvalidType, "no filename", right.getCtx(), right.getCtx().getText());
         }
     }
 

@@ -2,7 +2,7 @@ package org.imp.jvm.domain;
 
 
 import org.imp.jvm.compiler.Logger;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Node;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Export;
@@ -62,7 +62,7 @@ public class ImpFile {
             for (var f : s.fields) {
                 Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
                 if (t == null) {
-                    Logger.syntaxError(SemanticErrors.TypeNotFound, f.getCtx());
+                    Logger.syntaxError(Errors.TypeNotFound, this.name, f.getCtx(), f.getCtx().getStop().getText());
 
                 }
                 f.type = t;

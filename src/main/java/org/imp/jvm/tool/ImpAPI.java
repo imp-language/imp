@@ -1,29 +1,18 @@
 package org.imp.jvm.tool;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.ImpLexer;
-import org.imp.jvm.ImpParser;
 import org.imp.jvm.compiler.BytecodeGenerator;
-import org.imp.jvm.compiler.ClassGenerator;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Program;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
-import org.imp.jvm.parsing.visitor.ImpFileVisitor;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
@@ -54,17 +43,7 @@ public class ImpAPI {
         ImpFile ast = null;
         if (new File(filename).exists()) {
             ast = Parser.getAbstractSyntaxTree(filename);
-            return ast;
-        } else {
-//            Logger.syntaxError(SemanticErrors.);
         }
-
-        if (Logger.hasErrors()) {
-            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-            System.out.println("Correct parse errors before type checking and compilation can continue.");
-            System.exit(1);
-        }
-
         return ast;
     }
 
@@ -79,15 +58,14 @@ public class ImpAPI {
             String filePath = FilenameUtils.concat(basePath, relativeFileName + ".imp");
             filePath = FilenameUtils.separatorsToUnix(filePath);
 
-//            System.out.println("Found file " + filePath);
             ImpFile ast = createSourceFile(filePath);
-            ast.validate();
-            if (Logger.hasErrors()) {
-                Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-                System.out.println("Correct semantic errors before compilation can continue.");
-                System.exit(1);
+            if (ast == null) {
+                Logger.syntaxError(Errors.ModuleNotFound, entry.name, i.getCtx(), filePath);
+                Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");
             }
-
+            assert ast != null;
+            ast.validate();
+            Logger.killIfErrors("Correct semantic errors before compilation can continue.");
             impFileMap.put(filePath, ast);
             entry.qualifiedImports.add(ast);
 
@@ -126,11 +104,9 @@ public class ImpAPI {
             }
         }
 
-        if (Logger.hasErrors()) {
-            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-            System.out.println("Errored during bytecode generation.");
-            System.exit(1);
-        }
+
+        Logger.killIfErrors("Errored during bytecode generation.");
+
 
         return null;
     }

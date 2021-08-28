@@ -1,0 +1,11 @@
+{
+  "ImplementationError": {
+    "code": -1,
+    "suggestion": "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers.",
+    "template": "This error message should never occur. "
+  },
+  "MissingFieldType": {
+    "code": 0,
+    "suggestion": ""
+  }
+}

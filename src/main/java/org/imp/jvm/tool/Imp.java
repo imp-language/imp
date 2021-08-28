@@ -18,13 +18,13 @@ public class Imp {
     }
 
     public void compile() {
-        try {
-            ImpAPI.dependencyGraph(filename);
-        } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
-        }
-
-        System.exit(0);
+//        try {
+//            ImpAPI.dependencyGraph(filename);
+//        } catch (URISyntaxException | IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.exit(0);
 
         try {
             // 0. Generate ASTs for the first file
@@ -36,7 +36,7 @@ public class Imp {
             entryFile.validate();
 
             if (Logger.hasErrors()) {
-                Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
+                Logger.getSyntaxErrors().forEach(e -> System.out.println(e));
                 System.out.println("Correct semantic errors before compilation can continue.");
                 System.exit(1);
             }
