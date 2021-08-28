@@ -29,7 +29,7 @@ public class Block extends Statement {
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
         for (var stmt : statements) {
-            stmt.generate(mv, this.scope);
+            stmt.generate(mv, scope);
         }
     }
 

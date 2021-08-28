@@ -21,3 +21,9 @@ How to compile Java files using the Imp runtime:
 ```bash
 javac --enable-preview -source 14 -cp .compile;target/classes .compile/main/Example.java
 ```
+
+How to run the packaged Imp compiler JAR:
+
+```bash
+java --enable-preview -jar target/imp-0.1.jar examples/scratch.imp
+```

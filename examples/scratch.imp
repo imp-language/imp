@@ -1,17 +1,22 @@
 
-
+/*
+*/
 import "util/strings"
 
 import "io"
 import "net"
 
-
+loop val i=0; i<10; i++ {
+    log("i = "+i)
+    io.write("a","a")
+}
 
 io.write("a.txt", "data")
 
 
 val a = read("reee")
 
+/*
 
 log(a)
 
@@ -35,3 +40,4 @@ func read2(s string) string {
     // todo: error when fail to return
     return "a" + s
 }
+*/

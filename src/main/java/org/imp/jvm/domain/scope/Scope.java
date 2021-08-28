@@ -92,6 +92,9 @@ public class Scope {
      */
     public int getLocalVariableIndex(String varName) {
         // `this` and `super` usually occupy position 0 so we start at position 1?
+        if (!localVariables.containsKey(varName)) {
+            throw new Error("variable lost somewhere during compilation.");
+        }
         return localVariables.indexOf(varName) + 1;
     }
 

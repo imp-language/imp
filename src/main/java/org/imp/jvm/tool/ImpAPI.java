@@ -47,6 +47,8 @@ public class ImpAPI {
         return ast;
     }
 
+    private Map<String, Map<String, ImpFile>> processedImports;
+
     // Todo: recursion
     public static Map<String, ImpFile> gatherImports(ImpFile entry) throws IOException {
         System.out.println("Gathering imports for " + entry.name + ".imp");
@@ -70,7 +72,7 @@ public class ImpAPI {
             entry.qualifiedImports.add(ast);
 
 
-            var children = gatherImports(ast);
+//            var children = gatherImports(ast);
 
         }
 

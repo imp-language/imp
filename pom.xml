@@ -117,7 +117,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>org.imp.jvm.tool.Compiler</mainClass>
+                            <mainClass>org.imp.jvm.tool.ImpEntry</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
