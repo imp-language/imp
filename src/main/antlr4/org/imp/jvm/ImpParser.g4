@@ -37,6 +37,7 @@ statement
     | variableStatement
 //    | importStatement
     | exportStatement
+    | enumStatement
     ;
 
 
@@ -95,6 +96,9 @@ assign_op
     : (ADD | SUB | MUL | DIV | POW | MOD)? ASSIGN
     ;
 
+
+
+
 // Loops
 loopStatement
     : LOOP (loopCondition)? block
@@ -147,7 +151,20 @@ callStatement
 classStatement
     : INTERFACE identifier LBRACE interfaceBlock RBRACE
     | CLASS identifier (COLON identifier)? LBRACE classBlock RBRACE
-    | ENUM identifier LBRACE enumBlock RBRACE
+    ;
+
+
+// Enums
+enumStatement
+    : ENUM identifier LBRACE enumBlock EOL* RBRACE
+    ;
+
+enumBlock
+    : (EOL* enumDef COMMA* EOL*)*
+    ;
+
+enumDef
+    : identifier (ASSIGN expression)?
     ;
 
 // Structs
@@ -156,7 +173,7 @@ structStatement
     ;
 
 structBlock
-    : (EOL* fieldDef COMMA* EOL)*
+    : (EOL* fieldDef COMMA* EOL*)*
     ;
 
 fieldDef
@@ -182,11 +199,6 @@ classBlock
      :  (((PUBLIC)? methodSignature block) | (classProperty))*
      ;
 
-enumBlock
-     : enumMember (COMMA enumMember)* (COMMA)?
-     ;
-
-enumMember: identifier (ASSIGN expression)?;
 
 // Import/Export
 importStatement
