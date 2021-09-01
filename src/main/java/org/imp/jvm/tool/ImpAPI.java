@@ -7,6 +7,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Program;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
@@ -18,10 +19,9 @@ import java.util.*;
 
 public class ImpAPI {
 
-    public static void dependencyGraph(String filename) throws URISyntaxException, IOException {
+    public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) throws IOException {
 
 
-        ImpFile entry = createSourceFile(filename);
         var walker = new DependencyWalker();
         var dependencies = walker.walkDependencies(entry);
 
@@ -36,7 +36,7 @@ public class ImpAPI {
         exporter.exportGraph(dependencies, writer);
         System.out.println(writer.toString());
 
-
+        return dependencies;
     }
 
     public static ImpFile createSourceFile(String filename) throws IOException {
@@ -47,7 +47,6 @@ public class ImpAPI {
         return ast;
     }
 
-    private Map<String, Map<String, ImpFile>> processedImports;
 
     // Todo: recursion
     public static Map<String, ImpFile> gatherImports(ImpFile entry) throws IOException {

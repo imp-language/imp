@@ -61,6 +61,16 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         return importStatement;
     }
 
+    @Override
+    public Statement visitImportFileAsIdentifier(ImpParser.ImportFileAsIdentifierContext ctx) {
+        var modulePath = ctx.stringLiteral().accept(literalVisitor);
+
+        var identifier = ctx.identifier().getText();
+
+        var importStatement = new Import(modulePath, scope, identifier);
+        importStatement.setCtx(ctx);
+        return importStatement;
+    }
 
     @Override
     public Statement visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {

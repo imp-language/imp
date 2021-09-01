@@ -7,10 +7,17 @@ import org.objectweb.asm.MethodVisitor;
 public class Import extends Statement {
     public final Literal moduleName;
     public final Scope scope;
+    public String alias = null;
 
     public Import(Literal moduleName, Scope scope) {
         this.moduleName = moduleName;
         this.scope = scope;
+    }
+
+    public Import(Literal moduleName, Scope scope, String alias) {
+        this.moduleName = moduleName;
+        this.scope = scope;
+        this.alias = alias;
     }
 
 

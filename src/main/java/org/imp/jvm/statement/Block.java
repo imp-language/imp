@@ -25,6 +25,7 @@ public class Block extends Statement {
         this.scope = new Scope();
     }
 
+
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
         for (var stmt : statements) {

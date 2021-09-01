@@ -14,6 +14,7 @@ import org.imp.jvm.types.TypeResolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ImpFile {
     // Filename
@@ -96,5 +97,19 @@ public class ImpFile {
     @Override
     public String toString() {
         return name;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImpFile impFile = (ImpFile) o;
+        return packageName.equals(impFile.packageName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(packageName);
     }
 }

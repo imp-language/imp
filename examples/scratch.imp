@@ -1,46 +1,23 @@
+// Tests closing over external scope inside a function body.
+// These are simple examples, more complicated tests to follow.
 
+val g = 42
+val h = 17
+log("g before: " + g)
+log("h before: " + h)
 
-import "util/strings"
-
-import "io"
-import "net"
-
-
-
-
-
-loop val i=0; i<10; i++ {
-    log("i = "+i)
-    io.write("a","a")
+func modifyG() {
+    g = 14
+    h = 2
+    log("g during: " + g)
+    log("h during: " + h)
 }
 
-io.write("a.txt", "data")
 
+modifyG()
 
-val a = read("reee")
+log("g after: " + g)
+log("h after: " + h)
 
-/*
-
-log(a)
-
-log(4)
-
-write("e", "v")
-
-voidFunc("ree")
-
-
-func write(s string, d string) {
-    log("reeeeeee")
-}
-
-func voidFunc(s string) {
-    log("from void")
-}
-
-func read2(s string) string {
-    log("hello, not modules")
-    // todo: error when fail to return
-    return "a" + s
-}
-*/
+val k = 2 + g
+log(k)
