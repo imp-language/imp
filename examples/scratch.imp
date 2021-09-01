@@ -1,8 +1,47 @@
-// A partial implementation of the Javascript Closures example from
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
+// Declares variables of primitive types and changes
+// their types with addition or reassignment.
 
-val name = "Mozilla" // name is a local variable created by init
-func displayName() { // displayName() is the inner function, a closure
-    log(name) // use variable declared in the parent function
-}
-displayName()
+log("declarations")
+
+val i = 0
+log(i)
+
+val f = 0.0
+log(f)
+
+val b = false
+log(b)
+
+val s = "string"
+log(s)
+
+log("")
+log("operations")
+
+i = i + 1
+log(i)
+
+f = f + 1.0
+log(f)
+
+b = true
+log(b)
+
+s = s + " variable" + " a"
+log(s)
+
+log("\nnegatives")
+val neg_i = -1
+log(neg_i)
+neg_i = neg_i + -23
+log(neg_i)
+
+val neg_f = -1.0
+log(neg_f)
+neg_f++
+log(neg_f)
+
+val neg_d = -1.0d
+log(neg_d)
+neg_d = neg_d + 346.0d
+log(neg_d)

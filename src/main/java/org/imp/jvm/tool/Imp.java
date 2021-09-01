@@ -46,7 +46,6 @@ public class Imp {
             float runtime = ((float) (end - start)) / 1000000000;
             System.out.printf("Compiled %d files in %f seconds.", compilationSet.size(), runtime);
             System.out.println("");
-            int result = ImpAPI.run("examples.scratch.Entry");
 
 
             return entry.getClassName() + "/Entry";

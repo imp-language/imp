@@ -82,15 +82,12 @@ public class Verifier {
         BufferedReader stdError = new BufferedReader(new
                 InputStreamReader(proc.getErrorStream()));
 
-//        System.out.println("Here is the standard output of the command:\n");
         List<String> stdOutLines = new ArrayList<>();
         String s = null;
         while ((s = stdInput.readLine()) != null) {
-//            System.out.println(s);
             stdOutLines.add(s);
         }
 
-//        System.out.println("Here is the standard error of the command (if any):\n");
         while ((s = stdError.readLine()) != null) {
             System.out.println(s);
         }
@@ -117,6 +114,10 @@ public class Verifier {
             }
 
         }
+
+        stdError.close();
+        stdInput.close();
+
         if (flaws > 0) {
             flawsList.add(name);
         }
@@ -125,20 +126,6 @@ public class Verifier {
         System.out.println();
 
 
-
-        /*
-        String solution = String.join("\n", solutionLines);
-        String stdOut = String.join("\n", stdOutLines);
-
-        diff_match_patch dmp = new diff_match_patch();
-        LinkedList<diff_match_patch.Diff> diff = dmp.diff_main(solution, stdOut);
-        // Result: [(-1, "Hell"), (1, "G"), (0, "o"), (1, "odbye"), (0, " World.")]
-        dmp.diff_cleanupSemantic(diff);
-        // Result: [(-1, "Hello"), (1, "Goodbye"), (0, " World.")]
-        System.out.println(diff);
-
-        System.out.println(diff_prettyStrikethrough(diff));
-        */
     }
 
     private static String diff_prettyStrikethrough(List<diff_match_patch.Diff> diffs) {
