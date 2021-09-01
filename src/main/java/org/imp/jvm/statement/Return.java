@@ -1,8 +1,8 @@
 package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.types.Type;
 import org.imp.jvm.expression.Expression;
+import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 
 public class Return extends Statement {

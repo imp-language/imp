@@ -4,7 +4,10 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.types.FunctionType;
 import org.objectweb.asm.ClassWriter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class BytecodeGenerator {
     public Map<String, byte[]> generate(ImpFile impFile) {

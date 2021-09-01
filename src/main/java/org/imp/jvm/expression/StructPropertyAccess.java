@@ -3,9 +3,9 @@ package org.imp.jvm.expression;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.StructType;
-import org.imp.jvm.exception.Errors;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 

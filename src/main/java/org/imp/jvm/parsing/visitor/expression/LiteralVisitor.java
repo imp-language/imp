@@ -2,8 +2,8 @@ package org.imp.jvm.parsing.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
-import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.expression.Literal;
+import org.imp.jvm.types.BuiltInType;
 
 public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
     private final ExpressionVisitor expressionVisitor;

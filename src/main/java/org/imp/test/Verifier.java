@@ -3,12 +3,13 @@ package org.imp.test;
 import name.fraser.neil.plaintext.diff_match_patch;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.tool.Imp;
 import org.imp.jvm.tool.ImpAPI;
-import picocli.CommandLine;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;

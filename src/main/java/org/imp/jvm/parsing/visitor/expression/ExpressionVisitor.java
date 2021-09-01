@@ -8,15 +8,15 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
+import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
+import org.imp.jvm.expression.*;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Statement;
 import org.imp.jvm.types.*;
-import org.imp.jvm.expression.*;
-import org.imp.jvm.domain.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.Collections;

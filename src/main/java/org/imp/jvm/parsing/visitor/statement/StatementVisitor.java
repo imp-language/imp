@@ -6,13 +6,13 @@ import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.expression.Function;
-import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
-import org.imp.jvm.types.*;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
+import org.imp.jvm.expression.Function;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
+import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
 import org.imp.jvm.statement.*;
+import org.imp.jvm.types.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -3,7 +3,6 @@ package org.imp.jvm.tool;
 import org.imp.jvm.compiler.BytecodeGenerator;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
-
 import org.imp.jvm.parsing.Parser;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;

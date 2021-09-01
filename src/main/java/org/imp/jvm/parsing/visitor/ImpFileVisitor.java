@@ -6,9 +6,9 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Function;
-import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.Modifier;
 

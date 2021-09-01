@@ -2,8 +2,8 @@ package org.imp.jvm.expression;
 
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.exception.Errors;
+import org.imp.jvm.types.BuiltInType;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

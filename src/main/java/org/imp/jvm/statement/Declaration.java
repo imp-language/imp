@@ -2,10 +2,10 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Mutability;
 import org.imp.jvm.types.Type;
-import org.imp.jvm.expression.Expression;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
