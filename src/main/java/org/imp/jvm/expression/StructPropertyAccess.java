@@ -3,9 +3,9 @@ package org.imp.jvm.expression;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.StructType;
-import org.imp.jvm.exception.SemanticErrors;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -54,7 +54,7 @@ public class StructPropertyAccess extends Expression {
 
 
         } else {
-            Logger.syntaxError(SemanticErrors.PrimitiveTypePropertyAccess, getCtx());
+            Logger.syntaxError(Errors.PrimitiveTypePropertyAccess, "no filename", getCtx(), getCtx().getStart().getText());
             // Todo: property access on primitive types
             // Will need to use boxing and unboxing probably
         }

@@ -6,7 +6,8 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
+import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
@@ -27,6 +28,10 @@ public class FunctionCall extends Expression {
     public List<Type> argTypes;
     public String name;
 
+    private boolean hasBeenInitialized = false;
+
+    private Expression module;
+
 
     public FunctionCall(String name, List<Expression> arguments, ImpFile owner) {
         this.name = name;
@@ -34,6 +39,10 @@ public class FunctionCall extends Expression {
 
         this.function = null;
         this.owner = owner;
+    }
+
+    public void setOwner(Expression owner) {
+        this.module = owner;
     }
 
     @Override
@@ -50,23 +59,57 @@ public class FunctionCall extends Expression {
 
         // Find a FunctionType in the current scope by name
         FunctionType functionType = scope.findFunctionType(this.name);
+
+        // Potentially override if ainother name is imported
+        if (this.module != null) {
+            if (this.module instanceof VariableReference variableReference) {
+                String modulePath = variableReference.name;
+                var importedFile = this.owner.qualifiedImports.stream().filter(e -> e.name.contains(modulePath)).findFirst();
+                if (importedFile.isPresent()) {
+                    var i = importedFile.get();
+                    var func = i.functions.stream().filter(e -> e.functionType.name.equals(this.name)).findFirst();
+                    if (func.isPresent()) {
+                        functionType = func.get().functionType;
+                    }
+                } else {
+                    Logger.syntaxError(Errors.ModuleNotImported, owner.name, module.getCtx(), module.getCtx().getText());
+                }
+
+            } else {
+                System.err.println("Bad namespace on:" + module);
+                System.exit(81);
+            }
+        }
+
+
+        // If not found in current scope, search in imported files
         if (functionType == null) {
-            Logger.syntaxError(SemanticErrors.FunctionNotFound, getCtx());
+            var fType = this.getFunctionType(this.name);
+            functionType = fType;
+        }
+
+        // If not found at all, error
+        if (functionType == null) {
+            Logger.syntaxError(Errors.FunctionNotFound, owner.name, getCtx(), getCtx().getStart().getText());
             return;
         }
 
         // Find a function that exists in the current scope that matches the FunctionSignature
 
-        function = functionType.getSignatureByTypes(this.argTypes);
-        if (function == null) {
-            Logger.syntaxError(SemanticErrors.FunctionSignatureMismatch, getCtx());
+        this.function = functionType.getSignatureByTypes(this.argTypes);
+        if (this.function == null) {
+            Logger.syntaxError(Errors.FunctionSignatureMismatch, owner.name, getCtx(), getCtx().getStart().getText(), getCtx().getText());
             return;
         }
 //        var lvr = new VariableReference(scope.getLocalVariable("g"));
 //        lvr.type = BuiltInType.STRUCT;
 //        lvr.localVariable.type = BuiltInType.STRUCT;
 //        functionType.closures.add(lvr);
-        this.type = function.functionType;
+        this.type = function.returnType;
+
+
+        // Store as new local variable
+        scope.addLocalVariable(new LocalVariable(function.functionType.name, function.functionType));
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
@@ -99,10 +142,10 @@ public class FunctionCall extends Expression {
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, descriptor, false);
         } else {
             // 0. If the First Class Function has not been initialized, do so.
-            String localVariableName = this.type.getName();
-            if (scope.getLocalVariable(localVariableName) == null) {
+            String localVariableName = this.name;
+            if (!hasBeenInitialized) {
                 // Initialize the first-class function closure object
-                String ownerDescriptor = this.type.getInternalName();
+                String ownerDescriptor = this.function.functionType.getInternalName();
                 mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
                 mv.visitInsn(Opcodes.DUP);
 
@@ -110,14 +153,15 @@ public class FunctionCall extends Expression {
                 List<Identifier> params = Collections.emptyList();
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
                 mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
-
-                // Store as new local variable
-                scope.addLocalVariable(new LocalVariable(localVariableName, function.functionType));
+//
+//                // Store as new local variable
+//                scope.addLocalVariable(new LocalVariable(localVariableName, function.functionType));
                 mv.visitVarInsn(Opcodes.ASTORE, scope.getLocalVariableIndex(localVariableName));
+                hasBeenInitialized = true;
             }
 
             // 1. Load the First Class Function object
-            String ownerDescriptor = this.type.getInternalName();
+            String ownerDescriptor = this.function.functionType.getInternalName();
             int index = scope.getLocalVariableIndex(localVariableName);
             mv.visitVarInsn(Opcodes.ALOAD, index);
 
@@ -144,8 +188,23 @@ public class FunctionCall extends Expression {
 
             // 5. Call the appropriate invoke method on the First Class Function object
             List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
-            methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);
+
+            Type returnType = this.function.returnType;
+            methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
+
+
         }
+    }
+
+    private FunctionType getFunctionType(String name) {
+        for (var imported : this.owner.qualifiedImports) {
+            for (var func : imported.functions) {
+                if (func.functionType.name.equals(name)) {
+                    return func.functionType;
+                }
+            }
+        }
+        return null;
     }
 }

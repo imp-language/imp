@@ -8,16 +8,15 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.exception.Errors;
+import org.imp.jvm.expression.*;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.Block;
-import org.imp.jvm.expression.Function;
 import org.imp.jvm.statement.Statement;
 import org.imp.jvm.types.*;
-import org.imp.jvm.expression.*;
-import org.imp.jvm.domain.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,17 +89,15 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     }
 
     @Override
-    public FunctionCall visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
-
-        ImpParser.CallStatementContext callCtx = ctx.callStatement();
+    public FunctionCall visitCallStatement(ImpParser.CallStatementContext ctx) {
 
         // Function name
-        String functionName = callCtx.identifier().getText();
+        String functionName = ctx.identifier().getText();
 
         // Function argument expressions
         List<Expression> argExpressions = new ArrayList<>();
-        if (callCtx.expressionList() != null) {
-            var arguments = callCtx.expressionList().expression();
+        if (ctx.expressionList() != null) {
+            var arguments = ctx.expressionList().expression();
             argExpressions = arguments.stream().map(a -> a.accept(this)).collect(Collectors.toList());
         }
 
@@ -109,6 +106,15 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         call.setCtx(ctx);
 
         return call;
+
+    }
+
+    @Override
+    public FunctionCall visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
+
+        ImpParser.CallStatementContext callCtx = ctx.callStatement();
+
+        return visitCallStatement(callCtx);
 
     }
 
@@ -247,11 +253,17 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
             returnType = TypeResolver.getFromTypeContext(typeContext, scope);
         }
 
+        Modifier modifier = Modifier.NONE;
+        if (ctx.modifiers() != null) {
+            modifier = Modifier.fromString(ctx.modifiers().getText());
+
+        }
+
         // Don't allow multiple definitions with same signature
-        Function function = new Function(functionType, arguments, returnType, block);
+        Function function = new Function(functionType, arguments, returnType, block, modifier);
         function.setCtx(ctx);
         if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
-            Logger.syntaxError(SemanticErrors.DuplicateFunctionOverloads, ctx.identifier());
+            Logger.syntaxError(Errors.DuplicateFunctionOverloads, parent.name, ctx.identifier(), ctx.identifier().getText());
         } else {
             functionType.signatures.put(Function.getDescriptor(function.parameters), function);
 
@@ -261,4 +273,11 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     }
 
 
+    @Override
+    public Expression visitMethodCallExpression(ImpParser.MethodCallExpressionContext ctx) {
+        var owner = ctx.expression().accept(this);
+        var callStatement = visitCallStatement(ctx.callStatement());
+        callStatement.setOwner(owner);
+        return callStatement;
+    }
 }

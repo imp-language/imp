@@ -6,10 +6,11 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Function;
-import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.Modifier;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +28,8 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
     @Override
     public ImpFile visitProgram(ImpParser.ProgramContext ctx) {
+
+
         // get all top level statements in the file
         List<ImpParser.StatementContext> statementContexts = ctx.statement();
 
@@ -50,11 +53,27 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         impFile.functions.add(main);
 
+
         // handle each statement appropriately
         StatementVisitor statementVisitor = new StatementVisitor(staticScope, impFile);
+
+        // Parse all imports
+        List<ImpParser.ImportStatementContext> importStatementContexts = ctx.importStatement();
+        for (var importStatement : importStatementContexts) {
+            Import i = (Import) importStatement.accept(statementVisitor);
+            impFile.imports.add(i);
+        }
+
+
         for (var statement : statementContexts) {
             Statement s = statement.accept(statementVisitor);
 //            System.out.println(s);
+
+            if (s == null) {
+                System.err.println("Parser error: " + s + " is null.");
+                System.exit(1);
+
+            }
 
 
             // Split classes out to their own files
@@ -64,8 +83,16 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
                 // add function to static class methods
                 impFile.functions.add(f);
+
+                if (f.modifier == Modifier.EXPORT) {
+                    impFile.exports.add(new Export(f, staticScope));
+                }
+
             } else if (s instanceof Import i) {
+                // Todo: remove
                 impFile.imports.add(i);
+            } else if (s instanceof Export e) {
+                impFile.exports.add(e);
             } else {
                 // All other root level nodes go in the main method
                 main.block.statements.add(s);

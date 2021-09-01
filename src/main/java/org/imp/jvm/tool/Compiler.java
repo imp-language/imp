@@ -3,7 +3,6 @@ package org.imp.jvm.tool;
 import org.imp.jvm.compiler.BytecodeGenerator;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
-
 import org.imp.jvm.parsing.Parser;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -80,40 +79,19 @@ public class Compiler {
         // "registration" pass for custom types
         ImpFile ast = Parser.getAbstractSyntaxTree(source);
 
-        if (Logger.getSyntaxErrors().size() > 0) {
-            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-            System.out.println("Correct parse errors before type checking and compilation can continue.");
-            System.exit(1);
-        }
+
+        Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");
 
         // "validation" pass for custom types
         ast.validate();
 
-        if (Logger.getSyntaxErrors().size() > 0) {
-            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-            System.out.println("Correct semantic errors before compilation can continue.");
-            System.exit(1);
-        }
+        Logger.killIfErrors("Correct semantic errors before compilation can continue.");
 
         saveByteCodeToClassFile(ast);
 
-        if (Logger.getSyntaxErrors().size() > 0) {
-            Logger.getSyntaxErrors().forEach(e -> System.out.println(e.getMessage()));
-            System.out.println("Errored during bytecode generation.");
-            System.exit(1);
-        }
 
+        Logger.killIfErrors("Errored during bytecode generation.");
 
-//        InputStream inputStream = new FileInputStream(".compile/" + impFile.name + ".class");
-//        ClassReader classReader = new ClassReader(inputStream);
-//        ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
-//        ClassVisitor classVisitor = new CheckClassAdapter(classWriter, true);
-//        classReader.accept(classVisitor, 0);
-//
-//        StringWriter stringWriter = new StringWriter();
-//        PrintWriter printWriter = new PrintWriter(stringWriter);
-//        CheckClassAdapter.verify(new ClassReader(classWriter.toByteArray()), false, printWriter);
-//        assertTrue(stringWriter.toString().isEmpty());
 
         return ast.getClassName() + "/Entry";
     }

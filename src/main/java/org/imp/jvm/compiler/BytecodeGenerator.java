@@ -4,7 +4,10 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.types.FunctionType;
 import org.objectweb.asm.ClassWriter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class BytecodeGenerator {
     public Map<String, byte[]> generate(ImpFile impFile) {
@@ -35,7 +38,8 @@ public class BytecodeGenerator {
 
         for (var functionType : functionTypes) {
             String className = "Function_" + functionType.name;
-            code.put(impFile.packageName + "/" + className, classGenerator.generate(functionType).toByteArray());
+            var a = classGenerator.generate(functionType).toByteArray();
+            code.put(impFile.packageName + "/" + className, a);
 
         }
 

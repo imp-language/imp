@@ -28,12 +28,19 @@ public class Parser {
         ImpFile ast = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(file.getName())));
 
 
-//        parser.addErrorListener(new SyntaxErrorListener());
+        return ast;
+    }
 
+    public static ImpFile getAbstractSyntaxTree(String filename) throws IOException {
+        CharStream charStream = CharStreams.fromFileName(filename);
+        ImpLexer impLexer = new ImpLexer(charStream);
+        CommonTokenStream tokenStream = new CommonTokenStream(impLexer);
 
-//        impParser.addErrorListener(new ImpFile);
-//        parser.
+        ImpParser parser = new ImpParser(tokenStream);
+        parser.setBuildParseTree(true);
 
+        ParseTree parseTree = parser.program();
+        ImpFile ast = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(filename)));
         return ast;
     }
 

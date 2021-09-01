@@ -2,9 +2,11 @@ package org.imp.jvm.domain;
 
 
 import org.imp.jvm.compiler.Logger;
-import org.imp.jvm.exception.SemanticErrors;
-import org.imp.jvm.statement.Export;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Function;
+import org.imp.jvm.parsing.Node;
+import org.imp.jvm.statement.Block;
+import org.imp.jvm.statement.Export;
 import org.imp.jvm.statement.Import;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
@@ -12,6 +14,7 @@ import org.imp.jvm.types.TypeResolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ImpFile {
     // Filename
@@ -26,6 +29,7 @@ public class ImpFile {
     public final List<StructType> structTypes = new ArrayList<>();
 
     public final List<Import> imports = new ArrayList<>();
+    public final List<ImpFile> qualifiedImports = new ArrayList<>();
     public final List<Export> exports = new ArrayList<>();
 
 
@@ -40,11 +44,18 @@ public class ImpFile {
 
 
     public void validate() {
+        // WIP: convert to AST
+        Function main = functions.get(0);
+
+        Node<Block> block = new Node<>(main.block);
+
+
         // 0. Export validation
         for (var e : exports) {
             // Add a structure to the scope of this Imp file
             // that is the imported other file.
-            System.out.println(e);
+//            System.out.println(e);
+            e.validate(e.scope);
         }
 
         // 1. Ensure all struct fields have valid types
@@ -52,11 +63,20 @@ public class ImpFile {
             for (var f : s.fields) {
                 Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
                 if (t == null) {
-                    Logger.syntaxError(SemanticErrors.TypeNotFound, f.getCtx());
+                    Logger.syntaxError(Errors.TypeNotFound, this.name, f.getCtx(), f.getCtx().getStop().getText());
 
                 }
                 f.type = t;
             }
+        }
+
+
+        // Move all functions to the top level for compilation
+        List<Function> functionList = new ArrayList<>();
+        for (var f : functions) {
+            functionList.add(f);
+
+
         }
 
 
@@ -68,5 +88,28 @@ public class ImpFile {
 
         // 3. Secure variable mutability
         // Todo: immutability
+
+        // 4. Validate imports
+
+
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImpFile impFile = (ImpFile) o;
+        return packageName.equals(impFile.packageName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(packageName);
     }
 }

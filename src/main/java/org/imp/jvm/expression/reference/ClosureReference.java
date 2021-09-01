@@ -16,7 +16,9 @@ public class ClosureReference extends Reference {
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
         String varName = localVariable.getName();
-        int index = scope.getLocalVariableIndex(this.getName());
+        int index = 0;
+//        int index = scope.getLocalVariableIndex(this.getName());
+//        int index = scope.closures.indexOf(varName) + 1;
         mv.visitVarInsn(Opcodes.ALOAD, index);
 
         String currentFunctionName = scope.functionType.getName();

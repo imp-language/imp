@@ -1,7 +1,5 @@
 package org.imp.jvm.tool;
 
-import org.tomlj.Toml;
-
 public class ImpProjectConfiguration {
     public static final int NAME_SIZE = 128;
     public static final int DESCRIPTION_SIZE = 256;

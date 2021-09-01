@@ -1,11 +1,13 @@
 package org.imp.jvm.domain.scope;
 
+import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.expression.reference.ClosureReference;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
-import org.apache.commons.collections4.map.LinkedMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Describes the entities available to expressions and statements in
@@ -92,6 +94,9 @@ public class Scope {
      */
     public int getLocalVariableIndex(String varName) {
         // `this` and `super` usually occupy position 0 so we start at position 1?
+        if (!localVariables.containsKey(varName)) {
+            throw new Error("variable lost somewhere during compilation.");
+        }
         return localVariables.indexOf(varName) + 1;
     }
 

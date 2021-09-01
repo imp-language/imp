@@ -3,14 +3,16 @@ package org.imp.test;
 import name.fraser.neil.plaintext.diff_match_patch;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.tool.Compiler;
-import picocli.CommandLine;
+import org.imp.jvm.tool.Imp;
+import org.imp.jvm.tool.ImpAPI;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Verifier {
 
@@ -66,12 +68,11 @@ public class Verifier {
         List<String> solutionLines = FileUtils.readLines(new File(solutionPath), StandardCharsets.UTF_8);
 
         // 1. Compile imp source file
-        String[] args = {sourcePath};
-        var compiler = CommandLine.populateCommand(new Compiler(), args);
-        String classFilePath = compiler.compile();
+        var imp = new Imp(sourcePath);
+        String classFilePath = imp.compile();
 
         // 2. Execute compiled imp file
-        Process proc = compiler.spawn(classFilePath);
+        Process proc = ImpAPI.spawn(classFilePath);
 
 
         // 3. Watch standard out
@@ -81,15 +82,12 @@ public class Verifier {
         BufferedReader stdError = new BufferedReader(new
                 InputStreamReader(proc.getErrorStream()));
 
-//        System.out.println("Here is the standard output of the command:\n");
         List<String> stdOutLines = new ArrayList<>();
         String s = null;
         while ((s = stdInput.readLine()) != null) {
-//            System.out.println(s);
             stdOutLines.add(s);
         }
 
-//        System.out.println("Here is the standard error of the command (if any):\n");
         while ((s = stdError.readLine()) != null) {
             System.out.println(s);
         }
@@ -116,6 +114,10 @@ public class Verifier {
             }
 
         }
+
+        stdError.close();
+        stdInput.close();
+
         if (flaws > 0) {
             flawsList.add(name);
         }
@@ -124,20 +126,6 @@ public class Verifier {
         System.out.println();
 
 
-
-        /*
-        String solution = String.join("\n", solutionLines);
-        String stdOut = String.join("\n", stdOutLines);
-
-        diff_match_patch dmp = new diff_match_patch();
-        LinkedList<diff_match_patch.Diff> diff = dmp.diff_main(solution, stdOut);
-        // Result: [(-1, "Hell"), (1, "G"), (0, "o"), (1, "odbye"), (0, " World.")]
-        dmp.diff_cleanupSemantic(diff);
-        // Result: [(-1, "Hello"), (1, "Goodbye"), (0, " World.")]
-        System.out.println(diff);
-
-        System.out.println(diff_prettyStrikethrough(diff));
-        */
     }
 
     private static String diff_prettyStrikethrough(List<diff_match_patch.Diff> diffs) {

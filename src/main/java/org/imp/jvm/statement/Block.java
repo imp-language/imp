@@ -15,15 +15,21 @@ public class Block extends Statement {
         this.scope = scope;
     }
 
+    @Override
+    public List<Statement> getChildren() {
+        return statements;
+    }
+
     public Block() {
         this.statements = new ArrayList<>();
         this.scope = new Scope();
     }
 
+
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
         for (var stmt : statements) {
-            stmt.generate(mv, this.scope);
+            stmt.generate(mv, scope);
         }
     }
 

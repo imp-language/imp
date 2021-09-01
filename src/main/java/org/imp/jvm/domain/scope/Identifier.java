@@ -1,9 +1,9 @@
 package org.imp.jvm.domain.scope;
 
 import org.imp.jvm.compiler.FieldGenerator;
+import org.imp.jvm.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Type;
-import org.imp.jvm.expression.Expression;
 import org.objectweb.asm.MethodVisitor;
 
 

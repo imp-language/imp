@@ -5,14 +5,14 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
-import org.imp.jvm.types.*;
-import org.imp.jvm.exception.SemanticErrors;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
+import org.imp.jvm.expression.Function;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
+import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
 import org.imp.jvm.statement.*;
+import org.imp.jvm.types.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +39,8 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     @Override
     public Statement visitExportStatement(ImpParser.ExportStatementContext ctx) {
         if (ctx.function() != null) {
-
-            return new Export(null, scope);
+            Function function = (Function) ctx.function().accept(expressionVisitor);
+            return new Export(function, scope);
         } else {
             System.err.println("Exports not yet implemented.");
             return null;
@@ -56,12 +56,30 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     public Statement visitImportFile(ImpParser.ImportFileContext ctx) {
         var modulePath = ctx.stringLiteral().accept(literalVisitor);
 
-        return new Import(modulePath, scope);
+        var importStatement = new Import(modulePath, scope);
+        importStatement.setCtx(ctx);
+        return importStatement;
+    }
+
+    @Override
+    public Statement visitImportFileAsIdentifier(ImpParser.ImportFileAsIdentifierContext ctx) {
+        var modulePath = ctx.stringLiteral().accept(literalVisitor);
+
+        var identifier = ctx.identifier().getText();
+
+        var importStatement = new Import(modulePath, scope, identifier);
+        importStatement.setCtx(ctx);
+        return importStatement;
     }
 
     @Override
     public Statement visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
         return expressionVisitor.visitCallStatementExpression(ctx);
+    }
+
+    @Override
+    public Statement visitMethodCallExpression(ImpParser.MethodCallExpressionContext ctx) {
+        return expressionVisitor.visitMethodCallExpression(ctx);
     }
 
     @Override
@@ -83,7 +101,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             ImpParser.IdentifierContext identifierContext = fCtx.identifier();
 
             if (typeContext == null || typeContext.getText().length() < 1) {
-                Logger.syntaxError(SemanticErrors.MissingFieldType, identifierContext);
+                Logger.syntaxError(Errors.MissingFieldType, parent.name, identifierContext, ctx.getText(), Errors.getLocation(ctx.getStart()));
             }
             Type t = TypeResolver.getTemporaryType(typeContext);
 

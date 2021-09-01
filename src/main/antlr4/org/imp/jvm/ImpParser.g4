@@ -37,6 +37,7 @@ statement
     | variableStatement
 //    | importStatement
     | exportStatement
+    | enumStatement
     ;
 
 
@@ -95,6 +96,9 @@ assign_op
     : (ADD | SUB | MUL | DIV | POW | MOD)? ASSIGN
     ;
 
+
+
+
 // Loops
 loopStatement
     : LOOP (loopCondition)? block
@@ -120,8 +124,12 @@ ifStatement
 
 // Function definition
 function
-    : FUNCTION identifier LPAREN (arguments)? RPAREN (type)? block
+    : modifiers? FUNCTION identifier LPAREN (arguments)? RPAREN (type)? block
     | LPAREN (arguments)? RPAREN FATARROW block
+    ;
+
+modifiers
+    : EXPORT
     ;
 
 arguments
@@ -143,7 +151,20 @@ callStatement
 classStatement
     : INTERFACE identifier LBRACE interfaceBlock RBRACE
     | CLASS identifier (COLON identifier)? LBRACE classBlock RBRACE
-    | ENUM identifier LBRACE enumBlock RBRACE
+    ;
+
+
+// Enums
+enumStatement
+    : ENUM identifier LBRACE enumBlock EOL* RBRACE
+    ;
+
+enumBlock
+    : (EOL* enumDef COMMA* EOL*)*
+    ;
+
+enumDef
+    : identifier (ASSIGN expression)?
     ;
 
 // Structs
@@ -152,7 +173,7 @@ structStatement
     ;
 
 structBlock
-    : (EOL* fieldDef COMMA* EOL)*
+    : (EOL* fieldDef COMMA* EOL*)*
     ;
 
 fieldDef
@@ -178,17 +199,12 @@ classBlock
      :  (((PUBLIC)? methodSignature block) | (classProperty))*
      ;
 
-enumBlock
-     : enumMember (COMMA enumMember)* (COMMA)?
-     ;
-
-enumMember: identifier (ASSIGN expression)?;
 
 // Import/Export
 importStatement
-    : IMPORT stringLiteral                       #ImportFile // import io
-    | IMPORT stringLiteral AS identifier         #ImportFileAsIdentifier // import io as fs
-    | FROM stringLiteral IMPORT identifierList   #ImportFromFile // from io import read, write
+    : IMPORT stringLiteral                       #ImportFile // import "io"
+    | IMPORT stringLiteral AS identifier         #ImportFileAsIdentifier // import "io" as fs
+    | FROM stringLiteral IMPORT identifierList   #ImportFromFile // from "io" import read, write
 ;
 
 exportStatement

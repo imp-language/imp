@@ -4,17 +4,18 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.expression.Expression;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Return;
+import org.imp.jvm.statement.Statement;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.expression.EmptyExpression;
 import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.Modifier;
 import org.imp.jvm.types.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,13 +26,42 @@ public class Function extends Expression {
 
     public final FunctionType functionType;
 
+    public final Modifier modifier;
 
-    public Function(FunctionType functionType, List<Identifier> parameters, Type returnType, Block block) {
+
+    public Function(
+            FunctionType functionType,
+            List<Identifier> parameters,
+            Type returnType,
+            Block block,
+            Modifier modifier
+    ) {
         super();
+        this.modifier = modifier;
         this.block = block;
         this.functionType = functionType;
         this.parameters = parameters;
         this.returnType = returnType;
+    }
+
+    public Function(
+            FunctionType functionType,
+            List<Identifier> parameters,
+            Type returnType,
+            Block block
+    ) {
+        super();
+        this.modifier = null;
+        this.block = block;
+        this.functionType = functionType;
+        this.parameters = parameters;
+        this.returnType = returnType;
+    }
+
+
+    @Override
+    public List<Statement> getChildren() {
+        return Arrays.asList(block);
     }
 
     static public String getDescriptor(List<Identifier> identifiers) {

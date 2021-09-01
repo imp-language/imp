@@ -4,16 +4,20 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Literal;
 import org.objectweb.asm.MethodVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Import extends Statement {
     public final Literal moduleName;
-    public Scope scope;
+    public final Scope scope;
+    public String alias = null;
 
     public Import(Literal moduleName, Scope scope) {
         this.moduleName = moduleName;
         this.scope = scope;
+    }
+
+    public Import(Literal moduleName, Scope scope, String alias) {
+        this.moduleName = moduleName;
+        this.scope = scope;
+        this.alias = alias;
     }
 
 
@@ -25,6 +29,11 @@ public class Import extends Statement {
     @Override
     public void validate(Scope scope) {
 
+    }
+
+    public String getValue() {
+        String v = moduleName.value;
+        return v.substring(1, v.length() - 1);
     }
 
     @Override

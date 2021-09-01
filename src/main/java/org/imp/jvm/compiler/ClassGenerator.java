@@ -4,7 +4,9 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.runtime.Box;
-import org.imp.jvm.statement.*;
+import org.imp.jvm.statement.Block;
+import org.imp.jvm.statement.ClosureAssignment;
+import org.imp.jvm.statement.Constructor;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
@@ -86,7 +88,6 @@ public class ClassGenerator {
         closure.generate(classWriter);
 
 
-        System.out.println(Box.class.descriptorString());
 
         // Todo: add fields for closure variables
         for (var field : closureParams) {
