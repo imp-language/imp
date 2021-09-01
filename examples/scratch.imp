@@ -1,23 +1,8 @@
-// Tests closing over external scope inside a function body.
-// These are simple examples, more complicated tests to follow.
+// A partial implementation of the Javascript Closures example from
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
 
-val g = 42
-val h = 17
-log("g before: " + g)
-log("h before: " + h)
-
-func modifyG() {
-    g = 14
-    h = 2
-    log("g during: " + g)
-    log("h during: " + h)
+val name = "Mozilla" // name is a local variable created by init
+func displayName() { // displayName() is the inner function, a closure
+    log(name) // use variable declared in the parent function
 }
-
-
-modifyG()
-
-log("g after: " + g)
-log("h after: " + h)
-
-val k = 2 + g
-log(k)
+displayName()

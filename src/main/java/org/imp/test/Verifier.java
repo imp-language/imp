@@ -4,6 +4,8 @@ import name.fraser.neil.plaintext.diff_match_patch;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.tool.Compiler;
+import org.imp.jvm.tool.Imp;
+import org.imp.jvm.tool.ImpAPI;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -65,12 +67,11 @@ public class Verifier {
         List<String> solutionLines = FileUtils.readLines(new File(solutionPath), StandardCharsets.UTF_8);
 
         // 1. Compile imp source file
-        String[] args = {sourcePath};
-        var compiler = CommandLine.populateCommand(new Compiler(), args);
-        String classFilePath = compiler.compile();
+        var imp = new Imp(sourcePath);
+        String classFilePath = imp.compile();
 
         // 2. Execute compiled imp file
-        Process proc = compiler.spawn(classFilePath);
+        Process proc = ImpAPI.spawn(classFilePath);
 
 
         // 3. Watch standard out

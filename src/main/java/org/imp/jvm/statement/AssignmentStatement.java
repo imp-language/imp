@@ -31,16 +31,18 @@ public class AssignmentStatement extends Statement {
         if (recipient instanceof VariableReference variableReference) {
             if (variableReference.reference instanceof LocalReference reference) {
                 provider.generate(mv, scope);
-                VariableReference idRef = (VariableReference) recipient;
-                String varName = idRef.reference.getName();
+                String varName = reference.getName();
                 int index = scope.getLocalVariableIndex(varName);
                 castIfNecessary(providerType, recipientType, mv);
                 mv.visitVarInsn(recipientType.getStoreVariableOpcode(), index);
             } else if (variableReference.reference instanceof ClosureReference reference) {
                 String varName = reference.getName();
-                int index = scope.getLocalVariableIndex(varName);
+                int index = 0;
+//                int index = scope.closures.indexOf(varName);
+                System.out.println("index: " + index);
+//                int index = scope.getLocalVariableIndex(varName);
                 mv.visitVarInsn(Opcodes.ALOAD, index);
-                
+
                 String qualifiedFunctionName = scope.functionType.getName();
                 mv.visitFieldInsn(Opcodes.GETFIELD, qualifiedFunctionName, varName, "Lorg/imp/jvm/runtime/Box;");
 

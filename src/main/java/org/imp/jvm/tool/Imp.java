@@ -19,7 +19,7 @@ public class Imp {
         this.filename = filename;
     }
 
-    public void compile() {
+    public String compile() {
         try {
             long start = System.nanoTime();
             // Walk the dependency tree
@@ -46,6 +46,9 @@ public class Imp {
             System.out.printf("Compiled %d files in %f seconds.", compilationSet.size(), runtime);
             System.out.println("");
             int result = ImpAPI.run("examples.scratch.Entry");
+
+
+            return entry.getClassName() + "/Entry";
 
             // Compile each file
         } catch (IOException e) {
@@ -77,7 +80,7 @@ public class Imp {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return "nope";
 
     }
 

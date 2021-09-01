@@ -26,7 +26,12 @@ public class ImpAPI {
         var dependencies = walker.walkDependencies(entry);
 
         DOTExporter<ImpFile, DefaultEdge> exporter =
-                new DOTExporter<>(v -> v.name.replace('.', '_').replace('/', '_'));
+                new DOTExporter<>(v ->
+                        v.name
+                                .replace('.', '_')
+                                .replace('/', '_')
+                                .replace('\\', '_')
+                );
         exporter.setVertexAttributeProvider((v) -> {
             Map<String, Attribute> map = new LinkedHashMap<>();
             map.put("label", DefaultAttribute.createAttribute(v.toString()));
@@ -136,5 +141,12 @@ public class ImpAPI {
 
         return 0;
     }
+
+    public static Process spawn(String className) throws IOException {
+        String cmd = "java --enable-preview -cp .compile;target/classes " + className;
+        Process proc = Runtime.getRuntime().exec(cmd);
+        return proc;
+    }
+
 
 }
