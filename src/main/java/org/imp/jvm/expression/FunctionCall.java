@@ -8,6 +8,7 @@ import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.VariableReference;
+import org.imp.jvm.runtime.stdlib.Batteries;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
@@ -15,6 +16,7 @@ import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,7 +62,8 @@ public class FunctionCall extends Expression {
         // Find a FunctionType in the current scope by name
         FunctionType functionType = scope.findFunctionType(this.name);
 
-        // Potentially override if ainother name is imported
+
+        // Potentially override if another name is imported
         if (this.module != null) {
             if (this.module instanceof VariableReference variableReference) {
                 String modulePath = variableReference.name;
@@ -81,6 +84,22 @@ public class FunctionCall extends Expression {
             }
         }
 
+        // If the function is in the standard library:
+        if (functionType == null) {
+            var l = Batteries.class.getDeclaredMethods();
+            var s = Batteries.class.getCanonicalName();
+            Method m = null;
+            for (var method : l) {
+                if (method.getName().equals(this.name)) {
+                    // Todo: check types of arguments to make sure we get the right overload
+                    m = method;
+                }
+            }
+            if (m != null) {
+                FunctionType f = new FunctionType(this.name, this.owner);
+                functionType = f;
+            }
+        }
 
         // If not found in current scope, search in imported files
         if (functionType == null) {

@@ -142,7 +142,7 @@ argument
 
 // Function call
 callStatement
-    : identifier LPAREN (expressionList)? RPAREN
+    : (identifier|type) LPAREN (expressionList)? RPAREN
     ;
 
 
