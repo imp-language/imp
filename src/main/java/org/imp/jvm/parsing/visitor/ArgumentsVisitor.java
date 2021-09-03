@@ -30,7 +30,7 @@ public class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
                 identifier.name = argCtx.identifier().getText();
                 identifier.type = TypeResolver.getFromTypeContext(argCtx.type(), scope);
                 if (identifier.type == null) {
-                    throw new Error("ree");
+                    throw new Error("reeses");
                 }
 
                 arguments.add(identifier);

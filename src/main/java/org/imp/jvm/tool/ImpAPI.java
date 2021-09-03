@@ -32,6 +32,7 @@ public class ImpAPI {
                                 .replace('.', '_')
                                 .replace('/', '_')
                                 .replace('\\', '_')
+                                .replace('-', '_')
                 );
         exporter.setVertexAttributeProvider((v) -> {
             Map<String, Attribute> map = new LinkedHashMap<>();

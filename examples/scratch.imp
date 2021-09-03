@@ -1,15 +1,28 @@
 
 
 
+val i = 42
+log(string(i))
+log(float(i))
 
+val f = 64.32
+log(string(f))
+log(int(f))
 
-val i = 72
+val b = false
+log(string(b))
+log(int(b))
 
-val s = string(i)
-log(s)
+val s = "1"
+log(int(s))
+
 
 
 /*
+val f = 72.69
+log(f)
+val i = int(f)
+log(i)
 val g = 42
 val h = 17
 log("g before: " + g)

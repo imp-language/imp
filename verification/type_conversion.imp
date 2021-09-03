@@ -1,0 +1,5 @@
+// Tests conversion between int, string, float, etc.
+
+val i = 42
+log(string(i))
+log(float(i))
