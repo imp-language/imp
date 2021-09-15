@@ -1,30 +1,15 @@
 parser grammar ImpParser;
-// remember: parser rules are lowercase
 
 //    Question mark stands for: zero or one
 //    Plus stands for: one or more
 //    Star stands for: zero or more
 
-
 options {
     tokenVocab = ImpLexer;
 }
 
-//@header {
-//    package org.imp.jvm
-//}
-
 program : EOL* (importStatement EOL*)* (statement EOL*)* EOF;
 
-
-
-
-/*
- * Core
- */
-
-// Core Language Constructs
-// If statements, Loops, Returns, Switch, etc
 statement
     : block
     | classStatement
@@ -35,32 +20,27 @@ statement
     | assignment
     | expression
     | variableStatement
-//    | importStatement
     | exportStatement
     | enumStatement
     ;
-
 
 statementList
     : (statement EOL*)+
     ;
 
-
 block
     : LBRACE EOL* statementList? RBRACE EOL*
     ;
 
-/*
- * Expressions
- */
 // Comma-separated list of one or more expressions
 expressionList
     : expression (COMMA expression)*
     ;
 
 expression
-    : callStatement                                    #CallStatementExpression
+    : callStatement                                    #CallStatementExpression // Todo: rename to "callExpression" or "functionCall"
     | function                                         #FunctionDefinition
+    | expression DOT callStatement                     #MethodCallExpression
     | expression (DOT identifier)+                     #PropertyAccessExpression
     | expression LBRACK expression RBRACK              #MemberIndexExpression
     | literal                                          #LiteralExpression
@@ -73,21 +53,11 @@ expression
     | expression (ADD | SUB) expression                #AdditiveExpression
     | expression cmp=(LE | LT | GE | GT | EQUAL | NOTEQUAL) expression        #RelationalExpression
     | expression cmp=(AND | OR) expression             #LogicalExpression
-    | expression DOT callStatement                     #MethodCallExpression
     | expression (INC | DEC)                           #PostIncrementExpression
     | expression ASSIGN expression                     #AssignmentExpression
     | NEW identifier LPAREN (expressionList)? RPAREN   #NewObjectExpression
     ;
 
-propertyAccess
-    : (DOT identifier)+
-    ;
-
-/*
- * Statements
- */
-
-//    : expressionList assign_op expressionList
 assignment
     : expression assign_op expression;
 
@@ -95,9 +65,6 @@ assignment
 assign_op
     : (ADD | SUB | MUL | DIV | POW | MOD)? ASSIGN
     ;
-
-
-
 
 // Loops
 loopStatement

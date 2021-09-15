@@ -282,7 +282,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public Expression visitMethodCallExpression(ImpParser.MethodCallExpressionContext ctx) {
         var owner = ctx.expression().accept(this);
         var callStatement = visitCallStatement(ctx.callStatement());
-        callStatement.setOwner(owner);
+        callStatement.arguments.add(0, owner);
         return callStatement;
     }
 }

@@ -1,20 +1,20 @@
-/*
-*/
-log("test")
-val i = 42
-log(string(i))
-log(float(i))
 
-val f = 64.32
-log(string(f))
-log(int(f))
 
-val b = false
-log(string(b))
-log(int(b))
+struct Vector {
+    x float
+    y float
+}
 
-val si = "-999"
-log(int(si))
-val sf = "1.5928e9"
-log(float(sf))
+func add(a Vector, b Vector) Vector {
+    return new Vector(a.x + b.x, a.y + b.y)
+}
 
+func logVector(a Vector) {
+    log("(" + a.x + ", " + a.y + ")")
+}
+
+val sum = add(new Vector(4.0, 9.0), new Vector(5.0, 7.0))   // (9, 16)
+logVector(sum)
+
+val sum2 = sum.add(new Vector(1.0, 7.0))                    // (10, 23)
+logVector(sum2) // (10, 23)
