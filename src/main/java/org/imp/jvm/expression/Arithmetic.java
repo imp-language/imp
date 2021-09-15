@@ -42,38 +42,44 @@ public class Arithmetic extends Expression {
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
         } else {
+            Type goalType = this.type;
             if (left.type.equals(right.type)) {
                 left.generate(mv, scope);
                 right.generate(mv, scope);
 
             } else {
                 // the types don't match
-                Type goalType = this.type;
                 if (left.type == BuiltInType.INT && right.type == BuiltInType.FLOAT) {
                     left.generate(mv, scope);
                     mv.visitInsn(Opcodes.I2F);
                     right.generate(mv, scope);
+                    goalType = BuiltInType.FLOAT;
                 } else if (left.type == BuiltInType.FLOAT && right.type == BuiltInType.INT) {
                     left.generate(mv, scope);
                     right.generate(mv, scope);
                     mv.visitInsn(Opcodes.I2F);
+                    goalType = BuiltInType.FLOAT;
                 } else if (left.type == BuiltInType.INT && right.type == BuiltInType.DOUBLE) {
                     left.generate(mv, scope);
                     mv.visitInsn(Opcodes.I2D);
                     right.generate(mv, scope);
+                    goalType = BuiltInType.DOUBLE;
                 } else if (left.type == BuiltInType.DOUBLE && right.type == BuiltInType.INT) {
                     left.generate(mv, scope);
                     right.generate(mv, scope);
                     mv.visitInsn(Opcodes.I2D);
+                    goalType = BuiltInType.DOUBLE;
                 }
+
+                this.type = goalType;
             }
             int op = switch (operator) {
-                case ADD -> type.getAddOpcode();
-                case SUBTRACT -> type.getSubstractOpcode();
-                case MULTIPLY -> type.getMultiplyOpcode();
-                case DIVIDE -> type.getDivideOpcode();
+                case ADD -> goalType.getAddOpcode();
+                case SUBTRACT -> goalType.getSubstractOpcode();
+                case MULTIPLY -> goalType.getMultiplyOpcode();
+                case DIVIDE -> goalType.getDivideOpcode();
 
-                default -> type.getAddOpcode();
+                default -> goalType.getAddOpcode();
             };
             mv.visitInsn(op);
         }

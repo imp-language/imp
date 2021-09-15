@@ -228,10 +228,10 @@ iteratorDestructuring
 literal
     : collectionLiteral
     | stringLiteral
+    | doubleLiteral
     | integerLiteral
     | floatLiteral
     | booleanLiteral
-    | doubleLiteral
     ;
 
 identifier
