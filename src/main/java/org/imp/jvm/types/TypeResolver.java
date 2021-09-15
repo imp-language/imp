@@ -21,7 +21,7 @@ public class TypeResolver {
         } else if (typeContext instanceof ImpParser.TypeListContext) {
             return null;
         } else {
-            System.err.println("ree");
+            System.err.println("reea");
         }
         return null;
     }
@@ -68,10 +68,21 @@ public class TypeResolver {
         return result;
     }
 
-    private static Optional<BuiltInType> getBuiltInType(String typeName) {
+    public static Optional<BuiltInType> getBuiltInType(String typeName) {
+        // Todo: bad way of doing this
+        if (typeName.equals("boolean")) {
+            typeName = "bool";
+        }
+        String finalTypeName = typeName;
         return Arrays.stream(BuiltInType.values())
-                .filter(type -> type.getName().equals(typeName))
+                .filter(type -> type.getName().equals(finalTypeName))
                 .findFirst();
+    }
+
+    public static BuiltInType getBuiltInTypeByClass(Class<?> c) {
+        return Arrays.stream(BuiltInType.values())
+                .filter(type -> c.equals(type.getTypeClass()))
+                .findFirst().get();
     }
 
     public static final class TypeChecker {

@@ -21,3 +21,4 @@ log("h after: " + h)
 
 val k = 2 + g
 log(k)
+

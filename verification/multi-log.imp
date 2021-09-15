@@ -1,0 +1,12 @@
+// This test ensures that all forms of the log function work.
+
+log(1)
+log(2.43)
+log(false)
+log("reee")
+
+log(1, 2, 3, 4, 5)
+log(1.4, 2.6, 7.9, 81.97)
+log("a", "b", "c")
+
+log(1, 6.4, "neat")

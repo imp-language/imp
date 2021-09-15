@@ -1,47 +1,46 @@
-// Declares variables of primitive types and changes
-// their types with addition or reassignment.
 
-log("declarations")
 
-val i = 0
-log(i)
 
-val f = 0.0
-log(f)
+val i = 42
+log(string(i))
+log(float(i))
+
+val f = 64.32
+log(string(f))
+log(int(f))
 
 val b = false
-log(b)
+log(string(b))
+log(int(b))
 
-val s = "string"
-log(s)
+val s = "1"
+log(int(s))
 
-log("")
-log("operations")
 
-i = i + 1
-log(i)
 
-f = f + 1.0
+/*
+val f = 72.69
 log(f)
+val i = int(f)
+log(i)
+val g = 42
+val h = 17
+log("g before: " + g)
+log("h before: " + h)
 
-b = true
-log(b)
+func modifyG() {
+    g = 14
+    h = 2
+    log("g during: " + g)
+    log("h during: " + h)
+}
 
-s = s + " variable" + " a"
-log(s)
 
-log("\nnegatives")
-val neg_i = -1
-log(neg_i)
-neg_i = neg_i + -23
-log(neg_i)
+modifyG()
 
-val neg_f = -1.0
-log(neg_f)
-neg_f++
-log(neg_f)
+log("g after: " + g)
+log("h after: " + h)
 
-val neg_d = -1.0d
-log(neg_d)
-neg_d = neg_d + 346.0d
-log(neg_d)
+val k = 2 + g
+log(k)
+*/

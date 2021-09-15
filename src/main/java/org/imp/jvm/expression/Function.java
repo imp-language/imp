@@ -28,6 +28,7 @@ public class Function extends Expression {
 
     public final Modifier modifier;
 
+    public boolean isStandard = false;
 
     public Function(
             FunctionType functionType,
@@ -55,6 +56,21 @@ public class Function extends Expression {
         this.block = block;
         this.functionType = functionType;
         this.parameters = parameters;
+        this.returnType = returnType;
+    }
+
+    public Function(
+            FunctionType functionType,
+            List<Identifier> parameters,
+            Type returnType,
+            boolean isStandard
+    ) {
+        super();
+        this.modifier = null;
+        this.block = null;
+        this.functionType = functionType;
+        this.parameters = parameters;
+        this.isStandard = isStandard;
         this.returnType = returnType;
     }
 
@@ -87,7 +103,7 @@ public class Function extends Expression {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        throw new NotImplementedException("ree");
+        throw new NotImplementedException("reeb");
     }
 
     @Override

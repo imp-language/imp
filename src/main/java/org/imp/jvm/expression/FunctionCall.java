@@ -8,10 +8,8 @@ import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.VariableReference;
-import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.FunctionType;
-import org.imp.jvm.types.StructType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.runtime.Glue;
+import org.imp.jvm.types.*;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -54,13 +52,14 @@ public class FunctionCall extends Expression {
         argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
 
         if (name.equals("log")) {
-            return;
+//            return;
         }
 
         // Find a FunctionType in the current scope by name
         FunctionType functionType = scope.findFunctionType(this.name);
 
-        // Potentially override if ainother name is imported
+
+        // Potentially override if another name is imported
         if (this.module != null) {
             if (this.module instanceof VariableReference variableReference) {
                 String modulePath = variableReference.name;
@@ -81,6 +80,14 @@ public class FunctionCall extends Expression {
             }
         }
 
+        // If the function is in the standard library:
+        if (functionType == null) {
+            try {
+                functionType = Glue.findStandardLibraryFunction(this.arguments, this.name, this.owner);
+            } catch (Exception e) {
+                // Todo: better error handling in findStandardLibraryFunction
+            }
+        }
 
         // If not found in current scope, search in imported files
         if (functionType == null) {
@@ -115,31 +122,44 @@ public class FunctionCall extends Expression {
     public void generate(MethodVisitor mv, Scope scope) {
         // generate arguments
 
-        if (name.equals("log")) {
-            mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-            arguments.get(0).generate(mv, scope);
+        if (function.isStandard) {
+            if (this.name.equals("log")) {
+                mv.visitLdcInsn(arguments.size());
+                mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
 
-            // get the variation of println to call
-            Type argType = arguments.get(0).type;
+                for (int i = 0; i < arguments.size(); i++) {
+                    mv.visitInsn(Opcodes.DUP);
+                    mv.visitLdcInsn(i);
+                    arguments.get(i).generate(mv, scope);
+                    // Todo: cast bad
+                    BuiltInType bt = (BuiltInType) arguments.get(i).type;
+                    bt.doBoxing(mv);
+                    mv.visitInsn(Opcodes.AASTORE);
 
-            if (argType instanceof FunctionType) {
-                argType = BuiltInType.STRING;
+                }
+
+            } else {
+                for (var arg : arguments) {
+                    arg.generate(mv, scope);
+                }
+
             }
 
-            String descriptor = "(" + argType.getDescriptor() + ")V";
+//            mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
 
 
-            if (argType instanceof StructType) {
-                descriptor = "(Ljava/lang/Object;)V";
+            String owner = "org/imp/jvm/runtime/stdlib/Batteries";
+
+            List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
+            Type returnType = this.function.returnType;
+            String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
+            if (this.name.equals("log")) {
+                methodDescriptor = "([Ljava/lang/Object;)V";
             }
 
+            String name = this.function.functionType.name;
 
-//            descriptor = org.objectweb.asm.Type.getDescriptor(java.io.PrintStream.class);
-
-            String owner = "java/io/PrintStream";
-            name = "println"; // name of the method we call
-
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, descriptor, false);
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
         } else {
             // 0. If the First Class Function has not been initialized, do so.
             String localVariableName = this.name;

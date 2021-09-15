@@ -32,6 +32,7 @@ public class ImpAPI {
                                 .replace('.', '_')
                                 .replace('/', '_')
                                 .replace('\\', '_')
+                                .replace('-', '_')
                 );
         exporter.setVertexAttributeProvider((v) -> {
             Map<String, Attribute> map = new LinkedHashMap<>();
@@ -86,6 +87,8 @@ public class ImpAPI {
 
     public static Program createProgram(Map<String, ImpFile> files) throws IOException {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
+        Logger.killIfErrors("Errored during bytecode generation.");
+
         for (var key : files.keySet()) {
             var value = files.get(key);
             var byteUnits = bytecodeGenerator.generate(value);

@@ -92,7 +92,12 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public FunctionCall visitCallStatement(ImpParser.CallStatementContext ctx) {
 
         // Function name
-        String functionName = ctx.identifier().getText();
+        String functionName = null;
+        if (ctx.identifier() != null) {
+            functionName = ctx.identifier().getText();
+        } else {
+            functionName = ctx.type().getText();
+        }
 
         // Function argument expressions
         List<Expression> argExpressions = new ArrayList<>();
