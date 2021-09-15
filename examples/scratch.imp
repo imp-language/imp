@@ -1,6 +1,6 @@
-
-
-
+/*
+*/
+log("test")
 val i = 42
 log(string(i))
 log(float(i))
@@ -13,34 +13,8 @@ val b = false
 log(string(b))
 log(int(b))
 
-val s = "1"
-log(int(s))
+val si = "-999"
+log(int(si))
+val sf = "1.5928e9"
+log(float(sf))
 
-
-
-/*
-val f = 72.69
-log(f)
-val i = int(f)
-log(i)
-val g = 42
-val h = 17
-log("g before: " + g)
-log("h before: " + h)
-
-func modifyG() {
-    g = 14
-    h = 2
-    log("g during: " + g)
-    log("h during: " + h)
-}
-
-
-modifyG()
-
-log("g after: " + g)
-log("h after: " + h)
-
-val k = 2 + g
-log(k)
-*/

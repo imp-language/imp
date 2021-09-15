@@ -73,6 +73,7 @@ public class TypeResolver {
         if (typeName.equals("boolean")) {
             typeName = "bool";
         }
+        if (typeName.equals("java.lang.String")) typeName = "string";
         String finalTypeName = typeName;
         return Arrays.stream(BuiltInType.values())
                 .filter(type -> type.getName().equals(finalTypeName))

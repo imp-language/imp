@@ -128,6 +128,10 @@ function
     | LPAREN (arguments)? RPAREN FATARROW block
     ;
 
+operator
+    : (INC|DEC|ADD|SUB|MUL|DIV)
+    ;
+
 modifiers
     : EXPORT
     ;

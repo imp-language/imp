@@ -26,17 +26,20 @@ public class Batteries {
     }
 
     public static int _int(String s) {
-        try {
-
-            int i = Integer.parseInt(s);
-            return i;
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+//        try {
+        int i = Integer.parseInt(s);
+        return i;
+//        } catch (NumberFormatException e) {
+//            return 0;
+//        }
     }
 
     public static float _float(int i) {
         return (float) i;
+    }
+
+    public static float _float(String s) {
+        return Float.parseFloat(s);
     }
 
     public static String string(int i) {
