@@ -17,6 +17,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class ImpAPI {
 
@@ -121,29 +122,21 @@ public class ImpAPI {
         return null;
     }
 
-    public static int run(String className) throws IOException {
+    public static int run(String className) throws IOException, InterruptedException {
         String cmd = "java --enable-preview -cp .compile;target/classes " + className;
-        Process proc = Runtime.getRuntime().exec(cmd);
+        cmd = "java --version";
 
-        // 3. Watch standard out
-        BufferedReader stdInput = new BufferedReader(new
-                InputStreamReader(proc.getInputStream()));
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "java",
+                "--enable-preview",
+                "-cp",
+                ".compile;target/classes",
+                className
+        );
+        processBuilder.inheritIO();
+        Process process = processBuilder.start();
 
-        BufferedReader stdError = new BufferedReader(new
-                InputStreamReader(proc.getErrorStream()));
-
-        String s = null;
-        while ((s = stdInput.readLine()) != null) {
-            System.out.println(s);
-        }
-
-//        System.out.println("\nErrors (if any):");
-        while ((s = stdError.readLine()) != null) {
-            System.out.println(s);
-        }
-        System.out.println("");
-
-        return 0;
+        return process.waitFor();
     }
 
     public static Process spawn(String className) throws IOException {

@@ -1,6 +1,12 @@
 package org.imp.jvm.runtime.stdlib;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
@@ -9,10 +15,13 @@ import java.util.stream.Collectors;
  */
 public class Batteries {
 
-    // Todo: if only one element is passed to log(), call a more performant version
     public static void log(Object... args) {
         String result = Arrays.stream(args).map(Object::toString).collect(Collectors.joining(" "));
         System.out.println(result);
+    }
+
+    public static void log_single(Object arg) {
+        System.out.println(arg);
     }
 
     public static int _int(float f) {
@@ -55,5 +64,33 @@ public class Batteries {
     // Todo: not working yet
     public static String typeof(Object o) {
         return o.getClass().getName();
+    }
+
+    /**
+     * Reads the entire file to a string.
+     * Very primitive implementation.
+     *
+     * @return String
+     */
+    public static String read(String filename) throws IOException {
+        Path fileName = Path.of(filename);
+        String content = Files.readString(fileName);
+        return content;
+    }
+
+    public static String read() throws IOException {
+        Scanner in = new Scanner(System.in);
+        String s = in.nextLine();
+        in.close();
+        return s;
+    }
+
+    /**
+     * Writes content to a file.
+     * Very primitive implementation.
+     */
+    public static void write(String filename, String content) throws IOException {
+        Path fileName = Path.of(filename);
+        Files.writeString(fileName, content);
     }
 }

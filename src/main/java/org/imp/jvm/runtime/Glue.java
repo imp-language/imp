@@ -21,25 +21,38 @@ import java.util.stream.Collectors;
  */
 public class Glue {
     public static FunctionType findLogFunction(List<Expression> arguments, ImpFile owner) {
+        String name = "log";
+
+        // use the faster logger
+        if (arguments.size() == 1) {
+            name = "log_single";
+        }
 
         Class<?>[] classes = new Class[1];
         classes[0] = Object[].class;
         Method method = null;
-        try {
-            method = Batteries.class.getMethod("log", classes);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+
+        if (arguments.size() == 1) {
+            try {
+                method = Batteries.class.getMethod(name, Object.class);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                method = Batteries.class.getMethod(name, classes);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
         if (method != null) {
-            FunctionType f = new FunctionType("log", owner);
+            FunctionType f = new FunctionType(name, owner);
             List<Identifier> identifiers = new ArrayList<>();
 
             for (var arg : arguments) {
                 var ident = new Identifier(arg.type.getName(), arg.type);
                 identifiers.add(ident);
             }
-//            arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
-
 
             Type r = TypeResolver.getBuiltInTypeByClass(method.getReturnType());
 

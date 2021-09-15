@@ -51,10 +51,6 @@ public class FunctionCall extends Expression {
         }
         argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
 
-        if (name.equals("log")) {
-//            return;
-        }
-
         // Find a FunctionType in the current scope by name
         FunctionType functionType = scope.findFunctionType(this.name);
 
@@ -123,7 +119,10 @@ public class FunctionCall extends Expression {
         // generate arguments
 
         if (function.isStandard) {
-            if (this.name.equals("log")) {
+
+            // Todo: clean this up. Having a faster log for single
+            //  objects shouldn't require this much stuff.
+            if (this.name.equals("log") && arguments.size() > 1) {
                 mv.visitLdcInsn(arguments.size());
                 mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
 
@@ -137,6 +136,11 @@ public class FunctionCall extends Expression {
                     mv.visitInsn(Opcodes.AASTORE);
 
                 }
+
+            } else if (this.name.equals("log") && arguments.size() == 1) {
+                arguments.get(0).generate(mv, scope);
+                BuiltInType bt = (BuiltInType) arguments.get(0).type;
+                bt.doBoxing(mv);
 
             } else {
                 for (var arg : arguments) {
@@ -155,6 +159,9 @@ public class FunctionCall extends Expression {
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
             if (this.name.equals("log")) {
                 methodDescriptor = "([Ljava/lang/Object;)V";
+                if (arguments.size() == 1) {
+                    methodDescriptor = "(Ljava/lang/Object;)V";
+                }
             }
 
             String name = this.function.functionType.name;

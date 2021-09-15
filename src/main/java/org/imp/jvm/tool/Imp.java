@@ -77,7 +77,7 @@ public class Imp {
             System.out.println("");
             int result = ImpAPI.run("examples.scratch.Entry");
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         return "nope";
