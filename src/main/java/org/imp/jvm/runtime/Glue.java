@@ -5,6 +5,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.runtime.stdlib.Batteries;
+import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.types.TypeResolver;
@@ -53,13 +54,17 @@ public class Glue {
         if (name.equals("log")) {
             return Glue.findLogFunction(arguments, owner);
         }
-
-        // Convert arguments List<Expression> to Class<?>
         Class<?>[] classes = new Class[arguments.size()];
-        for (int i = 0; i < arguments.size(); i++) {
-            Type t = arguments.get(i).type;
-            var c = t.getTypeClass();
-            classes[i] = c;
+
+        if (name.equals("typeof")) {
+            classes[0] = Object.class;
+        } else {
+            // Convert arguments List<Expression> to Class<?>
+            for (int i = 0; i < arguments.size(); i++) {
+                Type t = arguments.get(i).type;
+                var c = t.getTypeClass();
+                classes[i] = c;
+            }
         }
 
         // Some methods are prefixed with _ in the Java
@@ -87,6 +92,10 @@ public class Glue {
                     var i = new Identifier(c.getName(), builtin.get());
                     identifiers.add(i);
                 }
+            }
+
+            if (name.equals("typeof")) {
+                identifiers.add(new Identifier("o", BuiltInType.OBJECT));
             }
 
             Type r = TypeResolver.getBuiltInTypeByClass(method.getReturnType());

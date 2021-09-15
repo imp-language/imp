@@ -18,8 +18,9 @@ public enum BuiltInType implements Type {
     STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, false, false),
 
     BOX("box", null, "Lorg/imp/jvm/runtime/Box;", TypeSpecificOpcodes.OBJECT, false, false),
-    STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false);
+    STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
 
+    OBJECT("object", Object.class, "ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false);
 
     private final String name;
     private final Class<?> typeClass;

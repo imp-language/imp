@@ -1,4 +1,4 @@
-
+// Super-simple test of Uniform Function Call Syntax
 
 struct Vector {
     x float
@@ -24,4 +24,6 @@ func length(a Vector) int {
     return 2
 }
 
+log(length(sum2))
+log(length(sum))
 log(length(sum2) == sum.length())

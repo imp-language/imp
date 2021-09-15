@@ -26,12 +26,8 @@ public class Batteries {
     }
 
     public static int _int(String s) {
-//        try {
         int i = Integer.parseInt(s);
         return i;
-//        } catch (NumberFormatException e) {
-//            return 0;
-//        }
     }
 
     public static float _float(int i) {
@@ -52,5 +48,10 @@ public class Batteries {
 
     public static String string(boolean b) {
         return b + "";
+    }
+
+    // Todo: not working yet
+    public static String typeof(Object o) {
+        return o.getClass().getName();
     }
 }
