@@ -20,6 +20,12 @@ public class ArithmeticVisitor extends ImpParserBaseVisitor<Arithmetic> {
             return new Arithmetic(left, right, Operator.ADD);
         } else if (ctx.SUB() != null) {
             return new Arithmetic(left, right, Operator.SUBTRACT);
+        } else if (ctx.MUL() != null) {
+            return new Arithmetic(left, right, Operator.MULTIPLY);
+        } else if (ctx.DIV() != null) {
+            return new Arithmetic(left, right, Operator.DIVIDE);
+        } else if (ctx.MOD() != null) {
+            return new Arithmetic(left, right, Operator.MODULUS);
         } else {
             System.out.println("not implemented");
             return null;

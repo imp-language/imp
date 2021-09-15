@@ -49,8 +49,7 @@ expression
     | (BANG | NOT) expression                          #UnaryNotExpression
     | (ADD | SUB) expression                           #UnaryAdditiveExpression
     | <assoc=right> expression POW expression          #PowerExpression
-    | expression (MUL | DIV | MOD) expression          #MultiplicativeExpression
-    | expression (ADD | SUB) expression                #AdditiveExpression
+    | expression (ADD | SUB | MUL | DIV | MOD) expression #AdditiveExpression
     | expression cmp=(LE | LT | GE | GT | EQUAL | NOTEQUAL) expression        #RelationalExpression
     | expression cmp=(AND | OR) expression             #LogicalExpression
     | expression (INC | DEC)                           #PostIncrementExpression

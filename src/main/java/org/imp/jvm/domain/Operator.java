@@ -9,6 +9,7 @@ public enum Operator {
     SUBTRACT("-", Opcodes.IFNE),
     MULTIPLY("*", Opcodes.IFEQ),
     DIVIDE("/", Opcodes.IFEQ),
+    MODULUS("%", Opcodes.IFEQ),
     LESS("<", Opcodes.IFLT),
     GREATER(">", Opcodes.IFGT),
     LESS_OR_EQUAL("<=", Opcodes.IFLE),

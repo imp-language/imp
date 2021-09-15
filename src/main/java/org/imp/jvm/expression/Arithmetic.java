@@ -25,20 +25,6 @@ public class Arithmetic extends Expression {
 
 
         if (type.equals(BuiltInType.STRING)) {
-
-            /*
-            left.generate(mv, scope);
-//            right.generate(mv, scope);
-            String owner = "java/lang/invoke/StringConcatFactory";
-            String name = "makeConcatWithConstants";
-            String descriptor = "(Ljava/lang/String;)Ljava/lang/String;";
-//            mv.visitMethodInsn(Opcodes.INVOKEDYNAMIC, owner, name, descriptor, false);
-
-            Handle handle = new Handle(Opcodes.H_INVOKEVIRTUAL, owner, name, descriptor, false);
-            mv.visitInvokeDynamicInsn(name, descriptor, handle, "penis");
-            */
-
-
             mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
             mv.visitInsn(Opcodes.DUP);
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
@@ -56,15 +42,37 @@ public class Arithmetic extends Expression {
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
         } else {
-            left.generate(mv, scope);
-            right.generate(mv, scope);
-            type.getAddOpcode();
+            if (left.type.equals(right.type)) {
+                left.generate(mv, scope);
+                right.generate(mv, scope);
+
+            } else {
+                // the types don't match
+                Type goalType = this.type;
+                if (left.type == BuiltInType.INT && right.type == BuiltInType.FLOAT) {
+                    left.generate(mv, scope);
+                    mv.visitInsn(Opcodes.I2F);
+                    right.generate(mv, scope);
+                } else if (left.type == BuiltInType.FLOAT && right.type == BuiltInType.INT) {
+                    left.generate(mv, scope);
+                    right.generate(mv, scope);
+                    mv.visitInsn(Opcodes.I2F);
+                } else if (left.type == BuiltInType.INT && right.type == BuiltInType.DOUBLE) {
+                    left.generate(mv, scope);
+                    mv.visitInsn(Opcodes.I2D);
+                    right.generate(mv, scope);
+                } else if (left.type == BuiltInType.DOUBLE && right.type == BuiltInType.INT) {
+                    left.generate(mv, scope);
+                    right.generate(mv, scope);
+                    mv.visitInsn(Opcodes.I2D);
+                }
+            }
             int op = switch (operator) {
                 case ADD -> type.getAddOpcode();
                 case SUBTRACT -> type.getSubstractOpcode();
                 case MULTIPLY -> type.getMultiplyOpcode();
                 case DIVIDE -> type.getDivideOpcode();
-                
+
                 default -> type.getAddOpcode();
             };
             mv.visitInsn(op);

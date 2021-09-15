@@ -1,27 +1,6 @@
 
 
-struct Vector {
-    x float
-    y float
-}
-
-func add(a Vector, b Vector) Vector {
-    return new Vector(a.x + b.x, a.y + b.y)
-}
-
-func logVector(a Vector) {
-    log("(" + a.x + ", " + a.y + ")")
-}
-
-val sum = add(new Vector(4.0, 9.0), new Vector(5.0, 7.0))
-logVector(sum)  // (9, 16)
-
-val sum2 = sum.add(new Vector(1.0, 7.0))
-logVector(sum2) // (10, 23)
+val pi = 3.14159265
 
 
-func length(a Vector) int {
-    return 2
-}
-
-log(length(sum2) == sum.length())
+log(int((1.3 + (4*5))/2))

@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
  * this Java class to compile.
  */
 public class Batteries {
+
+    // Todo: if only one element is passed to log(), call a more performant version
     public static void log(Object... args) {
         String result = Arrays.stream(args).map(Object::toString).collect(Collectors.joining(" "));
         System.out.println(result);
