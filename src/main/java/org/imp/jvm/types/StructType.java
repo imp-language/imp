@@ -2,9 +2,11 @@ package org.imp.jvm.types;
 
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
+import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
+import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
@@ -157,5 +159,10 @@ public class StructType implements Type {
     @Override
     public boolean isNumeric() {
         return false;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 }

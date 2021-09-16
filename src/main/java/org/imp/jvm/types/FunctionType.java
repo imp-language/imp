@@ -2,9 +2,11 @@ package org.imp.jvm.types;
 
 import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.domain.ImpFile;
+import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.expression.reference.VariableReference;
+import org.imp.jvm.types.overloads.OperatorOverload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,5 +112,10 @@ public class FunctionType implements Type {
     @Override
     public boolean isNumeric() {
         return false;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 }

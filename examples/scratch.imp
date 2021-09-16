@@ -1,8 +1,8 @@
 
 
 
-log("Input your name:")
+val a = "abcdefg"
 
-val s = read()
+val b = a[42]
 
-log("Hello, " + s)
+log(b)

@@ -37,7 +37,12 @@ public enum Errors implements ErrorContext {
     ModuleNotImported(11, "Make sure to import all modules referenced in the file.",
             "Module `{0}` has not been imported."),
     ModuleNotFound(12, "Is the module misspelled?",
-            "Module `{0}` is not found.")
+            "Module `{0}` is not found."),
+    InvalidIndexType(13, "Make sure to index with integers only.",
+            "Expression `{0}` cannot be indexed by type `{1}`."),
+
+    UnsupportedOperator(14, "Is the operator supported by the type?",
+            "The operator `{0}` is not supported on `{1}` which has type `{2}`.")
 
     //
     ;

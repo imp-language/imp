@@ -34,17 +34,17 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
     }
 
 
-    @Override
-    public Literal visitCollectionLiteral(ImpParser.CollectionLiteralContext ctx) {
-//        // List literals are converted to collections
-//        var elements = ctx.elementList().expression();
-//        List<Expression> expressions = elements.stream().map(expressionVisitor::visit).collect(Collectors.toList());
+//    @Override
+//    public Literal visitCollectionLiteral(ImpParser.CollectionLiteralContext ctx) {
+////        // List literals are converted to collections
+////        var elements = ctx.elementList().expression();
+////        List<Expression> expressions = elements.stream().map(expressionVisitor::visit).collect(Collectors.toList());
+////
+////        // ToDo: type check lists
+////        // type inference, first element in list defines type of whole collection
 //
-//        // ToDo: type check lists
-//        // type inference, first element in list defines type of whole collection
-
-        return new Literal(BuiltInType.VOID, null);
-    }
+//        return new Literal(BuiltInType.VOID, null);
+//    }
 
     @Override
     public Literal visitStringLiteral(ImpParser.StringLiteralContext ctx) {

@@ -285,4 +285,16 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         callStatement.arguments.add(0, owner);
         return callStatement;
     }
+
+
+    @Override
+    public Expression visitMemberIndexExpression(ImpParser.MemberIndexExpressionContext ctx) {
+        var expression = ctx.expression(0).accept(this);
+        var index = ctx.expression(1).accept(this);
+
+
+        var memberIndex = new MemberIndex(expression, index);
+        memberIndex.setCtx(ctx);
+        return memberIndex;
+    }
 }

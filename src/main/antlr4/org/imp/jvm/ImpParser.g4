@@ -226,8 +226,8 @@ iteratorDestructuring
  * Literals
  */
 literal
-    : collectionLiteral
-    | stringLiteral
+//    : collectionLiteral
+    : stringLiteral
     | doubleLiteral
     | integerLiteral
     | floatLiteral
@@ -261,9 +261,9 @@ doubleLiteral
 //    Star stands for: zero or more
 
 // Lists
-collectionLiteral
-    : identifier? LBRACK (type | expressionList)? RBRACK
-    ;
+//collectionLiteral
+//    : identifier? LBRACK (type | expressionList)? RBRACK
+//    ;
 
 
 // used in imports/exports

@@ -13,7 +13,8 @@ public enum Operator {
     LESS("<", Opcodes.IFLT),
     GREATER(">", Opcodes.IFGT),
     LESS_OR_EQUAL("<=", Opcodes.IFLE),
-    GRATER_OR_EQAL(">=", Opcodes.IFGE);
+    GRATER_OR_EQAL(">=", Opcodes.IFGE),
+    INDEX("[]", Opcodes.IFEQ);
 
     private final String sign;
     private final int opcode;

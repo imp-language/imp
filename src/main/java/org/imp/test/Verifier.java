@@ -1,6 +1,5 @@
 package org.imp.test;
 
-import name.fraser.neil.plaintext.diff_match_patch;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.tool.Imp;
@@ -128,19 +127,4 @@ public class Verifier {
 
     }
 
-    private static String diff_prettyStrikethrough(List<diff_match_patch.Diff> diffs) {
-        StringBuilder html = new StringBuilder();
-        for (diff_match_patch.Diff aDiff : diffs) {
-            String text = aDiff.text.replace("&", "&amp;").replace("<", "&lt;")
-                    .replace(">", "&gt;").replace("\n", "&para;<br>");
-            switch (aDiff.operation) {
-                case INSERT -> html.append("<ins style=\"background:#e6ffe6;\">").append(text)
-                        .append("</ins>");
-                case DELETE -> html.append("<del style=\"background:#ffe6e6;\">").append(text)
-                        .append("</del>");
-                case EQUAL -> html.append("<span>").append(text).append("</span>");
-            }
-        }
-        return html.toString();
-    }
 }

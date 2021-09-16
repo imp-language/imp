@@ -1,5 +1,7 @@
 package org.imp.jvm.types;
 
+import org.imp.jvm.domain.Operator;
+import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
 public record UnknownType(String name) implements Type {
@@ -78,5 +80,10 @@ public record UnknownType(String name) implements Type {
     @Override
     public boolean isNumeric() {
         return false;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 }
