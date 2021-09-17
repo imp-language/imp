@@ -1,4 +1,4 @@
-
+// Tests indexing strings for indexes that are in bounds
 
 
 val b = "0"
