@@ -85,6 +85,13 @@ public class FunctionCall extends Expression {
             }
         }
 
+        // Add a dummy node for empty log calls
+        // Todo: this is bad, refactor
+        if (name.equals("log") && arguments.size() == 0) {
+            var lit = new Literal(BuiltInType.STRING, "");
+            arguments.add(lit);
+        }
+
         // If not found in current scope, search in imported files
         if (functionType == null) {
             var fType = this.getFunctionType(this.name);

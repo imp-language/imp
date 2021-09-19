@@ -1,11 +1,49 @@
 
+// Tests arithmetic operations for the three main types: int, float, double
+// on the four main operations: +, -, *, /
 
 
-val b = "0"
-log(b[0])
+// addition
+log("addition")
+val i = 42
+val f = 4.9
+val d = 17.9812d
+log(i+14)
+log(i+40.75)
+log(i+d)
+log(42+i)
+log(40.7+i)
+log(-9d+i)
+log()
 
-val longer = "svbasvhlbqsa;vbas;vbsdjbv;pabsubvupwebfcupasbdvi;basdjibvsdjkbvas"
-log(longer[19])
+// subtraction
+log("subtraction")
+log(i-14)
+log(i-40.75)
+log(i-d)
+log(42-i)
+log(40.7-i)
+log(-9d-i)
+log()
 
-val name = "Matt Hall"
-log(name[8])
+// multiplication
+log("multiplication")
+log(i*14)
+log(i*40.75)
+log(i*d)
+log(42*i)
+log(40.7*i)
+log(-9d*i)
+log()
+
+// division
+log("division")
+log(i/4)
+log(3.14159265/3.1415926)
+log(4/2.5)
+log(33/4)
+log(33/4.)
+log(6/0.1)
+log(62/10000d)
+/*
+*/

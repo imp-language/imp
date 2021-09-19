@@ -24,6 +24,10 @@ public class Batteries {
         System.out.println(arg);
     }
 
+//    public static void log_none() {
+//        System.out.println();
+//    }
+
     public static int _int(float f) {
         return (int) f;
     }

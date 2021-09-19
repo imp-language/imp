@@ -24,7 +24,7 @@ public class Glue {
         String name = "log";
 
         // use the faster logger
-        if (arguments.size() == 1) {
+        if (arguments.size() <= 1) {
             name = "log_single";
         }
 
@@ -32,7 +32,7 @@ public class Glue {
         classes[0] = Object[].class;
         Method method = null;
 
-        if (arguments.size() == 1) {
+        if (arguments.size() <= 1) {
             try {
                 method = Batteries.class.getMethod(name, Object.class);
             } catch (NoSuchMethodException e) {
