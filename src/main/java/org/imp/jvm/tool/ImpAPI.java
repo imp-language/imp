@@ -42,7 +42,7 @@ public class ImpAPI {
         });
         Writer writer = new StringWriter();
         exporter.exportGraph(dependencies, writer);
-        System.out.println(writer.toString());
+//        System.out.println(writer.toString());
 
         return dependencies;
     }
@@ -58,7 +58,6 @@ public class ImpAPI {
 
     // Todo: recursion
     public static Map<String, ImpFile> gatherImports(ImpFile entry) throws IOException {
-        System.out.println("Gathering imports for " + entry.name + ".imp");
         String basePath = FilenameUtils.getPath(entry.name);
 
         Map<String, ImpFile> impFileMap = new HashMap<>();
