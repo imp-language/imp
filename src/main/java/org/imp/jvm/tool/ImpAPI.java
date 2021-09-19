@@ -34,6 +34,8 @@ public class ImpAPI {
                                 .replace('/', '_')
                                 .replace('\\', '_')
                                 .replace('-', '_')
+                                .replace(':', '_')
+
                 );
         exporter.setVertexAttributeProvider((v) -> {
             Map<String, Attribute> map = new LinkedHashMap<>();
@@ -139,7 +141,7 @@ public class ImpAPI {
     }
 
     public static Process spawn(String className) throws IOException {
-        String cmd = "java --enable-preview -cp .compile;target/classes " + className;
+        String cmd = "java --enable-preview -cp .compile" + System.getProperty("path.separator") + "target/classes " + className;
         Process proc = Runtime.getRuntime().exec(cmd);
         return proc;
     }

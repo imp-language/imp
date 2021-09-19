@@ -1,9 +1,11 @@
 package org.imp.jvm.tool;
 
+import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.jgrapht.traverse.DepthFirstIterator;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,8 +19,10 @@ public class Imp {
     public List<String> filenames;
 
     public Imp(String filename) {
-        this.filename = filename;
+
+        this.filename = FilenameUtils.separatorsToUnix(filename);
     }
+
 
     public String compile() {
         try {
@@ -36,7 +40,6 @@ public class Imp {
                 if (!compilationSet.containsKey(impFile.packageName)) {
                     compilationSet.put(impFile.packageName, impFile);
                 }
-//                System.out.println(impFile);
             }
             System.out.printf("Compiling %d files...%n", compilationSet.size());
 
@@ -47,8 +50,7 @@ public class Imp {
             System.out.printf("Compiled %d files in %f seconds.", compilationSet.size(), runtime);
             System.out.println("");
 
-
-            return entry.getClassName() + "/Entry";
+            return entry.getClassName() + "/" + "Entry";
 
             // Compile each file
         } catch (IOException e) {

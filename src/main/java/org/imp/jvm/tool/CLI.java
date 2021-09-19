@@ -2,6 +2,7 @@ package org.imp.jvm.tool;
 
 import picocli.CommandLine;
 
+import java.io.File;
 import java.io.IOException;
 
 @CommandLine.Command(name = "imp")
@@ -34,8 +35,9 @@ public class CLI {
             System.out.println("Bundling.");
         } else {
             var imp = new Imp(cli.filename);
-            imp.compile();
-            ImpAPI.run("examples.scratch.Entry");
+            var out = imp.compile();
+            var entry = out.replace(File.separatorChar, '.');
+            ImpAPI.run(entry);
         }
     }
 }
