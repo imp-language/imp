@@ -130,7 +130,7 @@ public class ImpAPI {
                 "java",
                 "--enable-preview",
                 "-cp",
-                ".compile;target/classes",
+                ".compile" + System.getProperty("path.separator") + "target/classes",
                 className
         );
         processBuilder.inheritIO();
