@@ -67,8 +67,18 @@ greet("World!")  // Hello, World!
 
 ## Usage
 
-Currently, to test Imp projects I'd recommend you use Intellij. Then you can run the `org.imp.jvm.tool.Compiler` class
-with an input filename to compile and execute Imp code.
+### Windows
+
+```shell
+imp.bat <filename>
+```
+
+### Unix
+
+```shell
+chmod u+x imp # the first time only
+./imp <filename>
+```
 
 ### Notes
 

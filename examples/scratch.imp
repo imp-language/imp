@@ -1,2 +1,13 @@
 
-log("reee")
+struct Dude {
+    name string
+}
+
+
+func hello(a Dude) {
+    log(a.name)
+}
+
+
+
+hello(new Dude("Matt"))
