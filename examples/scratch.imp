@@ -1,13 +1,28 @@
 
-struct Dude {
-    name string
+
+
+
+val a = [int]
+
+
+val intList = [4, 3, 2, 1]
+val intListEmpty = [int]
+
+
+func multipleReturn() (int, string) {
+    return (69, "bitch")
 }
 
 
-func hello(a Dude) {
-    log(a.name)
+
+func max<T>(list [T]) T {
+    mut largest = list[0];
+
+    for val item in list {
+        if item > largest {
+            largest = item;
+        }
+    }
+
+    return largest
 }
-
-
-
-hello(new Dude("Matt"))

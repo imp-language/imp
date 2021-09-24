@@ -90,7 +90,7 @@ ifStatement
 
 // Function definition
 function
-    : modifiers? FUNCTION identifier LPAREN (arguments)? RPAREN (type)? block
+    : modifiers? FUNCTION identifier (LT type GT) LPAREN (arguments)? RPAREN (type)? block
     | LPAREN (arguments)? RPAREN FATARROW block
     ;
 
@@ -190,11 +190,15 @@ type
     : (identifier | primitiveType) LBRACK RBRACK   #TypeList
     | primitiveType         #TypePrimitive
     | identifier            #TypeStruct
+    | anonymousTuple        #TypeAnonymousTuple
     ;
 
 primitiveType
     : BOOL | INT | FLOAT | CHAR | STRING | VOID;
 
+anonymousTuple
+    : LPAREN (type (COMMA type)* COMMA?) RPAREN
+    ;
 
 // function acceptsList(words string[])
 listType
@@ -226,12 +230,12 @@ iteratorDestructuring
  * Literals
  */
 literal
-//    : collectionLiteral
     : stringLiteral
     | doubleLiteral
     | integerLiteral
     | floatLiteral
     | booleanLiteral
+    | collectionLiteral
     ;
 
 identifier
@@ -261,9 +265,9 @@ doubleLiteral
 //    Star stands for: zero or more
 
 // Lists
-//collectionLiteral
-//    : identifier? LBRACK (type | expressionList)? RBRACK
-//    ;
+collectionLiteral
+    : identifier? LBRACK (type | expressionList)? RBRACK
+    ;
 
 
 // used in imports/exports
