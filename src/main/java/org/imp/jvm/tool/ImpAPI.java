@@ -7,6 +7,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Program;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
+import org.imp.jvm.runtime.Glue;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.Attribute;
@@ -68,16 +69,22 @@ public class ImpAPI {
             String filePath = FilenameUtils.concat(basePath, relativeFileName + ".imp");
             filePath = FilenameUtils.separatorsToUnix(filePath);
 
-            ImpFile ast = createSourceFile(filePath);
-            if (ast == null) {
-                Logger.syntaxError(Errors.ModuleNotFound, entry.name, i.getCtx(), filePath);
-                Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");
+
+            if (Glue.coreModules.containsKey(relativeFileName)) {
+//                System.out.println("Core module " + relativeFileName + " loaded.");
+                entry.stdlibImports.add(relativeFileName);
+            } else {
+                ImpFile ast = createSourceFile(filePath);
+                if (ast == null) {
+                    Logger.syntaxError(Errors.ModuleNotFound, entry.name, i.getCtx(), filePath);
+                    Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");
+                }
+                assert ast != null;
+                ast.validate();
+                Logger.killIfErrors("Correct semantic errors before compilation can continue.");
+                impFileMap.put(filePath, ast);
+                entry.qualifiedImports.add(ast);
             }
-            assert ast != null;
-            ast.validate();
-            Logger.killIfErrors("Correct semantic errors before compilation can continue.");
-            impFileMap.put(filePath, ast);
-            entry.qualifiedImports.add(ast);
 
 
 //            var children = gatherImports(ast);

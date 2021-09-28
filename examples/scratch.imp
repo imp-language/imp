@@ -1,28 +1,12 @@
+import "math"
+
+//import "io"
+
+val ten = 10
 
 
+//log("ree")
 
+//test("a")
 
-val a = [int]
-
-
-val intList = [4, 3, 2, 1]
-val intListEmpty = [int]
-
-
-func multipleReturn() (int, string) {
-    return (69, "bitch")
-}
-
-
-
-func max<T>(list [T]) T {
-    mut largest = list[0];
-
-    for val item in list {
-        if item > largest {
-            largest = item;
-        }
-    }
-
-    return largest
-}
+val sqrtTen = math.sqrt(10)

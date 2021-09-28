@@ -7,6 +7,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
+import org.imp.jvm.expression.reference.ModuleReference;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.runtime.Glue;
 import org.imp.jvm.types.*;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class FunctionCall extends Expression {
     public Function function;
-    public final List<Expression> arguments;
+    public List<Expression> arguments;
     public final ImpFile owner;
 
     public List<Type> argTypes;
@@ -51,52 +52,22 @@ public class FunctionCall extends Expression {
         }
         argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
 
-        // Find a FunctionType in the current scope by name
-        FunctionType functionType = scope.findFunctionType(this.name);
 
+        /*
+         * Functions are resolved in a specific order, first by name and then by parameter types.
+         * The order of search by name is as follows:
+         *
+         * 1. Functions in the always-imported "batteries" module
+         * 2. Functions defined in the current scope.
+         * 3. Functions from any imported standard library modules.
+         * 4. Functions from user defined modules.
+         *
+         * If no match is found by name, search by parameters does not occur.
+         *
+         * Search by parameters performs an exact match.
+         */
+        FunctionType functionType = this.searchByName(scope);
 
-        // Potentially override if another name is imported
-        if (this.module != null) {
-            if (this.module instanceof VariableReference variableReference) {
-                String modulePath = variableReference.name;
-                var importedFile = this.owner.qualifiedImports.stream().filter(e -> e.name.contains(modulePath)).findFirst();
-                if (importedFile.isPresent()) {
-                    var i = importedFile.get();
-                    var func = i.functions.stream().filter(e -> e.functionType.name.equals(this.name)).findFirst();
-                    if (func.isPresent()) {
-                        functionType = func.get().functionType;
-                    }
-                } else {
-                    Logger.syntaxError(Errors.ModuleNotImported, owner.name, module.getCtx(), module.getCtx().getText());
-                }
-
-            } else {
-                System.err.println("Bad namespace on:" + module);
-                System.exit(81);
-            }
-        }
-
-        // If the function is in the standard library:
-        if (functionType == null) {
-            try {
-                functionType = Glue.findStandardLibraryFunction(this.arguments, this.name, this.owner);
-            } catch (Exception e) {
-                // Todo: better error handling in findStandardLibraryFunction
-            }
-        }
-
-        // Add a dummy node for empty log calls
-        // Todo: this is bad, refactor
-        if (name.equals("log") && arguments.size() == 0) {
-            var lit = new Literal(BuiltInType.STRING, "");
-            arguments.add(lit);
-        }
-
-        // If not found in current scope, search in imported files
-        if (functionType == null) {
-            var fType = this.getFunctionType(this.name);
-            functionType = fType;
-        }
 
         // If not found at all, error
         if (functionType == null) {
@@ -104,17 +75,14 @@ public class FunctionCall extends Expression {
             return;
         }
 
-        // Find a function that exists in the current scope that matches the FunctionSignature
-
+        if (this.arguments.get(0).type == BuiltInType.MODULE) {
+            this.argTypes = this.argTypes.subList(1, this.argTypes.size());
+        }
         this.function = functionType.getSignatureByTypes(this.argTypes);
         if (this.function == null) {
             Logger.syntaxError(Errors.FunctionSignatureMismatch, owner.name, getCtx(), getCtx().getStart().getText(), getCtx().getText());
             return;
         }
-//        var lvr = new VariableReference(scope.getLocalVariable("g"));
-//        lvr.type = BuiltInType.STRUCT;
-//        lvr.localVariable.type = BuiltInType.STRUCT;
-//        functionType.closures.add(lvr);
         this.type = function.returnType;
 
 
@@ -126,6 +94,7 @@ public class FunctionCall extends Expression {
         // generate arguments
 
         if (function.isStandard) {
+            String owner = "org/imp/jvm/runtime/stdlib/Batteries";
 
             // Todo: clean this up. Having a faster log for single
             //  objects shouldn't require this much stuff.
@@ -150,7 +119,12 @@ public class FunctionCall extends Expression {
                 bt.doBoxing(mv);
 
             } else {
-                for (var arg : arguments) {
+                var argList = this.arguments;
+                if (this.arguments.get(0).type == BuiltInType.MODULE) {
+                    argList = this.arguments.subList(1, this.arguments.size());
+                    owner = "org/imp/jvm/runtime/stdlib/" + "Math";
+                }
+                for (var arg : argList) {
                     arg.generate(mv, scope);
                 }
 
@@ -159,10 +133,11 @@ public class FunctionCall extends Expression {
 //            mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
 
 
-            String owner = "org/imp/jvm/runtime/stdlib/Batteries";
-
             List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
             Type returnType = this.function.returnType;
+
+            // Todo: method descriptors have to be dynamically generated
+            // based on ModuleReferences being the first parameter.
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
             if (this.name.equals("log")) {
                 methodDescriptor = "([Ljava/lang/Object;)V";
@@ -239,6 +214,56 @@ public class FunctionCall extends Expression {
                 }
             }
         }
+        return null;
+    }
+
+
+    private FunctionType searchByName(Scope scope) {
+        FunctionType functionType = null;
+
+        // 1. Functions in the always-imported "batteries" module
+        functionType = Glue.findBatteriesFunction(this.name, this.owner);
+        if (functionType != null) return functionType;
+
+        // 2. Functions defined in the current scope.
+        functionType = scope.findFunctionType(this.name);
+        if (functionType != null) return functionType;
+
+        // 3. Functions from any imported standard library modules.
+        if (arguments.size() > 0) {
+            var potentialVariableReference = arguments.get(0);
+            if (potentialVariableReference instanceof VariableReference variableReference) {
+                if (variableReference.reference instanceof ModuleReference moduleReference) {
+                    String moduleName = moduleReference.name;
+                    functionType = Glue.findStandardLibraryFunction(moduleName, this.name, this.owner);
+                }
+                // Todo: potentially error here, don't need to check anything else if name not in module.
+            }
+        }
+        if (functionType != null) return functionType;
+
+        // Todo: 4. Functions from user defined modules.
+//        if (this.module != null) {
+//            if (this.module instanceof VariableReference variableReference) {
+//                String modulePath = variableReference.name;
+//                var importedFile = this.owner.qualifiedImports.stream().filter(e -> e.name.contains(modulePath)).findFirst();
+//                if (importedFile.isPresent()) {
+//                    var i = importedFile.get();
+//                    var func = i.functions.stream().filter(e -> e.functionType.name.equals(this.name)).findFirst();
+//                    if (func.isPresent()) {
+//                        functionType = func.get().functionType;
+//                    }
+//                } else {
+//                    Logger.syntaxError(Errors.ModuleNotImported, owner.name, module.getCtx(), module.getCtx().getText());
+//                }
+//
+//            } else {
+//                System.err.println("Bad namespace on:" + module);
+//                System.exit(81);
+//            }
+//        }
+
+
         return null;
     }
 }

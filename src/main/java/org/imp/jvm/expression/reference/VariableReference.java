@@ -27,6 +27,11 @@ public class VariableReference extends Expression {
     public void validate(Scope scope) {
         // Now we actually resolve the name to a variable.
 
+        // Check for module names- can't override imports
+        if (name.equals("math")) {
+            this.reference = new ModuleReference("math");
+        }
+
         // First check the scope for local variables,
         if (scope.variableExists(name) /*&& !scope.getLocalVariable(name).closure*/) {
             this.reference = new LocalReference(scope.getLocalVariable(name));

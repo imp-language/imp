@@ -6,6 +6,10 @@ export func write(filename string, data string) {
 }
 
 
+export func test(f string) {
+    log("reee:", f)
+}
+
 
 
 

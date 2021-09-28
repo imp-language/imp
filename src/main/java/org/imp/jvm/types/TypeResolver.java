@@ -80,10 +80,10 @@ public class TypeResolver {
                 .findFirst();
     }
 
-    public static BuiltInType getBuiltInTypeByClass(Class<?> c) {
+    public static Optional<BuiltInType> getBuiltInTypeByClass(Class<?> c) {
         return Arrays.stream(BuiltInType.values())
                 .filter(type -> c.equals(type.getTypeClass()))
-                .findFirst().get();
+                .findFirst();
     }
 
     public static final class TypeChecker {

@@ -33,9 +33,13 @@ public class ImpFile {
     public final List<Export> exports = new ArrayList<>();
 
 
+    public final List<String> stdlibImports = new ArrayList<>();
+
+
     public ImpFile(String name) {
         this.name = name;
         this.packageName = name;
+
     }
 
     public String getClassName() {

@@ -22,6 +22,7 @@ statement
     | variableStatement
     | exportStatement
     | enumStatement
+//    | typeAliasStatement
     ;
 
 statementList
@@ -90,13 +91,14 @@ ifStatement
 
 // Function definition
 function
-    : modifiers? FUNCTION identifier (LT type GT) LPAREN (arguments)? RPAREN (type)? block
+    : modifiers? FUNCTION identifier generic? LPAREN (arguments)? RPAREN (type)? block
     | LPAREN (arguments)? RPAREN FATARROW block
     ;
 
-operator
-    : (INC|DEC|ADD|SUB|MUL|DIV)
+generic
+    : LT type GT
     ;
+
 
 modifiers
     : EXPORT

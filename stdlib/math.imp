@@ -1,0 +1,5 @@
+
+// Todo, current implementation of stdlib is in Java
+export func rand() float {
+
+}
