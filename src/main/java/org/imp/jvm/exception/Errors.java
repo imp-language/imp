@@ -72,7 +72,7 @@ public enum Errors implements ErrorContext {
         if (ctx != null) {
             Token token = ctx.getStart();
             String s = filename + "@" + getLocation(token);
-            s += " SyntaxError[" + code + "]: ";
+            s += " Error[" + code + ", " + this.name() + "]: ";
 
             String text = MessageFormat.format(templateString, varargs);
             s += text;

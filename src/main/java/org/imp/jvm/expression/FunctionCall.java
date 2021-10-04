@@ -29,7 +29,8 @@ public class FunctionCall extends Expression {
 
     private boolean hasBeenInitialized = false;
 
-    private Expression module;
+    private boolean isModule = false;
+    private Class<?> moduleClass = null;
 
 
     public FunctionCall(String name, List<Expression> arguments, ImpFile owner) {
@@ -41,7 +42,7 @@ public class FunctionCall extends Expression {
     }
 
     public void setOwner(Expression owner) {
-        this.module = owner;
+//        this.module = owner;
     }
 
     @Override
@@ -75,8 +76,13 @@ public class FunctionCall extends Expression {
             return;
         }
 
-        if (this.arguments.get(0).type == BuiltInType.MODULE) {
+        if (this.arguments.size() > 0 && this.arguments.get(0).type == BuiltInType.MODULE) {
+            var variableReference = (VariableReference) this.arguments.get(0);
+            var moduleReference = (ModuleReference) variableReference.reference;
             this.argTypes = this.argTypes.subList(1, this.argTypes.size());
+            this.arguments = this.arguments.subList(1, this.arguments.size());
+            this.isModule = true;
+            this.moduleClass = Glue.coreModules.get(moduleReference.name);
         }
         this.function = functionType.getSignatureByTypes(this.argTypes);
         if (this.function == null) {
@@ -120,9 +126,8 @@ public class FunctionCall extends Expression {
 
             } else {
                 var argList = this.arguments;
-                if (this.arguments.get(0).type == BuiltInType.MODULE) {
-                    argList = this.arguments.subList(1, this.arguments.size());
-                    owner = "org/imp/jvm/runtime/stdlib/" + "Math";
+                if (this.isModule) {
+                    owner = this.moduleClass.getName().replace(".", "/");
                 }
                 for (var arg : argList) {
                     arg.generate(mv, scope);
@@ -140,10 +145,8 @@ public class FunctionCall extends Expression {
             // based on ModuleReferences being the first parameter.
             String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
             if (this.name.equals("log")) {
-                methodDescriptor = "([Ljava/lang/Object;)V";
-                if (arguments.size() == 1) {
-                    methodDescriptor = "(Ljava/lang/Object;)V";
-                }
+                if (arguments.size() > 1) methodDescriptor = "([Ljava/lang/Object;)V";
+                else if (arguments.size() == 1) methodDescriptor = "(Ljava/lang/Object;)V";
             }
 
             String name = this.function.functionType.name;
@@ -206,6 +209,11 @@ public class FunctionCall extends Expression {
         }
     }
 
+    /**
+     * @param name a
+     * @return a
+     * @deprecated
+     */
     private FunctionType getFunctionType(String name) {
         for (var imported : this.owner.qualifiedImports) {
             for (var func : imported.functions) {

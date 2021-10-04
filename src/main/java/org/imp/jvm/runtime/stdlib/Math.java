@@ -66,4 +66,11 @@ public class Math {
         return (float) java.lang.Math.exp(f);
     }
 
+    public static boolean similar(float a, float b, float EPSILON) {
+        return (a >= b - EPSILON) && (a <= b + EPSILON);
+    }
+
+    public static boolean similar(float a, float b) {
+        return similar(a, b, 0.0001f);
+    }
 }

@@ -20,10 +20,13 @@ public class Batteries {
         System.out.println(result);
     }
 
-    public static void log_single(Object arg) {
+    public static void log(Object arg) {
         System.out.println(arg);
     }
 
+    public static void log() {
+        System.out.println();
+    }
 //    public static void log_none() {
 //        System.out.println();
 //    }

@@ -5,6 +5,7 @@ import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
+import org.imp.jvm.runtime.Glue;
 import org.objectweb.asm.MethodVisitor;
 
 public class VariableReference extends Expression {
@@ -28,7 +29,7 @@ public class VariableReference extends Expression {
         // Now we actually resolve the name to a variable.
 
         // Check for module names- can't override imports
-        if (name.equals("math")) {
+        if (Glue.coreModules.containsKey(name)) {
             this.reference = new ModuleReference("math");
         }
 

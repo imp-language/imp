@@ -1,8 +1,8 @@
-import "math"
+//import "math"
 
 //import "io"
 
-val ten = 10
+//val ten = 10
 
 
 //log("ree")
@@ -10,3 +10,9 @@ val ten = 10
 //test("a")
 
 val sqrtTen = math.sqrt(10)
+
+log("sqrt", sqrtTen)
+
+log(math.similar(4.000001, 4.))
+/*
+*/

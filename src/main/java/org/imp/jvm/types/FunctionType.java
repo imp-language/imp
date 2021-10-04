@@ -28,6 +28,10 @@ public class FunctionType implements Type {
     }
 
     public Function getSignatureByTypes(List<Type> argTypes) {
+        if (this.name.equals("log")) {
+            if (argTypes.size() == 0) return this.signatures.get("");
+            return this.signatures.get("[Ljava/lang/Object;");
+        }
         var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
         String descriptor = Function.getDescriptor(identifiers);
         return getSignature(descriptor);

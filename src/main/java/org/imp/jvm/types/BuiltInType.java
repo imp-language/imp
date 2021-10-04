@@ -24,7 +24,8 @@ public enum BuiltInType implements Type {
     STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
 
     OBJECT("object", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
-    
+    OBJECT_ARR("object[]", Object[].class, "[Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
+
     MODULE("module", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false)
 
     //

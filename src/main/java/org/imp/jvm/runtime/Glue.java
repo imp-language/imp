@@ -91,6 +91,10 @@ public class Glue {
             if (type.isPresent()) {
                 var identifier = new Identifier(typeName, type.get());
                 identifiers.add(identifier);
+            } else {
+                var identifier = new Identifier(typeName, BuiltInType.OBJECT_ARR);
+                identifiers.add(identifier);
+//                System.exit(729);
             }
         }
 
@@ -115,9 +119,16 @@ public class Glue {
     }
 
     private static FunctionType findFunction(Class<?> module, String methodName, ImpFile owner) {
-        List<Method> methods = Arrays.stream(module.getMethods()).filter(m -> m.getName().equals(methodName)).collect(Collectors.toList());
+        String finalMethodName = methodName;
+        List<Method> methods = Arrays.stream(module.getMethods()).filter(m -> {
+            return m.getName().equals(finalMethodName) || m.getName().equals("_" + finalMethodName);
+        }).collect(Collectors.toList());
+
 
         if (methods.size() > 0) {
+            // Some methods in the JVM implementation of `batteries` must be prefixed
+            // (we use a "_") to avoid using Java reserved words like `float` or `int`.
+            if (methods.get(0).getName().startsWith("_")) methodName = "_" + methodName;
             FunctionType functionType = new FunctionType(methodName, owner);
 
             for (var method : methods) {
@@ -133,7 +144,9 @@ public class Glue {
     public static FunctionType findStandardLibraryFunction(String moduleName, String methodName, ImpFile owner) {
         if (!coreModules.containsKey(moduleName)) return null;
         var c = coreModules.get(moduleName);
-        return findFunction(c, methodName, owner);
+        FunctionType functionType = findFunction(c, methodName, owner);
+//        functionType.signatures.put(Function.getDescriptor())
+        return functionType;
     }
 
     public static FunctionType findStandardLibraryFunction(List<Expression> arguments, String name, ImpFile owner) {
