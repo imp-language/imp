@@ -8,6 +8,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;
+import org.imp.jvm.statement.Enum;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.Modifier;
@@ -79,6 +80,8 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
             // Split classes out to their own files
             if (s instanceof Struct struct) {
                 impFile.structTypes.add(struct.structType);
+            } else if (s instanceof Enum enumStatement) {
+                impFile.enumTypes.add(enumStatement.enumType);
             } else if (s instanceof Function f) {
 
                 // add function to static class methods

@@ -1,18 +1,9 @@
-//import "math"
 
-//import "io"
+enum Direction {
+    Up
+    Down
+    Left
+    Right
+}
 
-//val ten = 10
-
-
-//log("ree")
-
-//test("a")
-
-val sqrtTen = math.sqrt(10)
-
-log("sqrt", sqrtTen)
-
-log(math.similar(4.000001, 4.))
-/*
-*/
+val dir = Direction.Up

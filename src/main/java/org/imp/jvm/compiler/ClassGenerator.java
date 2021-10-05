@@ -7,10 +7,7 @@ import org.imp.jvm.runtime.Box;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.ClosureAssignment;
 import org.imp.jvm.statement.Constructor;
-import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.FunctionType;
-import org.imp.jvm.types.StructType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
@@ -165,6 +162,50 @@ public class ClassGenerator {
 
         return classWriter;
     }
+
+    /**
+     * Generate JVM enum class from an Imp enum definition
+     *
+     * @param enumType enum data
+     * @return bytecode
+     */
+    public ClassWriter generate(EnumType enumType) {
+        // https://github.com/llbit/ow2-asm/blob/master/test/conform/org/objectweb/asm/test/cases/Enum.java
+        // Todo: add stuff like valueOf from the above link
+        classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
+        String name = enumType.name;
+
+        String qualifiedName = packageName + "/" + name;
+        String descriptor = "L" + qualifiedName + ";";
+
+        classWriter.visit(CLASS_VERSION,
+                Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER + Opcodes.ACC_ENUM,
+                qualifiedName,
+                "Ljava/lang/Enum<" + descriptor + ">;",
+                "java/lang/Enum",
+                null
+        );
+
+
+        System.out.println(qualifiedName);
+        for (String element : enumType.elements.keySet()) {
+            FieldVisitor fv = classWriter.visitField(Opcodes.ACC_PUBLIC
+                            + Opcodes.ACC_FINAL
+                            + Opcodes.ACC_STATIC
+                            + Opcodes.ACC_ENUM,
+                    element, descriptor, null, null);
+            fv.visitEnd();
+
+            // Todo: generate the optional expression of an enum element
+
+        }
+
+
+        classWriter.visitEnd();
+
+        return classWriter;
+    }
+
 
     private void addConstructor(ImpFile parent, ClassWriter classWriter, List<Identifier> params, StructType structType) {
         var constructorType = new FunctionType("<init>", parent);

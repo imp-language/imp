@@ -1,3 +1,5 @@
 
 
-import "io"
+export func test() {
+    log("b")
+}

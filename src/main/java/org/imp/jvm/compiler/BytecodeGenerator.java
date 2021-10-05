@@ -25,6 +25,11 @@ public class BytecodeGenerator {
             code.put(impFile.packageName + "/" + struct.identifier.name, classGenerator.generate(struct).toByteArray());
         }
 
+        // Generate bytecode for each Enum defined in the Imp file
+        for (var enumType : impFile.enumTypes) {
+            code.put(impFile.packageName + "/" + enumType.name, classGenerator.generate(enumType).toByteArray());
+        }
+
         // Generate bytecode for each function defined in the Imp file
         Set<FunctionType> functionTypes = new HashSet<>();
         for (var function : impFile.functions) {

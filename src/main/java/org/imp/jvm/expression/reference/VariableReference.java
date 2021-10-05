@@ -1,6 +1,7 @@
 package org.imp.jvm.expression.reference;
 
 import org.imp.jvm.compiler.Logger;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
@@ -12,10 +13,12 @@ public class VariableReference extends Expression {
 
     public Reference reference;
     public final String name;
+    public final ImpFile owner;
 
-    public VariableReference(String name) {
+    public VariableReference(String name, ImpFile owner) {
         this.name = name;
         this.reference = null;
+        this.owner = owner;
     }
 
 
@@ -30,8 +33,16 @@ public class VariableReference extends Expression {
 
         // Check for module names- can't override imports
         if (Glue.coreModules.containsKey(name)) {
-            this.reference = new ModuleReference("math");
+            this.reference = new ModuleReference(name);
+        } else if (this.owner.qualifiedImports.size() > 0) {
+            var a = this.owner.qualifiedImports.stream().filter(impFile -> impFile.getBaseName().equals(name)).findFirst();
+            if (a.isPresent()) {
+                this.reference = new ModuleReference(name);
+            }
         }
+
+        // Todo: look for Enums
+
 
         // First check the scope for local variables,
         if (scope.variableExists(name) /*&& !scope.getLocalVariable(name).closure*/) {

@@ -46,7 +46,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public VariableReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
-        var vr = new VariableReference(name);
+        var vr = new VariableReference(name, parent);
         vr.setCtx(ctx);
 
         return vr;

@@ -1,6 +1,7 @@
 package org.imp.jvm.domain;
 
 
+import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Function;
@@ -8,6 +9,7 @@ import org.imp.jvm.parsing.Node;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Export;
 import org.imp.jvm.statement.Import;
+import org.imp.jvm.types.EnumType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.types.TypeResolver;
@@ -28,6 +30,9 @@ public class ImpFile {
     // All structs defined in the source file.
     public final List<StructType> structTypes = new ArrayList<>();
 
+    // All enums defined in the source file.
+    public final List<EnumType> enumTypes = new ArrayList<>();
+
     public final List<Import> imports = new ArrayList<>();
     public final List<ImpFile> qualifiedImports = new ArrayList<>();
     public final List<Export> exports = new ArrayList<>();
@@ -44,6 +49,10 @@ public class ImpFile {
 
     public String getClassName() {
         return name;
+    }
+
+    public String getBaseName() {
+        return FilenameUtils.getBaseName(name);
     }
 
 

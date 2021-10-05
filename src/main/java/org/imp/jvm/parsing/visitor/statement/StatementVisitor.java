@@ -12,11 +12,11 @@ import org.imp.jvm.expression.Function;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
 import org.imp.jvm.statement.*;
+import org.imp.jvm.statement.Enum;
 import org.imp.jvm.types.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javax.swing.plaf.nimbus.State;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // http://www.ist.tugraz.at/_attach/Publish/Cb/typechecker_2017.pdf
@@ -122,6 +122,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         struct.setCtx(ctx);
 
         // Add struct to scope
+        // Todo: do this for enums?
         scope.addStruct(structType);
 
         return struct;
@@ -255,6 +256,25 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
 
+    @Override
+    public Statement visitEnumStatement(ImpParser.EnumStatementContext ctx) {
+        var name = ctx.identifier().getText();
+        var blockCtx = ctx.enumBlock();
 
+        Map<String, Optional<Expression>> elements = new HashMap<>();
+        for (var enumDef : blockCtx.enumDef()) {
+            String key = enumDef.identifier().getText();
+            Expression e = null;
+            if (enumDef.expression() != null) {
+                e = enumDef.expression().accept(expressionVisitor);
+            }
+            Optional<Expression> expression = Optional.ofNullable(e);
 
+            elements.put(key, expression);
+        }
+        EnumType enumType = new EnumType(name, elements);
+        Enum enumStatement = new Enum(enumType);
+        enumStatement.setCtx(ctx);
+        return enumStatement;
+    }
 }
