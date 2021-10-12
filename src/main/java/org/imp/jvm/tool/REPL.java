@@ -1,6 +1,10 @@
 package org.imp.jvm.tool;
 
-import java.util.Scanner;
+import org.imp.jvm.domain.ImpFile;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.diogonunes.jcolor.Ansi.*;
 import static com.diogonunes.jcolor.Attribute.*;
@@ -8,16 +12,19 @@ import static com.diogonunes.jcolor.Attribute.*;
 
 /**
  * Todo: support highlighting by default in Windows
- *
- * @see issue https://github.com/dialex/JColor/issues/54
- * @see thread https://stackoverflow.com/questions/51680709/colored-text-output-in-powershell-console-using-ansi-vt100-codes/51681675#51681675
+ * <p>
+ * Github Issue https://github.com/dialex/JColor/issues/54
+ * Stackoverflow Thread https://stackoverflow.com/questions/51680709/colored-text-output-in-powershell-console-using-ansi-vt100-codes/51681675#51681675
  */
 public class REPL {
     public final String START_MESSAGE = "Welcome to Imp v0.0.1 on JVM";
     public final String HELP_MESSAGE = "Type `help` for more information.";
     private final String PROMPT = "> ";
+    private final String INDENT = ".... ";
 
     private final Scanner s;
+
+    private final List<String> statementLines = new ArrayList<>();
 
     public REPL() {
         s = new Scanner(System.in);
@@ -29,16 +36,54 @@ public class REPL {
 
         while (true) {
 
-            String line = next();
-            System.out.println(line);
+            var impFile = read();
+            Map<String, ImpFile> compilationSet = new HashMap<>();
+            compilationSet.put(impFile.packageName, impFile);
 
+            impFile.validate();
+
+            try {
+                var program = ImpAPI.createProgram(compilationSet);
+                ImpAPI.run("repl.Entry");
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
     }
 
-    private String next() {
+    private ImpFile read() {
+//        List<String> statementLines = new ArrayList<>();
         System.out.print(colorize(PROMPT, YELLOW_TEXT()));
-        String line = s.nextLine();
-        return line;
+
+        ImpFile impFile = null;
+
+        do {
+            String line = s.nextLine();
+            statementLines.add(line);
+
+            String joinedLines = String.join("\n", statementLines);
+            try {
+                impFile = parse(joinedLines);
+                Object b = null;
+            } catch (Exception e) {
+                System.out.print(colorize(INDENT, YELLOW_TEXT()));
+            }
+
+
+        } while (impFile == null);
+
+
+        return impFile;
+    }
+
+
+    private ImpFile parse(String line) {
+        try {
+            var impFile = ImpAPI.createReplFile(line);
+            return impFile;
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

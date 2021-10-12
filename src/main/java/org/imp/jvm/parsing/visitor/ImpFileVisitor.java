@@ -71,9 +71,9 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 //            System.out.println(s);
 
             if (s == null) {
-                System.err.println("Parser error: " + s + " is null.");
-                System.exit(1);
-
+//                System.err.println("Parser error: " + s + " is null.");
+//                System.exit(1);
+                throw new Error("Can't find input.");
             }
 
 

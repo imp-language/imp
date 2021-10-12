@@ -45,16 +45,21 @@ public class ImpAPI {
         });
         Writer writer = new StringWriter();
         exporter.exportGraph(dependencies, writer);
-//        System.out.println(writer.toString());
 
         return dependencies;
     }
 
     public static ImpFile createSourceFile(String filename) throws IOException {
         ImpFile ast = null;
-        if (new File(filename).exists()) {
-            ast = Parser.getAbstractSyntaxTree(filename);
+        File file = new File(filename);
+        if (file.exists()) {
+            ast = Parser.getAbstractSyntaxTree(file);
         }
+        return ast;
+    }
+
+    public static ImpFile createReplFile(String content) throws IOException {
+        ImpFile ast = Parser.getAbstractSyntaxTree(content);
         return ast;
     }
 
@@ -86,9 +91,6 @@ public class ImpAPI {
                 entry.qualifiedImports.add(ast);
             }
 
-
-//            var children = gatherImports(ast);
-
         }
 
         return impFileMap;
@@ -117,7 +119,7 @@ public class ImpAPI {
 
                 OutputStream output = new FileOutputStream(fileName);
                 output.write(byteUnit.getValue());
-                output.flush();
+//                output.flush();
                 output.close();
 
             }

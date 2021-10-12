@@ -9,6 +9,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.expression.Function;
+import org.imp.jvm.expression.Literal;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
 import org.imp.jvm.statement.*;
@@ -35,6 +36,10 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         this.parent = parent;
     }
 
+    @Override
+    public Literal visitLiteralExpression(ImpParser.LiteralExpressionContext ctx) {
+        return ctx.accept(literalVisitor);
+    }
 
     @Override
     public Statement visitExportStatement(ImpParser.ExportStatementContext ctx) {
