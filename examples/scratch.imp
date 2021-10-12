@@ -1,4 +1,4 @@
-
+/*
 enum Direction {
     Up
     Down
@@ -7,3 +7,16 @@ enum Direction {
 }
 
 val dir = Direction.Up
+*/
+
+// Tests indexing strings for indexes that are in bounds
+
+
+val b = "0"
+log(b[0])
+
+val longer = "svbasvhlbqsa;vbas;vbsdjbv;pabsubvupwebfcupasbdvi;basdjibvsdjkbvas"
+log(longer[19])
+
+val name = "Matt Hall"
+log(name[8])

@@ -44,8 +44,8 @@ expression
     | expression DOT callStatement                     #MethodCallExpression
     | expression (DOT identifier)+                     #PropertyAccessExpression
     | expression LBRACK expression RBRACK              #MemberIndexExpression
-    | literal                                          #LiteralExpression
     | identifier                                       #IdentifierReferenceExpression
+    | literal                                          #LiteralExpression
     | LPAREN expression RPAREN                         #WrappedExpression
     | (BANG | NOT) expression                          #UnaryNotExpression
     | (ADD | SUB) expression                           #UnaryAdditiveExpression

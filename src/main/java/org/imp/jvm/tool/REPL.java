@@ -29,7 +29,8 @@ public class REPL {
 
         while (true) {
 
-            next();
+            String line = next();
+            System.out.println(line);
 
         }
 
