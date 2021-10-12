@@ -24,8 +24,13 @@ public class CLI {
     public static void main(String[] args) throws IOException, InterruptedException {
         CLI cli = CommandLine.populateCommand(new CLI(), args);
 
-        if (cli.usageHelpRequested || cli.filename == null) {
+        if (cli.usageHelpRequested) {
             CommandLine.usage(cli, System.out);
+            return;
+        } else if (cli.filename == null) {
+            // Go into REPL mode
+            REPL repl = new REPL();
+            repl.start();
             return;
         }
 
