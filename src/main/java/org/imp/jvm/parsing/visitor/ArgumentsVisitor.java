@@ -36,7 +36,7 @@ public class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
                 arguments.add(identifier);
             }
         } catch (Error err) {
-            arguments = new ArrayList<Identifier>();
+            arguments = new ArrayList<>();
             Logger.syntaxError(Errors.TypeNotFound, "no filename", ctx, ctx.getStop().getText());
 
         }

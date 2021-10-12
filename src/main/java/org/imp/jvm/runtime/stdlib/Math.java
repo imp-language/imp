@@ -6,6 +6,7 @@ import java.util.Random;
  * The _ prefix is removed in Imp and only exists to allow
  * this Java class to compile.
  */
+@SuppressWarnings("unused")
 public class Math {
     public static float rand() {
         Random rand = new Random();

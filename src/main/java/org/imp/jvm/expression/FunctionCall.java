@@ -5,7 +5,6 @@ import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.LocalVariable;
-import org.imp.jvm.domain.scope.Method;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.ModuleReference;
@@ -27,7 +26,7 @@ public class FunctionCall extends Expression {
     public final ImpFile owner;
 
     public List<Type> argTypes;
-    public String name;
+    public final String name;
 
     private boolean hasBeenInitialized = false;
 
@@ -40,10 +39,6 @@ public class FunctionCall extends Expression {
 
         this.function = null;
         this.owner = owner;
-    }
-
-    public void setOwner(Expression owner) {
-//        this.module = owner;
     }
 
     @Override

@@ -12,7 +12,6 @@ program : EOL* (importStatement EOL*)* (statement EOL*)* EOF;
 
 statement
     : block
-    | classStatement
     | structStatement
     | returnStatement
     | ifStatement
@@ -91,13 +90,10 @@ ifStatement
 
 // Function definition
 function
-    : modifiers? FUNCTION identifier generic? LPAREN (arguments)? RPAREN (type)? block
+    : modifiers? FUNCTION identifier (LT type GT)? LPAREN (arguments)? RPAREN (type)? block
     | LPAREN (arguments)? RPAREN FATARROW block
     ;
 
-generic
-    : LT type GT
-    ;
 
 
 modifiers
@@ -118,22 +114,11 @@ callStatement
     ;
 
 
-
-// Classes
-classStatement
-    : INTERFACE identifier LBRACE interfaceBlock RBRACE
-    | CLASS identifier (COLON identifier)? LBRACE classBlock RBRACE
-    ;
-
-
 // Enums
 enumStatement
-    : ENUM identifier LBRACE enumBlock EOL* RBRACE
+    : ENUM identifier LBRACE (EOL* enumDef COMMA* EOL*)* EOL* RBRACE
     ;
 
-enumBlock
-    : (EOL* enumDef COMMA* EOL*)*
-    ;
 
 enumDef
     : identifier (ASSIGN expression)?
@@ -151,26 +136,6 @@ structBlock
 fieldDef
     : identifier type?
     ;
-
-interfaceBlock
-    : (methodSignature | (property type))*
-    ;
-
-methodSignature
-    : identifier LPAREN (arguments)? RPAREN (type)?
-    ;
-
-property
-    : (PUBLIC)? (VAL | MUT) identifier;
-
-classProperty
-    : property (type)? ASSIGN expression
-    | property type
-    ;
-classBlock
-     :  (((PUBLIC)? methodSignature block) | (classProperty))*
-     ;
-
 
 // Import/Export
 importStatement

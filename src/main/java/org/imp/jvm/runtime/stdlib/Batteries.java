@@ -1,8 +1,6 @@
 package org.imp.jvm.runtime.stdlib;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -13,6 +11,7 @@ import java.util.stream.Collectors;
  * The _ prefix is removed in Imp and only exists to allow
  * this Java class to compile.
  */
+@SuppressWarnings("unused")
 public class Batteries {
 
     public static void log(Object... args) {

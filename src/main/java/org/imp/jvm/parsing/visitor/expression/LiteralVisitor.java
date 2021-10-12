@@ -6,11 +6,8 @@ import org.imp.jvm.expression.Literal;
 import org.imp.jvm.types.BuiltInType;
 
 public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
-    private final ExpressionVisitor expressionVisitor;
-
 
     public LiteralVisitor(ExpressionVisitor expressionVisitor) {
-        this.expressionVisitor = expressionVisitor;
     }
 
     @Override

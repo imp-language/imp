@@ -4,7 +4,6 @@ import org.imp.jvm.domain.ImpFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.diogonunes.jcolor.Ansi.*;
 import static com.diogonunes.jcolor.Attribute.*;
@@ -15,6 +14,8 @@ import static com.diogonunes.jcolor.Attribute.*;
  * <p>
  * Github Issue https://github.com/dialex/JColor/issues/54
  * Stackoverflow Thread https://stackoverflow.com/questions/51680709/colored-text-output-in-powershell-console-using-ansi-vt100-codes/51681675#51681675
+ * <p>
+ * https://github.com/scala/scala/blob/2.13.x/src/repl/scala/tools/nsc/interpreter/IMain.scala
  */
 public class REPL {
     public final String START_MESSAGE = "Welcome to Imp v0.0.1 on JVM";

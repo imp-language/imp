@@ -2,11 +2,8 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.EnumType;
-import org.imp.jvm.types.StructType;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-
-import java.util.stream.Collectors;
 
 public class Enum extends Statement {
 

@@ -15,7 +15,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,7 +76,7 @@ public class Function extends Expression {
 
     @Override
     public List<Statement> getChildren() {
-        return Arrays.asList(block);
+        return List.of(block);
     }
 
     static public String getDescriptor(List<Identifier> identifiers) {

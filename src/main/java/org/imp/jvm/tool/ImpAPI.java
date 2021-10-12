@@ -1,6 +1,7 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.compiler.BytecodeGenerator;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
@@ -18,9 +19,41 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner;
+
+import static com.diogonunes.jcolor.Ansi.*;
+import static com.diogonunes.jcolor.Attribute.*;
+
 
 public class ImpAPI {
+
+    public static long time = System.nanoTime();
+    public static long startTime = System.nanoTime();
+    private static final String TIME_SYMBOL = "◔ ";
+
+    public static boolean LOG = false;
+
+    public static void log(String message) {
+        if (LOG) {
+            long current = System.nanoTime();
+            long delta = current - time;
+            float runtime = ((float) delta) / 1000000;
+            time = current;
+            String formattedRuntime = String.format("%.2fms", runtime);
+            formattedRuntime = StringUtils.rightPad(formattedRuntime, 10);
+            System.out.println(colorize(TIME_SYMBOL + formattedRuntime + message, TEXT_COLOR(104)));
+        }
+    }
+
+    public static void logTotalTime() {
+        if (LOG) {
+            long current = System.nanoTime();
+            long delta = current - startTime;
+            float runtime = ((float) delta) / 1000000;
+            String formattedRuntime = String.format("%.2fms", runtime);
+            formattedRuntime = StringUtils.rightPad(formattedRuntime, 10);
+            System.out.println(colorize(TIME_SYMBOL + formattedRuntime + "done", TEXT_COLOR(212)));
+        }
+    }
 
     public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) throws IOException {
 
@@ -53,7 +86,9 @@ public class ImpAPI {
         ImpFile ast = null;
         File file = new File(filename);
         if (file.exists()) {
+            ImpAPI.log("entry file found");
             ast = Parser.getAbstractSyntaxTree(file);
+            ImpAPI.log("ANTLR parsing complete");
         }
         return ast;
     }
@@ -132,7 +167,7 @@ public class ImpAPI {
         return null;
     }
 
-    public static int run(String className) throws IOException, InterruptedException {
+    public static void run(String className) throws IOException, InterruptedException {
         String cmd = "java --enable-preview -cp .compile;target/classes " + className;
         cmd = "java --version";
 
@@ -146,7 +181,7 @@ public class ImpAPI {
         processBuilder.inheritIO();
         Process process = processBuilder.start();
 
-        return process.waitFor();
+        process.waitFor();
     }
 
     public static Process spawn(String className) throws IOException {

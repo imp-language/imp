@@ -1,14 +1,25 @@
-/*
-enum Direction {
-    Up
-    Down
-    Left
-    Right
+
+func kelvinToCelcius(k float) float {
+    return k - 273.15
 }
 
-val dir = Direction.Up
-*/
+func kelvinToRankine(k float) float {
+    return k * 1.8
+}
 
+func kelvinToFahrenheit(k float) float {
+    val rankine = kelvinToRankine(k)
+    val fahrenheit = rankine - 459.67
+    return fahrenheit
+}
 
+val input = read()
 
-log(99)
+log(input)
+
+val k = float(input)
+
+log("K", input)
+log("C", kelvinToCelcius(k))
+log("F", kelvinToFahrenheit(k))
+log("R", kelvinToRankine(k))

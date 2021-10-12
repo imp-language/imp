@@ -2,11 +2,12 @@ package org.imp.jvm.runtime.stdlib.collections;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class List<T> {
-    private ArrayList<T> arrayList;
+    private final ArrayList<T> arrayList;
 
     public List() {
-        arrayList = new ArrayList<T>();
+        arrayList = new ArrayList<>();
     }
 
 

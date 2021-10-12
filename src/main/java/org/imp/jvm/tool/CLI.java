@@ -40,6 +40,7 @@ public class CLI {
             System.out.println("Bundling.");
         } else {
             var imp = new Imp(cli.filename);
+            ImpAPI.LOG = true;
             var out = imp.compile();
             var entry = out.replace(File.separatorChar, '.');
             ImpAPI.run(entry);

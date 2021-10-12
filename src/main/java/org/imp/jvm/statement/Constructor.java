@@ -33,14 +33,13 @@ public class Constructor extends Function {
 
 
     public void generate(ClassWriter cw) {
-        String name = functionType.name;
         String description = DescriptorFactory.getMethodDescriptor(this);
 
         int access = Opcodes.ACC_PUBLIC;
 
         MethodVisitor mv = cw.visitMethod(access, "<init>", description, null, null);
         mv.visitCode();
-        callSuper(mv, block.scope);
+        callSuper(mv);
 
 
         block.generate(mv, block.scope);
@@ -67,7 +66,7 @@ public class Constructor extends Function {
         mv.visitEnd();
     }
 
-    private void callSuper(MethodVisitor mv, Scope scope) {
+    private void callSuper(MethodVisitor mv) {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         String ownerDescriptor = "java/lang/Object";
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V", false);

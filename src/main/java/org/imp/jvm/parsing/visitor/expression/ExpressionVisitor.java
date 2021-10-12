@@ -251,11 +251,11 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
 
         // Return type
-        ImpParser.TypeContext typeContext = ctx.type();
+        var typeContext = ctx.type();
         Type returnType = BuiltInType.VOID;
-        if (typeContext != null) {
+        if (typeContext.size() > 0) {
             // ToDo: parse multiple returns
-            returnType = TypeResolver.getFromTypeContext(typeContext, scope);
+            returnType = TypeResolver.getFromTypeContext(typeContext.get(0), scope);
         }
 
         Modifier modifier = Modifier.NONE;

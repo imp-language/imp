@@ -6,6 +6,7 @@ package org.imp.jvm.runtime;
  *
  * @param <T>
  */
+@SuppressWarnings("ALL")
 public class Box<T> {
     public T t;
 

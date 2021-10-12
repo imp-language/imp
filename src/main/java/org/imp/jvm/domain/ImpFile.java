@@ -84,15 +84,6 @@ public class ImpFile {
         }
 
 
-        // Move all functions to the top level for compilation
-        List<Function> functionList = new ArrayList<>();
-        for (var f : functions) {
-            functionList.add(f);
-
-
-        }
-
-
         // 2. Recursively type-check the body of each function
         for (var f : functions) {
             f.block.validate(f.block.scope);

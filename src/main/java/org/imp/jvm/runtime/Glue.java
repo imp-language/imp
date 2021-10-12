@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class Glue {
 
-    public static Map<String, Class<?>> coreModules = new HashMap<>();
+    public static final Map<String, Class<?>> coreModules = new HashMap<>();
 
     static {
         coreModules.put("batteries", Batteries.class);
@@ -68,9 +68,9 @@ public class Glue {
 
     private static FunctionType findFunction(Class<?> module, String methodName, ImpFile owner) {
         String finalMethodName = methodName;
-        List<Method> methods = Arrays.stream(module.getMethods()).filter(m -> {
-            return m.getName().equals(finalMethodName) || m.getName().equals("_" + finalMethodName);
-        }).collect(Collectors.toList());
+        List<Method> methods = Arrays.stream(module.getMethods())
+                .filter(m -> m.getName().equals(finalMethodName) || m.getName().equals("_" + finalMethodName))
+                .collect(Collectors.toList());
 
 
         if (methods.size() > 0) {

@@ -90,7 +90,7 @@ public class Verifier {
         while ((s = stdError.readLine()) != null) {
             System.out.println(s);
         }
-        System.out.println("");
+        System.out.println();
 
         // 4. Compare results
         if (solutionLines.size() > stdOutLines.size()) {

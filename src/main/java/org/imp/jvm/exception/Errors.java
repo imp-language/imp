@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.Token;
 import java.text.MessageFormat;
 
 
-public enum Errors implements ErrorContext {
+public enum Errors {
     ImplementationError(-1, "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers.",
             "This error message should never occur. "),
     MissingFieldType(0, "Each struct field must have a type. Consider adding `string` or another primitive type after the field name.",
@@ -82,18 +82,5 @@ public enum Errors implements ErrorContext {
         return filename + "@[null] SyntaxError[" + code + "]: [null]";
     }
 
-    @Override
-    public int getLine() {
-        return 0;
-    }
 
-    @Override
-    public int getCol() {
-        return 0;
-    }
-
-    @Override
-    public String getText() {
-        return null;
-    }
 }

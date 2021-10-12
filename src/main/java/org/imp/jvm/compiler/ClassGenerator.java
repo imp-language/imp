@@ -95,7 +95,7 @@ public class ClassGenerator {
             }
             Object defaultValue = null;
             if (type instanceof BuiltInType) {
-                defaultValue = ((BuiltInType) type).getDefaultValue();
+                defaultValue = type.getDefaultValue();
             }
 
             defaultValue = null;
@@ -147,7 +147,7 @@ public class ClassGenerator {
             String descriptor = type.getDescriptor();
             Object defaultValue = null;
             if (type instanceof BuiltInType) {
-                defaultValue = ((BuiltInType) type).getDefaultValue();
+                defaultValue = type.getDefaultValue();
             }
 
             // Todo: fix

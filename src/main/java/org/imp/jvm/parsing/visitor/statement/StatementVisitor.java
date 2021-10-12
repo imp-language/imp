@@ -16,7 +16,6 @@ import org.imp.jvm.statement.*;
 import org.imp.jvm.statement.Enum;
 import org.imp.jvm.types.*;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -209,7 +208,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
         // Is the variable described as `mut` or `val`?
         if (ctx.VAL() != null && ctx.MUT() == null) {
-            mutability = Mutability.Val;
         } else if (ctx.VAL() == null && ctx.MUT() != null) {
             mutability = Mutability.Mut;
         }
@@ -256,18 +254,12 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
 
     @Override
-    public Statement visitClassStatement(ImpParser.ClassStatementContext ctx) {
-        return super.visitClassStatement(ctx);
-    }
-
-
-    @Override
     public Statement visitEnumStatement(ImpParser.EnumStatementContext ctx) {
         var name = ctx.identifier().getText();
-        var blockCtx = ctx.enumBlock();
+        var blockCtx = ctx.enumDef();
 
         Map<String, Optional<Expression>> elements = new HashMap<>();
-        for (var enumDef : blockCtx.enumDef()) {
+        for (var enumDef : blockCtx) {
             String key = enumDef.identifier().getText();
             Expression e = null;
             if (enumDef.expression() != null) {

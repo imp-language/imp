@@ -1,11 +1,9 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.jgrapht.traverse.DepthFirstIterator;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,7 +28,10 @@ public class Imp {
             // Walk the dependency tree
             var entry = ImpAPI.createSourceFile(filename);
             var dependencyGraph = ImpAPI.dependencyGraph(entry);
+            ImpAPI.log("build dependency graph");
             entry.validate();
+            ImpAPI.log("validate entry file");
+
 
             // Reduce graph dependencies to unique set of compilation units
             Iterator<ImpFile> iterator = new DepthFirstIterator<>(dependencyGraph, entry);
@@ -41,14 +42,12 @@ public class Imp {
                     compilationSet.put(impFile.packageName, impFile);
                 }
             }
-            System.out.printf("Compiling %d files...%n", compilationSet.size());
+
+            ImpAPI.log("create compilation set");
 
 
             var program = ImpAPI.createProgram(compilationSet);
-            long end = System.nanoTime();
-            float runtime = ((float) (end - start)) / 1000000000;
-            System.out.printf("Compiled %d files in %f seconds.", compilationSet.size(), runtime);
-            System.out.println("");
+            ImpAPI.logTotalTime();
 
             return entry.getClassName() + "/" + "Entry";
 
