@@ -5,8 +5,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-import java.io.IOException;
-
 public class DependencyWalker {
     private final Graph<ImpFile, DefaultEdge> dependencies = new DefaultDirectedGraph<>(DefaultEdge.class);
 
@@ -20,7 +18,7 @@ public class DependencyWalker {
     }
 
     private void recurse(ImpFile file) {
-        var imports = ImpAPI.gatherImports(file);
+        var imports = API.gatherImports(file);
 
         for (var impFile : imports.values()) {
             dependencies.addVertex(impFile);

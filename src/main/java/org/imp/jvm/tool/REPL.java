@@ -44,8 +44,8 @@ public class REPL {
             impFile.validate();
 
             try {
-                var program = ImpAPI.createProgram(compilationSet);
-                ImpAPI.run("repl.Entry");
+                var program = API.createProgram(compilationSet);
+                Runner.run("repl.Entry");
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -80,11 +80,6 @@ public class REPL {
 
 
     private ImpFile parse(String line) {
-        try {
-            var impFile = ImpAPI.createReplFile(line);
-            return impFile;
-        } catch (IOException e) {
-            return null;
-        }
+        return API.createReplFile(line);
     }
 }

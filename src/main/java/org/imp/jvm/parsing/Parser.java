@@ -37,13 +37,14 @@ public class Parser {
         parser.setBuildParseTree(true);
 
         ParseTree parseTree = parser.program();
-        ImpFile ast = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(file.getName())));
+        String name = FilenameUtils.separatorsToUnix(FilenameUtils.removeExtension(file.getPath()));
+        ImpFile ast = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(name)));
 
 
         return ast;
     }
 
-    public static ImpFile getAbstractSyntaxTree(String content) throws IOException {
+    public static ImpFile getAbstractSyntaxTree(String content) {
         CharStream charStream = CharStreams.fromString(content);
         ImpLexer impLexer = new ImpLexer(charStream);
         CommonTokenStream tokenStream = new CommonTokenStream(impLexer);

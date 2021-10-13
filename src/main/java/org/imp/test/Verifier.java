@@ -2,8 +2,9 @@ package org.imp.test;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.tool.Imp;
-import org.imp.jvm.tool.ImpAPI;
+import org.imp.jvm.tool.Compiler;
+import org.imp.jvm.tool.API;
+import org.imp.jvm.tool.Runner;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -67,11 +68,11 @@ public class Verifier {
         List<String> solutionLines = FileUtils.readLines(new File(solutionPath), StandardCharsets.UTF_8);
 
         // 1. Compile imp source file
-        var imp = new Imp(sourcePath);
+        var imp = new Compiler(sourcePath);
         String classFilePath = imp.compile();
 
         // 2. Execute compiled imp file
-        Process proc = ImpAPI.spawn(classFilePath);
+        Process proc = Runner.spawn(classFilePath);
 
 
         // 3. Watch standard out

@@ -4,6 +4,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.types.FunctionType;
 import org.objectweb.asm.ClassWriter;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,7 +12,8 @@ import java.util.Set;
 
 public class BytecodeGenerator {
     public Map<String, byte[]> generate(ImpFile impFile) {
-        ClassGenerator classGenerator = new ClassGenerator(impFile.packageName);
+        String cleanedPath = impFile.packageName.replace(File.separatorChar, '/');
+        ClassGenerator classGenerator = new ClassGenerator(cleanedPath);
 
         // Byte array for each section of the Imp source file
         var code = new HashMap<String, byte[]>();
@@ -19,6 +21,7 @@ public class BytecodeGenerator {
         // Generate bytecode for impFile.StaticUnit
         ClassWriter staticWriter = classGenerator.generate(impFile);
         code.put(impFile.packageName + "/" + "Entry", staticWriter.toByteArray());
+//        code.put("examples/scratch/Entry", staticWriter.toByteArray());
 
         // Generate bytecode for each Struct defined in the Imp file
         for (var struct : impFile.structTypes) {

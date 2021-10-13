@@ -24,7 +24,7 @@ import static com.diogonunes.jcolor.Ansi.*;
 import static com.diogonunes.jcolor.Attribute.*;
 
 
-public class ImpAPI {
+public class API {
     /**
      * Parse a source file.
      *
@@ -42,8 +42,18 @@ public class ImpAPI {
         return ast;
     }
 
+    /**
+     * Parse text content, from a REPL likely.
+     *
+     * @param content text
+     * @return ImpFile
+     */
+    public static ImpFile createReplFile(String content) {
+        return Parser.getAbstractSyntaxTree(content);
+    }
+
     public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) {
-        var walker = new DependencyWalker();
+        DependencyWalker walker = new DependencyWalker();
         var dependencies = walker.walkDependencies(entry);
 
         DOTExporter<ImpFile, DefaultEdge> exporter =
@@ -68,10 +78,6 @@ public class ImpAPI {
     }
 
 
-    public static ImpFile createReplFile(String content) throws IOException {
-        ImpFile ast = Parser.getAbstractSyntaxTree(content);
-        return ast;
-    }
 
 
     // Todo: recursion
@@ -110,7 +116,7 @@ public class ImpAPI {
         Logger.killIfErrors("Errored during bytecode generation.");
 
         for (var key : files.keySet()) {
-            var value = files.get(key);
+            ImpFile value = files.get(key);
             var byteUnits = bytecodeGenerator.generate(value);
             String className = value.getClassName();
             for (var byteUnit : byteUnits.entrySet()) {
@@ -146,28 +152,7 @@ public class ImpAPI {
         return null;
     }
 
-    public static void run(String className) throws IOException, InterruptedException {
-        String cmd = "java --enable-preview -cp .compile;target/classes " + className;
-        cmd = "java --version";
 
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                "java",
-                "--enable-preview",
-                "-cp",
-                ".compile" + System.getProperty("path.separator") + "target/classes",
-                className
-        );
-        processBuilder.inheritIO();
-        Process process = processBuilder.start();
-
-        process.waitFor();
-    }
-
-    public static Process spawn(String className) throws IOException {
-        String cmd = "java --enable-preview -cp .compile" + System.getProperty("path.separator") + "target/classes " + className;
-        Process proc = Runtime.getRuntime().exec(cmd);
-        return proc;
-    }
 
 
 }

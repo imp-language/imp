@@ -1,5 +1,7 @@
 package org.imp.jvm.tool;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ClassPathUtils;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -39,11 +41,35 @@ public class CLI {
         } else if (cli.bundle) {
             System.out.println("Bundling.");
         } else {
-            var imp = new Imp(cli.filename);
-            Timer.LOG = true;
-            var out = imp.compile();
-            var entry = out.replace(File.separatorChar, '.');
-            ImpAPI.run(entry);
+
+            switch (cli.filename) {
+                case "init":
+                    cli.initNewProject();
+                    break;
+                default:
+                    cli.handleInput();
+                    break;
+            }
+        }
+
+
+    }
+
+    private void initNewProject() {
+        System.out.println("reee");
+    }
+
+
+    private void handleInput() {
+
+
+        var imp = new Compiler(this.filename);
+        Timer.LOG = true;
+        var out = imp.compile();
+        try {
+            Runner.run(out);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

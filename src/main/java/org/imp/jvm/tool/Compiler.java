@@ -6,30 +6,29 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class Imp {
+public class Compiler {
 
     public final String filename;
 
     public List<String> filenames;
 
-    public Imp(String filename) {
+    public Compiler(String filename) {
 
         this.filename = FilenameUtils.separatorsToUnix(filename);
     }
 
 
     public String compile() {
-        long start = System.nanoTime();
         // Walk the dependency tree
-        var entry = ImpAPI.createSourceFile(filename);
+        var entry = API.createSourceFile(filename);
         Graph<ImpFile, DefaultEdge> dependencyGraph = null;
-        dependencyGraph = ImpAPI.dependencyGraph(entry);
+        dependencyGraph = API.dependencyGraph(entry);
         Timer.log("build dependency graph");
         entry.validate();
         Timer.log("validate entry file");
@@ -48,7 +47,7 @@ public class Imp {
         Timer.log("create compilation set");
 
 
-        var program = ImpAPI.createProgram(compilationSet);
+        var program = API.createProgram(compilationSet);
         Timer.logTotalTime();
 
         return entry.getClassName() + "/" + "Entry";

@@ -1,4 +1,4 @@
-//import "module"
+import "module"
 
 
 struct Location {
@@ -13,3 +13,5 @@ func m() {
 }
 
 m()
+
+module.test()

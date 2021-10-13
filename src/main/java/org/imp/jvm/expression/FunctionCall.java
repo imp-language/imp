@@ -263,9 +263,7 @@ public class FunctionCall extends Expression {
                                 functionType = func.get().functionType;
                             }
                         }
-
-                        System.out.println(moduleName);
-
+                        // file imported here
                     }
                     // Todo: potentially error here, don't need to check anything else if name not in module.
                 }
