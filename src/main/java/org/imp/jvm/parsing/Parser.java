@@ -14,9 +14,22 @@ import java.io.IOException;
 
 
 public class Parser {
-    public static ImpFile getAbstractSyntaxTree(File file) throws IOException {
 
-        CharStream charStream = CharStreams.fromFileName(file.getAbsolutePath());
+    /**
+     * Requires an input file that exists.
+     *
+     * @param file source
+     * @return ImpFile
+     */
+    public static ImpFile getAbstractSyntaxTree(File file) {
+        CharStream charStream = null;
+        try {
+            charStream = CharStreams.fromFileName(file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("getAbstractSyntaxTree requires a file that exists.");
+            System.exit(98);
+        }
         ImpLexer impLexer = new ImpLexer(charStream);
         CommonTokenStream tokenStream = new CommonTokenStream(impLexer);
 

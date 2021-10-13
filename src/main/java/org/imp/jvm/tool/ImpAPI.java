@@ -25,39 +25,24 @@ import static com.diogonunes.jcolor.Attribute.*;
 
 
 public class ImpAPI {
-
-    public static long time = System.nanoTime();
-    public static long startTime = System.nanoTime();
-    private static final String TIME_SYMBOL = "◔ ";
-
-    public static boolean LOG = false;
-
-    public static void log(String message) {
-        if (LOG) {
-            long current = System.nanoTime();
-            long delta = current - time;
-            float runtime = ((float) delta) / 1000000;
-            time = current;
-            String formattedRuntime = String.format("%.2fms", runtime);
-            formattedRuntime = StringUtils.rightPad(formattedRuntime, 10);
-            System.out.println(colorize(TIME_SYMBOL + formattedRuntime + message, TEXT_COLOR(104)));
+    /**
+     * Parse a source file.
+     *
+     * @param filename source
+     * @return ImpFile
+     */
+    public static ImpFile createSourceFile(String filename) {
+        ImpFile ast = null;
+        File file = new File(filename);
+        if (file.exists()) {
+            Timer.log("entry file found");
+            ast = Parser.getAbstractSyntaxTree(file);
+            Timer.log("ANTLR parsing complete");
         }
+        return ast;
     }
 
-    public static void logTotalTime() {
-        if (LOG) {
-            long current = System.nanoTime();
-            long delta = current - startTime;
-            float runtime = ((float) delta) / 1000000;
-            String formattedRuntime = String.format("%.2fms", runtime);
-            formattedRuntime = StringUtils.rightPad(formattedRuntime, 10);
-            System.out.println(colorize(TIME_SYMBOL + formattedRuntime + "done", TEXT_COLOR(212)));
-        }
-    }
-
-    public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) throws IOException {
-
-
+    public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) {
         var walker = new DependencyWalker();
         var dependencies = walker.walkDependencies(entry);
 
@@ -82,16 +67,6 @@ public class ImpAPI {
         return dependencies;
     }
 
-    public static ImpFile createSourceFile(String filename) throws IOException {
-        ImpFile ast = null;
-        File file = new File(filename);
-        if (file.exists()) {
-            ImpAPI.log("entry file found");
-            ast = Parser.getAbstractSyntaxTree(file);
-            ImpAPI.log("ANTLR parsing complete");
-        }
-        return ast;
-    }
 
     public static ImpFile createReplFile(String content) throws IOException {
         ImpFile ast = Parser.getAbstractSyntaxTree(content);
@@ -100,7 +75,7 @@ public class ImpAPI {
 
 
     // Todo: recursion
-    public static Map<String, ImpFile> gatherImports(ImpFile entry) throws IOException {
+    public static Map<String, ImpFile> gatherImports(ImpFile entry) {
         String basePath = FilenameUtils.getPath(entry.name);
 
         Map<String, ImpFile> impFileMap = new HashMap<>();
@@ -111,7 +86,6 @@ public class ImpAPI {
 
 
             if (Glue.coreModules.containsKey(relativeFileName)) {
-//                System.out.println("Core module " + relativeFileName + " loaded.");
                 entry.stdlibImports.add(relativeFileName);
             } else {
                 ImpFile ast = createSourceFile(filePath);
@@ -131,7 +105,7 @@ public class ImpAPI {
         return impFileMap;
     }
 
-    public static Program createProgram(Map<String, ImpFile> files) throws IOException {
+    public static Program createProgram(Map<String, ImpFile> files) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         Logger.killIfErrors("Errored during bytecode generation.");
 
@@ -152,10 +126,15 @@ public class ImpAPI {
                 tmp.getParentFile().mkdirs();
 
 
-                OutputStream output = new FileOutputStream(fileName);
-                output.write(byteUnit.getValue());
-//                output.flush();
-                output.close();
+                OutputStream output = null;
+                try {
+                    output = new FileOutputStream(fileName);
+                    output.write(byteUnit.getValue());
+                    output.close();
+                } catch (IOException e) {
+                    System.err.println("The above call to mkdirs() should have worked.");
+                    System.exit(9);
+                }
 
             }
         }

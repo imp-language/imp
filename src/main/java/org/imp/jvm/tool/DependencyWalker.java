@@ -10,7 +10,7 @@ import java.io.IOException;
 public class DependencyWalker {
     private final Graph<ImpFile, DefaultEdge> dependencies = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-    public Graph<ImpFile, DefaultEdge> walkDependencies(ImpFile entry) throws IOException {
+    public Graph<ImpFile, DefaultEdge> walkDependencies(ImpFile entry) {
         dependencies.addVertex(entry);
 
         recurse(entry);
@@ -19,7 +19,7 @@ public class DependencyWalker {
 
     }
 
-    private void recurse(ImpFile file) throws IOException {
+    private void recurse(ImpFile file) {
         var imports = ImpAPI.gatherImports(file);
 
         for (var impFile : imports.values()) {
