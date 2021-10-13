@@ -1,0 +1,24 @@
+// https://www.rosettacode.org/wiki/Temperature_conversion
+
+func kelvinToCelcius(k float) float {
+    return k - 273.15
+}
+
+func kelvinToRankine(k float) float {
+    return k * 1.8
+}
+
+func kelvinToFahrenheit(k float) float {
+    val rankine = kelvinToRankine(k)
+    val fahrenheit = rankine - 459.67
+    return fahrenheit
+}
+
+val input = 21
+
+val k = float(input)
+
+log("K", k)
+log("C", kelvinToCelcius(k))
+log("F", kelvinToFahrenheit(k))
+log("R", kelvinToRankine(k))

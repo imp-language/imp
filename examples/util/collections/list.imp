@@ -1,5 +1,0 @@
-
-
-export function list() {
-    log("new list")
-}

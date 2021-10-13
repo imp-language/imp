@@ -1,6 +1,0 @@
-
-import "io"
-
-export func ping(ip string) string {
-    log("ping")
-}

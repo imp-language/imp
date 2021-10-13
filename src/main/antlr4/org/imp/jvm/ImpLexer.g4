@@ -39,10 +39,7 @@ FROM : 'from';
 AS : 'as';
 
 NEW : 'new';
-CLASS : 'class';
-INTERFACE : 'interface';
 ENUM : 'enum';
-PUBLIC : 'public';
 STRUCT : 'struct';
 
 IN : 'in';
@@ -122,13 +119,6 @@ STRING_LITERAL
 
 // Fragments
 
-/*
-fragment DoubleStringCharacter
-    : ~["\\\r\n]
-    // | '\\' EscapeSequence
-    // | LineContinuation
-    ;
-*/
 
 fragment DECIMALS
     : [0-9]+

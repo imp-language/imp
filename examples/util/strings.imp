@@ -1,5 +1,0 @@
-
-
-export func append(base string, suffix string) string {
-    return base + suffix
-}

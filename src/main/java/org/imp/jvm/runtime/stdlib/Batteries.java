@@ -66,12 +66,7 @@ public class Batteries {
     public static String string(boolean b) {
         return b + "";
     }
-
-    // Todo: not working yet
-    public static String typeof(Object o) {
-        return o.getClass().getName();
-    }
-
+    
     /**
      * Reads the entire file to a string.
      * Very primitive implementation.
