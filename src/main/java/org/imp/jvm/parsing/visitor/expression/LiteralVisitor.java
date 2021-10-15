@@ -2,6 +2,7 @@ package org.imp.jvm.parsing.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.expression.ListLiteral;
 import org.imp.jvm.expression.Literal;
 import org.imp.jvm.types.BuiltInType;
 
@@ -49,7 +50,7 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
 //        // ToDo: type check lists
 //        // type inference, first element in list defines type of whole collection
 
-        return new Literal(BuiltInType.VOID, null);
+        return new ListLiteral(listExpressions);
     }
 
     @Override

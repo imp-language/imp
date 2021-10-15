@@ -4,7 +4,7 @@ val myInt = 4
 val list = [0, 1, 2, 3, myInt]
 
 
-
+log(list)
 
 /*
 

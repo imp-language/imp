@@ -153,7 +153,7 @@ public enum BuiltInType implements Type {
                 break;
             default:
                 System.err.println("Boxing isn't supported for that type.");
-                System.exit(28);
+//                System.exit(28);
                 break;
         }
     }
