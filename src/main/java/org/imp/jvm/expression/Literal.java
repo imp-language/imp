@@ -9,6 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 public class Literal extends Expression {
 
     public final String value;
+    private Object transformed;
 
     public Literal(Type type, String value) {
         super();
@@ -17,13 +18,14 @@ public class Literal extends Expression {
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
-        Object transformed = TypeResolver.getValueFromString(value, (BuiltInType) type);
 //        int transformed = Integer.parseInt((String) value);
         mv.visitLdcInsn(transformed);
     }
 
     @Override
     public void validate(Scope scope) {
+        transformed = TypeResolver.getValueFromString(value, (BuiltInType) type);
+        System.out.println(transformed);
 
     }
 

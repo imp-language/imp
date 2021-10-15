@@ -5,9 +5,13 @@ import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.expression.Literal;
 import org.imp.jvm.types.BuiltInType;
 
+import java.util.stream.Collectors;
+
 public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
+    public final ExpressionVisitor expressionVisitor;
 
     public LiteralVisitor(ExpressionVisitor expressionVisitor) {
+        this.expressionVisitor = expressionVisitor;
     }
 
     @Override
@@ -31,17 +35,22 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
     }
 
 
-//    @Override
-//    public Literal visitCollectionLiteral(ImpParser.CollectionLiteralContext ctx) {
-////        // List literals are converted to collections
-////        var elements = ctx.elementList().expression();
-////        List<Expression> expressions = elements.stream().map(expressionVisitor::visit).collect(Collectors.toList());
-////
-////        // ToDo: type check lists
-////        // type inference, first element in list defines type of whole collection
-//
-//        return new Literal(BuiltInType.VOID, null);
-//    }
+    @Override
+    public Literal visitCollectionLiteral(ImpParser.CollectionLiteralContext ctx) {
+        System.out.println(ctx);
+
+        // Currently parsing list literals only.
+        // Todo: add [type] empty list literals
+        var listElements = ctx.expressionList().expression();
+
+        var listExpressions = listElements.stream().map(listEl -> listEl.accept(expressionVisitor)).collect(Collectors.toList());
+
+
+//        // ToDo: type check lists
+//        // type inference, first element in list defines type of whole collection
+
+        return new Literal(BuiltInType.VOID, null);
+    }
 
     @Override
     public Literal visitStringLiteral(ImpParser.StringLiteralContext ctx) {

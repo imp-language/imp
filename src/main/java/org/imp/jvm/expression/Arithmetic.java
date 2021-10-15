@@ -20,10 +20,6 @@ public class Arithmetic extends Expression {
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
-
-        // ToDo: currently only addition is implemented
-
-
         if (type.equals(BuiltInType.STRING)) {
             mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
             mv.visitInsn(Opcodes.DUP);
@@ -89,8 +85,6 @@ public class Arithmetic extends Expression {
     public void validate(Scope scope) {
         left.validate(scope);
         right.validate(scope);
-        // Todo: ensure types are compatible
-
         this.type = getCommonType(left, right);
     }
 

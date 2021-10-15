@@ -1,17 +1,12 @@
-import "module"
+/*
+*/
+val myInt = 4
+val list = [0, 1, 2, 3, myInt]
 
 
-struct Location {
-    x int
-    y int
-}
 
 
-func m() {
-    val loc = new Location(42, 32)
-    log(loc.x, loc.y)
-}
+/*
 
-m()
 
-module.test()
+*/
