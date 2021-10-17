@@ -6,6 +6,8 @@ import org.imp.jvm.types.Type;
 import org.imp.jvm.types.TypeResolver;
 import org.objectweb.asm.MethodVisitor;
 
+import java.util.Arrays;
+
 public class Literal extends Expression {
 
     public final String value;

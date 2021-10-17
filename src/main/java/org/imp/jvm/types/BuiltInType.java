@@ -23,6 +23,7 @@ public enum BuiltInType implements Type {
     BOX("box", null, "Lorg/imp/jvm/runtime/Box;", TypeSpecificOpcodes.OBJECT, false, false),
     STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
     ENUM("enum", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
+    LIST("list", Object.class, "Ljava/util/List;", TypeSpecificOpcodes.OBJECT, false, false),
 
     OBJECT("object", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
     OBJECT_ARR("object[]", Object[].class, "[Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),

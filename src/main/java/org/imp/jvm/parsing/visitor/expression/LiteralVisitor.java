@@ -50,7 +50,9 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
 //        // ToDo: type check lists
 //        // type inference, first element in list defines type of whole collection
 
-        return new ListLiteral(listExpressions);
+        var listLiteral = new ListLiteral(listExpressions);
+        listLiteral.setCtx(ctx);
+        return listLiteral;
     }
 
     @Override

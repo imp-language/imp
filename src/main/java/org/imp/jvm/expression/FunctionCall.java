@@ -175,9 +175,11 @@ public class FunctionCall extends Expression {
     }
 
     private void castLogArgument(MethodVisitor mv, Scope scope) {
-        arguments.get(0).generate(mv, scope);
-        BuiltInType bt = (BuiltInType) arguments.get(0).type;
-        bt.doBoxing(mv);
+        var arg = arguments.get(0);
+        arg.generate(mv, scope);
+        if (arg.type instanceof BuiltInType bt) {
+            bt.doBoxing(mv);
+        }
     }
 
     private void generateInternalCall(MethodVisitor mv, Scope scope) {

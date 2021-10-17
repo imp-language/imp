@@ -42,8 +42,10 @@ public enum Errors {
             "Expression `{0}` cannot be indexed by type `{1}`."),
 
     UnsupportedOperator(14, "Is the operator supported by the type?",
-            "The operator `{0}` is not supported on `{1}` which has type `{2}`.")
+            "The operator `{0}` is not supported on `{1}` which has type `{2}`."),
 
+    ListTypeError(15, "Lists may contain elements of only one type.",
+            "Variable of type `{0}` cannot be added to a list with type `{1}`.")
     //
     ;
 

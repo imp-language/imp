@@ -233,7 +233,7 @@ doubleLiteral
 
 // Lists
 collectionLiteral
-    : LBRACK (type | expressionList)? RBRACK
+    : LBRACK (expressionList)? RBRACK
     ;
 
 
