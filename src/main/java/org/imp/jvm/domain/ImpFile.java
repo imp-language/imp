@@ -67,7 +67,6 @@ public class ImpFile {
         for (var e : exports) {
             // Add a structure to the scope of this Imp file
             // that is the imported other file.
-//            System.out.println(e);
             e.validate(e.scope);
         }
 

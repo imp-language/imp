@@ -27,7 +27,6 @@ public class Literal extends Expression {
     @Override
     public void validate(Scope scope) {
         transformed = TypeResolver.getValueFromString(value, (BuiltInType) type);
-        System.out.println(transformed);
 
     }
 

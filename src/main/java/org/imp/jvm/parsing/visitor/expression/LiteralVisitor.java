@@ -38,8 +38,6 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
 
     @Override
     public Literal visitCollectionLiteral(ImpParser.CollectionLiteralContext ctx) {
-        System.out.println(ctx);
-
         // Currently parsing list literals only.
         // Todo: add [type] empty list literals
         var listElements = ctx.expressionList().expression();

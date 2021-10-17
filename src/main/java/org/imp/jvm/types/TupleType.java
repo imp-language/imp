@@ -69,7 +69,7 @@ public class TupleType implements Type {
     }
 
     @Override
-    public int getSubstractOpcode() {
+    public int getSubtractOpcode() {
         return 0;
     }
 

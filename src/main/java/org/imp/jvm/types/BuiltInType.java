@@ -97,7 +97,7 @@ public enum BuiltInType implements Type {
     }
 
     @Override
-    public int getSubstractOpcode() {
+    public int getSubtractOpcode() {
         return opcodes.getSubstract();
     }
 

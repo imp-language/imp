@@ -94,4 +94,9 @@ public class Batteries {
         Path fileName = Path.of(filename);
         Files.writeString(fileName, content);
     }
+
+
+    public static int length(String s) {
+        return s.length();
+    }
 }

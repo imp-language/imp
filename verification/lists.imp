@@ -4,10 +4,12 @@
 val myInt = 4
 val list = [1000000,1100000, myInt]
 log(list)
+log(list[0])
 
 // Create a list of strings
 val stringList = ["Matt", "Hall"]
 log(stringList)
+log(stringList[1])
 
 // Create a list of objects
 // Todo

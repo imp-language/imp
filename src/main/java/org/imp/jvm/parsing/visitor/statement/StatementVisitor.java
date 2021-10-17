@@ -186,10 +186,17 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             block.scope = new Scope(scope);
 
             return new ForLoop(declaration, condition, incrementer, block);
-        } else if (conditionContext instanceof ImpParser.ForInLoopConditionContext) {
+        } else if (conditionContext instanceof ImpParser.ForInLoopConditionContext forInCtx) {
             // loop val item, idx in list { }
-            System.err.println("loop val item, idx in list { }");
-            System.exit(122);
+            String iterator = forInCtx.identifier().getText();
+            Expression expression = forInCtx.expression().accept(expressionVisitor);
+            expression.setCtx(forInCtx.expression());
+            Block block = (Block) ctx.block().accept(this);
+            block.scope = new Scope(scope);
+            var forInLoop = new ForInLoop(iterator, expression, block);
+            forInLoop.setCtx(forInCtx);
+
+            return forInLoop;
 
         } else if (conditionContext instanceof ImpParser.WhileLoopConditionContext) {
             // loop someExpression() == true { }

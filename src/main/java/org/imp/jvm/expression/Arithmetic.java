@@ -71,7 +71,7 @@ public class Arithmetic extends Expression {
             }
             int op = switch (operator) {
                 case ADD -> goalType.getAddOpcode();
-                case SUBTRACT -> goalType.getSubstractOpcode();
+                case SUBTRACT -> goalType.getSubtractOpcode();
                 case MULTIPLY -> goalType.getMultiplyOpcode();
                 case DIVIDE -> goalType.getDivideOpcode();
 

@@ -187,7 +187,6 @@ public class ClassGenerator {
         );
 
 
-        System.out.println(qualifiedName);
         for (String element : enumType.elements.keySet()) {
             FieldVisitor fv = classWriter.visitField(Opcodes.ACC_PUBLIC
                             + Opcodes.ACC_FINAL

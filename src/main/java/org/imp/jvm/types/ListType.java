@@ -1,7 +1,9 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.domain.Operator;
+import org.imp.jvm.types.overloads.ListOverloads;
 import org.imp.jvm.types.overloads.OperatorOverload;
+import org.imp.jvm.types.overloads.StringOverloads;
 import org.objectweb.asm.Opcodes;
 
 public class ListType implements Type {
@@ -24,7 +26,7 @@ public class ListType implements Type {
 
     @Override
     public Class<?> getTypeClass() {
-        return null;
+        return java.util.List.class;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class ListType implements Type {
     }
 
     @Override
-    public int getSubstractOpcode() {
+    public int getSubtractOpcode() {
         return 0;
     }
 
@@ -84,6 +86,6 @@ public class ListType implements Type {
 
     @Override
     public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
+        return new ListOverloads();
     }
 }

@@ -6,6 +6,9 @@ import org.antlr.v4.runtime.Token;
 
 import java.text.MessageFormat;
 
+import static com.diogonunes.jcolor.Ansi.colorize;
+import static com.diogonunes.jcolor.Attribute.TEXT_COLOR;
+
 
 public enum Errors {
     ImplementationError(-1, "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers.",
@@ -45,7 +48,9 @@ public enum Errors {
             "The operator `{0}` is not supported on `{1}` which has type `{2}`."),
 
     ListTypeError(15, "Lists may contain elements of only one type.",
-            "Variable of type `{0}` cannot be added to a list with type `{1}`.")
+            "Variable of type `{0}` cannot be added to a list with type `{1}`."),
+    CannotIterate(16, "For-in loops only work on iterables like Lists and Strings.",
+            "Expression `{0}` is not iterable.")
     //
     ;
 
@@ -75,6 +80,7 @@ public enum Errors {
             Token token = ctx.getStart();
             String s = filename + "@" + getLocation(token);
             s += " Error[" + code + ", " + this.name() + "]: ";
+//            s += colorize(" Error[" + code + ", " + this.name() + "]: ", TEXT_COLOR(1));
 
             String text = MessageFormat.format(templateString, varargs);
             s += text;
