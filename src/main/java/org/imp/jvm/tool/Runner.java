@@ -15,6 +15,7 @@ public class Runner {
     public static void run(String className) throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "java",
+//                "-verbose:class",
                 "--enable-preview",
                 "-cp",
                 ".compile" + System.getProperty("path.separator") + "target/classes",

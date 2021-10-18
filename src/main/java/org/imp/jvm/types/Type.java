@@ -20,7 +20,7 @@ public interface Type {
 
     int getAddOpcode();
 
-    int getSubstractOpcode();
+    int getSubtractOpcode();
 
     int getMultiplyOpcode();
 

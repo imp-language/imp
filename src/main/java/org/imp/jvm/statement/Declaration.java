@@ -3,6 +3,7 @@ package org.imp.jvm.statement;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Expression;
+import org.imp.jvm.expression.ListLiteral;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Mutability;
 import org.imp.jvm.types.Type;
@@ -55,7 +56,13 @@ public class Declaration extends Statement {
             // Todo: for now no casting is supported
             Type localVariableType = expression.type;
             castIfNecessary(type, localVariableType, mv);
+
+
+//            if (expression instanceof ListLiteral) {
+//
+//            } else {
             mv.visitVarInsn(type.getStoreVariableOpcode(), index);
+//            }
 //          return;
         }
     }

@@ -70,6 +70,7 @@ public class VariableReference extends Expression {
 
         if (reference == null) {
             Logger.syntaxError(Errors.LocalVariableNotFound, "no filename", getCtx(), name);
+            Logger.killIfErrors("Missing variables.");
             return;
         }
 

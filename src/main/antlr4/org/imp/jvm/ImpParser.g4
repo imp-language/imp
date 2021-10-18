@@ -72,7 +72,7 @@ loopStatement
 
 loopCondition
     : variableStatement SEMICOLON expression SEMICOLON expression SEMICOLON? #ForLoopCondition // val i = 0; i < 10; i++
-    | variableStatement IN expression #ForInLoopCondition // val item, idx in list
+    | identifier IN expression #ForInLoopCondition // val item, idx in list
     | expression #WhileLoopCondition
     ;
 
@@ -233,7 +233,7 @@ doubleLiteral
 
 // Lists
 collectionLiteral
-    : LBRACK (type | expressionList)? RBRACK
+    : LBRACK (expressionList)? RBRACK
     ;
 
 

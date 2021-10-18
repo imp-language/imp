@@ -6,6 +6,8 @@ import org.imp.jvm.types.Type;
 import org.imp.jvm.types.TypeResolver;
 import org.objectweb.asm.MethodVisitor;
 
+import java.util.Arrays;
+
 public class Literal extends Expression {
 
     public final String value;
@@ -25,7 +27,6 @@ public class Literal extends Expression {
     @Override
     public void validate(Scope scope) {
         transformed = TypeResolver.getValueFromString(value, (BuiltInType) type);
-        System.out.println(transformed);
 
     }
 

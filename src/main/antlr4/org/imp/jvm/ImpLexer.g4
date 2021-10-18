@@ -18,7 +18,7 @@ CommentMultiLine : '/*' .*? '*/' -> skip;
 
 
 // Keywords
-LOOP : 'loop';
+LOOP : 'loop' | 'for';
 IF : 'if';
 ELSE : 'else';
 FUNCTION : 'function' | 'func';

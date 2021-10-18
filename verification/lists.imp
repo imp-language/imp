@@ -1,18 +1,22 @@
-/*
+// Test list creation and modification
 
-val immutable = 42
+// Create a list of integers
+val myInt = 4
+val list = [1000000,1100000, myInt]
+log(list)
+log(list[0])
 
-mut mutable = "myChangingString"
+// Create a list of strings
+val stringList = ["Matt", "Hall"]
+log(stringList)
+log(stringList[1])
 
-log(immutable)
-log(mutable)
+// Create a list of objects
+// Todo
 
 
-*/
-
-
+// Loop through lists
 val integerList = [0,1,2,3,4,5]
-
 val sum = 0
 for i in integerList {
     log(i)
@@ -30,5 +34,4 @@ for i in words {
         shortestWord = i
     }
 }
-
 log(shortestLength, shortestWord)

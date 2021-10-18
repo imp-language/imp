@@ -5,6 +5,7 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.ListType;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
@@ -40,6 +41,14 @@ public class MemberIndex extends Expression {
 
         // Find the operator overload for member index for the given type
         this.overload = expressionType.getOperatorOverload(Operator.INDEX);
+
+        this.overload.setType(expressionType);
+
+        if (this.overload.type instanceof ListType listType) {
+            this.overload.setType(listType.contentType);
+        }
+
+
         // Or error if indexing is not supported for the type
         if (this.overload == null) {
             Logger.syntaxError(Errors.UnsupportedOperator, "no filename", getCtx(), "[]", getCtx().getText(), expressionType);
@@ -48,6 +57,7 @@ public class MemberIndex extends Expression {
         // Set type of the expression
         this.overload.validate(scope);
         this.type = this.overload.type;
+
 
     }
 

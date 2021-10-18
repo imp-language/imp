@@ -45,7 +45,7 @@ public class Scope {
     // Scopes from parent scopes
     public Scope(Scope scope) {
         name = scope.name + "-|";
-        localVariables = new LinkedMap<>();
+        localVariables = scope.localVariables.clone();
         closures = new LinkedMap<>();
         structs = scope.structs;
         functionTypes = scope.functionTypes;
@@ -105,7 +105,6 @@ public class Scope {
      * @return whether a variable exists in the current scope
      */
     public boolean variableExists(String varName) {
-        // ToDo: decide what happens with scope and local variable overriding by inner scopes.
         return getLocalVariable(varName) != null;
     }
 

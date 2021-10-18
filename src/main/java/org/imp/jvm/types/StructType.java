@@ -137,7 +137,7 @@ public class StructType implements Type {
     }
 
     @Override
-    public int getSubstractOpcode() {
+    public int getSubtractOpcode() {
         throw new RuntimeException("Substraction operation not (yet ;) ) supported for custom objects");
     }
 

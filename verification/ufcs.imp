@@ -20,10 +20,10 @@ val sum2 = sum.add(new Vector(1.0, 7.0))
 logVector(sum2) // (10, 23)
 
 
-func length(a Vector) int {
+func vectorLength(a Vector) int {
     return 2
 }
 
-log(length(sum2))
-log(length(sum))
-log(length(sum2) == sum.length())
+log(vectorLength(sum2))
+log(vectorLength(sum))
+log(vectorLength(sum2) == sum.vectorLength())

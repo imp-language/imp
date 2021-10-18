@@ -55,8 +55,6 @@ public class StructPropertyAccess extends Expression {
 
         } else {
             Logger.syntaxError(Errors.PrimitiveTypePropertyAccess, "no filename", getCtx(), getCtx().getStart().getText());
-            // Todo: property access on primitive types
-            // Will need to use boxing and unboxing probably
         }
 
     }

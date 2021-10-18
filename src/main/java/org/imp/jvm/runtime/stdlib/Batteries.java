@@ -26,9 +26,6 @@ public class Batteries {
     public static void log() {
         System.out.println();
     }
-//    public static void log_none() {
-//        System.out.println();
-//    }
 
     public static int _int(float f) {
         return (int) f;
@@ -93,5 +90,10 @@ public class Batteries {
     public static void write(String filename, String content) throws IOException {
         Path fileName = Path.of(filename);
         Files.writeString(fileName, content);
+    }
+
+
+    public static int length(String s) {
+        return s.length();
     }
 }

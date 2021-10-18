@@ -7,6 +7,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
+import org.imp.jvm.expression.AssignmentExpression;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.expression.Literal;
@@ -186,10 +187,16 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             block.scope = new Scope(scope);
 
             return new ForLoop(declaration, condition, incrementer, block);
-        } else if (conditionContext instanceof ImpParser.ForInLoopConditionContext) {
+        } else if (conditionContext instanceof ImpParser.ForInLoopConditionContext forInCtx) {
             // loop val item, idx in list { }
-            System.err.println("loop val item, idx in list { }");
-            System.exit(122);
+            String iterator = forInCtx.identifier().getText();
+            Expression expression = forInCtx.expression().accept(expressionVisitor);
+            expression.setCtx(forInCtx.expression());
+            Block block = (Block) ctx.block().accept(this);
+            var forInLoop = new ForInLoop(iterator, expression, block);
+            forInLoop.setCtx(forInCtx);
+
+            return forInLoop;
 
         } else if (conditionContext instanceof ImpParser.WhileLoopConditionContext) {
             // loop someExpression() == true { }
@@ -236,20 +243,12 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
 
-
-
     @Override
-    public AssignmentStatement visitAssignment(ImpParser.AssignmentContext ctx) {
+    public AssignmentExpression visitAssignment(ImpParser.AssignmentContext ctx) {
         Expression recipient = ctx.expression(0).accept(expressionVisitor);
         Expression provider = ctx.expression(1).accept(expressionVisitor);
 
-        // recipient must be an identifier or a property access expression
-
-
-//        String name = ctx.identifier().getText();
-//        Expression expression = ctx.expression().accept(expressionVisitor);
-//        return new Assignment(name, expression);
-        return new AssignmentStatement(recipient, provider);
+        return new AssignmentExpression(recipient, provider);
     }
 
 

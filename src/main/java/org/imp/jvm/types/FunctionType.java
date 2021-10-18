@@ -94,7 +94,7 @@ public class FunctionType implements Type {
     }
 
     @Override
-    public int getSubstractOpcode() {
+    public int getSubtractOpcode() {
         return 0;
     }
 
