@@ -48,6 +48,7 @@ public class Compiler {
 
 
         var program = API.createProgram(compilationSet);
+        Timer.log("generate bytecode");
         Timer.logTotalTime();
 
         return entry.getClassName() + "/" + "Entry";

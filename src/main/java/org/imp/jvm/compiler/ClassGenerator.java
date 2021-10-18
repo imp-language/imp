@@ -86,7 +86,6 @@ public class ClassGenerator {
 
 
 
-        // Todo: add fields for closure variables
         for (var field : closureParams) {
             Type type = field.type;
             String descriptor = type.getDescriptor();
@@ -137,7 +136,7 @@ public class ClassGenerator {
 
         List<Function> functions = new ArrayList<>();
 
-        assert structType.fields != null; // Todo: code smell
+        assert structType.fields != null;
 
         addConstructor(structType.parent, classWriter, structType.fields, structType);
 
@@ -145,13 +144,7 @@ public class ClassGenerator {
         for (var field : structType.fields) {
             Type type = field.type;
             String descriptor = type.getDescriptor();
-            Object defaultValue = null;
-            if (type instanceof BuiltInType) {
-                defaultValue = type.getDefaultValue();
-            }
-
-            // Todo: fix
-            defaultValue = null;
+            Object defaultValue = null; // currently not supported
 
             FieldVisitor fieldVisitor = classWriter.visitField(Opcodes.ACC_PUBLIC, field.name, descriptor, null, defaultValue);
             fieldVisitor.visitEnd();

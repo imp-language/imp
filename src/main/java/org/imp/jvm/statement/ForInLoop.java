@@ -13,15 +13,15 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class ForInLoop extends Loop {
-    public final String iterator;
+    public final String iteratorName;
     public final Expression expression;
     public final Block block;
 
     private Class<?> expressionClass;
 
-    public ForInLoop(String iterator, Expression expression, Block block) {
+    public ForInLoop(String iteratorName, Expression expression, Block block) {
         super(block);
-        this.iterator = iterator;
+        this.iteratorName = iteratorName;
         this.expression = expression;
         this.block = block;
     }
@@ -48,6 +48,8 @@ public class ForInLoop extends Loop {
             return;
         }
 
+        block.scope = new Scope(scope);
+
         // Todo: unique names so we can have multiple for-in loops in a scope.
         block.scope.addLocalVariable(new LocalVariable("iterator", BuiltInType.OBJECT));
         // Set the type of the iterator variable
@@ -56,7 +58,7 @@ public class ForInLoop extends Loop {
             iteratorType = listType.contentType;
         }
 
-        block.scope.addLocalVariable(new LocalVariable(iterator, iteratorType));
+        block.scope.addLocalVariable(new LocalVariable(iteratorName, iteratorType));
 
         block.validate(block.scope);
 
@@ -81,13 +83,15 @@ public class ForInLoop extends Loop {
         mv.visitVarInsn(Opcodes.ALOAD, iteratorIndex);
 
         mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true);
-        int nextIndex = block.scope.getLocalVariableIndex(iterator);
-        LocalVariable i = block.scope.getLocalVariable(iterator);
+        int nextIndex = block.scope.getLocalVariableIndex(iteratorName);
+        LocalVariable i = block.scope.getLocalVariable(iteratorName);
         if (i.type instanceof BuiltInType bt) {
             bt.doUnboxing(mv);
+        } else {
+//            mv.visitTypeInsn(Opcodes.CHECKCAST, i.type.getInternalName());
         }
 
-        mv.visitVarInsn(Opcodes.ASTORE, nextIndex);
+        mv.visitVarInsn(i.type.getStoreVariableOpcode(), nextIndex);
 
         block.generate(mv, block.scope);
 

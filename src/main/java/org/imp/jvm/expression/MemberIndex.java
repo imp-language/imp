@@ -44,6 +44,10 @@ public class MemberIndex extends Expression {
 
         this.overload.setType(expressionType);
 
+        if (this.overload.type instanceof ListType listType) {
+            this.overload.setType(listType.contentType);
+        }
+
 
         // Or error if indexing is not supported for the type
         if (this.overload == null) {
@@ -53,6 +57,7 @@ public class MemberIndex extends Expression {
         // Set type of the expression
         this.overload.validate(scope);
         this.type = this.overload.type;
+
 
     }
 

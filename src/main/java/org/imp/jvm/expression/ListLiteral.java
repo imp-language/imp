@@ -32,7 +32,6 @@ public class ListLiteral extends Literal {
             mv.visitLdcInsn(i);
             Expression el = elements.get(i);
             el.generate(mv, scope);
-            // Todo: cast bad
             if (el.type instanceof BuiltInType builtInType) {
                 builtInType.doBoxing(mv);
             }

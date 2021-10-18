@@ -188,6 +188,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitPropertyAccessExpression(ImpParser.PropertyAccessExpressionContext ctx) {
         Expression structExpr = ctx.expression().accept(this);
+        // Todo: make more useful, remove cast
         VariableReference structRef = (VariableReference) structExpr;
 
 

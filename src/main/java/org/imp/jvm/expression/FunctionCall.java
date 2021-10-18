@@ -166,10 +166,11 @@ public class FunctionCall extends Expression {
         for (int i = 0; i < arguments.size(); i++) {
             mv.visitInsn(Opcodes.DUP);
             mv.visitLdcInsn(i);
-            arguments.get(i).generate(mv, scope);
-            // Todo: cast bad
-            BuiltInType bt = (BuiltInType) arguments.get(i).type;
-            bt.doBoxing(mv);
+            var arg = arguments.get(i);
+            arg.generate(mv, scope);
+            if (arg.type instanceof BuiltInType bt) {
+                bt.doBoxing(mv);
+            }
             mv.visitInsn(Opcodes.AASTORE);
         }
     }

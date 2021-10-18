@@ -1,29 +1,34 @@
-
-
-val stringList = ["Matt", "Hall", "Long word"]
-
-for word in stringList {
-    log(word, length(word))
-
-}
-
-
-
-
 /*
-struct Type {
-    field int
-}
 
-val a = new Type(0)
+val immutable = 42
 
-val list = [a]
-log(list)
+mut mutable = "myChangingString"
 
-
-
-
-
+log(immutable)
+log(mutable)
 
 
 */
+
+
+val integerList = [0,1,2,3,4,5]
+
+val sum = 0
+for i in integerList {
+    log(i)
+    sum = sum + i
+}
+log("sum:",sum)
+
+val words = ["List", "of", "words", "Hello", "world"]
+val shortestWord = words[0]
+val shortestLength = length(shortestWord)
+for i in words {
+    log(i)
+    if length(i) < shortestLength {
+        shortestLength = length(i)
+        shortestWord = i
+    }
+}
+
+log(shortestLength, shortestWord)

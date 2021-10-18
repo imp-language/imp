@@ -20,6 +20,9 @@ public class ListOverloads extends OperatorOverload {
 
         if (type instanceof BuiltInType bt) {
             bt.doUnboxing(mv);
+        } else {
+
+            mv.visitTypeInsn(Opcodes.CHECKCAST, type.getInternalName());
         }
 
     }
