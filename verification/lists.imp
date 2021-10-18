@@ -13,3 +13,25 @@ log(stringList[1])
 
 // Create a list of objects
 // Todo
+
+
+// Loop through lists
+val integerList = [0,1,2,3,4,5]
+val sum = 0
+for i in integerList {
+    log(i)
+    sum = sum + i
+}
+log("sum:",sum)
+
+val words = ["List", "of", "words", "Hello", "world"]
+val shortestWord = words[0]
+val shortestLength = length(shortestWord)
+for i in words {
+    log(i)
+    if length(i) < shortestLength {
+        shortestLength = length(i)
+        shortestWord = i
+    }
+}
+log(shortestLength, shortestWord)
