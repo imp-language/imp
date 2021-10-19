@@ -1,4 +1,5 @@
 
+
 val immutable = 42
 
 mut mutable = "myChangingString"
@@ -8,10 +9,12 @@ log(mutable)
 
 mutable = string(347)
 
+/*
+
+
 log(immutable)
 log(mutable)
 
-/*
 
 */
 

@@ -54,6 +54,7 @@ public enum Errors {
             "Variable `{0}` is immutable and cannot receive assignment."),
     IncompatibleAssignment(18, "Check that both sides of the assignment have the same type.",
             "Variable `{0}` of type `{1}` cannot accept assignment of type `{2}`.")
+
     //
     ;
 
