@@ -6,7 +6,6 @@ package org.imp.jvm.runtime.stdlib;
  */
 @SuppressWarnings("unused")
 public class Process {
-    // Todo: the error code does not propagate through the ImpAPI runner.
     // Not a big deal, just fix eventually.
     public static void exit(int code) {
         System.exit(code);
