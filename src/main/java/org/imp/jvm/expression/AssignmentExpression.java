@@ -1,16 +1,18 @@
 package org.imp.jvm.expression;
 
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.ClosureReference;
 import org.imp.jvm.expression.reference.LocalReference;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.Mutability;
 import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-// todo: combine logic with AssignmentStatement
 public class AssignmentExpression extends Expression {
     public final Expression recipient;
     public final Expression provider;
@@ -19,6 +21,25 @@ public class AssignmentExpression extends Expression {
         this.recipient = recipient;
         this.provider = provider;
     }
+
+    @Override
+    public void validate(Scope scope) {
+        recipient.validate(scope);
+        // Check mutability
+        if (recipient instanceof VariableReference variableReference) {
+            if (variableReference.reference instanceof LocalReference localReference) {
+                if (localReference.localVariable.mutability == Mutability.Val) {
+                    Logger.syntaxError(Errors.MutabilityError, "no filename", recipient.getCtx(), recipient.getCtx().getText());
+                }
+            }
+        }
+        provider.validate(scope);
+        // Check type compatibility
+        if (!recipient.type.equals(provider.type)) {
+            Logger.syntaxError(Errors.IncompatibleAssignment, "no filename", recipient.getCtx(), recipient.getCtx().getText(), recipient.type, provider.type);
+        }
+    }
+
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
@@ -65,11 +86,6 @@ public class AssignmentExpression extends Expression {
         }
     }
 
-    @Override
-    public void validate(Scope scope) {
-        recipient.validate(scope);
-        provider.validate(scope);
-    }
 
     private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {
         // Todo: this does not work

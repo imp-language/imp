@@ -80,7 +80,6 @@ public class API {
 
 
 
-    // Todo: recursion
     public static Map<String, ImpFile> gatherImports(ImpFile entry) {
         String basePath = FilenameUtils.getPath(entry.name);
 

@@ -30,7 +30,6 @@ public enum Errors {
             "Constructor call for struct `{0}` does not provide values for all fields in the struct."),
     FunctionNotFound(7, "Make sure to define or import all functions being called.",
             "No functions named `{0}` exist in the current scope."),
-    // Todo: print attempted signature or available signatures instead
     FunctionSignatureMismatch(8, "Check the parameter positions and types of the called function.",
             "No function overloads exist on `{0}` that match the parameters `{1}`."),
     LocalVariableNotFound(9, "Make sure all variables referenced in this file are defined or imported.",
@@ -50,7 +49,11 @@ public enum Errors {
     ListTypeError(15, "Lists may contain elements of only one type.",
             "Variable of type `{0}` cannot be added to a list with type `{1}`."),
     CannotIterate(16, "For-in loops only work on iterables like Lists and Strings.",
-            "Expression `{0}` is not iterable.")
+            "Expression `{0}` is not iterable."),
+    MutabilityError(17, "Declare a variable with the `mut` keyword to allow mutability.",
+            "Variable `{0}` is immutable and cannot receive assignment."),
+    IncompatibleAssignment(18, "Check that both sides of the assignment have the same type.",
+            "Variable `{0}` of type `{1}` cannot accept assignment of type `{2}`.")
     //
     ;
 

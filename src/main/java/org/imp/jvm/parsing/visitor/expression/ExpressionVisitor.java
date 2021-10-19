@@ -160,7 +160,9 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitAssignmentExpression(ImpParser.AssignmentExpressionContext ctx) {
         Expression recipient = ctx.expression(0).accept(this);
+        recipient.setCtx(ctx.expression(0));
         Expression provider = ctx.expression(1).accept(this);
+        provider.setCtx(ctx.expression(1));
         return new AssignmentExpression(recipient, provider);
     }
 

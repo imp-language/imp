@@ -25,8 +25,18 @@ public class Declaration extends Statement {
 
 
     @Override
+    public void validate(Scope scope) {
+        expression.validate(scope);
+        localVariable = new LocalVariable(name, expression.type, mutability);
+        localVariable.type = expression.type;
+
+        scope.addLocalVariable(localVariable);
+    }
+
+
+    @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        
+
         if (localVariable.closure) {
             // Generate the box
             String ownerDescriptor = "org/imp/jvm/runtime/Box";
@@ -40,8 +50,6 @@ public class Declaration extends Statement {
                 System.err.println("Boxing isn't supported for custom types.");
                 System.exit(27);
             }
-
-//            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
 
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "(Ljava/lang/Object;)V", false);
 
@@ -58,29 +66,10 @@ public class Declaration extends Statement {
             castIfNecessary(type, localVariableType, mv);
 
 
-//            if (expression instanceof ListLiteral) {
-//
-//            } else {
             mv.visitVarInsn(type.getStoreVariableOpcode(), index);
-//            }
-//          return;
         }
     }
 
-    @Override
-    public void validate(Scope scope) {
-        expression.validate(scope);
-        localVariable = new LocalVariable(name, expression.type);
-        localVariable.type = expression.type;
-        
-        scope.addLocalVariable(localVariable);
-
-//        VariableReference varRef = new VariableReference(name);
-
-//        varRef.validate(scope);
-
-
-    }
 
     private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {
         if (!expressionType.equals(variableType)) {

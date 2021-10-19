@@ -3,16 +3,16 @@
 
 log("declarations")
 
-val i = 0
+mut i = 0
 log(i)
 
-val f = 0.0
+mut f = 0.0
 log(f)
 
-val b = false
+mut b = false
 log(b)
 
-val s = "string"
+mut s = "string"
 log(s)
 
 log("")
@@ -31,17 +31,17 @@ s = s + " variable" + " a"
 log(s)
 
 log("\nnegatives")
-val neg_i = -1
+mut neg_i = -1
 log(neg_i)
 neg_i = neg_i + -23
 log(neg_i)
 
-val neg_f = -1.0
+mut neg_f = -1.0
 log(neg_f)
 neg_f++
 log(neg_f)
 
-val neg_d = -1.0d
+mut neg_d = -1.0d
 log(neg_d)
 neg_d = neg_d + 346.0d
 log(neg_d)

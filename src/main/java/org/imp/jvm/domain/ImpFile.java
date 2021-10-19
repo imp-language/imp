@@ -89,9 +89,6 @@ public class ImpFile {
         }
 
 
-        // 3. Secure variable mutability
-        // Todo: immutability
-
         // 4. Validate imports
 
 

@@ -24,13 +24,12 @@ public class Runner {
         processBuilder.inheritIO();
         Process process = processBuilder.start();
 
-        process.waitFor();
+        int status = process.waitFor();
+        if (status != 0) System.err.println("Process finished with exit code " + status);
     }
 
-    // Todo: migrate Verifier to use Runner.run() instead of Runner.spawn()
     public static Process spawn(String className) throws IOException {
         String cmd = "java --enable-preview -cp .compile" + System.getProperty("path.separator") + "target/classes " + className;
-        Process proc = Runtime.getRuntime().exec(cmd);
-        return proc;
+        return Runtime.getRuntime().exec(cmd);
     }
 }
