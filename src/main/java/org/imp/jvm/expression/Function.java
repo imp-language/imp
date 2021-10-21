@@ -2,8 +2,12 @@ package org.imp.jvm.expression;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.compiler.DescriptorFactory;
+import org.imp.jvm.compiler.Logger;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Return;
 import org.imp.jvm.statement.Statement;
@@ -23,11 +27,14 @@ public class Function extends Expression {
     public final List<Identifier> parameters;
     public final Type returnType;
 
-    public final FunctionType functionType;
+    public FunctionType functionType;
 
     public final Modifier modifier;
 
     public boolean isStandard = false;
+
+    public String name;
+    private ImpFile parent;
 
     public Function(
             FunctionType functionType,
@@ -42,6 +49,24 @@ public class Function extends Expression {
         this.functionType = functionType;
         this.parameters = parameters;
         this.returnType = returnType;
+    }
+
+    public Function(
+            Modifier modifier, String name,
+            List<Identifier> parameters,
+            Type returnType,
+            Block block,
+            ImpFile parent
+    ) {
+        super();
+        this.modifier = modifier;
+        this.name = name;
+        this.parameters = parameters;
+        this.returnType = returnType;
+        this.block = block;
+        this.parent = parent;
+
+        this.functionType = null;
     }
 
 
@@ -96,8 +121,34 @@ public class Function extends Expression {
     @Override
     public void validate(Scope scope) {
         assert block != null;
-        block.validate(block.scope);
 
+
+        functionType = scope.findFunctionType(name);
+        // If no FunctionTypes of name exist on the current scope,
+        if (functionType == null) {
+            // Create a new FunctionType and add it to the scope
+            functionType = new FunctionType(name, parent);
+            scope.functionTypes.add(functionType);
+        }
+
+        if (functionType.signatures.containsKey(Function.getDescriptor(parameters))) {
+            Logger.syntaxError(Errors.DuplicateFunctionOverloads, this, name);
+            return;
+        } else {
+            functionType.signatures.put(Function.getDescriptor(parameters), this);
+
+        }
+
+        if (name != null && !name.equals("main")) {
+
+            Scope newScope = new Scope(scope);
+            newScope.functionType = functionType;
+            parameters.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
+            block.scope = newScope;
+            //            block.validate(newScope);
+        } else {
+//            block.validate(block.scope);
+        }
 
     }
 

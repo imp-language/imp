@@ -85,12 +85,15 @@ public class ImpFile {
 
         // 2. Recursively type-check the body of each function
         for (var f : functions) {
-            f.validate(null);
+            f.validate(main.block.scope);
+        }
+        for (var f : functions) {
+            f.block.validate(f.block.scope);
         }
 
 
         // 4. Validate imports
-
+        var b = 0;
 
     }
 

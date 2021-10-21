@@ -2,14 +2,11 @@ package org.imp.jvm.parsing.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
-import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
@@ -229,9 +226,54 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
          *
          */
 
+        // Is the function exported?
+        Modifier modifier = Modifier.NONE;
+        if (ctx.modifiers() != null) {
+            modifier = Modifier.fromString(ctx.modifiers().getText());
+        }
 
+        // The original name of the function
         String name = ctx.identifier().getText();
 
+        // Arguments of the function
+        List<Identifier> arguments = new ArrayList<>();
+        ImpParser.ArgumentsContext argumentsContext = ctx.arguments();
+        if (argumentsContext != null) {
+            arguments = argumentsContext.accept(new ArgumentsVisitor(scope, parent));
+        }
+
+        // Block of the function
+        ImpParser.BlockContext blockContext = ctx.block();
+        Block block;
+        if (blockContext.statementList() != null) {
+            List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
+
+            // Add parameters as local variables to the scope of the function block
+//            Scope newScope = new Scope(scope);
+//            newScope.functionType = null;
+//            arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
+
+            StatementVisitor statementVisitor = new StatementVisitor(scope, parent);
+            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
+            block = new Block(statements, scope);
+        } else {
+            block = new Block();
+        }
+
+
+        // Return type (or void)
+        var typeContext = ctx.type();
+        Type returnType = BuiltInType.VOID;
+        if (typeContext.size() > 0) {
+            returnType = TypeResolver.getFromTypeContext(typeContext.get(0), scope);
+        }
+
+
+        Function function = new Function(modifier, name, arguments, returnType, block, parent);
+        function.setCtx(ctx, parent.name);
+        return function;
+
+        /*
         FunctionType functionType = scope.findFunctionType(name);
 
         // If no FunctionTypes of name exist on the current scope,
@@ -242,45 +284,8 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         }
 
 
-        // Arguments
-        List<Identifier> arguments = new ArrayList<>();
-        ImpParser.ArgumentsContext argumentsContext = ctx.arguments();
-        if (argumentsContext != null) {
-            arguments = argumentsContext.accept(new ArgumentsVisitor(scope, parent));
-        }
-
-        // Block
-        ImpParser.BlockContext blockContext = ctx.block();
-        Block block;
-        if (blockContext.statementList() != null) {
-            List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
-
-            // Add parameters as local variables to the scope of the function block
-            Scope newScope = new Scope(scope);
-            newScope.functionType = functionType;
-            arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
-
-            StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
-            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
-            block = new Block(statements, newScope);
-        } else {
-            block = new Block();
-        }
 
 
-        // Return type
-        var typeContext = ctx.type();
-        Type returnType = BuiltInType.VOID;
-        if (typeContext.size() > 0) {
-            // ToDo: parse multiple returns
-            returnType = TypeResolver.getFromTypeContext(typeContext.get(0), scope);
-        }
-
-        Modifier modifier = Modifier.NONE;
-        if (ctx.modifiers() != null) {
-            modifier = Modifier.fromString(ctx.modifiers().getText());
-
-        }
 
         // Don't allow multiple definitions with same signature
         Function function = new Function(functionType, arguments, returnType, block, modifier);
@@ -293,6 +298,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         }
 
         return function;
+        */
     }
 
 
