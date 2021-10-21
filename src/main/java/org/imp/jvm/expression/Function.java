@@ -145,9 +145,6 @@ public class Function extends Expression {
             newScope.functionType = functionType;
             parameters.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
             block.scope = newScope;
-            //            block.validate(newScope);
-        } else {
-//            block.validate(block.scope);
         }
 
     }

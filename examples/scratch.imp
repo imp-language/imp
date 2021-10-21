@@ -1,33 +1,16 @@
 //import "lib/test"
 
-/*
 func returnsInt() int {
-    // return 4
+    return 4
     log("a")
 }
 
 
 val a = returnsInt()
 
+
+
+/*
+
 */
 
-mut g = 42
-mut h = 17
-log("g before: " + g)
-log("h before: " + h)
-
-func modifyG() {
-    g = 14
-    h = 2
-    log("g during: " + g)
-    log("h during: " + h)
-}
-
-
-modifyG()
-
-log("g after: " + g)
-log("h after: " + h)
-
-val k = 2 + g
-log(k)

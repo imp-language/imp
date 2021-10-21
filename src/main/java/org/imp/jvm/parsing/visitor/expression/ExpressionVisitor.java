@@ -212,9 +212,8 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
     @Override
     public Function visitFunction(ImpParser.FunctionContext ctx) {
-        // Todo: too much happens here. There's a validation step for this reason.
         /*
-         * New plan:
+         * Function analysis plan:
          *
          * In the parser:
          * - Get name and parameters.
@@ -244,22 +243,13 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         // Block of the function
         ImpParser.BlockContext blockContext = ctx.block();
-        Block block;
+        Block block = new Block();
         if (blockContext.statementList() != null) {
             List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
-
-            // Add parameters as local variables to the scope of the function block
-//            Scope newScope = new Scope(scope);
-//            newScope.functionType = null;
-//            arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
-
             StatementVisitor statementVisitor = new StatementVisitor(scope, parent);
             List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
             block = new Block(statements, scope);
-        } else {
-            block = new Block();
         }
-
 
         // Return type (or void)
         var typeContext = ctx.type();
@@ -272,33 +262,6 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         Function function = new Function(modifier, name, arguments, returnType, block, parent);
         function.setCtx(ctx, parent.name);
         return function;
-
-        /*
-        FunctionType functionType = scope.findFunctionType(name);
-
-        // If no FunctionTypes of name exist on the current scope,
-        if (functionType == null) {
-            // Create a new FunctionType and add it to the scope
-            functionType = new FunctionType(name, parent);
-            scope.functionTypes.add(functionType);
-        }
-
-
-
-
-
-        // Don't allow multiple definitions with same signature
-        Function function = new Function(functionType, arguments, returnType, block, modifier);
-        function.setCtx(ctx, parent.name);
-        if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
-            Logger.syntaxError(Errors.DuplicateFunctionOverloads, function, ctx.identifier().getText());
-        } else {
-            functionType.signatures.put(Function.getDescriptor(function.parameters), function);
-
-        }
-
-        return function;
-        */
     }
 
 
