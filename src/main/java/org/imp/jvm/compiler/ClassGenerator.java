@@ -74,7 +74,7 @@ public class ClassGenerator {
             closureParams.add(identifier);
         }
 //        var closureParams = scope.closures.values().stream().map(lv -> new Identifier(lv.getName(), BuiltInType.BOX)).collect(Collectors.toList());
-        var closure = new Function(closureType, closureParams, BuiltInType.VOID, new Block());
+        var closure = new Function(closureType, closureParams, BuiltInType.VOID, new Block(), Modifier.NONE);
 
         int i = 1;
         for (var c : closureParams) {

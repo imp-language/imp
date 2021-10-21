@@ -1,8 +1,8 @@
-import "lib/test"
+//import "lib/test"
 
-func voidFunc() {
-    log("reee")
+func returnsInt() {
+    return 4
 }
 
 
-val a = voidFunc()
+returnsInt()

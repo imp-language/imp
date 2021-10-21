@@ -44,19 +44,6 @@ public class Function extends Expression {
         this.returnType = returnType;
     }
 
-    public Function(
-            FunctionType functionType,
-            List<Identifier> parameters,
-            Type returnType,
-            Block block
-    ) {
-        super();
-        this.modifier = null;
-        this.block = block;
-        this.functionType = functionType;
-        this.parameters = parameters;
-        this.returnType = returnType;
-    }
 
     public Function(
             FunctionType functionType,
@@ -108,7 +95,10 @@ public class Function extends Expression {
 
     @Override
     public void validate(Scope scope) {
-        block.validate(scope);
+        assert block != null;
+        block.validate(block.scope);
+
+
     }
 
 

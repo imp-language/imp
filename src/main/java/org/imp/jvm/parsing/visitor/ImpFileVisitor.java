@@ -44,7 +44,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         var mainFunctionType = new FunctionType("main", impFile);
         var main = new Function(mainFunctionType,
                 new ArrayList<>(),
-                BuiltInType.VOID, new Block());
+                BuiltInType.VOID, new Block(), Modifier.NONE);
 
         Identifier varArgs = new Identifier();
         varArgs.type = BuiltInType.STRING_ARR;

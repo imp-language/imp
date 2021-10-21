@@ -215,6 +215,21 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
     @Override
     public Function visitFunction(ImpParser.FunctionContext ctx) {
+        // Todo: too much happens here. There's a validation step for this reason.
+        /*
+         * New plan:
+         *
+         * In the parser:
+         * - Get name and parameters.
+         * - Create Function instance.
+         *
+         * In the validator:
+         * - Find (or create) a FunctionType that matches the name
+         * - Add the Function to the FunctionType
+         *
+         */
+
+
         String name = ctx.identifier().getText();
 
         FunctionType functionType = scope.findFunctionType(name);

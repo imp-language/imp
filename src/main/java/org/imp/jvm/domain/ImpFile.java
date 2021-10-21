@@ -85,7 +85,7 @@ public class ImpFile {
 
         // 2. Recursively type-check the body of each function
         for (var f : functions) {
-            f.block.validate(f.block.scope);
+            f.validate(null);
         }
 
 

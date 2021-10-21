@@ -8,6 +8,7 @@ import org.imp.jvm.expression.EmptyExpression;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.Modifier;
 import org.imp.jvm.types.StructType;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -21,7 +22,7 @@ public class Constructor extends Function {
     public final StructType structType;
 
     public Constructor(StructType structType, FunctionType functionType, List<Identifier> parameters, Block block) {
-        super(functionType, parameters, BuiltInType.VOID, block);
+        super(functionType, parameters, BuiltInType.VOID, block, Modifier.NONE);
         this.structType = structType;
     }
 
