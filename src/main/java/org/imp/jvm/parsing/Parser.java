@@ -38,10 +38,9 @@ public class Parser {
 
         ParseTree parseTree = parser.program();
         String name = FilenameUtils.separatorsToUnix(FilenameUtils.removeExtension(file.getPath()));
-        ImpFile ast = parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(name)));
 
 
-        return ast;
+        return parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(name)));
     }
 
     public static ImpFile getAbstractSyntaxTree(String content) {
@@ -55,8 +54,7 @@ public class Parser {
         parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 
         ParseTree parseTree = parser.program();
-        ImpFile ast = parseTree.accept(new ImpFileVisitor("repl"));
-        return ast;
+        return parseTree.accept(new ImpFileVisitor("repl"));
     }
 
 

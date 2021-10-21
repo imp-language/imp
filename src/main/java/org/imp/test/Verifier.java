@@ -3,7 +3,6 @@ package org.imp.test;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.tool.Compiler;
-import org.imp.jvm.tool.API;
 import org.imp.jvm.tool.Runner;
 
 import java.io.BufferedReader;

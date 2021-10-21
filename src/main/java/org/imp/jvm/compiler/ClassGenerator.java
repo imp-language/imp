@@ -134,7 +134,6 @@ public class ClassGenerator {
 
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
-        List<Function> functions = new ArrayList<>();
 
         assert structType.fields != null;
 

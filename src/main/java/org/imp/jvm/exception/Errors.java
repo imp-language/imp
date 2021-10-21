@@ -7,9 +7,6 @@ import org.imp.jvm.statement.Statement;
 
 import java.text.MessageFormat;
 
-import static com.diogonunes.jcolor.Ansi.colorize;
-import static com.diogonunes.jcolor.Attribute.TEXT_COLOR;
-
 
 public enum Errors {
     ImplementationError(-1, "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers.",

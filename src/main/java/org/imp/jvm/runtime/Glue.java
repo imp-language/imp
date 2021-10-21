@@ -58,11 +58,7 @@ public class Glue {
         }
 
         var r = TypeResolver.getBuiltInTypeByClass(method.getReturnType());
-        if (r.isPresent()) {
-            Function function = new Function(functionType, identifiers, r.get(), true);
-            return function;
-        }
-        return null;
+        return r.map(builtInType -> new Function(functionType, identifiers, builtInType, true)).orElse(null);
     }
 
 

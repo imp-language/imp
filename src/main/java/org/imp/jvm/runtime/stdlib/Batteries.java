@@ -40,8 +40,7 @@ public class Batteries {
     }
 
     public static int _int(String s) {
-        int i = Integer.parseInt(s);
-        return i;
+        return Integer.parseInt(s);
     }
 
     public static float _float(int i) {
@@ -72,8 +71,7 @@ public class Batteries {
      */
     public static String read(String filename) throws IOException {
         Path fileName = Path.of(filename);
-        String content = Files.readString(fileName);
-        return content;
+        return Files.readString(fileName);
     }
 
     public static String read() throws IOException {

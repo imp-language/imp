@@ -7,11 +7,6 @@ import org.objectweb.asm.Opcodes;
 public record UnknownType(String name) implements Type {
 
 
-//
-//    private static final Map<String, String> shortcuts = HashMap.of(
-//            "List", "java.util.ArrayList"
-//    );
-
     @Override
     public String toString() {
         return "<unknown>";

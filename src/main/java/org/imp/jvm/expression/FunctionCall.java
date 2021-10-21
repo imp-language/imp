@@ -272,10 +272,6 @@ public class FunctionCall extends Expression {
                 }
             }
         }
-        if (functionType != null) return functionType;
-
-
-
-        return null;
+        return functionType;
     }
 }

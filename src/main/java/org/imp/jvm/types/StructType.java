@@ -45,8 +45,7 @@ public class StructType implements Type {
      * @return type of struct field if fieldName exists in this struct
      */
     public static Optional<Identifier> findStructField(StructType st, String fieldName) {
-        Optional<Identifier> identifier = st.fields.stream().filter(id -> id.name.equals(fieldName)).findFirst();
-        return identifier;
+        return st.fields.stream().filter(id -> id.name.equals(fieldName)).findFirst();
     }
 
     /**

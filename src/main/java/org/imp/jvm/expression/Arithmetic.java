@@ -74,8 +74,13 @@ public class Arithmetic extends Expression {
                 case SUBTRACT -> goalType.getSubtractOpcode();
                 case MULTIPLY -> goalType.getMultiplyOpcode();
                 case DIVIDE -> goalType.getDivideOpcode();
-
-                default -> goalType.getAddOpcode();
+                // Todo: Modulus
+                case MODULUS -> 0;
+                case LESS -> 0;
+                case GREATER -> 0;
+                case LESS_OR_EQUAL -> 0;
+                case GRATER_OR_EQAL -> 0;
+                case INDEX -> 0;
             };
             mv.visitInsn(op);
         }

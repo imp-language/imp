@@ -20,8 +20,6 @@ import static com.diogonunes.jcolor.Attribute.*;
 public class REPL {
     public final String START_MESSAGE = "Welcome to Imp v0.0.1 on JVM";
     public final String HELP_MESSAGE = "Type `help` for more information.";
-    private final String PROMPT = "> ";
-    private final String INDENT = ".... ";
 
     private final Scanner s;
 
@@ -55,6 +53,7 @@ public class REPL {
 
     private ImpFile read() {
 //        List<String> statementLines = new ArrayList<>();
+        String PROMPT = "> ";
         System.out.print(colorize(PROMPT, YELLOW_TEXT()));
 
         ImpFile impFile = null;
@@ -68,6 +67,7 @@ public class REPL {
                 impFile = parse(joinedLines);
                 Object b = null;
             } catch (Exception e) {
+                String INDENT = ".... ";
                 System.out.print(colorize(INDENT, YELLOW_TEXT()));
             }
 

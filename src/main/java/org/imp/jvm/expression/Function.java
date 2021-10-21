@@ -79,6 +79,7 @@ public class Function extends Expression {
         return List.of(block);
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     static public String getDescriptor(List<Identifier> identifiers) {
         String params = identifiers.stream().map(parameters -> parameters.type.getDescriptor())
                 .collect(Collectors.joining(", "));

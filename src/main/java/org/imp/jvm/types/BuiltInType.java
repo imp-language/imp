@@ -123,7 +123,6 @@ public enum BuiltInType implements Type {
 
     @Override
     public OperatorOverload getOperatorOverload(Operator operator) {
-        OperatorOverload overload = null;
         if (this == STRING) {
             if (operator == Operator.INDEX) {
                 return new StringOverloads();
