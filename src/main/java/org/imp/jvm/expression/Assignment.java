@@ -13,11 +13,11 @@ import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class AssignmentExpression extends Expression {
+public class Assignment extends Expression {
     public final Expression recipient;
     public final Expression provider;
 
-    public AssignmentExpression(Expression recipient, Expression provider) {
+    public Assignment(Expression recipient, Expression provider) {
         this.recipient = recipient;
         this.provider = provider;
     }
@@ -29,14 +29,14 @@ public class AssignmentExpression extends Expression {
         if (recipient instanceof VariableReference variableReference) {
             if (variableReference.reference instanceof LocalReference localReference) {
                 if (localReference.localVariable.mutability == Mutability.Val) {
-                    Logger.syntaxError(Errors.MutabilityError, "no filename", recipient.getCtx(), recipient.getCtx().getText());
+                    Logger.syntaxError(Errors.MutabilityError, recipient, recipient.getCtx().getText());
                 }
             }
         }
         provider.validate(scope);
         // Check type compatibility
         if (!recipient.type.equals(provider.type)) {
-            Logger.syntaxError(Errors.IncompatibleAssignment, "no filename", recipient.getCtx(), recipient.getCtx().getText(), recipient.type, provider.type);
+            Logger.syntaxError(Errors.IncompatibleAssignment, recipient, recipient.getCtx().getText(), recipient.type, provider.type);
         }
     }
 

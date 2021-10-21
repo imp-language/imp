@@ -68,7 +68,7 @@ public class FunctionCall extends Expression {
 
         // If not found at all, error
         if (functionType == null) {
-            Logger.syntaxError(Errors.FunctionNotFound, owner.name, getCtx(), getCtx().getStart().getText());
+            Logger.syntaxError(Errors.FunctionNotFound, this, getCtx().getStart().getText());
             return;
         }
 
@@ -81,7 +81,7 @@ public class FunctionCall extends Expression {
         }
         this.function = functionType.getSignatureByTypes(this.argTypes);
         if (this.function == null) {
-            Logger.syntaxError(Errors.FunctionSignatureMismatch, owner.name, getCtx(), getCtx().getStart().getText(), getCtx().getText());
+            Logger.syntaxError(Errors.FunctionSignatureMismatch, this, getCtx().getStart().getText(), getCtx().getText());
             return;
         }
         this.type = function.returnType;

@@ -1,9 +1,10 @@
 package org.imp.jvm.statement;
 
+import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
-import org.imp.jvm.expression.ListLiteral;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Mutability;
 import org.imp.jvm.types.Type;
@@ -27,10 +28,17 @@ public class Declaration extends Statement {
     @Override
     public void validate(Scope scope) {
         expression.validate(scope);
+
+        if (expression.type == BuiltInType.VOID) {
+            Logger.syntaxError(Errors.VoidAssignment, this, this.name, expression.type);
+            return;
+        }
+
         localVariable = new LocalVariable(name, expression.type, mutability);
         localVariable.type = expression.type;
 
         scope.addLocalVariable(localVariable);
+
     }
 
 

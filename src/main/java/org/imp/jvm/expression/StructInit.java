@@ -49,7 +49,7 @@ public class StructInit extends Expression {
     public void validate(Scope scope) {
         var st = scope.getStruct(structName);
         if (st == null) {
-            Logger.syntaxError(Errors.TypeNotFound, "no filename", getCtx(), getCtx().getStop().getText());
+            Logger.syntaxError(Errors.TypeNotFound, this, getCtx().getStop().getText());
 
         } else {
             this.type = st;
@@ -57,7 +57,7 @@ public class StructInit extends Expression {
 
             assert st.fields != null;
             if (arguments.size() != st.fields.size()) {
-                Logger.syntaxError(Errors.StructConstructorMismatch, "no filename", getCtx(), getCtx().getText());
+                Logger.syntaxError(Errors.StructConstructorMismatch, this, getCtx().getText());
             }
         }
     }

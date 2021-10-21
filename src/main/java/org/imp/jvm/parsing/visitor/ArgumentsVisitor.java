@@ -3,9 +3,11 @@ package org.imp.jvm.parsing.visitor;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.compiler.Logger;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
+import org.imp.jvm.statement.Empty;
 import org.imp.jvm.types.TypeResolver;
 
 import java.util.ArrayList;
@@ -14,9 +16,11 @@ import java.util.List;
 public class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
 
     public final Scope scope;
+    private final ImpFile parent;
 
-    public ArgumentsVisitor(Scope scope) {
+    public ArgumentsVisitor(Scope scope, ImpFile parent) {
         this.scope = scope;
+        this.parent = parent;
     }
 
     @Override
@@ -37,7 +41,8 @@ public class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
             }
         } catch (Error err) {
             arguments = new ArrayList<>();
-            Logger.syntaxError(Errors.TypeNotFound, "no filename", ctx, ctx.getStop().getText());
+            Empty empty = new Empty(ctx, parent.name);
+            Logger.syntaxError(Errors.TypeNotFound, empty, ctx.getStop().getText());
 
         }
 

@@ -10,7 +10,7 @@ public class PostIncrement extends Expression {
     public final Expression expression;
     public final Operator op;
 
-    private AssignmentExpression assignmentExpression;
+    private Assignment assignment;
 
     public PostIncrement(Expression expression, Operator op) {
         this.expression = expression;
@@ -19,7 +19,7 @@ public class PostIncrement extends Expression {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        assignmentExpression.generate(mv, scope);
+        assignment.generate(mv, scope);
     }
 
     @Override
@@ -29,9 +29,9 @@ public class PostIncrement extends Expression {
             var one = new Literal(expression.type, "1");
             one.validate(scope);
             var incrementer = new Arithmetic(expression, one, op);
-            this.assignmentExpression = new AssignmentExpression(expression, incrementer);
+            this.assignment = new Assignment(expression, incrementer);
         } else {
-            Logger.syntaxError(Errors.IncrementInvalidType, "no filename", getCtx(), getCtx().getText());
+            Logger.syntaxError(Errors.IncrementInvalidType, this, getCtx().getText());
         }
     }
 }

@@ -7,7 +7,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
-import org.imp.jvm.expression.AssignmentExpression;
+import org.imp.jvm.expression.Assignment;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.expression.Literal;
@@ -62,7 +62,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         var modulePath = ctx.stringLiteral().accept(literalVisitor);
 
         var importStatement = new Import(modulePath, scope);
-        importStatement.setCtx(ctx);
+        importStatement.setCtx(ctx, parent.name);
         return importStatement;
     }
 
@@ -73,7 +73,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         var identifier = ctx.identifier().getText();
 
         var importStatement = new Import(modulePath, scope, identifier);
-        importStatement.setCtx(ctx);
+        importStatement.setCtx(ctx, parent.name);
         return importStatement;
     }
 
@@ -106,14 +106,14 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             ImpParser.IdentifierContext identifierContext = fCtx.identifier();
 
             if (typeContext == null || typeContext.getText().length() < 1) {
-                Logger.syntaxError(Errors.MissingFieldType, parent.name, identifierContext, ctx.getText(), Errors.getLocation(ctx.getStart()));
+                Logger.syntaxError(Errors.MissingFieldType, new Empty(identifierContext, parent.name), ctx.getText(), Errors.getLocation(ctx.getStart()));
             }
             Type t = TypeResolver.getTemporaryType(typeContext);
 
 
             String n = identifierContext.getText();
             var field = new Identifier(n, t);
-            field.setCtx(fCtx);
+            field.setCtx(fCtx, parent.name);
             fields.add(field);
         }
 
@@ -124,7 +124,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
         // Create struct object
         Struct struct = new Struct(structType);
-        struct.setCtx(ctx);
+        struct.setCtx(ctx, parent.name);
 
         // Add struct to scope
         // Todo: do this for enums?
@@ -191,10 +191,10 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             // loop val item, idx in list { }
             String iterator = forInCtx.identifier().getText();
             Expression expression = forInCtx.expression().accept(expressionVisitor);
-            expression.setCtx(forInCtx.expression());
+            expression.setCtx(forInCtx.expression(), parent.name);
             Block block = (Block) ctx.block().accept(this);
             var forInLoop = new ForInLoop(iterator, expression, block);
-            forInLoop.setCtx(forInCtx);
+            forInLoop.setCtx(forInCtx, parent.name);
 
             return forInLoop;
 
@@ -232,6 +232,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             Expression expression = variableInitializeContext.expression().accept(expressionVisitor);
             String name = variableInitializeContext.identifier().getText();
             declaration = new Declaration(mutability, name, expression);
+            declaration.setCtx(ctx, parent.name);
 //            scope.addLocalVariable(new LocalVariable(name, expression.type));
 
         } else {
@@ -244,13 +245,13 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
 
 
     @Override
-    public AssignmentExpression visitAssignment(ImpParser.AssignmentContext ctx) {
+    public Assignment visitAssignment(ImpParser.AssignmentContext ctx) {
         Expression recipient = ctx.expression(0).accept(expressionVisitor);
-        recipient.setCtx(ctx.expression(0));
+        recipient.setCtx(ctx.expression(0), parent.name);
         Expression provider = ctx.expression(1).accept(expressionVisitor);
-        provider.setCtx(ctx.expression(1));
+        provider.setCtx(ctx.expression(1), parent.name);
 
-        return new AssignmentExpression(recipient, provider);
+        return new Assignment(recipient, provider);
     }
 
 
@@ -272,7 +273,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         }
         EnumType enumType = new EnumType(name, elements);
         Enum enumStatement = new Enum(enumType);
-        enumStatement.setCtx(ctx);
+        enumStatement.setCtx(ctx, parent.name);
         return enumStatement;
     }
 }

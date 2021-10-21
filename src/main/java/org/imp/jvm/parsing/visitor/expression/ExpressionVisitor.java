@@ -47,7 +47,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public VariableReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
         var vr = new VariableReference(name, parent);
-        vr.setCtx(ctx);
+        vr.setCtx(ctx, parent.name);
 
         return vr;
     }
@@ -76,9 +76,9 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitLogicalExpression(ImpParser.LogicalExpressionContext ctx) {
         Expression left = ctx.expression(0).accept(this);
-        left.setCtx(ctx.expression(0));
+        left.setCtx(ctx.expression(0), parent.name);
         Expression right = ctx.expression(1).accept(this);
-        right.setCtx(ctx.expression(1));
+        right.setCtx(ctx.expression(1), parent.name);
 
         Logical.LogicalOperator logicalOperator = Logical.LogicalOperator.AND;
         if (ctx.OR() != null) {
@@ -108,7 +108,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         // Function Call
         FunctionCall call = new FunctionCall(functionName, argExpressions, parent);
-        call.setCtx(ctx);
+        call.setCtx(ctx, parent.name);
 
         return call;
 
@@ -152,7 +152,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         var expression = ctx.expression().accept(this);
 
         var postIncrementExpression = new PostIncrement(expression, op);
-        postIncrementExpression.setCtx(ctx.expression());
+        postIncrementExpression.setCtx(ctx.expression(), parent.name);
         return postIncrementExpression;
 
     }
@@ -160,10 +160,10 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitAssignmentExpression(ImpParser.AssignmentExpressionContext ctx) {
         Expression recipient = ctx.expression(0).accept(this);
-        recipient.setCtx(ctx.expression(0));
+        recipient.setCtx(ctx.expression(0), parent.name);
         Expression provider = ctx.expression(1).accept(this);
-        provider.setCtx(ctx.expression(1));
-        return new AssignmentExpression(recipient, provider);
+        provider.setCtx(ctx.expression(1), parent.name);
+        return new Assignment(recipient, provider);
     }
 
     @Override
@@ -183,7 +183,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         }
 
         var si = new StructInit(structName, expressions, null);
-        si.setCtx(ctx.identifier());
+        si.setCtx(ctx.identifier(), parent.name);
         return si;
     }
 
@@ -201,7 +201,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         List<Identifier> fieldPath = new ArrayList<>();
         for (var e : fieldPathCtx) {
             var ident = new Identifier(e.getText(), new UnknownType(e.getText()));
-            ident.setCtx(e);
+            ident.setCtx(e, parent.name);
             fieldPath.add(ident);
         }
 
@@ -209,7 +209,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         // This could be an attempt to reference fields that do not exist.
         // Validation of the field path is performed later.
         StructPropertyAccess access = new StructPropertyAccess(structRef, fieldPath);
-        access.setCtx(ctx);
+        access.setCtx(ctx, parent.name);
         return access;
     }
 
@@ -231,7 +231,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         List<Identifier> arguments = new ArrayList<>();
         ImpParser.ArgumentsContext argumentsContext = ctx.arguments();
         if (argumentsContext != null) {
-            arguments = argumentsContext.accept(new ArgumentsVisitor(scope));
+            arguments = argumentsContext.accept(new ArgumentsVisitor(scope, parent));
         }
 
         // Block
@@ -269,9 +269,9 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         // Don't allow multiple definitions with same signature
         Function function = new Function(functionType, arguments, returnType, block, modifier);
-        function.setCtx(ctx);
+        function.setCtx(ctx, parent.name);
         if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
-            Logger.syntaxError(Errors.DuplicateFunctionOverloads, parent.name, ctx.identifier(), ctx.identifier().getText());
+            Logger.syntaxError(Errors.DuplicateFunctionOverloads, function, ctx.identifier().getText());
         } else {
             functionType.signatures.put(Function.getDescriptor(function.parameters), function);
 
@@ -297,7 +297,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
 
         var memberIndex = new MemberIndex(expression, index);
-        memberIndex.setCtx(ctx);
+        memberIndex.setCtx(ctx, parent.name);
         return memberIndex;
     }
 }

@@ -54,7 +54,7 @@ public class StructPropertyAccess extends Expression {
 
 
         } else {
-            Logger.syntaxError(Errors.PrimitiveTypePropertyAccess, "no filename", getCtx(), getCtx().getStart().getText());
+            Logger.syntaxError(Errors.PrimitiveTypePropertyAccess, this, getCtx().getStart().getText());
         }
 
     }

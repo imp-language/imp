@@ -75,7 +75,7 @@ public class ImpFile {
             for (var f : s.fields) {
                 Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
                 if (t == null) {
-                    Logger.syntaxError(Errors.TypeNotFound, this.name, f.getCtx(), f.getCtx().getStop().getText());
+                    Logger.syntaxError(Errors.TypeNotFound, f, f.getCtx().getStop().getText());
 
                 }
                 f.type = t;

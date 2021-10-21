@@ -44,7 +44,7 @@ public class ForInLoop extends Loop {
             System.err.println("String for-in loops Todo.");
             // Todo
         } else {
-            Logger.syntaxError(Errors.CannotIterate, "no filename", this.getCtx(), this.expression.getCtx().getText());
+            Logger.syntaxError(Errors.CannotIterate, this, this.expression.getCtx().getText());
             return;
         }
 

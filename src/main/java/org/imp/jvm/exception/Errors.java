@@ -3,6 +3,7 @@ package org.imp.jvm.exception;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.imp.jvm.statement.Statement;
 
 import java.text.MessageFormat;
 
@@ -53,7 +54,9 @@ public enum Errors {
     MutabilityError(17, "Declare a variable with the `mut` keyword to allow mutability.",
             "Variable `{0}` is immutable and cannot receive assignment."),
     IncompatibleAssignment(18, "Check that both sides of the assignment have the same type.",
-            "Variable `{0}` of type `{1}` cannot accept assignment of type `{2}`.")
+            "Variable `{0}` of type `{1}` cannot accept assignment of type `{2}`."),
+    VoidAssignment(19, "You cannot store the result of a void expression.",
+            "Variable `{0}` cannot accept assignment of type `{1}`.")
 
     //
     ;
@@ -78,7 +81,9 @@ public enum Errors {
         return line + ":" + col;
     }
 
-    public String template(String filename, ParserRuleContext ctx, Object... varargs) {
+    public String template(Statement statement, Object... varargs) {
+        ParserRuleContext ctx = statement.getCtx();
+        String filename = statement.getFilename();
         filename += ".imp";
         if (ctx != null) {
             Token token = ctx.getStart();
