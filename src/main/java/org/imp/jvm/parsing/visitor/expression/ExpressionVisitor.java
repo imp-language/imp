@@ -2,14 +2,11 @@ package org.imp.jvm.parsing.visitor.expression;
 
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
-import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.CompareSign;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
@@ -47,7 +44,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     public VariableReference visitIdentifierReferenceExpression(ImpParser.IdentifierReferenceExpressionContext ctx) {
         String name = ctx.getText();
         var vr = new VariableReference(name, parent);
-        vr.setCtx(ctx);
+        vr.setCtx(ctx, parent.name);
 
         return vr;
     }
@@ -76,9 +73,9 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitLogicalExpression(ImpParser.LogicalExpressionContext ctx) {
         Expression left = ctx.expression(0).accept(this);
-        left.setCtx(ctx.expression(0));
+        left.setCtx(ctx.expression(0), parent.name);
         Expression right = ctx.expression(1).accept(this);
-        right.setCtx(ctx.expression(1));
+        right.setCtx(ctx.expression(1), parent.name);
 
         Logical.LogicalOperator logicalOperator = Logical.LogicalOperator.AND;
         if (ctx.OR() != null) {
@@ -108,7 +105,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         // Function Call
         FunctionCall call = new FunctionCall(functionName, argExpressions, parent);
-        call.setCtx(ctx);
+        call.setCtx(ctx, parent.name);
 
         return call;
 
@@ -152,7 +149,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         var expression = ctx.expression().accept(this);
 
         var postIncrementExpression = new PostIncrement(expression, op);
-        postIncrementExpression.setCtx(ctx.expression());
+        postIncrementExpression.setCtx(ctx.expression(), parent.name);
         return postIncrementExpression;
 
     }
@@ -160,10 +157,10 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
     @Override
     public Expression visitAssignmentExpression(ImpParser.AssignmentExpressionContext ctx) {
         Expression recipient = ctx.expression(0).accept(this);
-        recipient.setCtx(ctx.expression(0));
+        recipient.setCtx(ctx.expression(0), parent.name);
         Expression provider = ctx.expression(1).accept(this);
-        provider.setCtx(ctx.expression(1));
-        return new AssignmentExpression(recipient, provider);
+        provider.setCtx(ctx.expression(1), parent.name);
+        return new Assignment(recipient, provider);
     }
 
     @Override
@@ -183,7 +180,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         }
 
         var si = new StructInit(structName, expressions, null);
-        si.setCtx(ctx.identifier());
+        si.setCtx(ctx.identifier(), parent.name);
         return si;
     }
 
@@ -201,7 +198,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         List<Identifier> fieldPath = new ArrayList<>();
         for (var e : fieldPathCtx) {
             var ident = new Identifier(e.getText(), new UnknownType(e.getText()));
-            ident.setCtx(e);
+            ident.setCtx(e, parent.name);
             fieldPath.add(ident);
         }
 
@@ -209,74 +206,61 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         // This could be an attempt to reference fields that do not exist.
         // Validation of the field path is performed later.
         StructPropertyAccess access = new StructPropertyAccess(structRef, fieldPath);
-        access.setCtx(ctx);
+        access.setCtx(ctx, parent.name);
         return access;
     }
 
     @Override
     public Function visitFunction(ImpParser.FunctionContext ctx) {
-        String name = ctx.identifier().getText();
+        /*
+         * Function analysis plan:
+         *
+         * In the parser:
+         * - Get name and parameters.
+         * - Create Function instance.
+         *
+         * In the validator:
+         * - Find (or create) a FunctionType that matches the name
+         * - Add the Function to the FunctionType
+         *
+         */
 
-        FunctionType functionType = scope.findFunctionType(name);
-
-        // If no FunctionTypes of name exist on the current scope,
-        if (functionType == null) {
-            // Create a new FunctionType and add it to the scope
-            functionType = new FunctionType(name, parent);
-            scope.functionTypes.add(functionType);
-        }
-
-
-        // Arguments
-        List<Identifier> arguments = new ArrayList<>();
-        ImpParser.ArgumentsContext argumentsContext = ctx.arguments();
-        if (argumentsContext != null) {
-            arguments = argumentsContext.accept(new ArgumentsVisitor(scope));
-        }
-
-        // Block
-        ImpParser.BlockContext blockContext = ctx.block();
-        Block block;
-        if (blockContext.statementList() != null) {
-            List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
-
-            // Add parameters as local variables to the scope of the function block
-            Scope newScope = new Scope(scope);
-            newScope.functionType = functionType;
-            arguments.forEach(param -> newScope.addLocalVariable(new LocalVariable(param.name, param.type)));
-
-            StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
-            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
-            block = new Block(statements, newScope);
-        } else {
-            block = new Block();
-        }
-
-
-        // Return type
-        var typeContext = ctx.type();
-        Type returnType = BuiltInType.VOID;
-        if (typeContext.size() > 0) {
-            // ToDo: parse multiple returns
-            returnType = TypeResolver.getFromTypeContext(typeContext.get(0), scope);
-        }
-
+        // Is the function exported?
         Modifier modifier = Modifier.NONE;
         if (ctx.modifiers() != null) {
             modifier = Modifier.fromString(ctx.modifiers().getText());
-
         }
 
-        // Don't allow multiple definitions with same signature
-        Function function = new Function(functionType, arguments, returnType, block, modifier);
-        function.setCtx(ctx);
-        if (functionType.signatures.containsKey(Function.getDescriptor(function.parameters))) {
-            Logger.syntaxError(Errors.DuplicateFunctionOverloads, parent.name, ctx.identifier(), ctx.identifier().getText());
-        } else {
-            functionType.signatures.put(Function.getDescriptor(function.parameters), function);
+        // The original name of the function
+        String name = ctx.identifier().getText();
 
+        // Arguments of the function
+        List<Identifier> arguments = new ArrayList<>();
+        ImpParser.ArgumentsContext argumentsContext = ctx.arguments();
+        if (argumentsContext != null) {
+            arguments = argumentsContext.accept(new ArgumentsVisitor(scope, parent));
         }
 
+        // Block of the function
+        ImpParser.BlockContext blockContext = ctx.block();
+        Block block = new Block();
+        if (blockContext.statementList() != null) {
+            List<ImpParser.StatementContext> blockStatementsCtx = blockContext.statementList().statement();
+            StatementVisitor statementVisitor = new StatementVisitor(scope, parent);
+            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
+            block = new Block(statements, scope);
+        }
+
+        // Return type (or void)
+        var typeContext = ctx.type();
+        Type returnType = BuiltInType.VOID;
+        if (typeContext.size() > 0) {
+            returnType = TypeResolver.getFromTypeContext(typeContext.get(0), scope);
+        }
+
+
+        Function function = new Function(modifier, name, arguments, returnType, block, parent);
+        function.setCtx(ctx, parent.name);
         return function;
     }
 
@@ -297,7 +281,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
 
         var memberIndex = new MemberIndex(expression, index);
-        memberIndex.setCtx(ctx);
+        memberIndex.setCtx(ctx, parent.name);
         return memberIndex;
     }
 }

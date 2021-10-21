@@ -72,7 +72,7 @@ public class Logical extends Expression {
             mv.visitLabel(endLabel);
 
         } else {
-            Logger.syntaxError(Errors.ImplementationError, "no filename", left.getCtx());
+            Logger.syntaxError(Errors.ImplementationError, left);
         }
 
     }
@@ -83,10 +83,10 @@ public class Logical extends Expression {
         right.validate(scope);
 
         if (left.type != BuiltInType.BOOLEAN) {
-            Logger.syntaxError(Errors.LogicalOperationInvalidType, "no filename", left.getCtx(), left.getCtx().getText());
+            Logger.syntaxError(Errors.LogicalOperationInvalidType, left, left.getCtx().getText());
         }
         if (right.type != BuiltInType.BOOLEAN) {
-            Logger.syntaxError(Errors.LogicalOperationInvalidType, "no filename", right.getCtx(), right.getCtx().getText());
+            Logger.syntaxError(Errors.LogicalOperationInvalidType, right, right.getCtx().getText());
         }
     }
 

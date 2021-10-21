@@ -1,10 +1,7 @@
 package org.imp.jvm.tool;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ClassPathUtils;
 import picocli.CommandLine;
 
-import java.io.File;
 import java.io.IOException;
 
 @CommandLine.Command(name = "imp")
@@ -23,7 +20,7 @@ public class CLI {
     boolean usageHelpRequested;
 
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) {
         CLI cli = CommandLine.populateCommand(new CLI(), args);
 
         if (cli.usageHelpRequested) {
@@ -42,13 +39,10 @@ public class CLI {
             System.out.println("Bundling.");
         } else {
 
-            switch (cli.filename) {
-                case "init":
-                    cli.initNewProject();
-                    break;
-                default:
-                    cli.handleInput();
-                    break;
+            if ("init".equals(cli.filename)) {
+                cli.initNewProject();
+            } else {
+                cli.handleInput();
             }
         }
 

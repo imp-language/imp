@@ -11,10 +11,6 @@ import java.util.stream.Collectors;
 public final class DescriptorFactory {
 
 
-//    public static String getMethodDescriptor(Function function) {
-//        return getMethodDescriptor(function.signature);
-//    }
-
     public static String getMethodDescriptor(Function signature) {
         Collection<Identifier> parameters = signature.parameters;
         Type returnType = signature.returnType;

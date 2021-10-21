@@ -9,13 +9,19 @@ import java.util.Optional;
 
 public abstract class Statement {
     private ParserRuleContext ctx;
+    private String filename;
 
-    public void setCtx(ParserRuleContext ctx) {
+    public void setCtx(ParserRuleContext ctx, String filename) {
         this.ctx = ctx;
+        this.filename = filename;
     }
 
     public ParserRuleContext getCtx() {
         return Optional.ofNullable(this.ctx).orElseThrow();
+    }
+
+    public String getFilename() {
+        return Optional.ofNullable(this.filename).orElseThrow();
     }
 
     public abstract void generate(MethodVisitor mv, Scope scope);

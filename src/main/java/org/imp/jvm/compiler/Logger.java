@@ -1,7 +1,7 @@
 package org.imp.jvm.compiler;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.imp.jvm.exception.Errors;
+import org.imp.jvm.statement.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,8 @@ public class Logger {
 
     private static final List<String> syntaxErrors = new ArrayList<>();
 
-    public static void syntaxError(Errors error, String filename, ParserRuleContext ctx, Object... varargs) {
-        String result = error.template(filename, ctx, varargs);
+    public static void syntaxError(Errors error, Statement statement, Object... varargs) {
+        String result = error.template(statement, varargs);
         syntaxErrors.add(result);
     }
 

@@ -48,7 +48,7 @@ public class LiteralVisitor extends ImpParserBaseVisitor<Literal> {
 
 
         var listLiteral = new ListLiteral(listExpressions);
-        listLiteral.setCtx(ctx);
+        listLiteral.setCtx(ctx, "parent.name");
         return listLiteral;
     }
 

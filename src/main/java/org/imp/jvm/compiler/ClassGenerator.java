@@ -74,7 +74,7 @@ public class ClassGenerator {
             closureParams.add(identifier);
         }
 //        var closureParams = scope.closures.values().stream().map(lv -> new Identifier(lv.getName(), BuiltInType.BOX)).collect(Collectors.toList());
-        var closure = new Function(closureType, closureParams, BuiltInType.VOID, new Block());
+        var closure = new Function(closureType, closureParams, BuiltInType.VOID, new Block(), Modifier.NONE);
 
         int i = 1;
         for (var c : closureParams) {
@@ -134,7 +134,6 @@ public class ClassGenerator {
 
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
-        List<Function> functions = new ArrayList<>();
 
         assert structType.fields != null;
 

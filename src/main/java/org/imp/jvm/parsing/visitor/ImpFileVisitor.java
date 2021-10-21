@@ -42,14 +42,23 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
 
         var mainFunctionType = new FunctionType("main", impFile);
-        var main = new Function(mainFunctionType,
-                new ArrayList<>(),
-                BuiltInType.VOID, new Block());
 
         Identifier varArgs = new Identifier();
         varArgs.type = BuiltInType.STRING_ARR;
         varArgs.name = "args";
-        main.parameters.add(varArgs);
+        var parameters = new ArrayList<Identifier>();
+        parameters.add(varArgs);
+
+        var main = new Function(
+                Modifier.NONE,
+                "main",
+                parameters,
+                BuiltInType.VOID,
+                new Block(),
+                impFile
+        );
+
+
         main.block.scope = staticScope;
 
         impFile.functions.add(main);
@@ -71,8 +80,6 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 //            System.out.println(s);
 
             if (s == null) {
-//                System.err.println("Parser error: " + s + " is null.");
-//                System.exit(1);
                 throw new Error("Can't find input.");
             }
 
@@ -100,8 +107,9 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         }
 
         var constructorType = new FunctionType("<init>", impFile);
-        impFile.functions.add(new Constructor(null, constructorType, Collections.emptyList(), new Block()));
-
+        var constructor = new Constructor(null, constructorType, Collections.emptyList(), new Block());
+        constructor.name = "<init>";
+        impFile.functions.add(constructor);
 
         return impFile;
     }

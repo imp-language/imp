@@ -2,7 +2,6 @@ package org.imp.jvm.types.overloads;
 
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.ListType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 

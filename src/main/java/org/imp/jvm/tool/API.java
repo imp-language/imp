@@ -1,7 +1,6 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.compiler.BytecodeGenerator;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
@@ -19,9 +18,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static com.diogonunes.jcolor.Ansi.*;
-import static com.diogonunes.jcolor.Attribute.*;
 
 
 public class API {
@@ -95,7 +91,7 @@ public class API {
             } else {
                 ImpFile ast = createSourceFile(filePath);
                 if (ast == null) {
-                    Logger.syntaxError(Errors.ModuleNotFound, entry.name, i.getCtx(), filePath);
+                    Logger.syntaxError(Errors.ModuleNotFound, i, filePath);
                     Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");
                 }
                 assert ast != null;

@@ -30,7 +30,7 @@ public class MemberIndex extends Expression {
 
         // Index has to be of int type, if not we error
         if (indexType != BuiltInType.INT) {
-            Logger.syntaxError(Errors.InvalidIndexType, "no filename", getCtx(), getCtx().getStart().getText(), indexType.getName());
+            Logger.syntaxError(Errors.InvalidIndexType, this, getCtx().getStart().getText(), indexType.getName());
             return;
         }
 
@@ -51,7 +51,7 @@ public class MemberIndex extends Expression {
 
         // Or error if indexing is not supported for the type
         if (this.overload == null) {
-            Logger.syntaxError(Errors.UnsupportedOperator, "no filename", getCtx(), "[]", getCtx().getText(), expressionType);
+            Logger.syntaxError(Errors.UnsupportedOperator, this, "[]", getCtx().getText(), expressionType);
         }
 
         // Set type of the expression

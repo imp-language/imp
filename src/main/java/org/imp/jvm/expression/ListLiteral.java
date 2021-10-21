@@ -10,7 +10,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ListLiteral extends Literal {
 
@@ -51,7 +50,7 @@ public class ListLiteral extends Literal {
 
         for (int i = 1; i < elements.size(); i++) {
             if (!elements.get(i).type.equals(firstType)) {
-                Logger.syntaxError(Errors.ListTypeError, "no filename", this.getCtx(), elements.get(i).type, firstType);
+                Logger.syntaxError(Errors.ListTypeError, this, elements.get(i).type, firstType);
             }
         }
 

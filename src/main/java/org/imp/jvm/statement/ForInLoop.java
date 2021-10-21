@@ -17,8 +17,6 @@ public class ForInLoop extends Loop {
     public final Expression expression;
     public final Block block;
 
-    private Class<?> expressionClass;
-
     public ForInLoop(String iteratorName, Expression expression, Block block) {
         super(block);
         this.iteratorName = iteratorName;
@@ -35,7 +33,7 @@ public class ForInLoop extends Loop {
         // Until the Imp type hierarchy develops, we will
         // allow for each on types that implement the Java
         // Iterable interface, and on strings.
-        this.expressionClass = expression.type.getTypeClass();
+        Class<?> expressionClass = expression.type.getTypeClass();
         if (Iterable.class.isAssignableFrom(expressionClass)) {
             // Ee know the expression is a List or some other
             // type implementing Iterable.
@@ -44,7 +42,7 @@ public class ForInLoop extends Loop {
             System.err.println("String for-in loops Todo.");
             // Todo
         } else {
-            Logger.syntaxError(Errors.CannotIterate, "no filename", this.getCtx(), this.expression.getCtx().getText());
+            Logger.syntaxError(Errors.CannotIterate, this, this.expression.getCtx().getText());
             return;
         }
 

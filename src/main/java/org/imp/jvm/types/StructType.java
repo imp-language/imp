@@ -45,8 +45,7 @@ public class StructType implements Type {
      * @return type of struct field if fieldName exists in this struct
      */
     public static Optional<Identifier> findStructField(StructType st, String fieldName) {
-        Optional<Identifier> identifier = st.fields.stream().filter(id -> id.name.equals(fieldName)).findFirst();
-        return identifier;
+        return st.fields.stream().filter(id -> id.name.equals(fieldName)).findFirst();
     }
 
     /**
@@ -69,10 +68,10 @@ public class StructType implements Type {
                 var rescursedPath = findStructField(foundStructType, fieldPath);
                 validatedPath.addAll(rescursedPath);
             } else if (fieldPath.size() > 0) {
-                Logger.syntaxError(Errors.StructFieldNotFound, parent.parent.name, fieldPath.get(0).getCtx(), fieldPath.get(0).getCtx().getText());
+                Logger.syntaxError(Errors.StructFieldNotFound, fieldPath.get(0), fieldPath.get(0).getCtx().getText());
             }
         } else {
-            Logger.syntaxError(Errors.StructFieldNotFound, parent.parent.name, first.getCtx(), first.getCtx().getText());
+            Logger.syntaxError(Errors.StructFieldNotFound, first, first.getCtx().getText());
         }
 
         return validatedPath;

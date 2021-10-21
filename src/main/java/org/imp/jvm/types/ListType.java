@@ -3,7 +3,6 @@ package org.imp.jvm.types;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.types.overloads.ListOverloads;
 import org.imp.jvm.types.overloads.OperatorOverload;
-import org.imp.jvm.types.overloads.StringOverloads;
 import org.objectweb.asm.Opcodes;
 
 public class ListType implements Type {

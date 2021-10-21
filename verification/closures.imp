@@ -1,8 +1,8 @@
 // Tests closing over external scope inside a function body.
 // These are simple examples, more complicated tests to follow.
 
-val g = 42
-val h = 17
+mut g = 42
+mut h = 17
 log("g before: " + g)
 log("h before: " + h)
 

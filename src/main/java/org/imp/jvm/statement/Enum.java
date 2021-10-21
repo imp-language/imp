@@ -2,7 +2,6 @@ package org.imp.jvm.statement;
 
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.EnumType;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
 public class Enum extends Statement {
@@ -25,10 +24,6 @@ public class Enum extends Statement {
         // accessible by the validation pass on all other statements.
     }
 
-
-    public void generate(ClassWriter cw) {
-//        throw new NotImplementedException("ree");
-    }
 
     @Override
     public String toString() {
