@@ -30,7 +30,7 @@ public class ListType implements Type {
 
     @Override
     public String getDescriptor() {
-        return null;
+        return "Ljava/util/List;";
     }
 
     @Override

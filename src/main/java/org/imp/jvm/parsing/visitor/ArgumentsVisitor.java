@@ -32,6 +32,7 @@ public class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
             for (var argCtx : argumentsCtx) {
                 var identifier = new Identifier();
                 identifier.name = argCtx.identifier().getText();
+                // Todo: type resolution should be moved to the validate() step
                 identifier.type = TypeResolver.getFromTypeContext(argCtx.type(), scope);
                 if (identifier.type == null) {
                     throw new Error("reeses");

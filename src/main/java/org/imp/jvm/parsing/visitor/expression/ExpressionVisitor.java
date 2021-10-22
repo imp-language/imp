@@ -223,6 +223,8 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
          * - Find (or create) a FunctionType that matches the name
          * - Add the Function to the FunctionType
          *
+         * Todo: walk the tree of each block and infer the return type
+         *
          */
 
         // Is the function exported?

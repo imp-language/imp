@@ -154,10 +154,10 @@ exportStatement
 
 // Type
 type
-    : (identifier | primitiveType) LBRACK RBRACK   #TypeList
-    | primitiveType         #TypePrimitive
+    : primitiveType         #TypePrimitive
     | identifier            #TypeStruct
     | anonymousTuple        #TypeAnonymousTuple
+    | (primitiveType) LBRACK RBRACK  #TypeList
     ;
 
 primitiveType

@@ -1,16 +1,13 @@
-//import "lib/test"
 
-func returnsInt() int {
-    return 4
-    log("a")
+
+val a = [0, 1, 2, 3]
+val s = ["reee", "beee", "veee", "yeee"]
+
+func takesListOfInt(listOfInt int[]) {
+    log("list")
+    log(listOfInt)
 }
 
-
-val a = returnsInt()
-
-
-
-/*
-
-*/
-
+takesListOfInt(a)
+takesListOfInt(s) // todo: this should error, it doesn't
+takesListOfInts(4)
