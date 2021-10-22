@@ -35,7 +35,7 @@ public class ExternalType implements Type {
 
     @Override
     public String getInternalName() {
-        return null;
+        return getName().replace(".", "/");
     }
 
     @Override

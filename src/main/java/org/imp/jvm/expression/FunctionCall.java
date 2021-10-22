@@ -94,6 +94,8 @@ public class FunctionCall extends Expression {
     public void generate(MethodVisitor mv, Scope scope) {
         // generate arguments
 
+        // Todo: split isStandard into an enum with Standard, Internal, and External cases.
+        // External doesn't need the closure init that Internal does.
         if (function.isStandard) {
             generateExternalCall(mv, scope);
         } else {
@@ -186,6 +188,7 @@ public class FunctionCall extends Expression {
     private void generateInternalCall(MethodVisitor mv, Scope scope) {
         // 0. If the First Class Function has not been initialized, do so.
         String localVariableName = this.name;
+
         if (!hasBeenInitialized) {
             // Initialize the first-class function closure object
             String ownerDescriptor = this.function.functionType.getInternalName();

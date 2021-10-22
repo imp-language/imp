@@ -20,8 +20,12 @@ takesListOfInts(4)
 
 type Random = extern "java.util.Random"
 
-
 val rand = new Random()
 
+log(rand)
+
+
 val randomFloat = rand.nextFloat()
+/*
 val another = nextFloat(rand)
+*/

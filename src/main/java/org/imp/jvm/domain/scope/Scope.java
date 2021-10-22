@@ -27,7 +27,6 @@ public class Scope {
 
     public final List<FunctionType> functionTypes;
 
-    private final List<StructType> structs;
 
     private final String name;
 
@@ -35,17 +34,16 @@ public class Scope {
 
     // Todo: migrate all "types" to this field
     // Types include functions, structs, external Java classes, type aliases, etc
-    private final List<Type> types;
+    private final LinkedMap<String, Type> types;
 
     // Root scopes
     public Scope() {
         this.name = "root";
         localVariables = new LinkedMap<>();
         closures = new LinkedMap<>();
-        structs = new ArrayList<>();
         functionTypes = new ArrayList<>();
         this.parentScope = null;
-        this.types = new ArrayList<>();
+        this.types = new LinkedMap<>();
     }
 
     // Scopes from parent scopes
@@ -53,15 +51,25 @@ public class Scope {
         name = scope.name + "-|";
         localVariables = scope.localVariables.clone();
         closures = new LinkedMap<>();
-        structs = scope.structs;
         functionTypes = scope.functionTypes;
         functionType = scope.functionType;
         this.parentScope = scope;
         this.types = scope.types;
     }
 
-    public void addType(Type type) {
-        this.types.add(type);
+    public void addType(String name, Type type) {
+        this.types.put(name, type);
+    }
+
+    /**
+     * Retrieves a type if it has been aliased to
+     * a name in the current scope.
+     *
+     * @param alias name of the type
+     * @return a StructType, FunctionType, or ExternalType
+     */
+    public Type getType(String alias) {
+        return types.get(alias);
     }
 
 
@@ -120,19 +128,4 @@ public class Scope {
     }
 
 
-    /**
-     * @param struct Struct to add to the current scope
-     */
-    public void addStruct(StructType struct) {
-        structs.add(struct);
-    }
-
-    /**
-     * @param name name of the Struct
-     * @return a Struct if one named name exists in the current scope
-     */
-    public StructType getStruct(String name) {
-        return structs.stream().filter(struct -> struct.identifier.name.equals(name)).findFirst()
-                .orElse(null);
-    }
 }

@@ -117,8 +117,8 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             field.setCtx(fCtx, parent.name);
             fields.add(field);
         }
-
-        var id = new Identifier(ctx.identifier().getText(), BuiltInType.STRUCT);
+        String name = ctx.identifier().getText();
+        var id = new Identifier(name, BuiltInType.STRUCT);
 
         // Create struct type object
         StructType structType = new StructType(id, fields, parent, scope);
@@ -128,8 +128,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         struct.setCtx(ctx, parent.name);
 
         // Add struct to scope
-        // Todo: do this for enums?
-        scope.addStruct(structType);
+        scope.addType(name, structType);
 
         return struct;
     }

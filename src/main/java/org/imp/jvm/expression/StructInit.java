@@ -6,6 +6,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.ExternalType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
@@ -47,18 +48,26 @@ public class StructInit extends Expression {
 
     @Override
     public void validate(Scope scope) {
-        var st = scope.getStruct(structName);
-        if (st == null) {
-            Logger.syntaxError(Errors.TypeNotFound, this, getCtx().getStop().getText());
+        var t = scope.getType(structName);
+        if (t instanceof StructType st) {
 
-        } else {
-            this.type = st;
-            arguments.forEach(expression -> expression.validate(scope));
+            if (st == null) {
+                Logger.syntaxError(Errors.TypeNotFound, this, getCtx().getStop().getText());
 
-            assert st.fields != null;
-            if (arguments.size() != st.fields.size()) {
-                Logger.syntaxError(Errors.StructConstructorMismatch, this, getCtx().getText());
+            } else {
+                this.type = st;
+                arguments.forEach(expression -> expression.validate(scope));
+
+                assert st.fields != null;
+                if (arguments.size() != st.fields.size()) {
+                    Logger.syntaxError(Errors.StructConstructorMismatch, this, getCtx().getText());
+                }
             }
+        } else if (t instanceof ExternalType et) {
+            this.type = et;
+        } else {
+            System.err.println("Type is not a struct.");
+            System.exit(998);
         }
     }
 
