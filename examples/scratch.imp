@@ -1,5 +1,5 @@
 
-
+/*
 val a = [0, 1, 2, 3]
 val s = ["reee", "beee", "veee", "yeee"]
 
@@ -11,3 +11,17 @@ func takesListOfInt(listOfInt int[]) {
 takesListOfInt(a)
 takesListOfInt(s) // todo: this should error, it doesn't
 takesListOfInts(4)
+
+
+
+*/
+
+
+
+type Random = extern "java.util.Random"
+
+
+val rand = new Random()
+
+val randomFloat = rand.nextFloat()
+val another = nextFloat(rand)

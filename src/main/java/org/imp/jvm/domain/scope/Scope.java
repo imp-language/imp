@@ -4,6 +4,7 @@ import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.expression.reference.ClosureReference;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.StructType;
+import org.imp.jvm.types.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,10 @@ public class Scope {
 
     public final Scope parentScope;
 
+    // Todo: migrate all "types" to this field
+    // Types include functions, structs, external Java classes, type aliases, etc
+    private final List<Type> types;
+
     // Root scopes
     public Scope() {
         this.name = "root";
@@ -40,6 +45,7 @@ public class Scope {
         structs = new ArrayList<>();
         functionTypes = new ArrayList<>();
         this.parentScope = null;
+        this.types = new ArrayList<>();
     }
 
     // Scopes from parent scopes
@@ -51,6 +57,11 @@ public class Scope {
         functionTypes = scope.functionTypes;
         functionType = scope.functionType;
         this.parentScope = scope;
+        this.types = scope.types;
+    }
+
+    public void addType(Type type) {
+        this.types.add(type);
     }
 
 

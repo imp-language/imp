@@ -1,5 +1,6 @@
 package org.imp.jvm.parsing.visitor.statement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.ImpParserBaseVisitor;
 import org.imp.jvm.compiler.Logger;
@@ -275,5 +276,20 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         Enum enumStatement = new Enum(enumType);
         enumStatement.setCtx(ctx, parent.name);
         return enumStatement;
+    }
+
+    @Override
+    public Statement visitTypeAliasStatement(ImpParser.TypeAliasStatementContext ctx) {
+
+        String name = ctx.identifier().getText();
+
+        String extern = ctx.stringLiteral().getText();
+        extern = StringUtils.removeStart(extern, "\"");
+        extern = StringUtils.removeEnd(extern, "\"");
+
+        var typeAlias = new TypeAlias(name, extern);
+        typeAlias.setCtx(ctx, parent.name);
+
+        return typeAlias;
     }
 }

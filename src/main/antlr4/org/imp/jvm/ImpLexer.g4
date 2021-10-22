@@ -37,6 +37,8 @@ EXPORT : 'export';
 IMPORT : 'import';
 FROM : 'from';
 AS : 'as';
+EXTERN : 'extern';
+TYPE: 'type';
 
 NEW : 'new';
 ENUM : 'enum';

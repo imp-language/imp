@@ -21,7 +21,7 @@ statement
     | variableStatement
     | exportStatement
     | enumStatement
-//    | typeAliasStatement
+    | typeAliasStatement
     ;
 
 statementList
@@ -68,6 +68,10 @@ assign_op
 // Loops
 loopStatement
     : LOOP (loopCondition)? block
+    ;
+
+typeAliasStatement
+    : TYPE identifier ASSIGN EXTERN stringLiteral
     ;
 
 loopCondition
