@@ -96,7 +96,9 @@ public class FunctionCall extends Expression {
 
         // Todo: split isStandard into an enum with Standard, Internal, and External cases.
         // External doesn't need the closure init that Internal does.
-        if (function.isStandard) {
+        if (function.kind == Function.FunctionKind.Standard) {
+            generateStandardCall(mv, scope);
+        } else if (function.kind == Function.FunctionKind.External) {
             generateExternalCall(mv, scope);
         } else {
             generateInternalCall(mv, scope);
@@ -123,6 +125,26 @@ public class FunctionCall extends Expression {
 
 
     private void generateExternalCall(MethodVisitor mv, Scope scope) {
+        System.out.println("ree");
+        // Load the instance of a Java class
+        var owner = arguments.get(0);
+        owner.generate(mv, scope);
+
+        // Generate all other method args
+        var otherArgs = arguments.subList(1, arguments.size());
+        for (var arg : otherArgs) {
+            arg.generate(mv, scope);
+        }
+
+        Type ownerType = owner.type;
+
+        String descriptor = DescriptorFactory.getMethodDescriptor(otherArgs.stream().map(a -> new Identifier("_", a.type)).collect(Collectors.toList()), function.returnType);
+
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerType.getInternalName(), this.name, descriptor, false);
+    }
+
+
+    private void generateStandardCall(MethodVisitor mv, Scope scope) {
         String owner = Batteries.class.getName().replace('.', '/');
         /*
          * Before calling the function, we must consider 3 cases:

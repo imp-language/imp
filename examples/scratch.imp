@@ -14,18 +14,23 @@ takesListOfInts(4)
 
 
 
+
 */
 
+type Math = extern "java.lang.Math"
+
+//log(Math)
+
+// Todo: recognize that sqrt is a static method
+// and use that information when validating the `sqrt(Math, int)` call
+val root = Math.sqrt(49)
 
 
+/*
 type Random = extern "java.util.Random"
 
 val rand = new Random()
-
-log(rand)
-
-
-val randomFloat = rand.nextFloat()
-/*
+val randomFloat = rand.nextInt(10)
+log(randomFloat)
 val another = nextFloat(rand)
 */

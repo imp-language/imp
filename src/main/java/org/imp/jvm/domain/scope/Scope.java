@@ -20,7 +20,6 @@ import java.util.Optional;
 public class Scope {
     private final LinkedMap<String, LocalVariable> localVariables;
 
-
     public final LinkedMap<String, ClosureReference> closures;
 
     public FunctionType functionType = null;

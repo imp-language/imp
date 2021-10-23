@@ -48,8 +48,7 @@ public class FunctionType implements Type {
     @Override
     public String toString() {
 
-        return signatures.values().stream().map(signature -> name + signature.toStringRepr())
-                .collect(Collectors.joining(", "));
+        return name;
     }
 
     @Override

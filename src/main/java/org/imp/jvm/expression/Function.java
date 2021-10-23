@@ -31,7 +31,13 @@ public class Function extends Expression {
 
     public final Modifier modifier;
 
-    public boolean isStandard = false;
+    public FunctionKind kind = FunctionKind.Internal;
+
+    public enum FunctionKind {
+        Internal,
+        External,
+        Standard
+    }
 
     public String name;
     private ImpFile parent;
@@ -74,14 +80,14 @@ public class Function extends Expression {
             FunctionType functionType,
             List<Identifier> parameters,
             Type returnType,
-            boolean isStandard
+            FunctionKind kind
     ) {
         super();
         this.modifier = null;
         this.block = null;
         this.functionType = functionType;
         this.parameters = parameters;
-        this.isStandard = isStandard;
+        this.kind = kind;
         this.returnType = returnType;
     }
 
