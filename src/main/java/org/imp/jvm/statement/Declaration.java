@@ -34,6 +34,10 @@ public class Declaration extends Statement {
             return;
         }
 
+        if (scope.variableExists(name)) {
+            Logger.syntaxError(Errors.Redeclaration, this, name);
+        }
+
         localVariable = new LocalVariable(name, expression.type, mutability);
         localVariable.type = expression.type;
 

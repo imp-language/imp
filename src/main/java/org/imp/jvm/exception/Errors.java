@@ -55,7 +55,9 @@ public enum Errors {
     VoidAssignment(19, "You cannot store the result of a void expression.",
             "Variable `{0}` cannot accept assignment of type `{1}`."),
     ExternNotFound(20, "Ensure the external type you are referencing actually exists.",
-            "External object `{0}` not found.")
+            "External object `{0}` not found."),
+    Redeclaration(21, "You cannot redeclare variables.",
+            "Redeclaration of variable `{0}`.")
 
     //
     ;

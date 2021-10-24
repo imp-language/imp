@@ -4,6 +4,7 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Arrays;
 
+// Todo: implement comparisons for floating-point types
 public enum CompareSign {
     EQUAL("==", Opcodes.IF_ICMPEQ),
     NOT_EQUAL("!=", Opcodes.IF_ICMPNE),

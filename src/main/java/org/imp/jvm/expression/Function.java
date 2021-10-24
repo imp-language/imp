@@ -42,6 +42,7 @@ public class Function extends Expression {
     public String name;
     private ImpFile parent;
 
+
     public Function(
             FunctionType functionType,
             List<Identifier> parameters,
@@ -133,7 +134,7 @@ public class Function extends Expression {
         // If no FunctionTypes of name exist on the current scope,
         if (functionType == null) {
             // Create a new FunctionType and add it to the scope
-            functionType = new FunctionType(name, parent);
+            functionType = new FunctionType(name, parent, false);
             scope.functionTypes.add(functionType);
         }
 

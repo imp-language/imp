@@ -50,6 +50,20 @@ public class FunctionCall extends Expression {
         argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
 
 
+//        if (function.isStatic) {
+//            var otherArgs = arguments.subList(1, arguments.size());
+//            for (var arg : otherArgs) {
+//                arg.validate(scope);
+//            }
+//            argTypes = otherArgs.stream().map(expression -> expression.type).collect(Collectors.toList());
+//        } else {
+//            for (var arg : arguments) {
+//                arg.validate(scope);
+//            }
+//            argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
+//        }
+
+
         /*
          * Functions are resolved in a specific order, first by name and then by parameter types.
          * The order of search by name is as follows:
@@ -79,6 +93,12 @@ public class FunctionCall extends Expression {
             this.arguments = this.arguments.subList(1, this.arguments.size());
             this.moduleClass = Glue.coreModules.get(moduleReference.name);
         }
+
+        if (functionType.isStatic) {
+            this.argTypes = this.argTypes.subList(1, this.argTypes.size());
+//            this.argTypes.add(0, null);
+        }
+
         this.function = functionType.getSignatureByTypes(this.argTypes);
         if (this.function == null) {
             Logger.syntaxError(Errors.FunctionSignatureMismatch, this, getCtx().getStart().getText(), getCtx().getText());
@@ -88,7 +108,10 @@ public class FunctionCall extends Expression {
 
 
         // Store as new local variable
-        scope.addLocalVariable(new LocalVariable(function.functionType.name, function.functionType));
+        if (!functionType.isStatic) {
+            scope.addLocalVariable(new LocalVariable(function.functionType.name, function.functionType));
+        }
+        Logger.killIfErrors("Missing variables.");
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
@@ -125,10 +148,13 @@ public class FunctionCall extends Expression {
 
 
     private void generateExternalCall(MethodVisitor mv, Scope scope) {
-        System.out.println("ree");
+        int opcode = Opcodes.INVOKESTATIC;
         // Load the instance of a Java class
         var owner = arguments.get(0);
-        owner.generate(mv, scope);
+        if (!function.functionType.isStatic) {
+            owner.generate(mv, scope);
+            opcode = Opcodes.INVOKEVIRTUAL;
+        }
 
         // Generate all other method args
         var otherArgs = arguments.subList(1, arguments.size());
@@ -140,7 +166,7 @@ public class FunctionCall extends Expression {
 
         String descriptor = DescriptorFactory.getMethodDescriptor(otherArgs.stream().map(a -> new Identifier("_", a.type)).collect(Collectors.toList()), function.returnType);
 
-        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerType.getInternalName(), this.name, descriptor, false);
+        mv.visitMethodInsn(opcode, ownerType.getInternalName(), this.name, descriptor, false);
     }
 
 

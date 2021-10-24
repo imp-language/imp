@@ -9,6 +9,7 @@ import org.imp.jvm.expression.Function;
 import org.imp.jvm.types.*;
 import org.objectweb.asm.MethodVisitor;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -51,20 +52,22 @@ public class TypeAlias extends Statement {
         // Add a new type to the scope
         ExternalType type = new ExternalType(foundClass);
         scope.addType(name, type);
-//        localVariable = new LocalVariable(name, type);
-//        scope.addLocalVariable(localVariable);
+        localVariable = new LocalVariable(name, type);
+        scope.addLocalVariable(localVariable);
 
 
         // Add all methods on the class to the scope
         var methods = foundClass.getMethods();
         for (var method : methods) {
+            int modifiers = method.getModifiers();
+            boolean isStatic = Modifier.isStatic(modifiers);
 //            System.out.println(method);
             String methodName = method.getName();
             FunctionType functionType = scope.findFunctionType(methodName);
             // If no FunctionTypes of name exist on the current scope,
             if (functionType == null) {
                 // Create a new FunctionType and add it to the scope
-                functionType = new FunctionType(methodName, null);
+                functionType = new FunctionType(methodName, null, isStatic);
                 scope.functionTypes.add(functionType);
             }
             var argumentClasses = method.getParameterTypes();
@@ -89,9 +92,10 @@ public class TypeAlias extends Statement {
                     BuiltInType bt = r.get();
                     Function function = new Function(functionType, identifiers, bt, Function.FunctionKind.External);
 
-                    function.parameters.add(0, new Identifier("_", type));
+                    if (!isStatic) {
+                        function.parameters.add(0, new Identifier("_", type));
+                    }
                     functionType.signatures.put(Function.getDescriptor(function.parameters), function);
-                    scope.functionTypes.add(functionType);
 
                 }
 

@@ -13,24 +13,25 @@ takesListOfInt(s) // todo: this should error, it doesn't
 takesListOfInts(4)
 
 
-
-
 */
 
-type Math = extern "java.lang.Math"
+mut g = 42
+mut h = 17
+log("g before: " + g)
+log("h before: " + h)
 
-//log(Math)
+func modifyG() {
+    g = 14
+    h = 2
+    log("g during: " + g)
+    log("h during: " + h)
+}
 
-// Todo: recognize that sqrt is a static method
-// and use that information when validating the `sqrt(Math, int)` call
-val root = Math.sqrt(49)
 
+modifyG()
 
-/*
-type Random = extern "java.util.Random"
+log("g after: " + g)
+log("h after: " + h)
 
-val rand = new Random()
-val randomFloat = rand.nextInt(10)
-log(randomFloat)
-val another = nextFloat(rand)
-*/
+val k = 2 + g
+log(k)

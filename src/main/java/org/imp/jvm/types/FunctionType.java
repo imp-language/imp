@@ -21,11 +21,15 @@ public class FunctionType implements Type {
 
     public final List<VariableReference> closures = new ArrayList<>();
 
-    public FunctionType(String name, ImpFile parent) {
+    public final boolean isStatic;
+
+    public FunctionType(String name, ImpFile parent, boolean isStatic) {
         this.name = name;
+        this.isStatic = isStatic;
         this.signatures = new LinkedMap<>();
         this.parent = parent;
     }
+
 
     public Function getSignatureByTypes(List<Type> argTypes) {
         if (this.name.equals("log")) {
@@ -48,7 +52,12 @@ public class FunctionType implements Type {
     @Override
     public String toString() {
 
-        return name;
+        String s = name + ", " + signatures.size() + " overloads";
+
+        if (isStatic) {
+            s += ", static";
+        }
+        return s;
     }
 
     @Override
