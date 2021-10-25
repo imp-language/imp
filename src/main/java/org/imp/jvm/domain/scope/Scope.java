@@ -3,7 +3,6 @@ package org.imp.jvm.domain.scope;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.expression.reference.ClosureReference;
 import org.imp.jvm.types.FunctionType;
-import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 
 import java.util.ArrayList;
@@ -82,11 +81,17 @@ public class Scope {
     }
 
     /**
-     * @param f string name to search for
+     * @param f        string name to search for
+     * @param isStatic
      * @return FunctionType if any functions of name `f` exist in the current scope
      */
-    public FunctionType findFunctionType(String f) {
-        return functionTypes.stream().filter(fType -> fType.name.equals(f)).findFirst().orElse(null);
+    public FunctionType findFunctionType(String f, boolean isStatic) {
+        return functionTypes.stream().filter(fType -> fType.name.equals(f) && fType.isStatic == isStatic).findFirst().orElse(null);
+
+    }
+
+    public void addFunctionType(FunctionType functionType) {
+        functionTypes.add(functionType);
     }
 
     /**

@@ -43,6 +43,10 @@ public class FunctionCall extends Expression {
 
     @Override
     public void validate(Scope scope) {
+        if (name.equals("sqrt")) {
+            System.out.println("r");
+        }
+
         // Find the types of each of the arguments
         for (var arg : arguments) {
             arg.validate(scope);
@@ -50,18 +54,7 @@ public class FunctionCall extends Expression {
         argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
 
 
-//        if (function.isStatic) {
-//            var otherArgs = arguments.subList(1, arguments.size());
-//            for (var arg : otherArgs) {
-//                arg.validate(scope);
-//            }
-//            argTypes = otherArgs.stream().map(expression -> expression.type).collect(Collectors.toList());
-//        } else {
-//            for (var arg : arguments) {
-//                arg.validate(scope);
-//            }
-//            argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
-//        }
+
 
 
         /*
@@ -258,7 +251,7 @@ public class FunctionCall extends Expression {
         mv.visitVarInsn(Opcodes.ALOAD, index);
 
         // 2. Load the variables that must be passed to the closure
-        var s = function.functionType.signatures.getValue(0).block.scope;
+        var s = function.functionType.getSignature(0).block.scope;
         List<Identifier> closureParams = new ArrayList<>();
         for (var p : s.closures.values()) {
             var identifier = new Identifier(p.getName(), BuiltInType.BOX);
@@ -296,7 +289,7 @@ public class FunctionCall extends Expression {
         if (functionType != null) return functionType;
 
         // 2. Functions defined in the current scope.
-        functionType = scope.findFunctionType(this.name);
+        functionType = scope.findFunctionType(this.name, false);
         if (functionType != null) return functionType;
 
         if (arguments.size() > 0) {

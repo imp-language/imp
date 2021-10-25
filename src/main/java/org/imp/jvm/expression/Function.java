@@ -130,19 +130,19 @@ public class Function extends Expression {
         assert block != null;
 
 
-        functionType = scope.findFunctionType(name);
+        functionType = scope.findFunctionType(name, false);
         // If no FunctionTypes of name exist on the current scope,
         if (functionType == null) {
             // Create a new FunctionType and add it to the scope
             functionType = new FunctionType(name, parent, false);
-            scope.functionTypes.add(functionType);
+            scope.addFunctionType(functionType);
         }
 
-        if (functionType.signatures.containsKey(Function.getDescriptor(parameters))) {
+        if (functionType.getSignatures().containsKey(Function.getDescriptor(parameters))) {
             Logger.syntaxError(Errors.DuplicateFunctionOverloads, this, name);
             return;
         } else {
-            functionType.signatures.put(Function.getDescriptor(parameters), this);
+            functionType.addSignature(Function.getDescriptor(parameters), this);
 
         }
 
@@ -168,15 +168,19 @@ public class Function extends Expression {
         }
         String description = DescriptorFactory.getMethodDescriptor(this);
 
-        MethodVisitor mv = cw.visitMethod(access, name, description, null, null);
-        mv.visitCode();
 
-        block.generate(mv, block.scope);
+        if (this.kind == FunctionKind.Internal) {
 
-        appendReturn(mv, block.scope);
+            MethodVisitor mv = cw.visitMethod(access, name, description, null, null);
+            mv.visitCode();
 
-        mv.visitMaxs(-1, -1);
-        mv.visitEnd();
+            block.generate(mv, block.scope);
+
+            appendReturn(mv, block.scope);
+
+            mv.visitMaxs(-1, -1);
+            mv.visitEnd();
+        }
     }
 
     private void appendReturn(MethodVisitor mv, Scope scope) {

@@ -16,7 +16,7 @@ public class FunctionType implements Type {
 
     public final String name;
     //    public final List<Function> signatures;
-    public final LinkedMap<String, Function> signatures;
+    private final LinkedMap<String, Function> signatures;
     public final ImpFile parent;
 
     public final List<VariableReference> closures = new ArrayList<>();
@@ -47,6 +47,18 @@ public class FunctionType implements Type {
      */
     public Function getSignature(String descriptor) {
         return signatures.get(descriptor);
+    }
+
+    public void addSignature(String descriptor, Function signature) {
+        signatures.put(descriptor, signature);
+    }
+
+    public Function getSignature(int pos) {
+        return signatures.getValue(pos);
+    }
+
+    public LinkedMap<String, Function> getSignatures() {
+        return signatures;
     }
 
     @Override

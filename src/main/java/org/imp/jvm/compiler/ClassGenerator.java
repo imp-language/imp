@@ -67,7 +67,7 @@ public class ClassGenerator {
 
         // Generate function closure
         var closureType = new FunctionType("closure", functionType.parent, false);
-        var scope = functionType.signatures.getValue(0).block.scope;
+        var scope = functionType.getSignature(0).block.scope;
         List<Identifier> closureParams = new ArrayList<>();
         for (var p : scope.closures.values()) {
             var identifier = new Identifier(p.getName(), BuiltInType.BOX);
@@ -104,7 +104,7 @@ public class ClassGenerator {
         }
 
         // Generate function invokers
-        var functions = functionType.signatures.values();
+        var functions = functionType.getSignatures().values();
         for (var function : functions) {
             function.generate(classWriter);
         }

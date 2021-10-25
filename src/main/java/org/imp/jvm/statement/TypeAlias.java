@@ -28,7 +28,6 @@ public class TypeAlias extends Statement {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        System.err.println();
 
     }
 
@@ -62,13 +61,25 @@ public class TypeAlias extends Statement {
             int modifiers = method.getModifiers();
             boolean isStatic = Modifier.isStatic(modifiers);
 //            System.out.println(method);
+
             String methodName = method.getName();
-            FunctionType functionType = scope.findFunctionType(methodName);
+            if (methodName.equals("sqrt")) {
+                System.out.println("r");
+            }
+
+            /**
+             * java.lang.Math.sqrt() and stdlib.math.sqrt() are conflicting.
+             * The java version is static, the imp version is not.
+             * We're currently tracking if a function is static in the function
+             * type. Instead, we must keep this in the signature.
+             */
+
+            FunctionType functionType = scope.findFunctionType(methodName, isStatic);
             // If no FunctionTypes of name exist on the current scope,
             if (functionType == null) {
                 // Create a new FunctionType and add it to the scope
                 functionType = new FunctionType(methodName, null, isStatic);
-                scope.functionTypes.add(functionType);
+                scope.addFunctionType(functionType);
             }
             var argumentClasses = method.getParameterTypes();
             var identifiers = new ArrayList<Identifier>();
@@ -95,7 +106,7 @@ public class TypeAlias extends Statement {
                     if (!isStatic) {
                         function.parameters.add(0, new Identifier("_", type));
                     }
-                    functionType.signatures.put(Function.getDescriptor(function.parameters), function);
+                    functionType.addSignature(Function.getDescriptor(function.parameters), function);
 
                 }
 

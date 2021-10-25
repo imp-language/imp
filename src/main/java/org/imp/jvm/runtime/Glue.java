@@ -77,7 +77,7 @@ public class Glue {
 
             for (var method : methods) {
                 Function function = buildImpFunctionFromJavaMethod(method, functionType);
-                functionType.signatures.put(Function.getDescriptor(function.parameters), function);
+                functionType.addSignature(Function.getDescriptor(function.parameters), function);
             }
 
             return functionType;
