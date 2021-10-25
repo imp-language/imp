@@ -5,14 +5,12 @@ import org.imp.jvm.types.overloads.ListOverloads;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Objects;
+public class ExternalType implements Type {
 
-public class ListType implements Type {
+    public final Class<?> foundClass;
 
-    public final Type contentType;
-
-    public ListType(Type contentType) {
-        this.contentType = contentType;
+    public ExternalType(Class<?> foundClass) {
+        this.foundClass = foundClass;
     }
 
     @Override
@@ -22,35 +20,22 @@ public class ListType implements Type {
 
     @Override
     public String getName() {
-        return "List<" + contentType + ">";
+        return foundClass.getName();
     }
 
     @Override
     public Class<?> getTypeClass() {
-        return java.util.List.class;
+        return foundClass;
     }
 
     @Override
     public String getDescriptor() {
-        return "Ljava/util/List;";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ListType listType = (ListType) o;
-        return contentType.equals(listType.contentType);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(contentType);
+        return foundClass.descriptorString();
     }
 
     @Override
     public String getInternalName() {
-        return null;
+        return getName().replace(".", "/");
     }
 
     @Override
@@ -100,6 +85,6 @@ public class ListType implements Type {
 
     @Override
     public OperatorOverload getOperatorOverload(Operator operator) {
-        return new ListOverloads();
+        return null;
     }
 }

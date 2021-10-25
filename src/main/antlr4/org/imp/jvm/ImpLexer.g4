@@ -32,11 +32,14 @@ FLOAT : 'float';
 CHAR : 'char';
 STRING : 'string';
 VOID : 'void';
+ANY : 'any';
 
 EXPORT : 'export';
 IMPORT : 'import';
 FROM : 'from';
 AS : 'as';
+EXTERN : 'extern';
+TYPE: 'type';
 
 NEW : 'new';
 ENUM : 'enum';
@@ -85,6 +88,7 @@ BITOR : '|';
 POW : '^';
 MOD : '%';
 FATARROW : '=>';
+VARARGS : '...';
 
 
 // Boolean Literals

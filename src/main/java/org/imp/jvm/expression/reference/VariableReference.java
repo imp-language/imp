@@ -49,8 +49,8 @@ public class VariableReference extends Expression {
             this.reference = new LocalReference(scope.getLocalVariable(name));
         }
         // If that fails, look for function names,
-        else if (scope.findFunctionType(name) != null) {
-            this.reference = new FunctionReference(scope.findFunctionType(name));
+        else if (scope.findFunctionType(name, false) != null) {
+            this.reference = new FunctionReference(scope.findFunctionType(name, false));
         }
         // Todo: check the Java interop standard lib
 
@@ -70,7 +70,7 @@ public class VariableReference extends Expression {
 
         if (reference == null) {
             Logger.syntaxError(Errors.LocalVariableNotFound, this, name);
-            Logger.killIfErrors("Missing variables.");
+//            Logger.killIfErrors("Missing variables.");
             return;
         }
 

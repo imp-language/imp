@@ -1,5 +1,24 @@
 
-// Todo, current implementation of stdlib is in Java
-export func rand() float {
+type Math = extern "java.lang.Math"
+type Random = extern "java.util.Random"
 
+
+
+export func rand() float {
+    val rand = new Random()
+    return rand.nextFloat()
 }
+
+export func rand(start int, end int) int {
+    val rand = new Random()
+    return rand.nextInt(start, end)
+}
+/*
+Todo: this don't work
+export func sqrt(f float) float {
+    // Todo
+    val d = Math.sqrt(4.0d)
+    return float(d)
+}
+
+*/

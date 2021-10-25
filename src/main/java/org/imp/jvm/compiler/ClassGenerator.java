@@ -66,8 +66,8 @@ public class ClassGenerator {
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
         // Generate function closure
-        var closureType = new FunctionType("closure", functionType.parent);
-        var scope = functionType.signatures.getValue(0).block.scope;
+        var closureType = new FunctionType("closure", functionType.parent, false);
+        var scope = functionType.getSignature(0).block.scope;
         List<Identifier> closureParams = new ArrayList<>();
         for (var p : scope.closures.values()) {
             var identifier = new Identifier(p.getName(), BuiltInType.BOX);
@@ -104,7 +104,7 @@ public class ClassGenerator {
         }
 
         // Generate function invokers
-        var functions = functionType.signatures.values();
+        var functions = functionType.getSignatures().values();
         for (var function : functions) {
             function.generate(classWriter);
         }
@@ -199,7 +199,7 @@ public class ClassGenerator {
 
 
     private void addConstructor(ImpFile parent, ClassWriter classWriter, List<Identifier> params, StructType structType) {
-        var constructorType = new FunctionType("<init>", parent);
+        var constructorType = new FunctionType("<init>", parent, false);
         Constructor constructor = new Constructor(structType, constructorType, params, new Block());
 
         constructor.generate(classWriter);

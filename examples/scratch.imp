@@ -1,16 +1,32 @@
-//import "lib/test"
-
-func returnsInt() int {
-    return 4
-    log("a")
-}
-
-
-val a = returnsInt()
-
 
 
 /*
+func takesAny(a any) {
+    log("a", a)
+}
+
+
+takesAny(4)
+takesAny("a") // Todo: allow any to accept anything
+
+
 
 */
+
+val a = [0, 1, 2, 3]
+val s = ["reee", "beee", "veee", "yeee"]
+
+func takesListOfInt(listOfInt int[], i int) {
+    //log("list")
+    //log(listOfInt)
+    for i in listOfInt {
+        //log(i + 4)
+    }
+}
+
+log(takesListOfInt(a, 0))
+//takesListOfInt(s, 99) // todo: this should error, it doesn't
+// takesListOfInt(4)
+
+
 

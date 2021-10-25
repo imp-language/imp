@@ -5,6 +5,7 @@ import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.scope.Scope;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class TypeResolver {
@@ -16,8 +17,12 @@ public class TypeResolver {
                 return builtInType.get();
             }
         } else if (typeContext instanceof ImpParser.TypeStructContext tsc) {
-            return scope.getStruct(tsc.identifier().getText());
-        } else if (typeContext instanceof ImpParser.TypeListContext) {
+            return scope.getType(tsc.identifier().getText());
+        } else if (typeContext instanceof ImpParser.TypeListContext typeListContext) {
+            Optional<BuiltInType> builtInType = getBuiltInType(typeListContext.primitiveType().getText());
+            if (builtInType.isPresent()) {
+                return new ListType(builtInType.get());
+            }
             return null;
         } else {
             System.err.println("reea");
@@ -29,7 +34,7 @@ public class TypeResolver {
         Optional<BuiltInType> builtInType = getBuiltInType(name);
         if (builtInType.isPresent()) return builtInType.get();
 
-        return scope.getStruct(name);
+        return scope.getType(name);
 
     }
 

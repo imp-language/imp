@@ -43,11 +43,18 @@ public class FunctionCall extends Expression {
 
     @Override
     public void validate(Scope scope) {
+        if (name.equals("sqrt")) {
+            System.out.println("r");
+        }
+
         // Find the types of each of the arguments
         for (var arg : arguments) {
             arg.validate(scope);
         }
         argTypes = arguments.stream().map(expression -> expression.type).collect(Collectors.toList());
+
+
+
 
 
         /*
@@ -79,22 +86,37 @@ public class FunctionCall extends Expression {
             this.arguments = this.arguments.subList(1, this.arguments.size());
             this.moduleClass = Glue.coreModules.get(moduleReference.name);
         }
+
+        if (functionType.isStatic) {
+            this.argTypes = this.argTypes.subList(1, this.argTypes.size());
+//            this.argTypes.add(0, null);
+        }
+
         this.function = functionType.getSignatureByTypes(this.argTypes);
         if (this.function == null) {
-            Logger.syntaxError(Errors.FunctionSignatureMismatch, this, getCtx().getStart().getText(), getCtx().getText());
+            String types = this.argTypes.stream().map(Object::toString).collect(Collectors.joining(", "));
+            Logger.syntaxError(Errors.FunctionSignatureMismatch, this, getCtx().getStart().getText(), types);
             return;
         }
         this.type = function.returnType;
 
 
         // Store as new local variable
-        scope.addLocalVariable(new LocalVariable(function.functionType.name, function.functionType));
+        if (!functionType.isStatic) {
+            scope.addLocalVariable(new LocalVariable(function.functionType.name, function.functionType));
+        }
+        
+        Logger.killIfErrors("Missing variables.");
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
         // generate arguments
 
-        if (function.isStandard) {
+        // Todo: split isStandard into an enum with Standard, Internal, and External cases.
+        // External doesn't need the closure init that Internal does.
+        if (function.kind == Function.FunctionKind.Standard) {
+            generateStandardCall(mv, scope);
+        } else if (function.kind == Function.FunctionKind.External) {
             generateExternalCall(mv, scope);
         } else {
             generateInternalCall(mv, scope);
@@ -121,6 +143,29 @@ public class FunctionCall extends Expression {
 
 
     private void generateExternalCall(MethodVisitor mv, Scope scope) {
+        int opcode = Opcodes.INVOKESTATIC;
+        // Load the instance of a Java class
+        var owner = arguments.get(0);
+        if (!function.functionType.isStatic) {
+            owner.generate(mv, scope);
+            opcode = Opcodes.INVOKEVIRTUAL;
+        }
+
+        // Generate all other method args
+        var otherArgs = arguments.subList(1, arguments.size());
+        for (var arg : otherArgs) {
+            arg.generate(mv, scope);
+        }
+
+        Type ownerType = owner.type;
+
+        String descriptor = DescriptorFactory.getMethodDescriptor(otherArgs.stream().map(a -> new Identifier("_", a.type)).collect(Collectors.toList()), function.returnType);
+
+        mv.visitMethodInsn(opcode, ownerType.getInternalName(), this.name, descriptor, false);
+    }
+
+
+    private void generateStandardCall(MethodVisitor mv, Scope scope) {
         String owner = Batteries.class.getName().replace('.', '/');
         /*
          * Before calling the function, we must consider 3 cases:
@@ -186,6 +231,7 @@ public class FunctionCall extends Expression {
     private void generateInternalCall(MethodVisitor mv, Scope scope) {
         // 0. If the First Class Function has not been initialized, do so.
         String localVariableName = this.name;
+
         if (!hasBeenInitialized) {
             // Initialize the first-class function closure object
             String ownerDescriptor = this.function.functionType.getInternalName();
@@ -207,7 +253,7 @@ public class FunctionCall extends Expression {
         mv.visitVarInsn(Opcodes.ALOAD, index);
 
         // 2. Load the variables that must be passed to the closure
-        var s = function.functionType.signatures.getValue(0).block.scope;
+        var s = function.functionType.getSignature(0).block.scope;
         List<Identifier> closureParams = new ArrayList<>();
         for (var p : s.closures.values()) {
             var identifier = new Identifier(p.getName(), BuiltInType.BOX);
@@ -223,15 +269,22 @@ public class FunctionCall extends Expression {
         // 4. Generate arguments for the function itself
         index = scope.getLocalVariableIndex(localVariableName);
         mv.visitVarInsn(Opcodes.ALOAD, index);
-        for (var arg : arguments) {
+        // 6. Box types if necessary
+        for (int i = 0; i < function.parameters.size(); i++) {
+            var param = function.parameters.get(i);
+            var arg = arguments.get(i);
             arg.generate(mv, scope);
+            if (arg.type instanceof BuiltInType bt && param.type != arg.type) {
+                bt.doBoxing(mv);
+            }
         }
 
         // 5. Call the appropriate invoke method on the First Class Function object
         List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
 
+
         Type returnType = this.function.returnType;
-        methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
+        methodDescriptor = DescriptorFactory.getMethodDescriptor(function.parameters, returnType);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
 
     }
@@ -245,7 +298,11 @@ public class FunctionCall extends Expression {
         if (functionType != null) return functionType;
 
         // 2. Functions defined in the current scope.
-        functionType = scope.findFunctionType(this.name);
+        boolean isStatic = false;
+
+        functionType = scope.findFunctionType(this.name, true);
+        if (functionType != null) return functionType;
+        functionType = scope.findFunctionType(this.name, false);
         if (functionType != null) return functionType;
 
         if (arguments.size() > 0) {

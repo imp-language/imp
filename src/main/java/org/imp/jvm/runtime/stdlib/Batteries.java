@@ -27,6 +27,8 @@ public class Batteries {
         System.out.println();
     }
 
+
+    // Int convertors
     public static int _int(float f) {
         return (int) f;
     }
@@ -43,12 +45,31 @@ public class Batteries {
         return Integer.parseInt(s);
     }
 
+
+    // Float convertors
     public static float _float(int i) {
         return (float) i;
     }
 
     public static float _float(String s) {
         return Float.parseFloat(s);
+    }
+
+    public static float _float(double d) {
+        return (float) d;
+    }
+
+    // Double convertors
+    public static double _double(int i) {
+        return i;
+    }
+
+    public static double _double(float f) {
+        return f;
+    }
+
+    public static double _double(String s) {
+        return Double.parseDouble(s);
     }
 
     public static String string(int i) {

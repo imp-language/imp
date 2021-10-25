@@ -21,7 +21,7 @@ public class Relational extends Expression {
 
     public void generate(MethodVisitor mv, Scope scope) {
 
-        // Currently only primitive comparisons are implemented
+        // Currently, only primitive comparisons are implemented
         generatePrimitivesComparison(mv, scope, left, right);
         Label endLabel = new Label();
         Label trueLabel = new Label();

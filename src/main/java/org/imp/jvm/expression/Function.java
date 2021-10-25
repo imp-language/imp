@@ -31,10 +31,17 @@ public class Function extends Expression {
 
     public final Modifier modifier;
 
-    public boolean isStandard = false;
+    public FunctionKind kind = FunctionKind.Internal;
+
+    public enum FunctionKind {
+        Internal,
+        External,
+        Standard
+    }
 
     public String name;
     private ImpFile parent;
+
 
     public Function(
             FunctionType functionType,
@@ -74,14 +81,14 @@ public class Function extends Expression {
             FunctionType functionType,
             List<Identifier> parameters,
             Type returnType,
-            boolean isStandard
+            FunctionKind kind
     ) {
         super();
         this.modifier = null;
         this.block = null;
         this.functionType = functionType;
         this.parameters = parameters;
-        this.isStandard = isStandard;
+        this.kind = kind;
         this.returnType = returnType;
     }
 
@@ -123,19 +130,19 @@ public class Function extends Expression {
         assert block != null;
 
 
-        functionType = scope.findFunctionType(name);
+        functionType = scope.findFunctionType(name, false);
         // If no FunctionTypes of name exist on the current scope,
         if (functionType == null) {
             // Create a new FunctionType and add it to the scope
-            functionType = new FunctionType(name, parent);
-            scope.functionTypes.add(functionType);
+            functionType = new FunctionType(name, parent, false);
+            scope.addFunctionType(functionType);
         }
 
-        if (functionType.signatures.containsKey(Function.getDescriptor(parameters))) {
+        if (functionType.getSignatures().containsKey(Function.getDescriptor(parameters))) {
             Logger.syntaxError(Errors.DuplicateFunctionOverloads, this, name);
             return;
         } else {
-            functionType.signatures.put(Function.getDescriptor(parameters), this);
+            functionType.addSignature(Function.getDescriptor(parameters), this);
 
         }
 
@@ -161,15 +168,19 @@ public class Function extends Expression {
         }
         String description = DescriptorFactory.getMethodDescriptor(this);
 
-        MethodVisitor mv = cw.visitMethod(access, name, description, null, null);
-        mv.visitCode();
 
-        block.generate(mv, block.scope);
+        if (this.kind == FunctionKind.Internal) {
 
-        appendReturn(mv, block.scope);
+            MethodVisitor mv = cw.visitMethod(access, name, description, null, null);
+            mv.visitCode();
 
-        mv.visitMaxs(-1, -1);
-        mv.visitEnd();
+            block.generate(mv, block.scope);
+
+            appendReturn(mv, block.scope);
+
+            mv.visitMaxs(-1, -1);
+            mv.visitEnd();
+        }
     }
 
     private void appendReturn(MethodVisitor mv, Scope scope) {
@@ -177,22 +188,5 @@ public class Function extends Expression {
         r.generate(mv, scope);
     }
 
-    public boolean matches(String otherSignatureName, List<Identifier> otherSignatureParameters) {
-        boolean namesAreEqual = this.functionType.name.equals(otherSignatureName);
-        if (!namesAreEqual) return false;
-
-        return doParametersMatch(parameters, otherSignatureParameters);
-    }
-
-    private boolean doParametersMatch(List<Identifier> a, List<Identifier> b) {
-        if (a.size() != b.size()) return false;
-        for (int i = 0; i < a.size(); i++) {
-            Identifier aIdent = a.get(i);
-            Identifier bIdent = b.get(i);
-            if (!aIdent.type.equals(bIdent.type)) {
-                return false;
-            }
-        }
-        return true;
-    }
+    
 }

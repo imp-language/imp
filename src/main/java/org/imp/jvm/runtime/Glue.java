@@ -58,7 +58,7 @@ public class Glue {
         }
 
         var r = TypeResolver.getBuiltInTypeByClass(method.getReturnType());
-        return r.map(builtInType -> new Function(functionType, identifiers, builtInType, true)).orElse(null);
+        return r.map(builtInType -> new Function(functionType, identifiers, builtInType, Function.FunctionKind.Standard)).orElse(null);
     }
 
 
@@ -73,11 +73,11 @@ public class Glue {
             // Some methods in the JVM implementation of `batteries` must be prefixed
             // (we use a "_") to avoid using Java reserved words like `float` or `int`.
             if (methods.get(0).getName().startsWith("_")) methodName = "_" + methodName;
-            FunctionType functionType = new FunctionType(methodName, owner);
+            FunctionType functionType = new FunctionType(methodName, owner, false);
 
             for (var method : methods) {
                 Function function = buildImpFunctionFromJavaMethod(method, functionType);
-                functionType.signatures.put(Function.getDescriptor(function.parameters), function);
+                functionType.addSignature(Function.getDescriptor(function.parameters), function);
             }
 
             return functionType;

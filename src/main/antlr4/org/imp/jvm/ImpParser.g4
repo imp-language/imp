@@ -21,7 +21,7 @@ statement
     | variableStatement
     | exportStatement
     | enumStatement
-//    | typeAliasStatement
+    | typeAliasStatement
     ;
 
 statementList
@@ -70,6 +70,10 @@ loopStatement
     : LOOP (loopCondition)? block
     ;
 
+typeAliasStatement
+    : TYPE identifier ASSIGN EXTERN stringLiteral
+    ;
+
 loopCondition
     : variableStatement SEMICOLON expression SEMICOLON expression SEMICOLON? #ForLoopCondition // val i = 0; i < 10; i++
     | identifier IN expression #ForInLoopCondition // val item, idx in list
@@ -91,7 +95,7 @@ ifStatement
 // Function definition
 function
     : modifiers? FUNCTION identifier (LT type GT)? LPAREN (arguments)? RPAREN (type)? block
-    | LPAREN (arguments)? RPAREN FATARROW block
+    | LPAREN (arguments)? RPAREN FATARROW block // not implemented yet
     ;
 
 
@@ -154,14 +158,15 @@ exportStatement
 
 // Type
 type
-    : (identifier | primitiveType) LBRACK RBRACK   #TypeList
-    | primitiveType         #TypePrimitive
+    : primitiveType         #TypePrimitive
     | identifier            #TypeStruct
     | anonymousTuple        #TypeAnonymousTuple
+    | (primitiveType) LBRACK RBRACK  #TypeList
+    | type VARARGS          #TypeVarargs
     ;
 
 primitiveType
-    : BOOL | INT | FLOAT | CHAR | STRING | VOID;
+    : BOOL | INT | FLOAT | CHAR | STRING | VOID | ANY;
 
 anonymousTuple
     : LPAREN (type (COMMA type)* COMMA?) RPAREN

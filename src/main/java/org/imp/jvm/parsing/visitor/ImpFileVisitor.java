@@ -41,7 +41,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
         var impFile = new ImpFile(filename);
 
 
-        var mainFunctionType = new FunctionType("main", impFile);
+        var mainFunctionType = new FunctionType("main", impFile, false);
 
         Identifier varArgs = new Identifier();
         varArgs.type = BuiltInType.STRING_ARR;
@@ -106,7 +106,7 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         }
 
-        var constructorType = new FunctionType("<init>", impFile);
+        var constructorType = new FunctionType("<init>", impFile, false);
         var constructor = new Constructor(null, constructorType, Collections.emptyList(), new Block());
         constructor.name = "<init>";
         impFile.functions.add(constructor);
