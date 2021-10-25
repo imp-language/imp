@@ -95,7 +95,7 @@ ifStatement
 // Function definition
 function
     : modifiers? FUNCTION identifier (LT type GT)? LPAREN (arguments)? RPAREN (type)? block
-    | LPAREN (arguments)? RPAREN FATARROW block
+    | LPAREN (arguments)? RPAREN FATARROW block // not implemented yet
     ;
 
 
@@ -162,10 +162,11 @@ type
     | identifier            #TypeStruct
     | anonymousTuple        #TypeAnonymousTuple
     | (primitiveType) LBRACK RBRACK  #TypeList
+    | type VARARGS          #TypeVarargs
     ;
 
 primitiveType
-    : BOOL | INT | FLOAT | CHAR | STRING | VOID;
+    : BOOL | INT | FLOAT | CHAR | STRING | VOID | ANY;
 
 anonymousTuple
     : LPAREN (type (COMMA type)* COMMA?) RPAREN

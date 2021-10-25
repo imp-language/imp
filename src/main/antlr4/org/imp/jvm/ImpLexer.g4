@@ -32,6 +32,7 @@ FLOAT : 'float';
 CHAR : 'char';
 STRING : 'string';
 VOID : 'void';
+ANY : 'any';
 
 EXPORT : 'export';
 IMPORT : 'import';
@@ -87,6 +88,7 @@ BITOR : '|';
 POW : '^';
 MOD : '%';
 FATARROW : '=>';
+VARARGS : '...';
 
 
 // Boolean Literals

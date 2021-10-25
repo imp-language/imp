@@ -34,11 +34,13 @@ public class FunctionType implements Type {
     public Function getSignatureByTypes(List<Type> argTypes) {
         if (this.name.equals("log")) {
             if (argTypes.size() == 0) return this.signatures.get("");
+            if (argTypes.get(0).equals(BuiltInType.VOID)) return null;
             return this.signatures.get("[Ljava/lang/Object;");
         }
         var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
         String descriptor = Function.getDescriptor(identifiers);
-        return getSignature(descriptor);
+//        return getSignature(descriptor);
+        return getSignature(argTypes);
     }
 
     /**
@@ -49,6 +51,33 @@ public class FunctionType implements Type {
         return signatures.get(descriptor);
     }
 
+    public Function getSignature(List<Type> argumentTypes) {
+        for (var function : signatures.values()) {
+//            boolean returnTypesMatch = (function.returnType != returnType);
+            boolean argTypesMatch = true;
+            if (argumentTypes.size() != function.parameters.size()) {
+                continue;
+            }
+            for (int i = 0; i < argumentTypes.size(); i++) {
+                var parameterType = argumentTypes.get(i);
+                var argumentType = function.parameters.get(i).type;
+                if (!parameterType.equals(argumentType) && argumentType != BuiltInType.ANY) {
+                    argTypesMatch = false;
+                    break;
+                }
+            }
+            boolean matchFound = argTypesMatch;
+            if (matchFound) return function;
+        }
+        return null;
+    }
+
+    /**
+     * Add a Function to the Function type
+     *
+     * @param descriptor (Ljava/lang/Object;)I would take an object and return an int, for example.
+     * @param signature  the function to add
+     */
     public void addSignature(String descriptor, Function signature) {
         signatures.put(descriptor, signature);
     }

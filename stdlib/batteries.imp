@@ -1,3 +1,5 @@
 
 
-export func log2(
+export func log2(args any[]) {
+
+}

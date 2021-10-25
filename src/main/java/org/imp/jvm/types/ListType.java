@@ -5,6 +5,8 @@ import org.imp.jvm.types.overloads.ListOverloads;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Objects;
+
 public class ListType implements Type {
 
     public final Type contentType;
@@ -31,6 +33,19 @@ public class ListType implements Type {
     @Override
     public String getDescriptor() {
         return "Ljava/util/List;";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListType listType = (ListType) o;
+        return contentType.equals(listType.contentType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contentType);
     }
 
     @Override

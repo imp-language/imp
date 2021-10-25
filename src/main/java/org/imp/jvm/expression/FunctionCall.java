@@ -94,7 +94,8 @@ public class FunctionCall extends Expression {
 
         this.function = functionType.getSignatureByTypes(this.argTypes);
         if (this.function == null) {
-            Logger.syntaxError(Errors.FunctionSignatureMismatch, this, getCtx().getStart().getText(), getCtx().getText());
+            String types = this.argTypes.stream().map(Object::toString).collect(Collectors.joining(", "));
+            Logger.syntaxError(Errors.FunctionSignatureMismatch, this, getCtx().getStart().getText(), types);
             return;
         }
         this.type = function.returnType;
@@ -104,6 +105,7 @@ public class FunctionCall extends Expression {
         if (!functionType.isStatic) {
             scope.addLocalVariable(new LocalVariable(function.functionType.name, function.functionType));
         }
+        
         Logger.killIfErrors("Missing variables.");
     }
 
@@ -267,15 +269,22 @@ public class FunctionCall extends Expression {
         // 4. Generate arguments for the function itself
         index = scope.getLocalVariableIndex(localVariableName);
         mv.visitVarInsn(Opcodes.ALOAD, index);
-        for (var arg : arguments) {
+        // 6. Box types if necessary
+        for (int i = 0; i < function.parameters.size(); i++) {
+            var param = function.parameters.get(i);
+            var arg = arguments.get(i);
             arg.generate(mv, scope);
+            if (arg.type instanceof BuiltInType bt && param.type != arg.type) {
+                bt.doBoxing(mv);
+            }
         }
 
         // 5. Call the appropriate invoke method on the First Class Function object
         List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
 
+
         Type returnType = this.function.returnType;
-        methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
+        methodDescriptor = DescriptorFactory.getMethodDescriptor(function.parameters, returnType);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
 
     }
@@ -289,6 +298,10 @@ public class FunctionCall extends Expression {
         if (functionType != null) return functionType;
 
         // 2. Functions defined in the current scope.
+        boolean isStatic = false;
+
+        functionType = scope.findFunctionType(this.name, true);
+        if (functionType != null) return functionType;
         functionType = scope.findFunctionType(this.name, false);
         if (functionType != null) return functionType;
 

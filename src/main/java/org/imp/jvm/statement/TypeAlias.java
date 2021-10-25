@@ -117,7 +117,6 @@ public class TypeAlias extends Statement {
 
         }
 
-        System.out.println(scope);
     }
 
     private Optional<Class<?>> getClass(String externalName) {

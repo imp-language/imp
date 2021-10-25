@@ -13,6 +13,7 @@ public enum BuiltInType implements Type {
     DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE, 0.0d, true),
     STRING("string", String.class, "Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, "", false),
     VOID("void", void.class, "V", TypeSpecificOpcodes.VOID, null, false),
+    ANY("any", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
 
     BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT, false, false),
     INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT, false, false),
@@ -150,6 +151,9 @@ public enum BuiltInType implements Type {
                 break;
             case STRING:
                 // No boxing required, String is already an object.
+                break;
+            case ANY:
+                // No boxing required, any is already an object.
                 break;
             default:
                 System.err.println("Boxing isn't supported for that type.");

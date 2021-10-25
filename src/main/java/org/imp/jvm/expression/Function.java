@@ -188,22 +188,5 @@ public class Function extends Expression {
         r.generate(mv, scope);
     }
 
-    public boolean matches(String otherSignatureName, List<Identifier> otherSignatureParameters) {
-        boolean namesAreEqual = this.functionType.name.equals(otherSignatureName);
-        if (!namesAreEqual) return false;
-
-        return doParametersMatch(parameters, otherSignatureParameters);
-    }
-
-    private boolean doParametersMatch(List<Identifier> a, List<Identifier> b) {
-        if (a.size() != b.size()) return false;
-        for (int i = 0; i < a.size(); i++) {
-            Identifier aIdent = a.get(i);
-            Identifier bIdent = b.get(i);
-            if (!aIdent.type.equals(bIdent.type)) {
-                return false;
-            }
-        }
-        return true;
-    }
+    
 }

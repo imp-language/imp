@@ -35,3 +35,18 @@ for i in words {
     }
 }
 log(shortestLength, shortestWord)
+
+
+// Functions accepting list parameters
+val a = [0, 1, 2, 3]
+val s = ["reee", "beee", "veee", "yeee"]
+
+func takesListOfInt(listOfInt int[], i int) {
+    log("list")
+    log(listOfInt)
+    for i in listOfInt {
+        log(i + 4)
+    }
+}
+takesListOfInt(a, 0) // this is fine
+// takesListOfInt(s, 99) // this will error if uncommented
