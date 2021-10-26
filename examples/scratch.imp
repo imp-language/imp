@@ -1,32 +1,23 @@
+import "../stdlib/math"
+
+
+log(math.sqrt(4.))
+log(math.sqrt(64))
+log(math.round(3.14159265, 0))
 
 
 /*
+
 func takesAny(a any) {
     log("a", a)
 }
-
-
-takesAny(4)
-takesAny("a") // Todo: allow any to accept anything
-
-
-
 */
 
-val a = [0, 1, 2, 3]
-val s = ["reee", "beee", "veee", "yeee"]
 
-func takesListOfInt(listOfInt int[], i int) {
-    //log("list")
-    //log(listOfInt)
-    for i in listOfInt {
-        //log(i + 4)
-    }
+
+
+func varargs(a int...) {
+    log(a)
 }
 
-log(takesListOfInt(a, 0))
-//takesListOfInt(s, 99) // todo: this should error, it doesn't
-// takesListOfInt(4)
-
-
-
+varargs([4,9])

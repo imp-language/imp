@@ -63,9 +63,6 @@ public class TypeAlias extends Statement {
 //            System.out.println(method);
 
             String methodName = method.getName();
-            if (methodName.equals("sqrt")) {
-                System.out.println("r");
-            }
 
             /**
              * java.lang.Math.sqrt() and stdlib.math.sqrt() are conflicting.

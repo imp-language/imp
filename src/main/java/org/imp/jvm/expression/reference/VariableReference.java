@@ -7,6 +7,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.runtime.Glue;
+import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 
 public class VariableReference extends Expression {
@@ -47,6 +48,11 @@ public class VariableReference extends Expression {
         // First check the scope for local variables,
         if (scope.variableExists(name) /*&& !scope.getLocalVariable(name).closure*/) {
             this.reference = new LocalReference(scope.getLocalVariable(name));
+        }
+        // Check for type aliases
+        else if (scope.getType(name) != null) {
+            Type t = scope.getType(name);
+            this.reference = new StaticReference(name, t);
         }
         // If that fails, look for function names,
         else if (scope.findFunctionType(name, false) != null) {

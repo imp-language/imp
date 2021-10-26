@@ -60,6 +60,7 @@ LBRACK : '[';
 RBRACK : ']';
 SEMICOLON : ';';
 COMMA : ',';
+VARARGS : '...';
 DOT : '.';
 
 
@@ -88,7 +89,6 @@ BITOR : '|';
 POW : '^';
 MOD : '%';
 FATARROW : '=>';
-VARARGS : '...';
 
 
 // Boolean Literals

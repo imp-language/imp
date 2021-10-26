@@ -43,9 +43,7 @@ public class FunctionCall extends Expression {
 
     @Override
     public void validate(Scope scope) {
-        if (name.equals("sqrt")) {
-            System.out.println("r");
-        }
+
 
         // Find the types of each of the arguments
         for (var arg : arguments) {
@@ -96,6 +94,7 @@ public class FunctionCall extends Expression {
         if (this.function == null) {
             String types = this.argTypes.stream().map(Object::toString).collect(Collectors.joining(", "));
             Logger.syntaxError(Errors.FunctionSignatureMismatch, this, getCtx().getStart().getText(), types);
+            Logger.killIfErrors("Functions not found.");
             return;
         }
         this.type = function.returnType;

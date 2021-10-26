@@ -45,6 +45,10 @@ public class Batteries {
         return Integer.parseInt(s);
     }
 
+    public static int _int(double d) {
+        return (int) d;
+    }
+
 
     // Float convertors
     public static float _float(int i) {

@@ -38,8 +38,6 @@ public class FunctionType implements Type {
             return this.signatures.get("[Ljava/lang/Object;");
         }
         var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
-        String descriptor = Function.getDescriptor(identifiers);
-//        return getSignature(descriptor);
         return getSignature(argTypes);
     }
 

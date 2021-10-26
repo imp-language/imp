@@ -29,6 +29,7 @@ public class Declaration extends Statement {
     public void validate(Scope scope) {
         expression.validate(scope);
 
+        assert expression.type != null;
         if (expression.type == BuiltInType.VOID) {
             Logger.syntaxError(Errors.VoidAssignment, this, this.name, expression.type);
             return;
@@ -44,7 +45,7 @@ public class Declaration extends Statement {
         scope.addLocalVariable(localVariable);
 
     }
-
+    
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
