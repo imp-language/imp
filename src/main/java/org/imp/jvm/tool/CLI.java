@@ -16,6 +16,9 @@ public class CLI {
     @CommandLine.Option(names = {"-b", "--bundle"}, description = "Bundle to JAR.")
     private boolean bundle;
 
+    @CommandLine.Option(names = {"-s", "--silent"}, description = "Don't print any debug messages.")
+    private boolean silent;
+
     @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
     boolean usageHelpRequested;
 
@@ -35,6 +38,7 @@ public class CLI {
 
         if (cli.compile) {
             System.out.println("Compiling.");
+            cli.build();
         } else if (cli.bundle) {
             System.out.println("Bundling.");
         } else {
@@ -42,7 +46,7 @@ public class CLI {
             if ("init".equals(cli.filename)) {
                 cli.initNewProject();
             } else {
-                cli.handleInput();
+                cli.run();
             }
         }
 
@@ -54,16 +58,22 @@ public class CLI {
     }
 
 
-    private void handleInput() {
+    private void run() {
+        var imp = new Compiler(this.filename);
+        if (!this.silent) {
+            Timer.LOG = true;
+        }
+        var out = imp.compile();
+        try {
+            Runner.run(out);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
-
+    private void build() {
         var imp = new Compiler(this.filename);
         Timer.LOG = true;
         var out = imp.compile();
-//        try {
-//            Runner.run(out);
-//        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
     }
 }
