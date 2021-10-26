@@ -1,0 +1,14 @@
+
+
+export type List = any[]
+
+
+val myList = [int]
+
+myList.add(42)
+
+myList.remove(0)
+
+
+// idk how type aliases would be best used for this
+// do functions accepting List type also accept any[]?

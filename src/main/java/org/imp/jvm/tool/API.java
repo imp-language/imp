@@ -33,7 +33,7 @@ public class API {
         if (file.exists()) {
             Timer.log("entry file found");
             ast = Parser.getAbstractSyntaxTree(file);
-            Timer.log("ANTLR parsing complete");
+            Timer.log("ANTLR visitor complete");
         }
         return ast;
     }

@@ -48,5 +48,5 @@ export func round(f float, places int) float {
 }
 
 export func exp(f float) float {
-    return float(Math.exp(f))
+    return float(Math.exp(double(f)))
 }

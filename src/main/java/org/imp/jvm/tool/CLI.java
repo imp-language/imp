@@ -60,10 +60,10 @@ public class CLI {
         var imp = new Compiler(this.filename);
         Timer.LOG = true;
         var out = imp.compile();
-        try {
-            Runner.run(out);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Runner.run(out);
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }
