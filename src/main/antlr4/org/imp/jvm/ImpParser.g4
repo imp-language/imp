@@ -16,7 +16,7 @@ statement
     | returnStatement
     | ifStatement
     | loopStatement
-    | assignment
+//    | assignment
     | expression
     | variableStatement
     | exportStatement
@@ -51,9 +51,9 @@ expression
     | <assoc=right> expression POW expression          #PowerExpression
     | expression (ADD | SUB | MUL | DIV | MOD) expression #AdditiveExpression
     | expression cmp=(LE | LT | GE | GT | EQUAL | NOTEQUAL) expression        #RelationalExpression
+    | expression ASSIGN expression       #AssignmentExpression
     | expression cmp=(AND | OR) expression             #LogicalExpression
     | expression (INC | DEC)                           #PostIncrementExpression
-    | expression ASSIGN expression                     #AssignmentExpression
     | NEW identifier LPAREN (expressionList)? RPAREN   #NewObjectExpression
     ;
 
@@ -158,10 +158,10 @@ exportStatement
 
 // Type
 type
-    : primitiveType         #TypePrimitive
+    : (BOOL | INT | FLOAT | CHAR | STRING | VOID | ANY)         #TypePrimitive
     | identifier            #TypeStruct
     | anonymousTuple        #TypeAnonymousTuple
-    | (primitiveType) LBRACK RBRACK  #TypeList
+    | t=(BOOL | INT | FLOAT | CHAR | STRING | VOID | ANY) LBRACK RBRACK  #TypeList
     | type VARARGS          #TypeVarargs
     ;
 
@@ -170,16 +170,6 @@ primitiveType
 
 anonymousTuple
     : LPAREN (type (COMMA type)* COMMA?) RPAREN
-    ;
-
-// function acceptsList(words string[])
-listType
-    : (identifier | primitiveType) LBRACK RBRACK
-    ;
-
-objectType
-    : identifier  // function or class type saved to a variable
-    | LPAREN (arguments)? RPAREN FATARROW type // anonymous type signature
     ;
 
 
@@ -245,7 +235,7 @@ collectionLiteral
 // used in imports/exports
 identifierList
     : identifier (COMMA identifier)* COMMA?
-    ; // TODO: do we allow ( ) around identifier lists
+    ;
 
 
 // Strings
@@ -253,4 +243,3 @@ stringLiteral
     : RAW_STRING_LIT
     | STRING_LITERAL
     ;
-    // TODO: template string literals?

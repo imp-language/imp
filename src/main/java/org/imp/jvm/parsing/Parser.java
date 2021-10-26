@@ -39,12 +39,20 @@ public class Parser {
         ImpParser parser = new ImpParser(tokenStream);
         Timer.log("ANTLR parser created");
 
-        parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+        parser.removeErrorListeners();
+        parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+
+
+//        parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
         String name = FilenameUtils.separatorsToUnix(FilenameUtils.removeExtension(file.getPath()));
         ParseTree parseTree = null;
         parseTree = parser.program();
         Timer.log("ANTLR parsing complete");
+
+
         return parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(name)));
+
+
 //        try {
 //            parser.getInterpreter().setPredictionMode(PredictionMode.LL);
 //            parseTree = parser.program();

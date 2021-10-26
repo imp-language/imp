@@ -19,7 +19,7 @@ public class TypeResolver {
         } else if (typeContext instanceof ImpParser.TypeStructContext tsc) {
             return scope.getType(tsc.identifier().getText());
         } else if (typeContext instanceof ImpParser.TypeListContext typeListContext) {
-            Optional<BuiltInType> builtInType = getBuiltInType(typeListContext.primitiveType().getText());
+            Optional<BuiltInType> builtInType = getBuiltInType(typeListContext.t.getText());
             if (builtInType.isPresent()) {
                 return new ListType(builtInType.get());
             }

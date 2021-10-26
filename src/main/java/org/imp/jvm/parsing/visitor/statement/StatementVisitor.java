@@ -248,12 +248,16 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     public Assignment visitAssignment(ImpParser.AssignmentContext ctx) {
         Expression recipient = ctx.expression(0).accept(expressionVisitor);
         recipient.setCtx(ctx.expression(0), parent.name);
-        Expression provider = ctx.expression(1).accept(expressionVisitor);
-        provider.setCtx(ctx.expression(1), parent.name);
+//        Expression provider = ctx.expression(1).accept(expressionVisitor);
+//        provider.setCtx(ctx.expression(1), parent.name);
 
-        return new Assignment(recipient, provider);
+        return (Assignment) recipient;
     }
 
+    @Override
+    public Statement visitAssignmentExpression(ImpParser.AssignmentExpressionContext ctx) {
+        return ctx.accept(expressionVisitor);
+    }
 
     @Override
     public Statement visitEnumStatement(ImpParser.EnumStatementContext ctx) {
