@@ -8,11 +8,14 @@ import org.imp.jvm.ImpLexer;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.exception.ThrowingErrorListener;
+import org.imp.jvm.lexer.Token;
+import org.imp.jvm.lexer.TokenType;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
 import org.imp.jvm.tool.Timer;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Parser {
@@ -24,6 +27,12 @@ public class Parser {
      * @return ImpFile
      */
     public static ImpFile getAbstractSyntaxTree(File file) {
+
+        System.exit(9);
+
+        var b = 79e4d;
+        System.out.println(b);
+
         CharStream charStream = null;
         try {
             charStream = CharStreams.fromFileName(file.getAbsolutePath());

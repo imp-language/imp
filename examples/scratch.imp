@@ -1,16 +1,8 @@
-/*
-log("Enter your name:")
-val name = read()
-log("Hello,", name)
-*/
-
-// Testing non-generic Java interop on java.lang and java.util
-// classes.
-
 type Random = extern "java.util.Random"
 
 val rand = new Random()
 
+log(9e10)
 val randomInt = rand.nextInt(10)
 log(randomInt >= 0)
 log(randomInt < 10)
@@ -21,7 +13,7 @@ log(int(randomFloat) <= 1)
 
 type Math = extern "java.lang.Math"
 
-val max = Math.max(8, 79)
+val max = Math.max(8e-20, 79E-4)
 log(max)
 
 val abs = Math.abs(-19)
@@ -29,3 +21,8 @@ log(abs)
 
 val sqrt = Math.sqrt(144d)
 log(sqrt)
+
+val multiLineString = "aaa
+aaa
+aaa
+"

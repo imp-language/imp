@@ -1,500 +1,6617 @@
-struct Person {
-    fname string
-    lname string
-}
-func hello(name string) void {
-    log("hello, " + name)
-}
-func hello(p Person) void {
-    log("HELLO, " + p.fname)
-}
-hello("Matt")
-hello("Kyle")
-val payton = new Person("Payton", "Kramer")
-hello(payton)
-struct AnotherStruct {
+mut a = 9
+mut b = "9"
+mut c = false
+mut d = 9.0
+mut e = 42
+struct MyStruct {
     i int
-    f int
-    b int
-    c int
+    f float
+    c OtherStruct
 }
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
-log("some text")
-log(1+4/3+2)
+struct OtherStruct {
+    field string
+}
+func myFunction(a int, b float) {
+    log(a, b)
+}
+func myFunctionReturns(a int) int {
+    log(a)
+    return a * 97
+}
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
+myFunction(a, d)
+e = myFunctionReturns(int(d))
+log(e)
+if a == 4 {
+    log("nope")
+} else {
+    log(9)
+}
