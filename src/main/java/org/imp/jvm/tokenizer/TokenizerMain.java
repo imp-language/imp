@@ -1,4 +1,4 @@
-package org.imp.jvm.lexer;
+package org.imp.jvm.tokenizer;
 
 import org.imp.jvm.tool.Timer;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -7,22 +7,24 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LexerMain {
+public class TokenizerMain {
 
     @Benchmark
     public void lexerBenchMark() {
         try {
-            File file = new File("examples/long.imp");
-            PushbackReader reader =
-                    new PushbackReader(new FileReader(file));
-            Timer.log("PushbackReader opened");
-            var lexer = new org.imp.jvm.lexer.Lexer(reader);
-            org.imp.jvm.lexer.Token tok;
+//            File file = new File("examples/long.imp");
+            File file = new File("examples/scratch.imp");
+            BufferedReader reader =
+                    new BufferedReader(new FileReader(file));
+            Timer.log("Buffer opened");
+            var lexer = new Tokenizer(reader);
+            Timer.log("Lexer created");
+            Token tok;
             List<Token> tokens = new ArrayList<>();
             do {
                 tok = lexer.next();
 //                tokens.add(tok);
-//                System.out.println(tok);
+                System.out.println(tok);
             } while (tok.type() != TokenType.EOF);
 
             Timer.log("Source file tokenized.");
@@ -33,8 +35,12 @@ public class LexerMain {
     }
 
     public static void main(String[] args) throws IOException {
+//        Timer.LOG = true;
+
+        new TokenizerMain().lexerBenchMark();
+
         Timer.LOG = true;
-        new LexerMain().lexerBenchMark();
+        Timer.logTotalTime();
 //        org.openjdk.jmh.Main.main(args);
     }
 }

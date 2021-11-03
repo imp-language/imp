@@ -1,4 +1,4 @@
-package org.imp.jvm.lexer;
+package org.imp.jvm.tokenizer;
 
 import java.util.HashMap;
 
@@ -63,12 +63,13 @@ public enum TokenType {
     IDENTIFIER,
     NUMBER,
 
-    EOF(null);
+    ERROR,
+    EOF;
 
 
     public final String representation;
     public final String alternate;
-    private static HashMap<String, TokenType> matcher = new HashMap<>();
+    private static final HashMap<String, TokenType> matcher = new HashMap<>();
 
     static {
         for (var tokenType : TokenType.values()) {

@@ -30,10 +30,11 @@ public class Timer {
             String formattedRuntime = String.format("%.2fms", runtime);
             formattedRuntime = StringUtils.rightPad(formattedRuntime, 10);
             System.out.println(colorize(TIME_SYMBOL + formattedRuntime + message, TEXT_COLOR(104)));
+            time = System.nanoTime();
         }
     }
 
-    public static void logTotalTime() {
+    public static float logTotalTime() {
         if (LOG) {
             long current = System.nanoTime();
             long delta = current - startTime;
@@ -41,6 +42,8 @@ public class Timer {
             String formattedRuntime = String.format("%.2fms", runtime);
             formattedRuntime = StringUtils.rightPad(formattedRuntime, 10);
             System.out.println(colorize(TIME_SYMBOL + formattedRuntime + "done", TEXT_COLOR(212)));
+            return runtime;
         }
+        return 0;
     }
 }

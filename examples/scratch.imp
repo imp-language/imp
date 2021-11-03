@@ -22,7 +22,4 @@ log(abs)
 val sqrt = Math.sqrt(144d)
 log(sqrt)
 
-val multiLineString = "aaa
-aaa
-aaa
-"
+val multiLineString = "aaa"

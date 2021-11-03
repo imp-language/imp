@@ -1,20 +1,34 @@
-package org.imp.jvm.lexer;
+package org.imp.jvm.tokenizer;
 
 import java.io.IOException;
 import java.io.PushbackReader;
+import java.io.Reader;
 import java.util.Iterator;
 
-import static org.imp.jvm.lexer.TokenType.*;
+import static org.imp.jvm.tokenizer.TokenType.*;
 
-public class Lexer implements Iterator<Token> {
+public class Tokenizer implements Iterator<Token> {
     private final PushbackReader reader;
     private int line = 1;
     private int col = 1;
 
+    public Status getStatus() {
+        return status;
+    }
+
+    private Status status = Status.Whole;
+
+    enum Status {
+        Whole, // do codegen, all input is correct
+        Partial, // attempt to parse, some errors
+        Fatal // bad, exit
+    }
+
+
     private final StringBuilder sb = new StringBuilder();
 
-    public Lexer(PushbackReader reader) {
-        this.reader = reader;
+    public Tokenizer(Reader reader) {
+        this.reader = new PushbackReader(reader, 5);
     }
 
     @Override
@@ -33,7 +47,10 @@ public class Lexer implements Iterator<Token> {
             tok = new Token(EOF, startLine, startCol, null);
         } else if (isAlpha(c)) {
             String identifier = consumeIdentifier();
-            tok = new Token(IDENTIFIER, startLine, startCol, identifier);
+            var tokenType = IDENTIFIER;
+            var keyword = TokenType.find(identifier);
+            if (keyword != null) tokenType = keyword;
+            tok = new Token(tokenType, startLine, startCol, identifier);
         } else if (isDigit(c)) {
             String number = consumeNumber();
             tok = new Token(NUMBER, startLine, startCol, number);
@@ -41,18 +58,26 @@ public class Lexer implements Iterator<Token> {
             String stringLiteral = consumeString();
             tok = new Token(STRING, startLine, startCol, stringLiteral);
         } else {
-            var shortToken = TokenType.find(c + "");
+            var shortToken = TokenType.find(String.valueOf(c));
             if (shortToken == null) {
                 char next = peekNext();
-                var longToken = TokenType.find(Character.toString(c) + next);
+                String content = String.valueOf(new char[]{c, next});
+                var longToken = TokenType.find(content);
+
+                if (longToken == null) {
+                    advance();
+                    advance();
+                    status = Status.Partial;
+                    return new Token(ERROR, startLine, startCol, content);
+                }
                 advance();
                 advance();
                 // if null error
-                tok = new Token(longToken, startLine, startCol, Character.toString(c) + next);
+                tok = new Token(longToken, startLine, startCol, content);
 
             } else {
                 advance();
-                tok = new Token(shortToken, startLine, startCol, c + "");
+                tok = new Token(shortToken, startLine, startCol, String.valueOf(c));
             }
         }
 
@@ -119,6 +144,11 @@ public class Lexer implements Iterator<Token> {
     }
 
 
+    /**
+     * Advance along the input stream.
+     *
+     * @return char
+     */
     private char advance() {
         try {
             int i = reader.read();
@@ -136,6 +166,11 @@ public class Lexer implements Iterator<Token> {
         return '\0';
     }
 
+    /**
+     * Peek one ahead.
+     *
+     * @return char
+     */
     private char peek() {
         try {
             int i = reader.read();
@@ -148,6 +183,11 @@ public class Lexer implements Iterator<Token> {
         return '\0';
     }
 
+    /**
+     * Peek two ahead.
+     *
+     * @return char
+     */
     private char peekNext() {
         try {
             int i = reader.read();
@@ -174,6 +214,9 @@ public class Lexer implements Iterator<Token> {
         return c >= '0' && c <= '9';
     }
 
+    /**
+     * Call advance() on all tokens considered whitespace or comments
+     */
     void skipWhitespace() {
         while (true) {
             char c = peek();
