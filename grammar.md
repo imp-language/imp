@@ -29,12 +29,12 @@ statement      → export
 
 export         → "export" statement;               
 typeAlias      → "type" IDENTIFIER "=" "extern" STRING;
-struct         → "struct" IDENTIFIER "{" (parameter ","?)*
-enum           → "enum" IDENTIFIER "{" (IDENTIFIER ","?)* "}"
-function       → "func" IDENTIFIER "(" parameters ")" IDENTIFIER? block
+struct         → "struct" IDENTIFIER "{" (parameter ","?)*;
+enum           → "enum" IDENTIFIER "{" (IDENTIFIER ","?)* "}";
+function       → "func" IDENTIFIER "(" parameters ")" IDENTIFIER? block;
 
 
-block          → "{" (statement)* "}
+block          → "{" (statement)* "};
 
 
 ```
@@ -48,6 +48,6 @@ Expressions:
 Some helper rules:
 
 ```ebnf
-parameter      → IDENTIFIER IDENTIFIER
-parameters     → nameType ("," nameType)* ","
+parameter      → IDENTIFIER IDENTIFIER;
+parameters     → nameType ("," nameType)* ",";
 ```
