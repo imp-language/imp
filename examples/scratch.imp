@@ -1,25 +1,4993 @@
-type Random = extern "java.util.Random"
+export struct Person {
+    fname string
+    lname string
+    dob Date
+}
+// Todo: structs should require commas probably
 
-val rand = new Random()
+func myFunc(i int, s dat) ree {
+}
 
-log(9e10)
-val randomInt = rand.nextInt(10)
-log(randomInt >= 0)
-log(randomInt < 10)
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
 
-val randomFloat = rand.nextFloat()
-log(int(randomFloat) >= 0)
-log(int(randomFloat) <= 1)
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
 
-type Math = extern "java.lang.Math"
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
 
-val max = Math.max(8e-20, 79E-4)
-log(max)
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
 
-val abs = Math.abs(-19)
-log(abs)
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
 
-val sqrt = Math.sqrt(144d)
-log(sqrt)
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
 
-val multiLineString = "aaa"
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}
+func myFunc(i int, s dat) ree {
+}
+
+enum MyEnum {
+    North,
+    South
+    East
+    West
+}

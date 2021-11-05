@@ -48,8 +48,10 @@ public class Parser {
         ParseTree parseTree = null;
         parseTree = parser.program();
         Timer.log("ANTLR parsing complete");
+//        Timer.LOG = true;
+//        Timer.logTotalTime();
 
-
+//        System.exit(98);
         return parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(name)));
 
 

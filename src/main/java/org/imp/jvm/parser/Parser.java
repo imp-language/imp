@@ -13,25 +13,50 @@ import org.imp.jvm.tokenizer.Tokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Parser {
-    private final Tokenizer tokens;
-    private final List<Token> mRead = new ArrayList<Token>();
+public class Parser extends ParserBase {
 
     public Parser(Tokenizer tokens) {
-        this.tokens = tokens;
+        super(tokens);
     }
 
     List<Stmt> parse() {
         List<Stmt> stmts = new ArrayList<>();
 
-        var stmt = statement();
+        while (!isAtEnd()) {
 
+            // If a statement is poorly formed, we mark it
+            // as such and continue to attempt to parse the
+            // other statements in the file.
+            var stmt = statement();
+            stmts.add(stmt);
+        }
         return stmts;
     }
 
     private Stmt statement() {
+        if (match(EXPORT)) return export();
+
         if (match(TYPE)) return typeAlias();
+        if (match(STRUCT)) return struct();
+        if (match(FUNC)) return function();
+        if (match(ENUM)) return parseEnum();
+        if (match(LBRACE)) return block();
         return null;
+    }
+
+    private Stmt.Block block() {
+        List<Stmt> statements = new ArrayList<>();
+
+        while (!check(RBRACE) && !isAtEnd()) {
+            statements.add(statement());
+        }
+
+        consume(RBRACE, "Expect '}' after block.");
+        return new Stmt.Block(statements);
+    }
+
+    private Stmt.Export export() {
+        return new Stmt.Export(statement());
     }
 
     private Stmt.TypeAlias typeAlias() {
@@ -43,72 +68,70 @@ public class Parser {
         return new Stmt.TypeAlias(name, new Expr.Literal(literal));
     }
 
-    private boolean match(TokenType... types) {
-        for (TokenType type : types) {
-            if (check(type)) {
-                consume();
-                return true;
-            }
+    private Stmt.Struct struct() {
+        Token name = consume(IDENTIFIER, "Expected struct name.");
+        consume(LBRACE, "Expected opening curly braces before struct body.");
+
+        List<Stmt.Parameter> parameters = new ArrayList<>();
+        while (!check(RBRACE)) {
+            Stmt.Parameter parameter = parameter();
+            optional(COMMA);
+            parameters.add(parameter);
         }
 
-        return false;
+        consume(RBRACE, "Expected opening curly braces before struct body.");
+
+
+        return new Stmt.Struct(name, parameters);
     }
 
-    private boolean check(TokenType type) {
-        return peek().type() == type;
-    }
+    private Stmt.Enum parseEnum() {
+        Token name = consume(IDENTIFIER, "Expected struct name.");
+        consume(LBRACE, "Expected opening curly braces before struct body.");
 
-    public boolean match(TokenType expected) {
-        Token token = lookAhead(0);
-        if (token.type() != expected) {
-            return false;
+        List<Token> values = new ArrayList<>();
+        while (!check(RBRACE)) {
+            Token value = consume(IDENTIFIER, "Expected enum value.");
+            optional(COMMA);
+            values.add(value);
         }
 
-        consume();
-        return true;
+        consume(RBRACE, "Expected opening curly braces before struct body.");
+
+
+        return new Stmt.Enum(name, values);
     }
 
-    public Token consume() {
-        // Make sure we've read the token.
-        lookAhead(0);
+    private Stmt.Function function() {
+        Token name = consume(IDENTIFIER, "Expected function name.");
+        consume(LPAREN, "Expected opening parentheses after function name.");
 
-        return mRead.remove(0);
-    }
-
-    private Token consume(TokenType type, String message) {
-        if (check(type)) return consume();
-
-        error(peek(), message);
-        return null;
-    }
-
-    private static void report(int line, String where,
-                               String message) {
-        System.err.println(
-                "[line " + line + "] Error" + where + ": " + message);
-    }
-
-    //< lox-error
-//> Parsing Expressions token-error
-    void error(Token token, String message) {
-        if (token.type() == TokenType.EOF) {
-            report(token.line(), " at end", message);
-        } else {
-            report(token.line(), " at '" + token.source() + "'", message);
-        }
-    }
-
-    private Token peek() {
-        return lookAhead(0);
-    }
-
-    private Token lookAhead(int distance) {
-        // Read in as many as needed.
-        while (distance >= mRead.size()) {
-            mRead.add(tokens.next());
+        List<Stmt.Parameter> parameters = new ArrayList<>();
+        if (!check(RPAREN)) {
+            do {
+                parameters.add(parameter());
+            } while (match(COMMA));
         }
 
-        // Get the queued token.
-        return mRead.get(distance);
+        consume(RPAREN, "Expected closing parentheses after function parameters.");
+
+        Token returnType = null;
+        if (!check(LBRACE)) {
+            returnType = consume();
+        }
+        consume(LBRACE, "Expected opening curly braces before function body.");
+
+        // Todo parse block
+        consume(RBRACE, "Expected opening curly braces before function body.");
+
+        return new Stmt.Function(name, parameters, returnType, null);
     }
+
+    private Stmt.Parameter parameter() {
+        Token name = consume(IDENTIFIER, "Expected field name.");
+        Token type = consume(IDENTIFIER, "Expected field type.");
+        return new Stmt.Parameter(name, type);
+    }
+
+
 }
