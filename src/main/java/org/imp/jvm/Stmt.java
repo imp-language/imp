@@ -1,8 +1,5 @@
 package org.imp.jvm;
 
-import org.imp.jvm.statement.Block;
-import org.imp.jvm.statement.Export;
-import org.imp.jvm.statement.TypeAlias;
 import org.imp.jvm.tokenizer.Token;
 
 import java.util.List;
@@ -24,11 +21,11 @@ public interface Stmt {
 
         R visitFunctionStmt(Function stmt);
 
-        R visitIfStmt(If stmt);
+        R visitIf(If stmt);
 
         R visitReturnStmt(Return stmt);
 
-        R visitDeclarationStmt(Declaration stmt);
+        R visitVariable(Variable stmt);
 
         R visitParameterStmt(Parameter stmt);
 
@@ -90,7 +87,7 @@ public interface Stmt {
 
     record If(Expr condition, Stmt trueStmt, Stmt falseStmt) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitIfStmt(this);
+            return visitor.visitIf(this);
         }
     }
 
@@ -100,11 +97,12 @@ public interface Stmt {
         }
     }
 
-    record Declaration(Token mutability, Token name, Expr expr) implements Stmt {
+    record Variable(Token mutability, Token name, Expr expr) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitDeclarationStmt(this);
+            return visitor.visitVariable(this);
         }
     }
+
 
 
     record ForInLoop(Token iteratorName, Expression iteratorSource, Block body) implements Stmt {
@@ -113,7 +111,7 @@ public interface Stmt {
         }
     }
 
-    record ForLoop(Declaration declaration, Expression condition, Expr incrementer, Block body) implements Stmt {
+    record ForLoop(Variable declaration, Expression condition, Expr incrementer, Block body) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitForLoop(this);
         }

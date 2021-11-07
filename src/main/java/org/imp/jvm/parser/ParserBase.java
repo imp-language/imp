@@ -5,17 +5,70 @@ import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.tokenizer.Tokenizer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.imp.jvm.tokenizer.TokenType.EOF;
 
 public class ParserBase {
     private final Tokenizer tokens;
-    private final List<Token> mRead = new ArrayList<Token>();
+    private final List<Token> mRead = new ArrayList<>();
+
+    final Map<TokenType, PrefixParselet> prefixParselets = new HashMap<>();
+    final Map<TokenType, InfixParselet> infixParselets = new HashMap<>();
 
     public ParserBase(Tokenizer tokens) {
         this.tokens = tokens;
     }
+
+    /**
+     * Registers a postfix unary operator parselet for the given token and
+     * precedence.
+     */
+    public void postfix(TokenType token, Precedence precedence) {
+        register(token, new InfixParselet.PostfixOperator(precedence.precedence));
+    }
+
+    /**
+     * Registers a prefix unary operator parselet for the given token and
+     * precedence.
+     */
+    public void prefix(TokenType token, Precedence precedence) {
+        register(token, new PrefixParselet.PrefixOperator(precedence.precedence));
+    }
+
+    /**
+     * Registers a left-associative binary operator parselet for the given token
+     * and precedence.
+     */
+    public void infixLeft(TokenType token, Precedence precedence) {
+        register(token, new InfixParselet.BinaryOperator(precedence.precedence, false));
+    }
+
+    /**
+     * Registers a right-associative binary operator parselet for the given token
+     * and precedence.
+     */
+    public void infixRight(TokenType token, Precedence precedence) {
+        register(token, new InfixParselet.BinaryOperator(precedence.precedence, true));
+    }
+
+    int getPrecedence() {
+        InfixParselet parser = infixParselets.get(lookAhead(0).type());
+        if (parser != null) return parser.precedence();
+
+        return 0;
+    }
+
+    void register(TokenType token, PrefixParselet parselet) {
+        prefixParselets.put(token, parselet);
+    }
+
+    void register(TokenType token, InfixParselet parselet) {
+        infixParselets.put(token, parselet);
+    }
+
 
     private boolean match(TokenType... types) {
         for (TokenType type : types) {

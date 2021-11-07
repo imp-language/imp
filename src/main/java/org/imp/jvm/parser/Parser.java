@@ -10,6 +10,7 @@ import static org.imp.jvm.tokenizer.TokenType.*;
 
 import org.imp.jvm.tokenizer.Tokenizer;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,27 @@ public class Parser extends ParserBase {
 
     public Parser(Tokenizer tokens) {
         super(tokens);
+
+        // Register the ones that need special parselets.
+        register(IDENTIFIER, new PrefixParselet.Identifier());
+        register(NUMBER, new PrefixParselet.Literal());
+        register(TRUE, new PrefixParselet.Literal());
+        register(FALSE, new PrefixParselet.Literal());
+        register(STRING, new PrefixParselet.Literal());
+//        register(TokenType.QUESTION, new ConditionalParselet());
+        register(LPAREN, new PrefixParselet.Grouping());
+//        register(RPAREN, new CallParselet());
+
+        // Register the simple operator parselets.
+        prefix(ADD, Precedence.PREFIX);
+        prefix(SUB, Precedence.PREFIX);
+        prefix(NOT, Precedence.PREFIX);
+
+        infixLeft(ADD, Precedence.SUM);
+        infixLeft(SUB, Precedence.SUM);
+        infixLeft(MUL, Precedence.PRODUCT);
+        infixLeft(DIV, Precedence.PRODUCT);
+        infixRight(POW, Precedence.EXPONENT);
     }
 
     List<Stmt> parse() {
@@ -28,6 +50,7 @@ public class Parser extends ParserBase {
             // as such and continue to attempt to parse the
             // other statements in the file.
             var stmt = statement();
+            if (stmt == null) break;
             stmts.add(stmt);
         }
         return stmts;
@@ -40,8 +63,59 @@ public class Parser extends ParserBase {
         if (match(STRUCT)) return struct();
         if (match(FUNC)) return function();
         if (match(ENUM)) return parseEnum();
+        if (match(IF)) return parseIf();
+        if (check(MUT) || check(VAL)) return variable();
         if (match(LBRACE)) return block();
         return null;
+    }
+
+    private Stmt.If parseIf() {
+        Expr condition = expression();
+        Stmt.Block trueStmt = block();
+        Stmt falseStmt = null;
+        if (match(ELSE)) {
+            if (match(IF)) {
+                falseStmt = parseIf();
+            } else if (match(LBRACE)) {
+                falseStmt = block();
+            } else {
+                error(peek(), "Invalid end to if-else statement.");
+            }
+        }
+        return new Stmt.If(condition, trueStmt, falseStmt);
+    }
+
+    private Stmt.Variable variable() {
+        Token mutability = consume();
+        Token name = consume(IDENTIFIER, "Expected variable name.");
+        consume(ASSIGN, "Expected assignment operator.");
+
+        Expr expr = expression();
+
+        return new Stmt.Variable(mutability, name, expr);
+    }
+
+    Expr expression() {
+        return expression(0);
+    }
+
+    Expr expression(int precedence) {
+
+        Token token = consume();
+        PrefixParselet prefix = prefixParselets.get(token.type());
+
+        if (prefix == null) error(token, "Could not parse.");
+
+        Expr left = prefix.parse(this, token);
+
+        while (precedence < getPrecedence()) {
+            token = consume();
+
+            InfixParselet infix = infixParselets.get(token.type());
+            left = infix.parse(this, left, token);
+        }
+
+        return left;
     }
 
     private Stmt.Block block() {

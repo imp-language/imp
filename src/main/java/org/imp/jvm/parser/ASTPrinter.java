@@ -3,7 +3,6 @@ package org.imp.jvm.parser;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -156,8 +155,14 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
-    public String visitIfStmt(Stmt.If stmt) {
-        return null;
+    public String visitIf(Stmt.If stmt) {
+        StringBuilder sb = new StringBuilder();
+        if (stmt.falseStmt() == null) {
+            sb.append("(if ").append(print(stmt.condition())).append(print(stmt.trueStmt()));
+        } else {
+            sb.append("(if-else ").append(print(stmt.condition())).append(print(stmt.trueStmt())).append(print(stmt.falseStmt()));
+        }
+        return sb.toString();
     }
 
     @Override
@@ -166,9 +171,10 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
-    public String visitDeclarationStmt(Stmt.Declaration stmt) {
-        return null;
+    public String visitVariable(Stmt.Variable stmt) {
+        return parenthesize(stmt.mutability().source(), stmt.expr());
     }
+
 
     @Override
     public String visitParameterStmt(Stmt.Parameter stmt) {
@@ -184,6 +190,7 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     public String visitForLoop(Stmt.ForLoop stmt) {
         return null;
     }
+
 
     @Override
     public String visitTypeAlias(Stmt.TypeAlias stmt) {

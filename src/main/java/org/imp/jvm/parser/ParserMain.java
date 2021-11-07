@@ -36,7 +36,7 @@ public class ParserMain {
 
             var parser = new Parser(tokenizer);
             var statements = parser.parse();
-//            System.out.println(printer.print(statements));
+            System.out.println(printer.print(statements));
             Timer.log("Source file parsed.");
             Timer.LOG = true;
             Timer.logTotalTime();

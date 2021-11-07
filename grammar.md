@@ -13,27 +13,32 @@ program        → statement* EOF ;
 A program is a series of statements.
 
 ```ebnf
-statement      → export
+statement      → expression
+               | export
                | typeAlias
                | struct
                | enum
                | function
+               | if
                | variable 
                | loop
-               | if
                | return
                | block
                
                ;
                
 
-export         → "export" statement;               
-typeAlias      → "type" IDENTIFIER "=" "extern" STRING;
-struct         → "struct" IDENTIFIER "{" (parameter ","?)*;
-enum           → "enum" IDENTIFIER "{" (IDENTIFIER ","?)* "}";
-function       → "func" IDENTIFIER "(" parameters ")" IDENTIFIER? block;
+export         → "export" statement ;
+typeAlias      → "type" IDENTIFIER "=" "extern" STRING ;
+struct         → "struct" IDENTIFIER "{" (parameter ","?)* ;
+enum           → "enum" IDENTIFIER "{" (IDENTIFIER ","?)* "}" ;
+function       → "func" IDENTIFIER "(" parameters ")" IDENTIFIER? block ;
+if             → "if" expression block ("else" (block | if))? ;
+variable       → ("mut"|"val") IDENTIFIER "=" expression ;
 
 
+
+return         → "return" expression?;
 block          → "{" (statement)* "};
 
 
@@ -42,6 +47,10 @@ block          → "{" (statement)* "};
 Expressions:
 
 ```ebnf
+expression     → assignment
+               |
+               ;
+assignment     →
 
 ```
 
