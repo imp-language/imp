@@ -9,7 +9,13 @@ public interface PrefixParselet {
 
     record PrefixOperator(int precedence) implements PrefixParselet {
         public Expr parse(Parser parser, Token token) {
-            return null;
+            // To handle right-associative operators like "^", we allow a slightly
+            // lower precedence when parsing the right-hand side. This will let a
+            // parselet with the same precedence appear on the right, which will then
+            // take *this* parselet's result as its left-hand argument.
+            Expr right = parser.expression(precedence());
+
+            return new Expr.Prefix(token, right);
         }
     }
 

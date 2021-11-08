@@ -25,9 +25,10 @@ public class Parser extends ParserBase {
         register(TRUE, new PrefixParselet.Literal());
         register(FALSE, new PrefixParselet.Literal());
         register(STRING, new PrefixParselet.Literal());
-//        register(TokenType.QUESTION, new ConditionalParselet());
+        register(ASSIGN, new InfixParselet.AssignOperator());
+
         register(LPAREN, new PrefixParselet.Grouping());
-//        register(RPAREN, new CallParselet());
+        register(LPAREN, new InfixParselet.Call());
 
         // Register the simple operator parselets.
         prefix(ADD, Precedence.PREFIX);
@@ -39,6 +40,15 @@ public class Parser extends ParserBase {
         infixLeft(MUL, Precedence.PRODUCT);
         infixLeft(DIV, Precedence.PRODUCT);
         infixRight(POW, Precedence.EXPONENT);
+
+        // Comparisons
+        infixLeft(EQUAL, Precedence.COMPARISON);
+        infixLeft(LT, Precedence.COMPARISON);
+        infixLeft(GT, Precedence.COMPARISON);
+        infixLeft(LE, Precedence.COMPARISON);
+        infixLeft(GT, Precedence.COMPARISON);
+        infixLeft(AND, Precedence.AND);
+        infixLeft(OR, Precedence.OR);
     }
 
     List<Stmt> parse() {
@@ -65,8 +75,8 @@ public class Parser extends ParserBase {
         if (match(ENUM)) return parseEnum();
         if (match(IF)) return parseIf();
         if (check(MUT) || check(VAL)) return variable();
-        if (match(LBRACE)) return block();
-        return null;
+        if (check(LBRACE)) return block();
+        else return new Stmt.Expression(expression());
     }
 
     private Stmt.If parseIf() {
@@ -76,7 +86,7 @@ public class Parser extends ParserBase {
         if (match(ELSE)) {
             if (match(IF)) {
                 falseStmt = parseIf();
-            } else if (match(LBRACE)) {
+            } else if (check(LBRACE)) {
                 falseStmt = block();
             } else {
                 error(peek(), "Invalid end to if-else statement.");
@@ -120,6 +130,7 @@ public class Parser extends ParserBase {
 
     private Stmt.Block block() {
         List<Stmt> statements = new ArrayList<>();
+        consume(LBRACE, "Expect '{' before block.");
 
         while (!check(RBRACE) && !isAtEnd()) {
             statements.add(statement());

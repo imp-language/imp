@@ -62,6 +62,19 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
         return builder.toString();
     }
 
+    private String parenthesize2(String name, List<Expr> exprs) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("(").append(name);
+        for (Expr expr : exprs) {
+            builder.append(" ");
+            builder.append(expr.accept(this));
+        }
+        builder.append(")");
+
+        return builder.toString();
+    }
+
 
     @Override
     public String visitAssignExpr(Expr.Assign expr) {
@@ -80,7 +93,7 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     @Override
     public String visitIdentifierExpr(Expr.Identifier expr) {
-        return null;
+        return expr.identifier().source();
     }
 
     @Override
@@ -94,8 +107,17 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
-    public String visitUnaryExpr(Expr.Unary expr) {
-        return null;
+    public String visitPrefix(Expr.Prefix expr) {
+        return parenthesize(expr.operator().source(), expr.right());
+    }
+
+    @Override
+    public String visitCall(Expr.Call expr) {
+        StringBuilder result = new StringBuilder("(call " + print(expr.item()) + " (");
+        result.append(expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")));
+
+        result.append("))");
+        return result.toString();
     }
 
     @Override
@@ -137,7 +159,7 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     @Override
     public String visitExpressionStmt(Stmt.Expression stmt) {
-        return null;
+        return print(stmt.expr());
     }
 
     @Override
@@ -158,10 +180,19 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     public String visitIf(Stmt.If stmt) {
         StringBuilder sb = new StringBuilder();
         if (stmt.falseStmt() == null) {
-            sb.append("(if ").append(print(stmt.condition())).append(print(stmt.trueStmt()));
+            sb.append("(if ")
+                    .append(print(stmt.condition()))
+                    .append("\n\t")
+                    .append(print(stmt.trueStmt()));
         } else {
-            sb.append("(if-else ").append(print(stmt.condition())).append(print(stmt.trueStmt())).append(print(stmt.falseStmt()));
+            sb.append("(if-else ")
+                    .append(print(stmt.condition()))
+                    .append("\n\t")
+                    .append(print(stmt.trueStmt()))
+                    .append("\n\t")
+                    .append(print(stmt.falseStmt()));
         }
+        sb.append(")");
         return sb.toString();
     }
 
@@ -172,7 +203,7 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     @Override
     public String visitVariable(Stmt.Variable stmt) {
-        return parenthesize(stmt.mutability().source(), stmt.expr());
+        return parenthesize(stmt.mutability().source() + " " + stmt.name().source(), stmt.expr());
     }
 
 

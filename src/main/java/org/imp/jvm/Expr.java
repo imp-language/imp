@@ -3,7 +3,6 @@ package org.imp.jvm;
 import org.imp.jvm.tokenizer.Token;
 
 import java.util.List;
-import java.util.Set;
 
 public interface Expr {
     interface Visitor<R> {
@@ -19,7 +18,9 @@ public interface Expr {
 
         R visitLiteralExpr(Literal expr);
 
-        R visitUnaryExpr(Unary expr);
+        R visitPrefix(Prefix expr);
+
+        R visitCall(Call expr);
 
         R visitPostfixExpr(Postfix expr);
     }
@@ -40,9 +41,9 @@ public interface Expr {
         }
     }
 
-    record Call(String name, Token lparen, List<Expr> arguments, Token rparan) implements Expr {
+    record Call(Expr item, List<Expr> arguments) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
-            return null;
+            return visitor.visitCall(this);
         }
     }
 
@@ -76,9 +77,9 @@ public interface Expr {
     }
 
     // operator expression
-    record Unary(Token operator, Expr right) implements Expr {
+    record Prefix(Token operator, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitUnaryExpr(this);
+            return visitor.visitPrefix(this);
         }
     }
 

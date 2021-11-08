@@ -1,14 +1,16 @@
 package org.imp.jvm.parser;
 
 public enum Precedence {
-    ASSIGNMENT(1),
-    CONDITIONAL(2),
-    SUM(3),
-    PRODUCT(4),
-    EXPONENT(5),
-    PREFIX(6),
-    POSTFIX(7),
-    CALL(8);
+    PRIMARY(10),
+    POSTFIX(9),
+    PREFIX(8),
+    EXPONENT(7),
+    PRODUCT(6),
+    SUM(5),
+    COMPARISON(4),
+    AND(3),
+    OR(2),
+    ASSIGNMENT(1);
 
     public final int precedence;
 

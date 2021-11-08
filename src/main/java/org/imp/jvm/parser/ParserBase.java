@@ -102,7 +102,7 @@ public class ParserBase {
         return mRead.remove(0);
     }
 
-    Token consume(TokenType type, String message) {
+    public Token consume(TokenType type, String message) {
         if (check(type)) return consume();
 
         error(peek(), message);

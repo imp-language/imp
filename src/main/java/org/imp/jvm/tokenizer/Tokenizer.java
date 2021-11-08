@@ -1,5 +1,7 @@
 package org.imp.jvm.tokenizer;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
@@ -59,22 +61,21 @@ public class Tokenizer implements Iterator<Token> {
             tok = new Token(STRING, startLine, startCol, stringLiteral);
         } else {
             var shortToken = TokenType.find(String.valueOf(c));
-            if (shortToken == null) {
-                char next = peekNext();
-                String content = String.valueOf(new char[]{c, next});
-                var longToken = TokenType.find(content);
+//            if (shortToken == null) {
+            char next = peekNext();
+            String content = String.valueOf(new char[]{c, next});
+            var longToken = TokenType.find(content);
 
-                if (longToken == null) {
-                    advance();
-                    advance();
-                    status = Status.Partial;
-                    return new Token(ERROR, startLine, startCol, content);
-                }
+
+            if (longToken == null && shortToken == null) {
                 advance();
                 advance();
-                // if null error
+                status = Status.Partial;
+                return new Token(ERROR, startLine, startCol, content);
+            } else if (longToken != null) {
+                advance();
+                advance();
                 tok = new Token(longToken, startLine, startCol, content);
-
             } else {
                 advance();
                 tok = new Token(shortToken, startLine, startCol, String.valueOf(c));
@@ -230,7 +231,18 @@ public class Tokenizer implements Iterator<Token> {
                 case '/':
                     if (peekNext() == '/') {
                         // A comment goes until the end of the line.
+                        var b = 0;
                         while (peek() != '\n'/* && !isAtEnd()*/) advance();
+                    } else if (peekNext() == '*') {
+                        advance();
+                        advance();
+                        String nextTwo = "";
+                        do {
+                            advance();
+                            nextTwo = String.valueOf(peek()) + peekNext();
+                        } while (!nextTwo.equals("*/"));
+                        advance();
+                        advance();
                     } else {
                         return;
                     }
