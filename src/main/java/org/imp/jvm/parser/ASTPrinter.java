@@ -1,8 +1,11 @@
 package org.imp.jvm.parser;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.tokenizer.Token;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,6 +110,11 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
+    public String visitLiteralList(Expr.LiteralList expr) {
+        return "[" + expr.entries().stream().map(this::print).collect(Collectors.joining(",")) + "]";
+    }
+
+    @Override
     public String visitPrefix(Expr.Prefix expr) {
         return parenthesize(expr.operator().source(), expr.right());
     }
@@ -122,7 +130,32 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     @Override
     public String visitPostfixExpr(Expr.Postfix expr) {
-        return null;
+        return parenthesize(expr.operator().source(), expr.expr());
+    }
+
+    @Override
+    public String visitBad(Expr.Bad expr) {
+        String result = "(BAD ";
+        result += (Arrays.stream(expr.badTokens()).map(tok -> StringEscapeUtils.escapeJava(tok.source())).collect(Collectors.joining(", ")));
+        result += "))";
+        return result;
+    }
+
+    @Override
+    public String visitNew(Expr.New expr) {
+        return parenthesize("new", expr.call());
+    }
+
+    @Override
+    public String visitPropertyAccess(Expr.PropertyAccess expr) {
+
+
+        return parenthesize("property", expr.left(), expr.right());
+    }
+
+    @Override
+    public String visitIndexAccess(Expr.IndexAccess expr) {
+        return parenthesize("index", expr.left(), expr.right());
     }
 
     @Override
@@ -172,7 +205,8 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
         result.append(stmt.parameters().stream().map(this::print).collect(Collectors.joining(", ")));
 
         if (stmt.returnType() != null) result.append(") ").append(stmt.returnType().source());
-        result.append(")");
+        result.append(")\n\t");
+        result.append(print(stmt.body()));
         return result.toString();
     }
 
@@ -225,6 +259,6 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     @Override
     public String visitTypeAlias(Stmt.TypeAlias stmt) {
-        return null;
+        return "(type " + stmt.name().source() + " extern " + print(stmt.literal()) + ")";
     }
 }

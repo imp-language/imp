@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Verifier {
 
-    public static final String verificationPath = "verification";
+    public static final String verificationPath = "verification/original";
 
     public static final List<String> flawsList = new ArrayList<>();
 

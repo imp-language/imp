@@ -30,6 +30,33 @@ public interface InfixParselet {
         }
     }
 
+    record PropertyAccess() implements InfixParselet {
+        public Expr parse(Parser parser, Expr left, Token token) {
+            Expr right = parser.expression(precedence() - 1);
+            return new Expr.PropertyAccess(left, right);
+        }
+
+
+        @Override
+        public int precedence() {
+            return Precedence.PREFIX;
+        }
+    }
+
+    record IndexAccess() implements InfixParselet {
+        public Expr parse(Parser parser, Expr left, Token token) {
+            Expr right = parser.expression(precedence() - 1);
+            parser.consume(TokenType.RBRACK, "Expected ']' after index access.");
+            return new Expr.IndexAccess(left, right);
+        }
+
+
+        @Override
+        public int precedence() {
+            return Precedence.PREFIX;
+        }
+    }
+
     record PostfixOperator(int precedence) implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             return new Expr.Postfix(left, token);
@@ -45,7 +72,7 @@ public interface InfixParselet {
 
         @Override
         public int precedence() {
-            return Precedence.ASSIGNMENT.precedence;
+            return Precedence.ASSIGNMENT;
         }
     }
 
@@ -62,12 +89,15 @@ public interface InfixParselet {
                 parser.consume(TokenType.RPAREN, "Expected closing ')' after function call.");
             }
 
+
             return new Expr.Call(left, args);
         }
 
         @Override
         public int precedence() {
-            return Precedence.PRIMARY.precedence;
+            return Precedence.PRIMARY;
         }
     }
+
+
 }

@@ -18,14 +18,31 @@ public interface Expr {
 
         R visitLiteralExpr(Literal expr);
 
+        R visitLiteralList(LiteralList expr);
+
         R visitPrefix(Prefix expr);
 
         R visitCall(Call expr);
 
         R visitPostfixExpr(Postfix expr);
+
+        R visitBad(Bad expr);
+
+        R visitNew(New expr);
+
+        R visitPropertyAccess(PropertyAccess expr);
+
+        R visitIndexAccess(IndexAccess expr);
     }
 
-    abstract <R> R accept(Visitor<R> visitor);
+    <R> R accept(Visitor<R> visitor);
+
+    // error
+    record Bad(Token... badTokens) implements Expr {
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBad(this);
+        }
+    }
 
     // expression operator expression
     record Assign(Expr left, Expr right) implements Expr {
@@ -33,6 +50,7 @@ public interface Expr {
             return visitor.visitAssignExpr(this);
         }
     }
+
 
     // expression operator expression
     record Binary(Expr left, Token operator, Expr right) implements Expr {
@@ -68,6 +86,13 @@ public interface Expr {
         }
     }
 
+    // literal number, boolean or string
+    record LiteralList(List<Expr> entries) implements Expr {
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLiteralList(this);
+        }
+    }
+
 
     // identifier
     record Identifier(Token identifier) implements Expr {
@@ -87,6 +112,28 @@ public interface Expr {
     record Postfix(Expr expr, Token operator) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPostfixExpr(this);
+        }
+    }
+
+
+    // expression operator
+    record New(Expr call) implements Expr {
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitNew(this);
+        }
+    }
+
+    // expression . expression
+    record PropertyAccess(Expr left, Expr right) implements Expr {
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitPropertyAccess(this);
+        }
+    }
+
+    // expression[expression]
+    record IndexAccess(Expr left, Expr right) implements Expr {
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitIndexAccess(this);
         }
     }
 

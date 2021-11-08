@@ -29,14 +29,12 @@ statement      → expression
                
 
 export         → "export" statement ;
-typeAlias      → "type" IDENTIFIER "=" "extern" STRING ;
-struct         → "struct" IDENTIFIER "{" (parameter ","?)* ;
-enum           → "enum" IDENTIFIER "{" (IDENTIFIER ","?)* "}" ;
-function       → "func" IDENTIFIER "(" parameters ")" IDENTIFIER? block ;
+typeAlias      → "type" identifier "=" "extern" STRING ;
+struct         → "struct" identifier "{" (parameter ","?)* ;
+enum           → "enum" identifier "{" (IDENTIFIER ","?)* "}" ;
+function       → "func" identifier "(" parameters ")" identifier? block ;
 if             → "if" expression block ("else" (block | if))? ;
-variable       → ("mut"|"val") IDENTIFIER "=" expression ;
-
-
+variable       → ("mut"|"val") identifier "=" expression ;
 
 return         → "return" expression?;
 block          → "{" (statement)* "};
@@ -48,9 +46,24 @@ Expressions:
 
 ```ebnf
 expression     → assignment
-               |
+               | identifier
+               | literal
+               | call
+               | grouping
+               | new
+               | propertyAccess
+               | indexAccess
                ;
-assignment     →
+               
+               
+assignment     → expression "=" expression ;
+identifier     → IDENTIFIER ;
+literal        → NUMBER | TRUE | FALSE | STRING | listLiteral ;
+call           → identifier "(" arguments ")" ;
+grouping       → "(" expression ")" 
+new            → "new" call ;
+propertyAccess → expression "." expression ;
+
 
 ```
 
@@ -59,4 +72,6 @@ Some helper rules:
 ```ebnf
 parameter      → IDENTIFIER IDENTIFIER;
 parameters     → nameType ("," nameType)* ",";
+arguments      → expression ("," expression)* ",";
+listLiteral    → "[" arguments "]" ;
 ```

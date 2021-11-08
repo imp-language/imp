@@ -8,22 +8,25 @@ import org.imp.jvm.tool.Timer;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import static org.imp.jvm.parser.ParserMain.Method.TEST;
+
 public class ParserMain {
+    enum Method {
+        TEST,
+        SKIP
+    }
+
+    public static void test(String root) {
+        var dirs = new HashMap<String, Method>();
+        dirs.put("if", TEST);
+    }
+
+
     public static void main(String[] args) {
-//        var mul = new Expr.Binary(
-//                new Expr.Binary(
-//                        new Expr.Literal(new Token(TokenType.NUMBER, 0, 0, "1")),
-//                        new Token(TokenType.ADD, 0, 0, "+"),
-//                        new Expr.Binary(
-//                                new Expr.Literal(new Token(TokenType.NUMBER, 0, 0, "2")),
-//                                new Token(TokenType.MUL, 0, 0, ""),
-//                                new Expr.Literal(new Token(TokenType.NUMBER, 0, 0, "3"))
-//                        )),
-//                new Token(TokenType.SUB, 0, 0, "-"),
-//                new Expr.Literal(new Token(TokenType.NUMBER, 0, 0, "4"))
-//        );
+
         var printer = new ASTPrinter();
 
         try {
@@ -36,8 +39,8 @@ public class ParserMain {
 
             var parser = new Parser(tokenizer);
             var statements = parser.parse();
-//            System.out.println(printer.print(statements));
-            printer.print(statements);
+            System.out.println(printer.print(statements));
+//            printer.print(statements);
             Timer.log("Source file parsed.");
             Timer.LOG = true;
             Timer.logTotalTime();

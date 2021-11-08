@@ -1,20 +1,15 @@
 package org.imp.jvm.parser;
 
-public enum Precedence {
-    PRIMARY(10),
-    POSTFIX(9),
-    PREFIX(8),
-    EXPONENT(7),
-    PRODUCT(6),
-    SUM(5),
-    COMPARISON(4),
-    AND(3),
-    OR(2),
-    ASSIGNMENT(1);
+public class Precedence {
+    public static final int PRIMARY = 10;
+    public static final int POSTFIX = 9;
+    public static final int PREFIX = 8;
+    public static final int EXPONENT = 7;
+    public static final int PRODUCT = 6;
+    public static final int SUM = 5;
+    public static final int COMPARISON = 4;
+    public static final int AND = 3;
+    public static final int OR = 2;
+    public static final int ASSIGNMENT = 1;
 
-    public final int precedence;
-
-    Precedence(int precedence) {
-        this.precedence = precedence;
-    }
 }

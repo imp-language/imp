@@ -8,7 +8,7 @@ public enum TokenType {
     RPAREN(")"),
     LBRACE("{"),
     RBRACE("}"),
-    LBRACK("]"),
+    LBRACK("["),
     RBRACK("]"),
     COMMA(","),
     VARARGS("..."),
@@ -37,6 +37,7 @@ public enum TokenType {
 
     // Suffix-only operators
     INC("++"),
+    DEC("--"),
 
     // Keywords
     FOR("for"),

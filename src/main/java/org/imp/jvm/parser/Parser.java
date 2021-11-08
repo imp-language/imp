@@ -2,15 +2,12 @@ package org.imp.jvm.parser;
 
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.statement.Statement;
 import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.tokenizer.TokenType;
 
 import static org.imp.jvm.tokenizer.TokenType.*;
 
 import org.imp.jvm.tokenizer.Tokenizer;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +18,15 @@ public class Parser extends ParserBase {
 
         // Register the ones that need special parselets.
         register(IDENTIFIER, new PrefixParselet.Identifier());
-        register(NUMBER, new PrefixParselet.Literal());
-        register(TRUE, new PrefixParselet.Literal());
-        register(FALSE, new PrefixParselet.Literal());
-        register(STRING, new PrefixParselet.Literal());
+        register(NUMBER, new PrefixParselet.Literal(false));
+        register(TRUE, new PrefixParselet.Literal(false));
+        register(FALSE, new PrefixParselet.Literal(false));
+        register(STRING, new PrefixParselet.Literal(false));
+        register(LBRACK, new PrefixParselet.Literal(true));
         register(ASSIGN, new InfixParselet.AssignOperator());
+        register(NEW, new PrefixParselet.New());
+        register(DOT, new InfixParselet.PropertyAccess());
+        register(LBRACK, new InfixParselet.IndexAccess());
 
         register(LPAREN, new PrefixParselet.Grouping());
         register(LPAREN, new InfixParselet.Call());
@@ -41,14 +42,19 @@ public class Parser extends ParserBase {
         infixLeft(DIV, Precedence.PRODUCT);
         infixRight(POW, Precedence.EXPONENT);
 
+
         // Comparisons
         infixLeft(EQUAL, Precedence.COMPARISON);
         infixLeft(LT, Precedence.COMPARISON);
         infixLeft(GT, Precedence.COMPARISON);
         infixLeft(LE, Precedence.COMPARISON);
-        infixLeft(GT, Precedence.COMPARISON);
+        infixLeft(GE, Precedence.COMPARISON);
         infixLeft(AND, Precedence.AND);
         infixLeft(OR, Precedence.OR);
+
+        // Postfix operators
+        postfix(INC, Precedence.POSTFIX);
+        postfix(DEC, Precedence.POSTFIX);
     }
 
     List<Stmt> parse() {
@@ -67,6 +73,10 @@ public class Parser extends ParserBase {
     }
 
     private Stmt statement() {
+        if (check(ERROR)) {
+            System.out.println();
+        }
+
         if (match(EXPORT)) return export();
 
         if (match(TYPE)) return typeAlias();
@@ -114,7 +124,11 @@ public class Parser extends ParserBase {
         Token token = consume();
         PrefixParselet prefix = prefixParselets.get(token.type());
 
-        if (prefix == null) error(token, "Could not parse.");
+        if (prefix == null) {
+            error(token, "Could not parse.");
+            return new Expr.Bad(token);
+        }
+
 
         Expr left = prefix.parse(this, token);
 
@@ -204,12 +218,11 @@ public class Parser extends ParserBase {
         if (!check(LBRACE)) {
             returnType = consume();
         }
-        consume(LBRACE, "Expected opening curly braces before function body.");
 
-        // Todo parse block
-        consume(RBRACE, "Expected opening curly braces before function body.");
 
-        return new Stmt.Function(name, parameters, returnType, null);
+        Stmt.Block block = block();
+
+        return new Stmt.Function(name, parameters, returnType, block);
     }
 
     private Stmt.Parameter parameter() {

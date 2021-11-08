@@ -4,6 +4,9 @@ import org.imp.jvm.Expr;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface PrefixParselet {
     Expr parse(Parser parser, Token token);
 
@@ -25,9 +28,30 @@ public interface PrefixParselet {
         }
     }
 
-    record Literal() implements PrefixParselet {
+    record Literal(boolean isList) implements PrefixParselet {
         public Expr parse(Parser parser, Token token) {
+            if (token.type() == TokenType.LBRACK) {
+                List<Expr> args = new ArrayList<>();
+                if (!parser.match(TokenType.RBRACK)) {
+                    do {
+                        args.add(parser.expression());
+                    } while (parser.match(TokenType.COMMA));
+                    parser.optional(TokenType.COMMA);
+                    parser.consume(TokenType.RBRACK, "Expected closing ']' after list literal.");
+                }
+                return new Expr.LiteralList(args);
+            }
+
             return new Expr.Literal(token);
+        }
+    }
+
+    record New() implements PrefixParselet {
+        public Expr parse(Parser parser, Token token) {
+            Expr expr = parser.expression();
+
+
+            return new Expr.New(expr);
         }
     }
 

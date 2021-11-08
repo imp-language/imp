@@ -26,32 +26,32 @@ public class ParserBase {
      * Registers a postfix unary operator parselet for the given token and
      * precedence.
      */
-    public void postfix(TokenType token, Precedence precedence) {
-        register(token, new InfixParselet.PostfixOperator(precedence.precedence));
+    public void postfix(TokenType token, int precedence) {
+        register(token, new InfixParselet.PostfixOperator(precedence));
     }
 
     /**
      * Registers a prefix unary operator parselet for the given token and
      * precedence.
      */
-    public void prefix(TokenType token, Precedence precedence) {
-        register(token, new PrefixParselet.PrefixOperator(precedence.precedence));
+    public void prefix(TokenType token, int precedence) {
+        register(token, new PrefixParselet.PrefixOperator(precedence));
     }
 
     /**
      * Registers a left-associative binary operator parselet for the given token
      * and precedence.
      */
-    public void infixLeft(TokenType token, Precedence precedence) {
-        register(token, new InfixParselet.BinaryOperator(precedence.precedence, false));
+    public void infixLeft(TokenType token, int precedence) {
+        register(token, new InfixParselet.BinaryOperator(precedence, false));
     }
 
     /**
      * Registers a right-associative binary operator parselet for the given token
      * and precedence.
      */
-    public void infixRight(TokenType token, Precedence precedence) {
-        register(token, new InfixParselet.BinaryOperator(precedence.precedence, true));
+    public void infixRight(TokenType token, int precedence) {
+        register(token, new InfixParselet.BinaryOperator(precedence, true));
     }
 
     int getPrecedence() {
