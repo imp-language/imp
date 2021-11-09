@@ -35,6 +35,7 @@ enum           → "enum" identifier "{" (IDENTIFIER ","?)* "}" ;
 function       → "func" identifier "(" parameters ")" identifier? block ;
 if             → "if" expression block ("else" (block | if))? ;
 variable       → ("mut"|"val") identifier "=" expression ;
+loop           → "for" loopCondition block ;
 
 return         → "return" expression?;
 block          → "{" (statement)* "};
@@ -70,8 +71,15 @@ propertyAccess → expression "." expression ;
 Some helper rules:
 
 ```ebnf
-parameter      → IDENTIFIER IDENTIFIER;
+parameter      → identifier type;
 parameters     → nameType ("," nameType)* ",";
 arguments      → expression ("," expression)* ",";
 listLiteral    → "[" arguments "]" ;
+loopCondition  → identifier "in" expression
+               | identifier "in" expression ".." expression
+               
+               ;
+               
+type           → identifier ("[" "]")? ; // Todo: better type expressions
+
 ```

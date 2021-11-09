@@ -1,8 +1,11 @@
 package org.imp.jvm;
 
+import org.apache.commons.math3.analysis.function.Exp;
+import org.imp.jvm.statement.ForInLoop;
 import org.imp.jvm.tokenizer.Token;
 
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 public interface Stmt {
     <R> R accept(Visitor<R> visitor);
@@ -29,9 +32,10 @@ public interface Stmt {
 
         R visitParameterStmt(Parameter stmt);
 
-        R visitForInLoop(ForInLoop stmt);
 
-        R visitForLoop(ForLoop stmt);
+        R visitFor(For stmt);
+
+        R visitForInCondition(ForInCondition stmt);
 
         R visitTypeAlias(TypeAlias stmt);
     }
@@ -79,7 +83,7 @@ public interface Stmt {
         }
     }
 
-    record Parameter(Token name, Token type) implements Stmt {
+    record Parameter(Token name, Token type, boolean listType) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitParameterStmt(this);
         }
@@ -104,18 +108,20 @@ public interface Stmt {
     }
 
 
-
-    record ForInLoop(Token iteratorName, Expression iteratorSource, Block body) implements Stmt {
+    record For(ForCondition condition, Block block) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitForInLoop(this);
+            return visitor.visitFor(this);
         }
     }
 
-    record ForLoop(Variable declaration, Expression condition, Expr incrementer, Block body) implements Stmt {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitForLoop(this);
-        }
+
+    interface ForCondition extends Stmt {
     }
 
+    record ForInCondition(Token name, Expr expr) implements ForCondition {
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitForInCondition(this);
+        }
+    }
 
 }

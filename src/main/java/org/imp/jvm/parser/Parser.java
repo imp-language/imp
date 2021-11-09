@@ -85,8 +85,15 @@ public class Parser extends ParserBase {
         if (match(ENUM)) return parseEnum();
         if (match(IF)) return parseIf();
         if (check(MUT) || check(VAL)) return variable();
+        if (match(FOR)) return parseFor();
+        if (match(RETURN)) return parseReturn();
         if (check(LBRACE)) return block();
         else return new Stmt.Expression(expression());
+    }
+
+    Stmt.Return parseReturn() {
+        Expr expr = expression();
+        return new Stmt.Return(expr);
     }
 
     private Stmt.If parseIf() {
@@ -103,6 +110,15 @@ public class Parser extends ParserBase {
             }
         }
         return new Stmt.If(condition, trueStmt, falseStmt);
+    }
+
+    private Stmt.For parseFor() {
+        Token name = consume(IDENTIFIER, "Need iterator variable name.");
+        consume(IN, "Expected 'in' keyword.");
+        Expr condition = expression();
+        Stmt.Block block = block();
+
+        return new Stmt.For(new Stmt.ForInCondition(name, condition), block);
     }
 
     private Stmt.Variable variable() {
@@ -228,7 +244,13 @@ public class Parser extends ParserBase {
     private Stmt.Parameter parameter() {
         Token name = consume(IDENTIFIER, "Expected field name.");
         Token type = consume(IDENTIFIER, "Expected field type.");
-        return new Stmt.Parameter(name, type);
+        boolean listType = false;
+        if (match(LBRACK)) {
+            listType = true;
+            consume(RBRACK, "Expected ']' in list type.");
+            // Todo: better type expressions
+        }
+        return new Stmt.Parameter(name, type, listType);
     }
 
 

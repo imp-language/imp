@@ -3,7 +3,7 @@ package org.imp.jvm.parser;
 import org.apache.commons.text.StringEscapeUtils;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.tokenizer.Token;
+import org.imp.jvm.tokenizer.TokenType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -106,7 +106,9 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     @Override
     public String visitLiteralExpr(Expr.Literal expr) {
-        return expr.literal().source();
+        String source = expr.literal().source();
+        if (expr.literal().type() == TokenType.STRING) return '"' + source + '"';
+        return source;
     }
 
     @Override
@@ -232,7 +234,7 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     @Override
     public String visitReturnStmt(Stmt.Return stmt) {
-        return null;
+        return parenthesize("return", stmt.expr());
     }
 
     @Override
@@ -243,17 +245,25 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
 
     @Override
     public String visitParameterStmt(Stmt.Parameter stmt) {
-        return stmt.name().source() + " " + stmt.type().source();
+        String result = stmt.name().source() + " " + stmt.type().source();
+
+        if (stmt.listType()) result += "[]";
+        return result;
+    }
+
+
+    @Override
+    public String visitFor(Stmt.For stmt) {
+        StringBuilder sb = new StringBuilder("(for ");
+        sb.append(print(stmt.condition()))
+                .append("\n\t")
+                .append(print(stmt.block()));
+        return sb.toString();
     }
 
     @Override
-    public String visitForInLoop(Stmt.ForInLoop stmt) {
-        return null;
-    }
-
-    @Override
-    public String visitForLoop(Stmt.ForLoop stmt) {
-        return null;
+    public String visitForInCondition(Stmt.ForInCondition stmt) {
+        return "(for-in " + stmt.name().source() + " " + print(stmt.expr()) + ")";
     }
 
 

@@ -3,3 +3,4 @@ build
 .antlr
 target
 bfg-1.14.0.jar
+/cloc-1.90.exe

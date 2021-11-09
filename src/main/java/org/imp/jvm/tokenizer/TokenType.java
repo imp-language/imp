@@ -12,6 +12,7 @@ public enum TokenType {
     RBRACK("]"),
     COMMA(","),
     VARARGS("..."),
+    RANGE(".."),
     DOT("."),
 
 

@@ -1,56 +1,47 @@
-// Test list creation and modification
-/*
-// Create a list of integers
-val myInt = 4
-val list = [1000000,1100000, myInt]
-log(list)
-*/
-log(list[0])
+// Declares variables of primitive types and changes
+// their types with addition or reassignment.
 
-// Create a list of strings
-val stringList = ["Matt", "Hall"]
-log(stringList)
-log(stringList[1])
+log("declarations")
 
-// Create a list of objects
-// Todo
+mut i = 0
+log(i)
 
-// Todo: parse for loops
-// Loop through lists
-val integerList = [0,1,2,3,4,5]
-mut sum = 0
-for i in integerList {
-    log(i)
-    sum = sum + i
-}
-/*
-log("sum:",sum)
+mut f = 0.0
+log(f)
 
-val words = ["List", "of", "words", "Hello", "world"]
-mut shortestWord = ""
-mut shortestLength = 100000
-for i in words {
-    log(i)
-    if length(i) < shortestLength {
-        shortestLength = length(i)
-        shortestWord = i
-    }
-}
-log(shortestLength, shortestWord)
+mut b = false
+log(b)
 
+mut s = "string"
+log(s)
 
-// Functions accepting list parameters
-val a = [0, 1, 2, 3]
-val s = ["reee", "beee", "veee", "yeee"]
+log("")
+log("operations")
 
-func takesListOfInt(listOfInt int[], i int) {
-    log("list")
-    log(listOfInt)
-    for i in listOfInt {
-        log(i + 4)
-    }
-}
-takesListOfInt(a, 0) // this is fine
-// takesListOfInt(s, 99) // this will error if uncommented
+i = i + 1
+log(i)
 
-*/
+f = f + 1.0
+log(f)
+
+b = true
+log(b)
+
+s = s + " variable" + " a"
+log(s)
+
+log("\nnegatives")
+mut neg_i = -1
+log(neg_i)
+neg_i = neg_i + -23
+log(neg_i)
+
+mut neg_f = -1.0
+log(neg_f)
+neg_f++
+log(neg_f)
+
+mut neg_d = -1.0d
+log(neg_d)
+neg_d = neg_d + 346.0d
+log(neg_d)
