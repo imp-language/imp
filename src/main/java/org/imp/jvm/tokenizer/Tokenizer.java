@@ -54,8 +54,7 @@ public class Tokenizer implements Iterator<Token> {
             if (keyword != null) tokenType = keyword;
             tok = new Token(tokenType, startLine, startCol, identifier);
         } else if (isDigit(c)) {
-            String number = consumeNumber();
-            tok = new Token(NUMBER, startLine, startCol, number);
+            tok = consumeNumber();
         } else if (c == '"') {
             String stringLiteral = consumeString();
             tok = new Token(STRING, startLine, startCol, stringLiteral);
@@ -112,13 +111,15 @@ public class Tokenizer implements Iterator<Token> {
         return clearStringBuilder();
     }
 
-    private String consumeNumber() {
+    private Token consumeNumber() {
+        TokenType type = INT;
         // whole number part
         while (isDigit(peek())) {
             sb.append(advance());
         }
         // decimal point
         if (peek() == '.') {
+            type = FLOAT;
             sb.append(advance());
             // decimal part
             while (isDigit(peek())) {
@@ -139,9 +140,13 @@ public class Tokenizer implements Iterator<Token> {
         }
 
         // double suffix
-        if (peek() == 'd') sb.append(advance());
+        if (peek() == 'd') {
+            type = DOUBLE;
+            sb.append(advance());
+        }
 
-        return clearStringBuilder();
+        String value = clearStringBuilder();
+        return new Token(type, line, col, value);
     }
 
 

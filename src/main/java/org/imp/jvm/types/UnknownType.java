@@ -4,7 +4,7 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
-public record UnknownType(String name) implements Type {
+public class UnknownType implements Type {
 
 
     @Override

@@ -3,6 +3,7 @@ package org.imp.jvm.parser;
 import org.imp.jvm.Expr;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
+import org.imp.jvm.typechecker.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +19,13 @@ public interface PrefixParselet {
             // take *this* parselet's result as its left-hand argument.
             Expr right = parser.expression(precedence());
 
-            return new Expr.Prefix(token, right);
+            return new Expr.Prefix(new Entity(), token, right);
         }
     }
 
     record Identifier() implements PrefixParselet {
         public Expr parse(Parser parser, Token token) {
-            return new Expr.Identifier(token);
+            return new Expr.Identifier(new Entity(), token);
         }
     }
 
@@ -39,10 +40,10 @@ public interface PrefixParselet {
                     parser.optional(TokenType.COMMA);
                     parser.consume(TokenType.RBRACK, "Expected closing ']' after list literal.");
                 }
-                return new Expr.LiteralList(args);
+                return new Expr.LiteralList(new Entity(), args);
             }
 
-            return new Expr.Literal(token);
+            return new Expr.Literal(new Entity(), token);
         }
     }
 
@@ -51,7 +52,7 @@ public interface PrefixParselet {
             Expr expr = parser.expression();
 
 
-            return new Expr.New(expr);
+            return new Expr.New(new Entity(), expr);
         }
     }
 

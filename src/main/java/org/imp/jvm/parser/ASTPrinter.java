@@ -18,7 +18,7 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
         return stmt.accept(this);
     }
 
-    String print(List<Stmt> stmts) {
+    public String print(List<Stmt> stmts) {
         StringBuilder sb = new StringBuilder();
         for (var stmt : stmts) {
             sb.append(stmt.accept(this)).append("\n");
@@ -193,7 +193,7 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     @Override
-    public String visitExpressionStmt(Stmt.Expression stmt) {
+    public String visitExpressionStmt(Stmt.ExpressionStmt stmt) {
         return print(stmt.expr());
     }
 

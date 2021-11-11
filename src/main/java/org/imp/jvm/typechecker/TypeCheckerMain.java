@@ -1,30 +1,16 @@
-package org.imp.jvm.parser;
+package org.imp.jvm.typechecker;
 
-import org.imp.jvm.Expr;
-import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.tokenizer.TokenType;
+import org.imp.jvm.parser.ASTPrinter;
+import org.imp.jvm.parser.Parser;
 import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.tool.Timer;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
-import static org.imp.jvm.parser.ParserMain.Method.TEST;
-
-public class ParserMain {
-    enum Method {
-        TEST,
-        SKIP
-    }
-
-    public static void test(String root) {
-        var dirs = new HashMap<String, Method>();
-        dirs.put("if", TEST);
-    }
-
-
+public class TypeCheckerMain {
     public static void main(String[] args) {
 
         var printer = new ASTPrinter();
@@ -45,7 +31,9 @@ public class ParserMain {
             Timer.log("Source file parsed.");
             Timer.LOG = true;
             Timer.logTotalTime();
-            System.out.println(statements.size() + " statements parsed.");
+
+            var typeChecker = new TypeChecker();
+            typeChecker.validate(statements.get(0));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

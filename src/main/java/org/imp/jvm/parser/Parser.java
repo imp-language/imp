@@ -7,6 +7,7 @@ import org.imp.jvm.tokenizer.Token;
 import static org.imp.jvm.tokenizer.TokenType.*;
 
 import org.imp.jvm.tokenizer.Tokenizer;
+import org.imp.jvm.typechecker.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +19,14 @@ public class Parser extends ParserBase {
 
         // Register the ones that need special parselets.
         register(IDENTIFIER, new PrefixParselet.Identifier());
-        register(NUMBER, new PrefixParselet.Literal(false));
+        register(INT, new PrefixParselet.Literal(false));
+        register(FLOAT, new PrefixParselet.Literal(false));
+        register(DOUBLE, new PrefixParselet.Literal(false));
         register(TRUE, new PrefixParselet.Literal(false));
         register(FALSE, new PrefixParselet.Literal(false));
         register(STRING, new PrefixParselet.Literal(false));
         register(LBRACK, new PrefixParselet.Literal(true));
+
         register(ASSIGN, new InfixParselet.AssignOperator());
         register(NEW, new PrefixParselet.New());
         register(DOT, new InfixParselet.PropertyAccess());
@@ -57,7 +61,7 @@ public class Parser extends ParserBase {
         postfix(DEC, Precedence.POSTFIX);
     }
 
-    List<Stmt> parse() {
+    public List<Stmt> parse() {
         List<Stmt> stmts = new ArrayList<>();
 
         while (!isAtEnd()) {
@@ -88,7 +92,7 @@ public class Parser extends ParserBase {
         if (match(FOR)) return parseFor();
         if (match(RETURN)) return parseReturn();
         if (check(LBRACE)) return block();
-        else return new Stmt.Expression(expression());
+        else return new Stmt.ExpressionStmt(expression());
     }
 
     Stmt.Return parseReturn() {
@@ -142,7 +146,7 @@ public class Parser extends ParserBase {
 
         if (prefix == null) {
             error(token, "Could not parse.");
-            return new Expr.Bad(token);
+            return new Expr.Bad(new Entity(), token);
         }
 
 
@@ -180,7 +184,7 @@ public class Parser extends ParserBase {
         consume(EXTERN, "Expected 'extern' keyword in type alias");
         Token literal = consume(STRING, "Expected string literal.");
 
-        return new Stmt.TypeAlias(name, new Expr.Literal(literal));
+        return new Stmt.TypeAlias(name, new Expr.Literal(new Entity(), literal));
     }
 
     private Stmt.Struct struct() {

@@ -63,6 +63,9 @@ public enum TokenType {
     FALSE("false"),
     STRING,
     IDENTIFIER,
+    INT,
+    FLOAT,
+    DOUBLE,
     NUMBER,
 
     ERROR,

@@ -12,6 +12,8 @@ import java.util.Map;
 import static org.imp.jvm.tokenizer.TokenType.EOF;
 
 public class ParserBase {
+
+
     private final Tokenizer tokens;
     private final List<Token> mRead = new ArrayList<>();
 
@@ -20,6 +22,15 @@ public class ParserBase {
 
     public ParserBase(Tokenizer tokens) {
         this.tokens = tokens;
+    }
+
+
+    void error(Token token, String message) {
+        if (token.type() == EOF) {
+            report(token.line(), " at end", message);
+        } else {
+            report(token.line(), " at '" + token.source() + "'", message);
+        }
     }
 
     /**
@@ -115,15 +126,6 @@ public class ParserBase {
                 "[line " + line + "] Error" + where + ": " + message);
     }
 
-    //< lox-error
-//> Parsing Expressions token-error
-    void error(Token token, String message) {
-        if (token.type() == EOF) {
-            report(token.line(), " at end", message);
-        } else {
-            report(token.line(), " at '" + token.source() + "'", message);
-        }
-    }
 
     Token peek() {
         return lookAhead(0);

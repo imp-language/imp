@@ -197,7 +197,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
         // Types on struct fields have not settled yet, so all we know is a list of field names.
         List<Identifier> fieldPath = new ArrayList<>();
         for (var e : fieldPathCtx) {
-            var ident = new Identifier(e.getText(), new UnknownType(e.getText()));
+            var ident = new Identifier(e.getText(), new UnknownType());
             ident.setCtx(e, parent.name);
             fieldPath.add(ident);
         }

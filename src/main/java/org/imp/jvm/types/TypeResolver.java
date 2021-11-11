@@ -71,6 +71,7 @@ public class TypeResolver {
         return result;
     }
 
+
     public static Optional<BuiltInType> getBuiltInType(String typeName) {
         // Todo: bad way of doing this
         if (typeName.equals("boolean")) {
@@ -82,6 +83,7 @@ public class TypeResolver {
                 .filter(type -> type.getName().equals(finalTypeName))
                 .findFirst();
     }
+    
 
     public static Optional<BuiltInType> getBuiltInTypeByClass(Class<?> c) {
         return Arrays.stream(BuiltInType.values())

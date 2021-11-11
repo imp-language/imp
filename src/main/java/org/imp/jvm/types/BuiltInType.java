@@ -1,6 +1,7 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.domain.Operator;
+import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.imp.jvm.types.overloads.StringOverloads;
 import org.objectweb.asm.MethodVisitor;
@@ -50,6 +51,21 @@ public enum BuiltInType implements Type {
         this.isNumeric = isNumeric;
     }
 
+    public static BuiltInType getFromToken(TokenType tokenType) {
+        return switch (tokenType) {
+            case LPAREN, IDENTIFIER, NUMBER, ERROR, EOF, IN, EXTERN,
+                    NEW, AS, IMPORT, EXPORT, MUT, VAL, TYPE, FUNC,
+                    ENUM, STRUCT, RETURN, ELSE, IF, FOR, DEC, INC,
+                    NOT, POW, MOD, DIV, SUB, MUL, ADD, OR, AND, NOTEQUAL,
+                    EQUAL, LT, GT, LE, GE, ASSIGN, DOT, RANGE, VARARGS,
+                    COMMA, RBRACK, LBRACK, RBRACE, LBRACE, RPAREN -> null;
+            case TRUE, FALSE -> BuiltInType.BOOLEAN;
+            case STRING -> BuiltInType.STRING;
+            case INT -> BuiltInType.INT;
+            case FLOAT -> BuiltInType.FLOAT;
+            case DOUBLE -> BuiltInType.DOUBLE;
+        };
+    }
 
 
     @Override

@@ -3,6 +3,7 @@ package org.imp.jvm.parser;
 import org.imp.jvm.Expr;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
+import org.imp.jvm.typechecker.Entity;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -26,14 +27,14 @@ public interface InfixParselet {
             // take *this* parselet's result as its left-hand argument.
             Expr right = parser.expression(
                     precedence - (isRight ? 1 : 0));
-            return new Expr.Binary(left, token, right);
+            return new Expr.Binary(new Entity(), left, token, right);
         }
     }
 
     record PropertyAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             Expr right = parser.expression(precedence() - 1);
-            return new Expr.PropertyAccess(left, right);
+            return new Expr.PropertyAccess(new Entity(), left, right);
         }
 
 
@@ -47,7 +48,7 @@ public interface InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             Expr right = parser.expression(precedence() - 1);
             parser.consume(TokenType.RBRACK, "Expected ']' after index access.");
-            return new Expr.IndexAccess(left, right);
+            return new Expr.IndexAccess(new Entity(), left, right);
         }
 
 
@@ -59,7 +60,7 @@ public interface InfixParselet {
 
     record PostfixOperator(int precedence) implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
-            return new Expr.Postfix(left, token);
+            return new Expr.Postfix(new Entity(), left, token);
         }
     }
 
@@ -67,7 +68,7 @@ public interface InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             Expr right = parser.expression(precedence() - 1);
 
-            return new Expr.Assign(left, right);
+            return new Expr.Assign(new Entity(), left, right);
         }
 
         @Override
@@ -90,7 +91,7 @@ public interface InfixParselet {
             }
 
 
-            return new Expr.Call(left, args);
+            return new Expr.Call(new Entity(), left, args);
         }
 
         @Override

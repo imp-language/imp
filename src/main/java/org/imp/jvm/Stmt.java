@@ -1,11 +1,8 @@
 package org.imp.jvm;
 
-import org.apache.commons.math3.analysis.function.Exp;
-import org.imp.jvm.statement.ForInLoop;
 import org.imp.jvm.tokenizer.Token;
 
 import java.util.List;
-import java.util.concurrent.locks.Condition;
 
 public interface Stmt {
     <R> R accept(Visitor<R> visitor);
@@ -20,7 +17,7 @@ public interface Stmt {
 
         R visitStruct(Struct stmt);
 
-        R visitExpressionStmt(Expression stmt);
+        R visitExpressionStmt(ExpressionStmt stmt);
 
         R visitFunctionStmt(Function stmt);
 
@@ -65,7 +62,7 @@ public interface Stmt {
         }
     }
 
-    record Expression(Expr expr) implements Stmt {
+    record ExpressionStmt(Expr expr) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitExpressionStmt(this);
         }
