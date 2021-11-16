@@ -8,6 +8,8 @@ import org.imp.jvm.domain.Program;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
 import org.imp.jvm.runtime.Glue;
+import org.imp.jvm.tokenizer.Tokenizer;
+import org.imp.jvm.typechecker.TypeCheckerMain;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.Attribute;
@@ -27,12 +29,27 @@ public class API {
      * @param filename source
      * @return ImpFile
      */
-    public static ImpFile createSourceFile(String filename) {
-        ImpFile ast = null;
+    public static ImpFile createSourceFile(String filename) throws FileNotFoundException {
         File file = new File(filename);
+        BufferedReader reader =
+                new BufferedReader(new FileReader(file));
+        Timer.log("Buffer opened");
+        var tokenizer = new Tokenizer(reader);
+        Timer.log("Lexer created");
+
+        var parser = new org.imp.jvm.parser.Parser(tokenizer);
+        var statements = parser.parse();
+
+
+        ImpFile ast = null;
         if (file.exists()) {
             Timer.log("entry file found");
-            ast = Parser.getAbstractSyntaxTree(file);
+//            ast = Parser.getAbstractSyntaxTree(file);
+            try {
+                ast = TypeCheckerMain.getAbstractSyntaxTree2(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
             Timer.log("ANTLR visitor complete");
         }
         return ast;
@@ -48,7 +65,7 @@ public class API {
         return Parser.getAbstractSyntaxTree(content);
     }
 
-    public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) {
+    public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) throws FileNotFoundException {
         DependencyWalker walker = new DependencyWalker();
         var dependencies = walker.walkDependencies(entry);
 
@@ -74,9 +91,7 @@ public class API {
     }
 
 
-
-
-    public static Map<String, ImpFile> gatherImports(ImpFile entry) {
+    public static Map<String, ImpFile> gatherImports(ImpFile entry) throws FileNotFoundException {
         String basePath = FilenameUtils.getPath(entry.name);
 
         Map<String, ImpFile> impFileMap = new HashMap<>();

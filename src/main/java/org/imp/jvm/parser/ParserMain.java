@@ -1,15 +1,11 @@
 package org.imp.jvm.parser;
 
-import org.imp.jvm.Expr;
-import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.tool.Timer;
+import org.imp.jvm.visitors.ASTPrinterVisitor;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.imp.jvm.parser.ParserMain.Method.TEST;
 
@@ -27,7 +23,7 @@ public class ParserMain {
 
     public static void main(String[] args) {
 
-        var printer = new ASTPrinter();
+        var printer = new ASTPrinterVisitor();
 
         try {
             File file = new File("examples/scratch.imp");

@@ -1,17 +1,41 @@
 package org.imp.jvm.typechecker;
 
 import org.imp.jvm.Expr;
+import org.imp.jvm.ImpParser;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.expression.Expression;
-import org.imp.jvm.expression.Literal;
-import org.imp.jvm.statement.If;
-import org.imp.jvm.statement.Return;
-import org.imp.jvm.statement.Statement;
+import org.imp.jvm.compiler.Logger;
+import org.imp.jvm.domain.ImpFile;
+import org.imp.jvm.domain.Operator;
+import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.exception.Errors;
+import org.imp.jvm.expression.*;
+import org.imp.jvm.expression.reference.VariableReference;
+import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
+import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
+import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
+import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
+import org.imp.jvm.statement.*;
+import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
-import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.Type;
+
+import static org.imp.jvm.tokenizer.TokenType.*;
+
+import org.imp.jvm.types.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<Statement> {
+
+    private final Scope scope;
+    private final ImpFile parent;
+
+    public TypeChecker(Scope scope, ImpFile parent) {
+        this.scope = scope;
+        this.parent = parent;
+    }
 
     Expression validate(Expr expr) {
         return expr.accept(this);
@@ -29,6 +53,30 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
 
     @Override
     public Expression visitBinaryExpr(Expr.Binary expr) {
+        TokenType op = expr.operator().type();
+        switch (op) {
+            case ADD, SUB, MUL, DIV, MOD -> {
+                var left = expr.left().accept(this);
+                var right = expr.right().accept(this);
+                if (op == ADD) {
+                    return new Arithmetic(left, right, Operator.ADD);
+                } else if (op == SUB) {
+                    return new Arithmetic(left, right, Operator.SUBTRACT);
+                } else if (op == MUL) {
+                    return new Arithmetic(left, right, Operator.MULTIPLY);
+                } else if (op == DIV) {
+                    return new Arithmetic(left, right, Operator.DIVIDE);
+                } else if (op == MOD) {
+                    return new Arithmetic(left, right, Operator.MODULUS);
+                } else {
+                    System.out.println("not implemented");
+                    return null;
+                }
+            }
+            default -> {
+            }
+        }
+
         return null;
     }
 
@@ -39,12 +87,20 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
 
     @Override
     public Expression visitIdentifierExpr(Expr.Identifier expr) {
-        return null;
+        var vr = new VariableReference(expr.identifier().source(), parent);
+
+        return vr;
     }
 
     @Override
     public Expression visitLogicalExpr(Expr.Logical expr) {
-        return null;
+        var left = expr.left().accept(this);
+        var right = expr.left().accept(this);
+
+        //Todo will be unnecessary after migration complete
+        var op = Logical.LogicalOperator.AND;
+        if (expr.comparison().type() == TokenType.OR) op = Logical.LogicalOperator.OR;
+        return new Logical(left, right, op);
     }
 
     @Override
@@ -61,7 +117,11 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
 
     @Override
     public Expression visitLiteralList(Expr.LiteralList expr) {
-        return null;
+        List<Expression> elements = new ArrayList<>();
+        for (var e : expr.entries()) {
+            elements.add(e.accept(this));
+        }
+        return new ListLiteral(elements);
     }
 
     @Override
@@ -71,7 +131,23 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
 
     @Override
     public Expression visitCall(Expr.Call expr) {
-        return null;
+
+        var castToIdentifier = (Expr.Identifier) expr.item(); // Todo: bad!
+
+        // Function name
+        String functionName = castToIdentifier.identifier().source();
+
+        // Function argument expressions
+        List<Expression> argExpressions = new ArrayList<>();
+        for (var arg : expr.arguments()) {
+            argExpressions.add(arg.accept(this));
+        }
+
+
+        // Function Call
+        FunctionCall call = new FunctionCall(functionName, argExpressions, parent);
+
+        return call;
     }
 
     @Override
@@ -86,11 +162,23 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
 
     @Override
     public Expression visitNew(Expr.New expr) {
-        return null;
+        List<Expression> expressions = new ArrayList<>();
+
+        var callContext = (Expr.Call) expr.call();
+        var itemContext = (Expr.Identifier) callContext.item();
+        var expressionContexts = callContext.arguments();
+        for (var expCtx : expressionContexts) {
+            Expression exp = expCtx.accept(this);
+            expressions.add(exp);
+        }
+
+        var si = new StructInit(itemContext.identifier().source(), expressions, null);
+        return si;
     }
 
     @Override
     public Expression visitPropertyAccess(Expr.PropertyAccess expr) {
+        // Todo: major refactor needed, old code only supported identifier property access
         return null;
     }
 
@@ -100,11 +188,18 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
     }
 
     @Override
-    public Statement visitBlockStmt(Stmt.Block stmt) {
-        for (var statement : stmt.statements()) {
-            statement.accept(this);
-        }
+    public Statement visit(Stmt stmt) {
         return null;
+    }
+
+    @Override
+    public Statement visitBlockStmt(Stmt.Block stmt) {
+        List<Statement> statements = new ArrayList<>();
+        for (var statement : stmt.statements()) {
+            Statement s = statement.accept(this);
+            statements.add(s);
+        }
+        return new Block(statements, new Scope(/*Todo*/));
     }
 
     @Override
@@ -119,17 +214,87 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
 
     @Override
     public Statement visitStruct(Stmt.Struct stmt) {
-        return null;
+
+        List<Identifier> fields = new ArrayList<>();
+
+        // At this point we do not know of any custom types that exist.
+        for (var parameter : stmt.fields()) {
+//            Type t = TypeResolver.getFromTypeContext(types.get(i), scope);
+            String typeToken = parameter.type().source();
+            Type t = new UnknownType(typeToken);
+
+
+            String n = parameter.name().source();
+            var field = new Identifier(n, t);
+            fields.add(field);
+        }
+        String name = stmt.name().source();
+        var id = new Identifier(name, BuiltInType.STRUCT);
+
+        // Create struct type object
+        StructType structType = new StructType(id, fields, parent, scope);
+
+        // Create struct object
+        Struct struct = new Struct(structType);
+
+        // Add struct to scope
+        scope.addType(name, structType);
+
+        return struct;
     }
 
     @Override
-    public Statement visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        return null;
+    public Expression visitExpressionStmt(Stmt.ExpressionStmt stmt) {
+        return stmt.expr().accept(this);
     }
 
     @Override
     public Statement visitFunctionStmt(Stmt.Function stmt) {
-        return null;
+        /*
+         * Function analysis plan:
+         *
+         * In the parser:
+         * - Get name and parameters.
+         * - Create Function instance.
+         *
+         * In the validator:
+         * - Find (or create) a FunctionType that matches the name
+         * - Add the Function to the FunctionType
+         *
+         * Todo: walk the tree of each block and infer the return type
+         *
+         */
+
+        // Is the function exported? (nope, moved to a separate statement)
+        Modifier modifier = Modifier.NONE;
+
+        // The original name of the function
+        String name = stmt.name().source();
+
+        // Arguments of the function
+        List<Identifier> parameters = new ArrayList<>();
+        for (var parameter : stmt.parameters()) {
+            parameters.add(new Identifier(parameter.name().source(), new UnknownType(parameter.type().source())));
+        }
+
+        // Block of the function
+        Block block = new Block();
+        if (stmt.body() != null) {
+            var blockStatements = stmt.body().statements();
+            List<Statement> statements = blockStatements.stream().map(this::validate).collect(Collectors.toList());
+            block = new Block(statements, scope);
+        }
+
+        // Return type (or void)
+        var typeContext = stmt.returnType();
+        Type returnType = BuiltInType.VOID;
+        if (typeContext != null) {
+            returnType = new UnknownType(typeContext.source());
+        }
+
+
+        Function function = new Function(modifier, name, parameters, returnType, block, parent);
+        return function;
     }
 
     @Override
@@ -154,7 +319,12 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
     public Statement visitVariable(Stmt.Variable stmt) {
         Expression expression = stmt.expr().accept(this);
 
-        return null;
+        Mutability mutability = Mutability.Val;
+        if (stmt.mutability().type() == TokenType.MUT) mutability = Mutability.Mut;
+
+        String name = stmt.name().source();
+
+        return new Declaration(mutability, name, expression);
     }
 
     @Override

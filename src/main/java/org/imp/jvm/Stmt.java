@@ -8,6 +8,7 @@ public interface Stmt {
     <R> R accept(Visitor<R> visitor);
 
     interface Visitor<R> {
+        R visit(Stmt stmt);
 
         R visitBlockStmt(Block stmt);
 

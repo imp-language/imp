@@ -1,4 +1,4 @@
-package org.imp.jvm.parser;
+package org.imp.jvm.visitors;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.imp.jvm.Expr;
@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
+public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<String> {
     String print(Expr expr) {
         return expr.accept(this);
     }
@@ -158,6 +158,11 @@ public class ASTPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     @Override
     public String visitIndexAccess(Expr.IndexAccess expr) {
         return parenthesize("index", expr.left(), expr.right());
+    }
+
+    @Override
+    public String visit(Stmt stmt) {
+        return null;
     }
 
     @Override

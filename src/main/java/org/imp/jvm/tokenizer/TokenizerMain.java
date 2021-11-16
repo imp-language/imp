@@ -35,12 +35,10 @@ public class TokenizerMain {
     }
 
     public static void main(String[] args) throws IOException {
-//        Timer.LOG = true;
 
         new TokenizerMain().lexerBenchMark();
 
         Timer.LOG = true;
         Timer.logTotalTime();
-//        org.openjdk.jmh.Main.main(args);
     }
 }

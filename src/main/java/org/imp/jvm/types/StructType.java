@@ -24,6 +24,12 @@ public class StructType implements Type {
 
     private boolean unknown = false;
 
+    public StructType(Identifier identifier, List<Identifier> fields) {
+        this.identifier = identifier;
+        this.fields = fields;
+        this.parent = null;
+        this.scope = null;
+    }
 
     public StructType(Identifier identifier, List<Identifier> fields, ImpFile parent, Scope scope) {
         this.identifier = identifier;

@@ -5,6 +5,16 @@ import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
 public class UnknownType implements Type {
+    public String typeName = null;
+
+
+    public UnknownType(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public UnknownType() {
+        
+    }
 
 
     @Override

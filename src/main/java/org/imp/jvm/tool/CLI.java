@@ -2,6 +2,7 @@ package org.imp.jvm.tool;
 
 import picocli.CommandLine;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @CommandLine.Command(name = "imp")
@@ -63,7 +64,12 @@ public class CLI {
         if (!this.silent) {
 //            Timer.LOG = true;
         }
-        var out = imp.compile();
+        String out = null;
+        try {
+            out = imp.compile();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         try {
             Runner.run(out);
         } catch (IOException | InterruptedException e) {
@@ -74,6 +80,10 @@ public class CLI {
     private void build() {
         var imp = new Compiler(this.filename);
         Timer.LOG = true;
-        var out = imp.compile();
+        try {
+            var out = imp.compile();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

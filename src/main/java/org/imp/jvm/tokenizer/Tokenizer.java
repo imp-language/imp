@@ -2,15 +2,13 @@ package org.imp.jvm.tokenizer;
 
 import org.apache.commons.text.StringEscapeUtils;
 
-import java.io.IOException;
-import java.io.PushbackReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.Iterator;
 
 import static org.imp.jvm.tokenizer.TokenType.*;
 
 public class Tokenizer implements Iterator<Token> {
-    private final PushbackReader reader;
+    private PushbackReader reader;
     private int line = 1;
     private int col = 1;
 
@@ -28,6 +26,14 @@ public class Tokenizer implements Iterator<Token> {
 
 
     private final StringBuilder sb = new StringBuilder();
+
+    public Tokenizer(File file) {
+        try {
+            this.reader = new PushbackReader(new FileReader(file), 5);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     public Tokenizer(Reader reader) {
         this.reader = new PushbackReader(reader, 5);

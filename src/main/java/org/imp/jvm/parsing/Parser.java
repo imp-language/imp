@@ -9,6 +9,7 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.exception.ThrowingErrorListener;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
 import org.imp.jvm.tool.Timer;
+import org.imp.jvm.typechecker.TypeCheckerMain;
 
 import java.io.*;
 
