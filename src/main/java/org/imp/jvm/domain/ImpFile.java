@@ -5,8 +5,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Function;
-import org.imp.jvm.parsing.Node;
-import org.imp.jvm.statement.Block;
 import org.imp.jvm.statement.Export;
 import org.imp.jvm.statement.Import;
 import org.imp.jvm.types.EnumType;
@@ -59,8 +57,6 @@ public class ImpFile {
     public void validate() {
         // WIP: convert to AST
         Function main = functions.get(0);
-
-        Node<Block> block = new Node<>(main.block);
 
 
         // 0. Export validation

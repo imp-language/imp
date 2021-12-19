@@ -1,7 +1,22 @@
 
+val a = 5
+
+function myFunc() {
+    val b = 4
+
+}
+
+
+/*
 struct Employee {
     name string
 }
 
+val b = 5
+
+
+
 log(9)
 log(9)
+
+*/

@@ -1,24 +1,21 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
+import org.imp.jvm.NewScope;
 import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.parser.Parser;
 import org.imp.jvm.tokenizer.Tokenizer;
-import org.imp.jvm.visitors.CodegenVisitor;
-import org.imp.jvm.visitors.TypeVisitor;
+import org.imp.jvm.types.Type;
+import org.imp.jvm.visitors.ASTPrinterVisitor;
+import org.imp.jvm.visitors.ScopeVisitor;
+import org.imp.jvm.visitors.StandardTraversal;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Compiler {
 
@@ -61,13 +58,24 @@ public class Compiler {
          *      Visit each statement and expression, generating code.
          */
 
-        TypeVisitor typeVisitor = new TypeVisitor();
+        var printer = new ASTPrinterVisitor();
+        System.out.println(printer.print(statements));
+
+        var rootScope = new NewScope();
+
+
+        // 1. Gather all types defined in the file
+        List<Type> types = new ArrayList<>();
+        ScopeVisitor scopeVisitor = new ScopeVisitor();
         for (var stmt : statements) {
-            var type = typeVisitor.visit(stmt);
-            if (type.isPresent()) {
-                // Todo: add new types to scope
-            }
+            StandardTraversal.traverse(stmt, scopeVisitor, null);
+
+//            var type = typeVisitor.visit(stmt);
+//            if (type.isPresent()) {
+//                types.add(type.get());
+//            }
         }
+        System.out.println(types);
 
 //        Scope staticScope = new Scope();
 //        MethodVisitor mv = new Me

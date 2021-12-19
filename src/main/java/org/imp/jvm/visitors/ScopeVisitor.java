@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TypeVisitor implements Stmt.Visitor<Optional<Type>> {
+public class ScopeVisitor implements Stmt.Visitor<Optional<Type>> {
 
 
     @Override
@@ -21,17 +21,17 @@ public class TypeVisitor implements Stmt.Visitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitBlockStmt(Stmt.Block stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitExport(Stmt.Export stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitEnum(Stmt.Enum stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -60,46 +60,46 @@ public class TypeVisitor implements Stmt.Visitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitFunctionStmt(Stmt.Function stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitIf(Stmt.If stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitReturnStmt(Stmt.Return stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitVariable(Stmt.Variable stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitParameterStmt(Stmt.Parameter stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitFor(Stmt.For stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitForInCondition(Stmt.ForInCondition stmt) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitTypeAlias(Stmt.TypeAlias stmt) {
-        return null;
+        return Optional.empty();
     }
 }

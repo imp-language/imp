@@ -2,11 +2,12 @@ package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.typechecker.Entity;
-import org.imp.jvm.types.Type;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public interface Expr {
+public interface Expr extends Node {
     interface Visitor<R> {
         R visitAssignExpr(Assign expr);
 
@@ -36,18 +37,31 @@ public interface Expr {
         R visitPostfixExpr(Postfix expr);
 
 
-
         R visitPropertyAccess(PropertyAccess expr);
 
     }
 
     <R> R accept(Visitor<R> visitor);
 
+    default List<Node> list(Expr... exprs) {
+        List<Node> list = new ArrayList<>();
+        Collections.addAll(list, exprs);
+        return list;
+    }
+
+    default List<Node> list(List<Expr> exprs) {
+        return new ArrayList<>(exprs);
+    }
 
     // error
     record Bad(Entity entity, Token... badTokens) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBad(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
@@ -55,6 +69,11 @@ public interface Expr {
     record Assign(Entity entity, Expr left, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitAssignExpr(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list(left, right);
         }
     }
 
@@ -64,11 +83,21 @@ public interface Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBinaryExpr(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     record Call(Entity entity, Expr item, List<Expr> arguments) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitCall(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
@@ -77,12 +106,22 @@ public interface Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitGroupingExpr(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     // expression comparison expression
     record Logical(Entity entity, Expr left, Token comparison, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLogicalExpr(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
@@ -91,12 +130,23 @@ public interface Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralExpr(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     // literal number, boolean or string
     record LiteralList(Entity entity, List<Expr> entries) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralList(this);
+        }
+
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
@@ -106,6 +156,11 @@ public interface Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIdentifierExpr(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     // operator expression
@@ -113,12 +168,22 @@ public interface Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPrefix(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     // expression operator
     record Postfix(Entity entity, Expr expr, Token operator) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPostfixExpr(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
@@ -128,6 +193,11 @@ public interface Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitNew(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     // expression . expression
@@ -135,12 +205,22 @@ public interface Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPropertyAccess(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     // expression[expression]
     record IndexAccess(Entity entity, Expr left, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIndexAccess(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 

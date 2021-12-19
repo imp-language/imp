@@ -2,10 +2,13 @@ package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public interface Stmt {
+public interface Stmt extends Node {
     <R> R accept(Visitor<R> visitor);
+
 
     interface Visitor<R> {
         R visit(Stmt stmt);
@@ -30,7 +33,6 @@ public interface Stmt {
 
         R visitParameterStmt(Parameter stmt);
 
-
         R visitFor(For stmt);
 
         R visitForInCondition(ForInCondition stmt);
@@ -38,10 +40,25 @@ public interface Stmt {
         R visitTypeAlias(TypeAlias stmt);
     }
 
+    default List<Node> list(Stmt... stmts) {
+        List<Node> list = new ArrayList<>();
+        Collections.addAll(list, stmts);
+        return list;
+    }
+
+    default List<Node> list(List<Stmt> stmts) {
+        return new ArrayList<>(stmts);
+    }
+
     record Enum(Token name, List<Token> values) implements Stmt {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitEnum(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return null;
         }
     }
 
@@ -49,11 +66,21 @@ public interface Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitStruct(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     record Block(List<Stmt> statements) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBlockStmt(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list(statements);
         }
     }
 
@@ -61,11 +88,21 @@ public interface Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitExport(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list(stmt);
+        }
     }
 
     record ExpressionStmt(Expr expr) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitExpressionStmt(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
@@ -73,11 +110,21 @@ public interface Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitTypeAlias(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     record Function(Token name, List<Parameter> parameters, Token returnType, Block body) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFunctionStmt(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
@@ -85,11 +132,21 @@ public interface Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitParameterStmt(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     record If(Expr condition, Stmt trueStmt, Stmt falseStmt) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIf(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list(trueStmt, falseStmt);
         }
     }
 
@@ -97,11 +154,21 @@ public interface Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitReturnStmt(this);
         }
+
+        @Override
+        public List<Node> children() {
+            return list();
+        }
     }
 
     record Variable(Token mutability, Token name, Expr expr) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitVariable(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
@@ -109,6 +176,11 @@ public interface Stmt {
     record For(ForCondition condition, Block block) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFor(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list(block);
         }
     }
 
@@ -119,6 +191,11 @@ public interface Stmt {
     record ForInCondition(Token name, Expr expr) implements ForCondition {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitForInCondition(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list();
         }
     }
 
