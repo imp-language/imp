@@ -1,16 +1,16 @@
 package org.imp.jvm.parser;
 
+import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.tokenizer.Token;
-
-import static org.imp.jvm.tokenizer.TokenType.*;
-
 import org.imp.jvm.tokenizer.Tokenizer;
-import org.imp.jvm.typechecker.Entity;
+import org.imp.jvm.typechecker.Annotation;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.imp.jvm.tokenizer.TokenType.*;
 
 public class Parser extends ParserBase {
 
@@ -45,6 +45,8 @@ public class Parser extends ParserBase {
         infixLeft(MUL, Precedence.PRODUCT);
         infixLeft(DIV, Precedence.PRODUCT);
         infixRight(POW, Precedence.EXPONENT);
+
+        infixLeft(RANGE, Precedence.COMPARISON);
 
 
         // Comparisons
@@ -146,7 +148,7 @@ public class Parser extends ParserBase {
 
         if (prefix == null) {
             error(token, "Could not parse.");
-            return new Expr.Bad(new Entity(), token);
+            return new Expr.Bad(new Annotation(), token);
         }
 
 
@@ -171,7 +173,7 @@ public class Parser extends ParserBase {
         }
 
         consume(RBRACE, "Expect '}' after block.");
-        return new Stmt.Block(statements);
+        return new Stmt.Block(statements, new Environment());
     }
 
     private Stmt.Export export() {
@@ -184,7 +186,7 @@ public class Parser extends ParserBase {
         consume(EXTERN, "Expected 'extern' keyword in type alias");
         Token literal = consume(STRING, "Expected string literal.");
 
-        return new Stmt.TypeAlias(name, new Expr.Literal(new Entity(), literal));
+        return new Stmt.TypeAlias(name, new Expr.Literal(new Annotation(), literal));
     }
 
     private Stmt.Struct struct() {

@@ -1,31 +1,22 @@
 package org.imp.jvm.typechecker;
 
 import org.imp.jvm.Expr;
-import org.imp.jvm.ImpParser;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.*;
 import org.imp.jvm.expression.reference.VariableReference;
-import org.imp.jvm.parsing.visitor.ArgumentsVisitor;
-import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
-import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
-import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
 import org.imp.jvm.statement.*;
-import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
-
-import static org.imp.jvm.tokenizer.TokenType.*;
-
 import org.imp.jvm.types.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.imp.jvm.tokenizer.TokenType.*;
 
 public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<Statement> {
 
@@ -179,6 +170,11 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
     @Override
     public Expression visitPropertyAccess(Expr.PropertyAccess expr) {
         // Todo: major refactor needed, old code only supported identifier property access
+        return null;
+    }
+
+    @Override
+    public Expression visitRange(Expr.Range range) {
         return null;
     }
 

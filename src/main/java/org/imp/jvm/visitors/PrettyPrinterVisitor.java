@@ -3,13 +3,16 @@ package org.imp.jvm.visitors;
 import org.apache.commons.text.StringEscapeUtils;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<String> {
+public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<String> {
+    public boolean displayAnnotations = true;
+
     String print(Expr expr) {
         return expr.accept(this);
     }
@@ -26,72 +29,37 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
         return sb.toString();
     }
 
-    private String parenthesize(String name, Expr... exprs) {
+
+    private String s(Expr... exprs) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("(").append(name);
-        for (Expr expr : exprs) {
-            builder.append(" ");
-            builder.append(expr.accept(this));
-        }
-        builder.append(")");
+        List<Expr> exprList = Arrays.asList(exprs);
 
-        return builder.toString();
+        return exprList.stream().map(this::print).collect(Collectors.joining(" "));
     }
 
-    private String parenthesize(String name, Stmt... stmts) {
+    private String s(String... strs) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("(").append(name);
-        for (Stmt stmt : stmts) {
-            builder.append(" ");
-            builder.append(stmt.accept(this));
-        }
-        builder.append(")");
+        List<String> strList = Arrays.asList(strs);
 
-        return builder.toString();
-    }
-
-    private String parenthesize(String name, List<Stmt> stmts) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("(").append(name);
-        for (Stmt stmt : stmts) {
-            builder.append(" ");
-            builder.append(stmt.accept(this));
-        }
-        builder.append(")");
-
-        return builder.toString();
-    }
-
-    private String parenthesize2(String name, List<Expr> exprs) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("(").append(name);
-        for (Expr expr : exprs) {
-            builder.append(" ");
-            builder.append(expr.accept(this));
-        }
-        builder.append(")");
-
-        return builder.toString();
+        return String.join(" ", strList);
     }
 
 
     @Override
     public String visitAssignExpr(Expr.Assign expr) {
-        return parenthesize("=", expr.left(), expr.right());
+        return s(print(expr.left()), "=", print(expr.right()));
     }
 
     @Override
     public String visitBinaryExpr(Expr.Binary expr) {
-        return parenthesize(expr.operator().representation(), expr.left(), expr.right());
+        return s(print(expr.left()), expr.operator().representation(), print(expr.right()));
     }
 
     @Override
     public String visitGroupingExpr(Expr.Grouping expr) {
-        return parenthesize("group", expr.expr());
+        return s("(", print(expr), ")");
     }
 
     @Override
@@ -118,7 +86,7 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
 
     @Override
     public String visitPrefix(Expr.Prefix expr) {
-        return parenthesize(expr.operator().source(), expr.right());
+        return s(expr.operator().source(), print(expr.right()));
     }
 
     @Override
@@ -132,7 +100,7 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
 
     @Override
     public String visitPostfixExpr(Expr.Postfix expr) {
-        return parenthesize(expr.operator().source(), expr.expr());
+        return s(expr.operator().source(), print(expr.expr()));
     }
 
     @Override
@@ -145,24 +113,22 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
 
     @Override
     public String visitNew(Expr.New expr) {
-        return parenthesize("new", expr.call());
+        return s("new", print(expr.call()));
     }
 
     @Override
     public String visitPropertyAccess(Expr.PropertyAccess expr) {
-
-
-        return parenthesize("property", expr.left(), expr.right());
+        return s(print(expr.left()), ".", print(expr.right()));
     }
 
     @Override
     public String visitRange(Expr.Range range) {
-        return parenthesize("range", range.left(), range.right());
+        return s(print(range.left()), "..", print(range.right()));
     }
 
     @Override
     public String visitIndexAccess(Expr.IndexAccess expr) {
-        return parenthesize("index", expr.left(), expr.right());
+        return s(print(expr.left()), "[", print(expr.right()), "]");
     }
 
     @Override
@@ -170,14 +136,29 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
         return null;
     }
 
+    private int indent = 0;
+
+    String tabs() {
+        return "\n" + "\t".repeat(indent);
+    }
+
     @Override
-    public String visitBlockStmt(Stmt.Block stmt) {
-        return parenthesize("block", stmt.statements());
+    public String visitBlockStmt(Stmt.Block block) {
+        StringBuilder sb = new StringBuilder("{");
+        indent++;
+        for (var stmt : block.statements()) {
+            sb.append(tabs() + print(stmt));
+        }
+
+
+        indent--;
+        sb.append(tabs() + "}");
+        return sb.toString();
     }
 
     @Override
     public String visitExport(Stmt.Export stmt) {
-        return parenthesize("export", stmt.stmt());
+        return s("export", print(stmt.stmt()));
     }
 
     @Override
@@ -185,7 +166,7 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
         StringBuilder result = new StringBuilder("(enum " + stmt.name().source() + " (");
 
 
-        result.append(stmt.values().stream().map(val -> val.source()).collect(Collectors.joining(", ")));
+        result.append(stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")));
 
         result.append("))");
         return result.toString();
@@ -209,15 +190,15 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
 
     @Override
     public String visitFunctionStmt(Stmt.Function stmt) {
-        StringBuilder result = new StringBuilder("(func " + stmt.name().source());
+        StringBuilder result = new StringBuilder("func " + stmt.name().source());
 
 
-        result.append(" (");
+        result.append("(");
 
         result.append(stmt.parameters().stream().map(this::print).collect(Collectors.joining(", ")));
 
         if (stmt.returnType() != null) result.append(") ").append(stmt.returnType().source());
-        result.append(")\n\t");
+        result.append(") ");
         result.append(print(stmt.body()));
         return result.toString();
     }
@@ -244,18 +225,31 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
 
     @Override
     public String visitReturnStmt(Stmt.Return stmt) {
-        return parenthesize("return", stmt.expr());
+        return s("return", print(stmt.expr()));
     }
 
     @Override
     public String visitVariable(Stmt.Variable stmt) {
-        return parenthesize(stmt.mutability().source() + " " + stmt.name().source(), stmt.expr());
+
+        var name = stmt.name().source();
+
+        if (displayAnnotations) {
+//            Annotation annotation = stmt.
+
+            name += " : $ree";
+        }
+
+        return s(stmt.mutability().source(), name, "=", print(stmt.expr()));
     }
 
 
     @Override
     public String visitParameterStmt(Stmt.Parameter stmt) {
         String result = stmt.name().source() + " " + stmt.type().source();
+
+        if (displayAnnotations) {
+            result += " : $ree";
+        }
 
         if (stmt.listType()) result += "[]";
         return result;
@@ -264,16 +258,19 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
 
     @Override
     public String visitFor(Stmt.For stmt) {
-        StringBuilder sb = new StringBuilder("(for ");
+        StringBuilder sb = new StringBuilder("for ");
         sb.append(print(stmt.condition()))
-                .append("\n\t")
                 .append(print(stmt.block()));
-        return sb.toString();
+        return s("for", print(stmt.condition()), print(stmt.block()));
     }
 
     @Override
     public String visitForInCondition(Stmt.ForInCondition stmt) {
-        return "(for-in " + stmt.name().source() + " " + print(stmt.expr()) + ")";
+        var name = stmt.name().source();
+        if (displayAnnotations) {
+            name += " : $ree";
+        }
+        return s(name, "in", print(stmt.expr()));
     }
 
 

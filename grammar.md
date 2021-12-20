@@ -64,6 +64,7 @@ call           → identifier "(" arguments ")" ;
 grouping       → "(" expression ")" 
 new            → "new" call ;
 propertyAccess → expression "." expression ;
+indexAccess    → expression "[" expression "]" ;
 
 
 ```

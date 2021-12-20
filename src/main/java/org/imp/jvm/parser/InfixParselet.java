@@ -3,9 +3,8 @@ package org.imp.jvm.parser;
 import org.imp.jvm.Expr;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
-import org.imp.jvm.typechecker.Entity;
+import org.imp.jvm.typechecker.Annotation;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +26,14 @@ public interface InfixParselet {
             // take *this* parselet's result as its left-hand argument.
             Expr right = parser.expression(
                     precedence - (isRight ? 1 : 0));
-            return new Expr.Binary(new Entity(), left, token, right);
+            return new Expr.Binary(new Annotation(), left, token, right);
         }
     }
 
     record PropertyAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             Expr right = parser.expression(precedence() - 1);
-            return new Expr.PropertyAccess(new Entity(), left, right);
+            return new Expr.PropertyAccess(new Annotation(), left, right);
         }
 
 
@@ -46,9 +45,23 @@ public interface InfixParselet {
 
     record IndexAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
-            Expr right = parser.expression(precedence() - 1);
+            Expr right = parser.expression();
             parser.consume(TokenType.RBRACK, "Expected ']' after index access.");
-            return new Expr.IndexAccess(new Entity(), left, right);
+            return new Expr.IndexAccess(new Annotation(), left, right);
+
+//            List<Expr> args = new ArrayList<>();
+//
+//            // There may be no arguments at all.
+//            if (!parser.match(TokenType.RPAREN)) {
+//                do {
+//                    args.add(parser.expression());
+//                } while (parser.match(TokenType.COMMA));
+//                parser.optional(TokenType.COMMA);
+//                parser.consume(TokenType.RPAREN, "Expected closing ')' after function call.");
+//            }
+
+
+//            return new Expr.Call(new Entity(), left, args);
         }
 
 
@@ -60,7 +73,7 @@ public interface InfixParselet {
 
     record PostfixOperator(int precedence) implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
-            return new Expr.Postfix(new Entity(), left, token);
+            return new Expr.Postfix(new Annotation(), left, token);
         }
     }
 
@@ -68,7 +81,7 @@ public interface InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             Expr right = parser.expression(precedence() - 1);
 
-            return new Expr.Assign(new Entity(), left, right);
+            return new Expr.Assign(new Annotation(), left, right);
         }
 
         @Override
@@ -91,7 +104,7 @@ public interface InfixParselet {
             }
 
 
-            return new Expr.Call(new Entity(), left, args);
+            return new Expr.Call(new Annotation(), left, args);
         }
 
         @Override

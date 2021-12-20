@@ -92,6 +92,11 @@ public class CodegenVisitor implements Stmt.Visitor<Generator>, Expr.Visitor<Voi
     }
 
     @Override
+    public Void visitRange(Expr.Range range) {
+        return null;
+    }
+
+    @Override
     public Generator visit(Stmt stmt) {
         return null;
     }

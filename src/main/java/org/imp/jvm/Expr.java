@@ -1,7 +1,7 @@
 package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.typechecker.Entity;
+import org.imp.jvm.typechecker.Annotation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +39,7 @@ public interface Expr extends Node {
 
         R visitPropertyAccess(PropertyAccess expr);
 
+        R visitRange(Range range);
     }
 
     <R> R accept(Visitor<R> visitor);
@@ -54,7 +55,7 @@ public interface Expr extends Node {
     }
 
     // error
-    record Bad(Entity entity, Token... badTokens) implements Expr {
+    record Bad(Annotation annotation, Token... badTokens) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBad(this);
         }
@@ -66,7 +67,7 @@ public interface Expr extends Node {
     }
 
     // expression operator expression
-    record Assign(Entity entity, Expr left, Expr right) implements Expr {
+    record Assign(Annotation annotation, Expr left, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitAssignExpr(this);
         }
@@ -79,7 +80,7 @@ public interface Expr extends Node {
 
 
     // expression operator expression
-    record Binary(Entity entity, Expr left, Token operator, Expr right) implements Expr {
+    record Binary(Annotation annotation, Expr left, Token operator, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBinaryExpr(this);
         }
@@ -90,7 +91,7 @@ public interface Expr extends Node {
         }
     }
 
-    record Call(Entity entity, Expr item, List<Expr> arguments) implements Expr {
+    record Call(Annotation annotation, Expr item, List<Expr> arguments) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitCall(this);
         }
@@ -102,7 +103,7 @@ public interface Expr extends Node {
     }
 
     // LPAREN expression RPAREN
-    record Grouping(Entity entity, Expr expr) implements Expr {
+    record Grouping(Annotation annotation, Expr expr) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitGroupingExpr(this);
         }
@@ -114,7 +115,7 @@ public interface Expr extends Node {
     }
 
     // expression comparison expression
-    record Logical(Entity entity, Expr left, Token comparison, Expr right) implements Expr {
+    record Logical(Annotation annotation, Expr left, Token comparison, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLogicalExpr(this);
         }
@@ -126,7 +127,7 @@ public interface Expr extends Node {
     }
 
     // literal number, boolean or string
-    record Literal(Entity entity, Token literal) implements Expr {
+    record Literal(Annotation annotation, Token literal) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralExpr(this);
         }
@@ -138,7 +139,7 @@ public interface Expr extends Node {
     }
 
     // literal number, boolean or string
-    record LiteralList(Entity entity, List<Expr> entries) implements Expr {
+    record LiteralList(Annotation annotation, List<Expr> entries) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralList(this);
         }
@@ -152,7 +153,7 @@ public interface Expr extends Node {
 
 
     // identifier
-    record Identifier(Entity entity, Token identifier) implements Expr {
+    record Identifier(Annotation annotation, Token identifier) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIdentifierExpr(this);
         }
@@ -164,7 +165,7 @@ public interface Expr extends Node {
     }
 
     // operator expression
-    record Prefix(Entity entity, Token operator, Expr right) implements Expr {
+    record Prefix(Annotation annotation, Token operator, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPrefix(this);
         }
@@ -176,7 +177,7 @@ public interface Expr extends Node {
     }
 
     // expression operator
-    record Postfix(Entity entity, Expr expr, Token operator) implements Expr {
+    record Postfix(Annotation annotation, Expr expr, Token operator) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPostfixExpr(this);
         }
@@ -189,7 +190,7 @@ public interface Expr extends Node {
 
 
     // expression operator
-    record New(Entity entity, Expr call) implements Expr {
+    record New(Annotation annotation, Expr call) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitNew(this);
         }
@@ -201,7 +202,7 @@ public interface Expr extends Node {
     }
 
     // expression . expression
-    record PropertyAccess(Entity entity, Expr left, Expr right) implements Expr {
+    record PropertyAccess(Annotation annotation, Expr left, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPropertyAccess(this);
         }
@@ -213,7 +214,7 @@ public interface Expr extends Node {
     }
 
     // expression[expression]
-    record IndexAccess(Entity entity, Expr left, Expr right) implements Expr {
+    record IndexAccess(Annotation annotation, Expr left, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIndexAccess(this);
         }
@@ -221,6 +222,20 @@ public interface Expr extends Node {
         @Override
         public List<Node> children() {
             return list();
+        }
+    }
+
+    // expression ... expression
+    record Range(Annotation annotation, Expr left, Expr right) implements Expr {
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitRange(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return list(left, right);
         }
     }
 

@@ -73,10 +73,11 @@ public interface Stmt extends Node {
         }
     }
 
-    record Block(List<Stmt> statements) implements Stmt {
+    record Block(List<Stmt> statements, Environment environment) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBlockStmt(this);
         }
+
 
         @Override
         public List<Node> children() {
@@ -187,6 +188,7 @@ public interface Stmt extends Node {
 
     interface ForCondition extends Stmt {
     }
+
 
     record ForInCondition(Token name, Expr expr) implements ForCondition {
         public <R> R accept(Visitor<R> visitor) {

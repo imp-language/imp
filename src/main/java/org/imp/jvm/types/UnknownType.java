@@ -7,19 +7,25 @@ import org.objectweb.asm.Opcodes;
 public class UnknownType implements Type {
     public String typeName = null;
 
+    final int id;
+
+    static int counter = 1;
 
     public UnknownType(String typeName) {
         this.typeName = typeName;
+        id = counter;
+        counter++;
     }
 
     public UnknownType() {
-        
+        id = counter;
+        counter++;
     }
 
 
     @Override
     public String toString() {
-        return "<unknown>";
+        return "$" + id;
     }
 
     @Override

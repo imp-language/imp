@@ -1,9 +1,10 @@
 
-val a = 5
-
-function myFunc() {
-    val b = 4
-
+func range(from int, to int) {
+    val numbers = []
+    for i in to..from {
+        numbers[i - from] = i
+    }
+    return numbers
 }
 
 

@@ -1,14 +1,14 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.NewScope;
+import org.imp.jvm.Environment;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.parser.Parser;
 import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.visitors.ASTPrinterVisitor;
-import org.imp.jvm.visitors.ScopeVisitor;
-import org.imp.jvm.visitors.StandardTraversal;
+import org.imp.jvm.visitors.EnvironmentVisitor;
+import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
@@ -60,15 +60,18 @@ public class Compiler {
 
         var printer = new ASTPrinterVisitor();
         System.out.println(printer.print(statements));
+        var pretty = new PrettyPrinterVisitor();
+        System.out.println(pretty.print(statements));
 
-        var rootScope = new NewScope();
+        var rootEnvironment = new Environment();
 
 
         // 1. Gather all types defined in the file
         List<Type> types = new ArrayList<>();
-        ScopeVisitor scopeVisitor = new ScopeVisitor();
+        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(rootEnvironment);
         for (var stmt : statements) {
-            StandardTraversal.traverse(stmt, scopeVisitor, null);
+//            StandardTraversal.traverse(stmt, environmentVisitor, null);
+            stmt.accept(environmentVisitor);
 
 //            var type = typeVisitor.visit(stmt);
 //            if (type.isPresent()) {

@@ -1,17 +1,23 @@
 package org.imp.jvm.visitors;
 
+import org.imp.jvm.Environment;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.StructType;
-import org.imp.jvm.types.Type;
-import org.imp.jvm.types.UnknownType;
+import org.imp.jvm.types.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ScopeVisitor implements Stmt.Visitor<Optional<Type>> {
+public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>> {
+
+    public final Environment rootEnvironment;
+    public Environment currentEnvironment;
+
+    public EnvironmentVisitor(Environment rootEnvironment) {
+        this.rootEnvironment = rootEnvironment;
+        this.currentEnvironment = this.rootEnvironment;
+    }
 
 
     @Override
@@ -65,7 +71,28 @@ public class ScopeVisitor implements Stmt.Visitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitFunctionStmt(Stmt.Function stmt) {
-        return Optional.empty();
+        String name = stmt.name().source();
+
+        var childEnvironment = stmt.body().environment();
+        childEnvironment.setParent(currentEnvironment);
+
+        // Annotate parameters in the current scope
+        for (var param : stmt.parameters()) {
+            childEnvironment.addVariable(param.name().source(), new UnknownType());
+        }
+
+
+        var returnType = Optional.ofNullable(stmt.returnType());
+
+
+        FunctionType functionType = new FunctionType(name, null, false);
+        currentEnvironment.addVariable(name, functionType);
+
+        currentEnvironment = childEnvironment;
+        stmt.body().accept(this);
+
+        currentEnvironment = currentEnvironment.getParent();
+        return Optional.of(functionType);
     }
 
     @Override
