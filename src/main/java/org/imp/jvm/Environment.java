@@ -26,6 +26,20 @@ public class Environment {
         variables.put(name, type);
     }
 
+    public <T extends Type> Type getVariable(String name, Class<T> type) {
+        return variables.get(name);
+    }
+
+    public Type getVariable(String name) {
+        if (variables.get(name) != null) {
+            return variables.get(name);
+        }
+        if (parent != null) {
+            return parent.getVariable(name);
+        }
+        return null;
+    }
+
     public Environment getParent() {
         return parent;
     }
@@ -33,4 +47,5 @@ public class Environment {
     public void setParent(Environment parent) {
         this.parent = parent;
     }
+
 }

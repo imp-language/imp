@@ -25,7 +25,13 @@ public interface PrefixParselet {
 
     record Identifier() implements PrefixParselet {
         public Expr parse(Parser parser, Token token) {
+            if (parser.peek().type() == TokenType.LBRACK && parser.lookAhead(1).type() == TokenType.RBRACK) {
+                parser.consume();
+                parser.consume();
+                return new Expr.EmptyList(token);
+            }
             return new Expr.Identifier(new Annotation(), token);
+
         }
     }
 

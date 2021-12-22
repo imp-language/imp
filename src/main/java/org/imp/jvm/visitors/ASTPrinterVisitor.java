@@ -161,6 +161,11 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
     }
 
     @Override
+    public String visitEmptyList(Expr.EmptyList emptyList) {
+        return "(list" + "[" + emptyList.type().source() + "])";
+    }
+
+    @Override
     public String visitIndexAccess(Expr.IndexAccess expr) {
         return parenthesize("index", expr.left(), expr.right());
     }

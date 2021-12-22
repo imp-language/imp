@@ -54,6 +54,7 @@ expression     → assignment
                | new
                | propertyAccess
                | indexAccess
+               | emptyList
                ;
                
                
@@ -65,6 +66,7 @@ grouping       → "(" expression ")"
 new            → "new" call ;
 propertyAccess → expression "." expression ;
 indexAccess    → expression "[" expression "]" ;
+emptyList      → type "[" "]" ;
 
 
 ```

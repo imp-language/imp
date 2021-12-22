@@ -18,7 +18,6 @@ public class Parser extends ParserBase {
         super(tokens);
 
         // Register the ones that need special parselets.
-        register(IDENTIFIER, new PrefixParselet.Identifier());
         register(INT, new PrefixParselet.Literal(false));
         register(FLOAT, new PrefixParselet.Literal(false));
         register(DOUBLE, new PrefixParselet.Literal(false));
@@ -26,6 +25,7 @@ public class Parser extends ParserBase {
         register(FALSE, new PrefixParselet.Literal(false));
         register(STRING, new PrefixParselet.Literal(false));
         register(LBRACK, new PrefixParselet.Literal(true));
+        register(IDENTIFIER, new PrefixParselet.Identifier());
 
         register(ASSIGN, new InfixParselet.AssignOperator());
         register(NEW, new PrefixParselet.New());

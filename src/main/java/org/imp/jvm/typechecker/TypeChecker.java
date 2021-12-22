@@ -179,6 +179,11 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
     }
 
     @Override
+    public Expression visitEmptyList(Expr.EmptyList emptyList) {
+        return null;
+    }
+
+    @Override
     public Expression visitIndexAccess(Expr.IndexAccess expr) {
         return null;
     }

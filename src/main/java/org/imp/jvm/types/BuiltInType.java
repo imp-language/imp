@@ -67,6 +67,17 @@ public enum BuiltInType implements Type {
         };
     }
 
+    public static BuiltInType getFromString(String value) {
+        return switch (value) {
+            case "int" -> BuiltInType.INT;
+            case "float" -> BuiltInType.FLOAT;
+            case "double" -> BuiltInType.DOUBLE;
+            case "bool" -> BuiltInType.BOOLEAN;
+            case "string" -> BuiltInType.STRING;
+            default -> null;
+        };
+    }
+
 
     @Override
     public String toString() {

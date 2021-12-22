@@ -1,6 +1,7 @@
 package org.imp.jvm.visitors;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.tokenizer.Token;
@@ -12,6 +13,15 @@ import java.util.stream.Collectors;
 
 public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<String> {
     public boolean displayAnnotations = true;
+
+
+    public final Environment rootEnvironment;
+    public Environment currentEnvironment;
+
+    public PrettyPrinterVisitor(Environment rootEnvironment) {
+        this.rootEnvironment = rootEnvironment;
+        this.currentEnvironment = this.rootEnvironment;
+    }
 
     String print(Expr expr) {
         return expr.accept(this);
@@ -91,10 +101,10 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
     @Override
     public String visitCall(Expr.Call expr) {
-        StringBuilder result = new StringBuilder("(call " + print(expr.item()) + " (");
+        StringBuilder result = new StringBuilder(print(expr.item()) + "(");
         result.append(expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")));
 
-        result.append("))");
+        result.append(")");
         return result.toString();
     }
 
@@ -121,14 +131,20 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
         return s(print(expr.left()), ".", print(expr.right()));
     }
 
+    // Todo: relate to binary expressions somehow
     @Override
     public String visitRange(Expr.Range range) {
-        return s(print(range.left()), "..", print(range.right()));
+        return print(range.left()) + ".." + print(range.right());
+    }
+
+    @Override
+    public String visitEmptyList(Expr.EmptyList emptyList) {
+        return emptyList.type().source() + "[]";
     }
 
     @Override
     public String visitIndexAccess(Expr.IndexAccess expr) {
-        return s(print(expr.left()), "[", print(expr.right()), "]");
+        return print(expr.left()) + "[" + print(expr.right()) + "]";
     }
 
     @Override
@@ -192,14 +208,17 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
     public String visitFunctionStmt(Stmt.Function stmt) {
         StringBuilder result = new StringBuilder("func " + stmt.name().source());
 
+        var childEnvironment = stmt.body().environment();
 
         result.append("(");
 
+        currentEnvironment = childEnvironment;
         result.append(stmt.parameters().stream().map(this::print).collect(Collectors.joining(", ")));
 
         if (stmt.returnType() != null) result.append(") ").append(stmt.returnType().source());
         result.append(") ");
         result.append(print(stmt.body()));
+        currentEnvironment = currentEnvironment.getParent();
         return result.toString();
     }
 
@@ -234,9 +253,13 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
         var name = stmt.name().source();
 
         if (displayAnnotations) {
-//            Annotation annotation = stmt.
+            var t = currentEnvironment.getVariable(name);
+            if (t != null) {
+                name += " : " + t.toString();
 
-            name += " : $ree";
+            } else {
+                name += " : $reee";
+            }
         }
 
         return s(stmt.mutability().source(), name, "=", print(stmt.expr()));
@@ -245,11 +268,17 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
     @Override
     public String visitParameterStmt(Stmt.Parameter stmt) {
-        String result = stmt.name().source() + " " + stmt.type().source();
-
+        String name = stmt.name().source();
+        var t = currentEnvironment.getVariable(stmt.name().source());
         if (displayAnnotations) {
-            result += " : $ree";
+            if (t != null) {
+                name += " : " + t.toString();
+
+            } else {
+                name += " : $reee";
+            }
         }
+        String result = name + " " + stmt.type().source();
 
         if (stmt.listType()) result += "[]";
         return result;
@@ -258,17 +287,24 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
     @Override
     public String visitFor(Stmt.For stmt) {
-        StringBuilder sb = new StringBuilder("for ");
-        sb.append(print(stmt.condition()))
-                .append(print(stmt.block()));
-        return s("for", print(stmt.condition()), print(stmt.block()));
+        var childEnvironment = stmt.block().environment();
+        currentEnvironment = childEnvironment;
+        String str = s("for", print(stmt.condition()), print(stmt.block()));
+        currentEnvironment = currentEnvironment.getParent();
+        return str;
     }
 
     @Override
     public String visitForInCondition(Stmt.ForInCondition stmt) {
         var name = stmt.name().source();
+        var t = currentEnvironment.getVariable(stmt.name().source());
         if (displayAnnotations) {
-            name += " : $ree";
+            if (t != null) {
+                name += " : " + t.toString();
+
+            } else {
+                name += " : $reee";
+            }
         }
         return s(name, "in", print(stmt.expr()));
     }

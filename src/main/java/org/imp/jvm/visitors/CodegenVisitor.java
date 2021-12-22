@@ -97,6 +97,11 @@ public class CodegenVisitor implements Stmt.Visitor<Generator>, Expr.Visitor<Voi
     }
 
     @Override
+    public Void visitEmptyList(Expr.EmptyList emptyList) {
+        return null;
+    }
+
+    @Override
     public Generator visit(Stmt stmt) {
         return null;
     }

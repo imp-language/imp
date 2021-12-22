@@ -60,8 +60,6 @@ public class Compiler {
 
         var printer = new ASTPrinterVisitor();
         System.out.println(printer.print(statements));
-        var pretty = new PrettyPrinterVisitor();
-        System.out.println(pretty.print(statements));
 
         var rootEnvironment = new Environment();
 
@@ -73,13 +71,11 @@ public class Compiler {
 //            StandardTraversal.traverse(stmt, environmentVisitor, null);
             stmt.accept(environmentVisitor);
 
-//            var type = typeVisitor.visit(stmt);
-//            if (type.isPresent()) {
-//                types.add(type.get());
-//            }
         }
-        System.out.println(types);
 
+
+        var pretty = new PrettyPrinterVisitor(rootEnvironment);
+        System.out.println(pretty.print(statements));
 //        Scope staticScope = new Scope();
 //        MethodVisitor mv = new Me
 //        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);

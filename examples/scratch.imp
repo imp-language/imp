@@ -1,8 +1,13 @@
 
 func range(from int, to int) {
-    val numbers = []
+    func lambda(i int) {
+        val twice = 2*i
+        return twice
+    }
+    val numbers = int[]
     for i in to..from {
-        numbers[i - from] = i
+        val b = 42
+        numbers[i - from] = lambda(i)
     }
     return numbers
 }

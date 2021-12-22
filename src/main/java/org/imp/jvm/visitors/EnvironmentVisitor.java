@@ -1,6 +1,7 @@
 package org.imp.jvm.visitors;
 
 import org.imp.jvm.Environment;
+import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.types.*;
@@ -26,7 +27,10 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitBlockStmt(Stmt.Block stmt) {
+    public Optional<Type> visitBlockStmt(Stmt.Block block) {
+        for (var stmt : block.statements()) {
+            stmt.accept(this);
+        }
         return Optional.empty();
     }
 
@@ -78,7 +82,12 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>> {
 
         // Annotate parameters in the current scope
         for (var param : stmt.parameters()) {
-            childEnvironment.addVariable(param.name().source(), new UnknownType());
+            var bt = BuiltInType.getFromToken(param.type().type());
+            if (bt != null) {
+                childEnvironment.addVariable(param.name().source(), bt);
+            } else {
+                childEnvironment.addVariable(param.name().source(), new UnknownType());
+            }
         }
 
 
@@ -102,11 +111,40 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitReturnStmt(Stmt.Return stmt) {
+        // Set the return type of the function to the type of the
+        // expression you are returning.
+        var e = stmt.expr();
+        if (e instanceof Expr.Identifier identifier) {
+            var name = identifier.identifier().source();
+            var v = currentEnvironment.getVariable(name);
+            System.out.println("identifier " + v);
+        } else {
+            System.out.println("expr " + e);
+        }
+
         return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitVariable(Stmt.Variable stmt) {
+
+        Type t;
+        if (stmt.expr() instanceof Expr.Literal literal) {
+            t = BuiltInType.getFromToken(literal.literal().type());
+        } else if (stmt.expr() instanceof Expr.EmptyList emptyList) {
+            Type generic = null;
+            var bt = BuiltInType.getFromString(emptyList.type().source());
+            if (bt != null) {
+                generic = bt;
+            } else {
+                generic = new UnknownType();
+            }
+            t = new ListType(generic);
+        } else {
+            t = new UnknownType();
+        }
+
+        currentEnvironment.addVariable(stmt.name().source(), t);
         return Optional.empty();
     }
 
@@ -117,11 +155,21 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitFor(Stmt.For stmt) {
+
+        var childEnvironment = stmt.block().environment();
+        childEnvironment.setParent(currentEnvironment);
+
+        currentEnvironment = childEnvironment;
+        stmt.condition().accept(this);
+        stmt.block().accept(this);
+        currentEnvironment = currentEnvironment.getParent();
+
         return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitForInCondition(Stmt.ForInCondition stmt) {
+        currentEnvironment.addVariable(stmt.name().source(), new UnknownType());
         return Optional.empty();
     }
 

@@ -40,6 +40,8 @@ public interface Expr extends Node {
         R visitPropertyAccess(PropertyAccess expr);
 
         R visitRange(Range range);
+
+        R visitEmptyList(EmptyList emptyList);
     }
 
     <R> R accept(Visitor<R> visitor);
@@ -53,6 +55,20 @@ public interface Expr extends Node {
     default List<Node> list(List<Expr> exprs) {
         return new ArrayList<>(exprs);
     }
+
+    record EmptyList(Token type) implements Expr {
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitEmptyList(this);
+        }
+
+        @Override
+        public List<Node> children() {
+            return null;
+        }
+    }
+
 
     // error
     record Bad(Annotation annotation, Token... badTokens) implements Expr {
