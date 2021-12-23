@@ -7,6 +7,9 @@ import org.imp.jvm.types.overloads.StringOverloads;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum BuiltInType implements Type {
     BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT, false, false),
     INT("int", int.class, "I", TypeSpecificOpcodes.INT, 0, true),
@@ -34,6 +37,15 @@ public enum BuiltInType implements Type {
 
     //
     ;
+
+    private final static Map<BuiltInType, Integer> widenings = new HashMap<>();
+
+    static {
+        widenings.put(INT, 0);
+        widenings.put(FLOAT, 1);
+        widenings.put(DOUBLE, 2);
+        widenings.put(STRING, 10);
+    }
 
     private final String name;
     private final Class<?> typeClass;
@@ -76,6 +88,17 @@ public enum BuiltInType implements Type {
             case "string" -> BuiltInType.STRING;
             default -> null;
         };
+    }
+
+    public boolean canBeWidenedTo(BuiltInType bigger) {
+        return widenings.get(this) < widenings.get(bigger);
+    }
+
+    public static BuiltInType widen(BuiltInType a, BuiltInType b) {
+        if (widenings.get(a) > widenings.get(b)) {
+            return a;
+        }
+        return b;
     }
 
 

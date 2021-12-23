@@ -6,6 +6,8 @@ import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
+import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.FunctionType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -85,7 +87,19 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
     @Override
     public String visitLiteralExpr(Expr.Literal expr) {
         String source = expr.literal().source();
-        if (expr.literal().type() == TokenType.STRING) return '"' + source + '"';
+        if (expr.literal().type() == TokenType.STRING) source = '"' + source + '"';
+
+//        if (displayAnnotations) {
+//            var t = BuiltInType.getFromToken(expr.literal().type());
+//            if (t != null) {
+//                source += " : " + t.toString();
+//
+//            } else {
+//                System.err.println("This should never happen. All literals should be builtin, for now.");
+//                System.exit(979);
+//            }
+//        }
+
         return source;
     }
 
@@ -217,6 +231,15 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
         if (stmt.returnType() != null) result.append(") ").append(stmt.returnType().source());
         result.append(") ");
+        if (displayAnnotations) {
+            var t = currentEnvironment.getVariableTyped(stmt.name().source(), FunctionType.class);
+            if (t != null) {
+                result.append(" : ").append(t.toString());
+
+            } else {
+                result.append(" : $reee");
+            }
+        }
         result.append(print(stmt.body()));
         currentEnvironment = currentEnvironment.getParent();
         return result.toString();
@@ -244,7 +267,20 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
     @Override
     public String visitReturnStmt(Stmt.Return stmt) {
-        return s("return", print(stmt.expr()));
+        var s = print(stmt.expr());
+        if (stmt.expr() instanceof Expr.Identifier) {
+
+            if (displayAnnotations) {
+                var t = currentEnvironment.getVariable(s);
+                if (t != null) {
+                    s += " : " + t.toString();
+
+                } else {
+                    s += " : $reee";
+                }
+            }
+        }
+        return s("return", s);
     }
 
     @Override
@@ -272,7 +308,9 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
         var t = currentEnvironment.getVariable(stmt.name().source());
         if (displayAnnotations) {
             if (t != null) {
-                name += " : " + t.toString();
+                if (!(t instanceof BuiltInType)) {
+                    name += " : " + t.toString();
+                }
 
             } else {
                 name += " : $reee";

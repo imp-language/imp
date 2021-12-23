@@ -9,6 +9,7 @@ import org.imp.jvm.types.Type;
 import org.imp.jvm.visitors.ASTPrinterVisitor;
 import org.imp.jvm.visitors.EnvironmentVisitor;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
+import org.imp.jvm.visitors.TypeCheckVisitor;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
@@ -64,13 +65,21 @@ public class Compiler {
         var rootEnvironment = new Environment();
 
 
-        // 1. Gather all types defined in the file
+        // 1. For each element in the file, get some information
         List<Type> types = new ArrayList<>();
         EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(rootEnvironment);
         for (var stmt : statements) {
 //            StandardTraversal.traverse(stmt, environmentVisitor, null);
             stmt.accept(environmentVisitor);
+        }
 
+        // 2. Apply rules for expressions, e.g. 2*x is an int
+        // but 2.0*x is a float (given that x is a number).
+        //Todo the above
+
+        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(rootEnvironment);
+        for (var stmt : statements) {
+            stmt.accept(typeCheckVisitor);
         }
 
 

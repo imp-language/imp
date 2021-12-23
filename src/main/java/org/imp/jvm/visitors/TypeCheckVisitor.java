@@ -3,20 +3,20 @@ package org.imp.jvm.visitors;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.expression.Function;
-import org.imp.jvm.types.*;
+import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.Type;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visitor<Optional<Type>> {
+public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visitor<Optional<Type>> {
 
     public final Environment rootEnvironment;
     public Environment currentEnvironment;
 
-    public EnvironmentVisitor(Environment rootEnvironment) {
+    private Optional<FunctionType> currentFunctionType;
+
+    public TypeCheckVisitor(Environment rootEnvironment) {
         this.rootEnvironment = rootEnvironment;
         this.currentEnvironment = this.rootEnvironment;
     }
@@ -47,26 +47,9 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitStruct(Stmt.Struct stmt) {
-        List<Identifier> fields = new ArrayList<>();
-
-        // At this point we do not know of any custom types that exist.
-        for (var parameter : stmt.fields()) {
-//            Type t = TypeResolver.getFromTypeContext(types.get(i), scope);
-            String typeToken = parameter.type().source();
-            Type t = new UnknownType(typeToken);
 
 
-            String n = parameter.name().source();
-            var field = new Identifier(n, t);
-            fields.add(field);
-        }
-        String name = stmt.name().source();
-        var id = new Identifier(name, BuiltInType.STRUCT);
-
-        // Create struct type object
-        StructType structType = new StructType(id, fields);
-
-        return Optional.of(structType);
+        return Optional.empty();
     }
 
     @Override
@@ -76,50 +59,19 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitFunctionStmt(Stmt.Function stmt) {
-        String name = stmt.name().source();
 
 
-        var childEnvironment = stmt.body().environment();
-        childEnvironment.setParent(currentEnvironment);
-
-        // Annotate parameters in the current scope
-        List<Identifier> parameters = new ArrayList<>();
-        for (var param : stmt.parameters()) {
-            var bt = BuiltInType.getFromString(param.type().source());
-            if (bt != null) {
-                childEnvironment.addVariable(param.name().source(), bt);
-            } else {
-                childEnvironment.addVariable(param.name().source(), new UnknownType());
-            }
-            parameters.add(new Identifier(param.name().source(), new UnknownType(param.type().source())));
-
+        var f = currentEnvironment.getVariable(stmt.name().source());
+        if (f instanceof FunctionType ft) {
+            currentFunctionType = Optional.of(ft);
         }
 
-
-        var returnType = Optional.ofNullable(stmt.returnType());
-
-        var functionType = currentEnvironment.getVariableTyped(name, FunctionType.class);
-
-        // Todo: add overloads back in the mix
-        if (functionType == null) {
-            functionType = new FunctionType(name, null, false);
-            currentEnvironment.addVariable(name, functionType);
-        }
-        var function = new Function(Modifier.NONE, name, parameters, null, null, null);
-
-        if (functionType.getSignatures().containsKey(Function.getDescriptor(parameters))) {
-//            Logger.syntaxError(Errors.DuplicateFunctionOverloads, this, name);
-            System.exit(972);
-        } else {
-            functionType.addSignature(Function.getDescriptor(parameters), function);
-
-        }
-
-        currentEnvironment = childEnvironment;
+        currentEnvironment = stmt.body().environment();
         stmt.body().accept(this);
 
         currentEnvironment = currentEnvironment.getParent();
-        return Optional.of(functionType);
+
+        return Optional.empty();
     }
 
     @Override
@@ -131,14 +83,19 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
     public Optional<Type> visitReturnStmt(Stmt.Return stmt) {
         // Set the return type of the function to the type of the
         // expression you are returning.
-        var e = stmt.expr();
-        if (e instanceof Expr.Identifier identifier) {
-            var name = identifier.identifier().source();
-            var v = currentEnvironment.getVariable(name);
-            System.out.println("identifier " + v);
-        } else {
-            System.out.println("expr " + e);
+        var t = stmt.expr().accept(this);
+
+        if (t.isPresent() && currentFunctionType.isPresent()) {
+            System.out.println("return type " + t.get());
         }
+
+//        if (e instanceof Expr.Identifier identifier) {
+//            var name = identifier.identifier().source();
+//            var v = currentEnvironment.getVariable(name);
+//            System.out.println("identifier " + v);
+//        } else {
+//            System.out.println("expr " + e);
+//        }
 
         return Optional.empty();
     }
@@ -146,23 +103,13 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
     @Override
     public Optional<Type> visitVariable(Stmt.Variable stmt) {
 
-        Type t;
-        if (stmt.expr() instanceof Expr.Literal literal) {
-            t = BuiltInType.getFromToken(literal.literal().type());
-        } else if (stmt.expr() instanceof Expr.EmptyList emptyList) {
-            Type generic = null;
-            var bt = BuiltInType.getFromString(emptyList.type().source());
-            if (bt != null) {
-                generic = bt;
-            } else {
-                generic = new UnknownType();
-            }
-            t = new ListType(generic);
-        } else {
-            t = new UnknownType();
-        }
+        var expr = stmt.expr();
+        var t = expr.accept(this);
 
-        currentEnvironment.addVariable(stmt.name().source(), t);
+        if (t.isPresent()) {
+            currentEnvironment.setVariableType(stmt.name().source(), t.get());
+
+        }
         return Optional.empty();
     }
 
@@ -174,10 +121,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
     @Override
     public Optional<Type> visitFor(Stmt.For stmt) {
 
-        var childEnvironment = stmt.block().environment();
-        childEnvironment.setParent(currentEnvironment);
-
-        currentEnvironment = childEnvironment;
+        currentEnvironment = stmt.block().environment();
         stmt.condition().accept(this);
         stmt.block().accept(this);
         currentEnvironment = currentEnvironment.getParent();
@@ -187,7 +131,6 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitForInCondition(Stmt.ForInCondition stmt) {
-        currentEnvironment.addVariable(stmt.name().source(), new UnknownType());
         return Optional.empty();
     }
 
@@ -203,8 +146,34 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitBinaryExpr(Expr.Binary expr) {
-        return Optional.empty();
+        var t1 = expr.left().accept(this);
+        var t2 = expr.right().accept(this);
+
+        if (t1.isEmpty() || t2.isEmpty()) {
+            System.err.println("Types in binary expression not determined.");
+            System.exit(969);
+        }
+
+        var totalType = t1.get();
+
+        switch (expr.operator().type()) {
+            case ADD, SUB, MUL, DIV, MOD -> {
+                if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
+                    totalType = BuiltInType.widen(bt1, bt2);
+                }
+            }
+            default -> {
+            }
+        }
+
+        var i = 4f / 4;
+
+
+        System.out.println(i);
+
+        return Optional.of(totalType);
     }
+
 
     @Override
     public Optional<Type> visitBad(Expr.Bad expr) {
@@ -223,7 +192,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitIdentifierExpr(Expr.Identifier expr) {
-        return Optional.empty();
+        return Optional.of(currentEnvironment.getVariable(expr.identifier().source()));
     }
 
     @Override
@@ -238,7 +207,12 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitLiteralExpr(Expr.Literal expr) {
-        return Optional.empty();
+        var t = BuiltInType.getFromToken(expr.literal().type());
+        if (t == null) {
+            System.err.println("This should never happen. All literals should be builtin, for now.");
+            System.exit(980);
+        }
+        return Optional.of(t);
     }
 
     @Override

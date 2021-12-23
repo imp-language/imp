@@ -12,6 +12,10 @@ func range(from int, to int) {
     return numbers
 }
 
+func range(from int, to int, step int) {
+
+}
+
 
 /*
 struct Employee {

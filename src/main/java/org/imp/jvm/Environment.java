@@ -26,8 +26,13 @@ public class Environment {
         variables.put(name, type);
     }
 
-    public <T extends Type> Type getVariable(String name, Class<T> type) {
-        return variables.get(name);
+    // Todo: This is (better but still) bad and errors ofter.
+    public <T> T getVariableTyped(String name, Class<T> clazz) {
+        var v = getVariable(name);
+        if (clazz.isInstance(v)) {
+            return (T) v;
+        }
+        return null;
     }
 
     public Type getVariable(String name) {
@@ -38,6 +43,14 @@ public class Environment {
             return parent.getVariable(name);
         }
         return null;
+    }
+
+    public void setVariableType(String name, Type type) {
+        if (variables.get(name) != null) {
+            variables.put(name, type);
+        } else {
+            System.err.println("reee");
+        }
     }
 
     public Environment getParent() {
