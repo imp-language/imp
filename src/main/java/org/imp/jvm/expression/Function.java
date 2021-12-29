@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class Function extends Expression {
     public final Block block;
     public final List<Identifier> parameters;
-    public final Type returnType;
+    public Type returnType;
 
     public FunctionType functionType;
 

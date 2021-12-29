@@ -3,11 +3,14 @@ package org.imp.jvm.visitors;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.FunctionType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.expression.Function;
+import org.imp.jvm.types.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visitor<Optional<Type>> {
 
@@ -15,6 +18,7 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
     public Environment currentEnvironment;
 
     private Optional<FunctionType> currentFunctionType;
+    private final Stack<Function> functionStack = new Stack<>();
 
     public TypeCheckVisitor(Environment rootEnvironment) {
         this.rootEnvironment = rootEnvironment;
@@ -46,8 +50,18 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
     }
 
     @Override
-    public Optional<Type> visitStruct(Stmt.Struct stmt) {
-
+    public Optional<Type> visitStruct(Stmt.Struct struct) {
+        var structType = currentEnvironment.getVariableTyped(struct.name().source(), StructType.class);
+        if (structType != null) {
+            for (var field : structType.fields) {
+                if (field.type instanceof UnknownType ut) {
+                    var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
+                    if (attempt != null) {
+                        field.type = attempt;
+                    }
+                }
+            }
+        }
 
         return Optional.empty();
     }
@@ -60,17 +74,47 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
     @Override
     public Optional<Type> visitFunctionStmt(Stmt.Function stmt) {
 
-
+        // Find the FunctionType associated with this statement
         var f = currentEnvironment.getVariable(stmt.name().source());
         if (f instanceof FunctionType ft) {
             currentFunctionType = Optional.of(ft);
+            var functionType = currentFunctionType.get();
+
+            // Choose an overload
+            List<Identifier> parameters = new ArrayList<>();
+            for (var param : stmt.parameters()) {
+                var bt = BuiltInType.getFromString(param.type().source());
+                Type type = null;
+                if (bt != null) {
+                    type = bt;
+                } else {
+                    type = new UnknownType();
+                }
+
+                parameters.add(new Identifier(param.name().source(), type));
+            }
+            var function = functionType.getSignature(Function.getDescriptor(parameters));
+            if (function != null) {
+                functionStack.add(function);
+            }
+
+            for (var param : function.parameters) {
+                if (param.type instanceof UnknownType ut) {
+                    var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
+                    if (attempt != null) {
+                        param.type = attempt;
+                    }
+                }
+            }
+
+            currentEnvironment = stmt.body().environment();
+            stmt.body().accept(this);
+
+            currentEnvironment = currentEnvironment.getParent();
+            functionStack.pop();
+
+
         }
-
-        currentEnvironment = stmt.body().environment();
-        stmt.body().accept(this);
-
-        currentEnvironment = currentEnvironment.getParent();
-
         return Optional.empty();
     }
 
@@ -86,23 +130,15 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
         var t = stmt.expr().accept(this);
 
         if (t.isPresent() && currentFunctionType.isPresent()) {
-            System.out.println("return type " + t.get());
+            if (functionStack.size() > 0) {
+                functionStack.peek().returnType = t.get();
+            }
         }
+
 
         // Todo: associate return types with current function
         // Each signature has its own return type
-//        List<Identifier> parameters = new ArrayList<>();
-//        for (var param : stmt.parameters()) {
-//            var bt = BuiltInType.getFromString(param.type().source());
-//            Type type = null;
-//            if (bt != null) {
-//                type = bt;
-//            } else {
-//                type = new UnknownType();
-//            }
-//            parameters.add(new Identifier(param.name().source(), type));
-//        }
-//        var function = functionType.getSignature(Function.getDescriptor(parameters));
+
 
 //        if (e instanceof Expr.Identifier identifier) {
 //            var name = identifier.identifier().source();
@@ -181,10 +217,6 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
             }
         }
 
-        var i = 4f / 4;
-
-
-        System.out.println(i);
 
         return Optional.of(totalType);
     }

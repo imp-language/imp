@@ -50,21 +50,27 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         List<Identifier> fields = new ArrayList<>();
 
         // At this point we do not know of any custom types that exist.
-        for (var parameter : stmt.fields()) {
-//            Type t = TypeResolver.getFromTypeContext(types.get(i), scope);
-            String typeToken = parameter.type().source();
-            Type t = new UnknownType(typeToken);
+        for (var field : stmt.fields()) {
+            Type type = null;
+            var bt = BuiltInType.getFromString(field.type().source());
+            if (bt != null) {
+                type = bt;
+            } else {
+                type = new UnknownType(field.type().source());
+            }
 
-
-            String n = parameter.name().source();
-            var field = new Identifier(n, t);
-            fields.add(field);
+            String n = field.name().source();
+            var f = new Identifier(n, type);
+            fields.add(f);
         }
         String name = stmt.name().source();
         var id = new Identifier(name, BuiltInType.STRUCT);
 
         // Create struct type object
         StructType structType = new StructType(id, fields);
+
+
+        currentEnvironment.addVariable(name, structType);
 
         return Optional.of(structType);
     }
@@ -90,7 +96,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
             if (bt != null) {
                 t = bt;
             } else {
-                t = new UnknownType();
+                t = new UnknownType(param.type().source());
             }
             childEnvironment.addVariable(param.name().source(), t);
             parameters.add(new Identifier(param.name().source(), t));
@@ -137,9 +143,6 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         if (e instanceof Expr.Identifier identifier) {
             var name = identifier.identifier().source();
             var v = currentEnvironment.getVariable(name);
-            System.out.println("identifier " + v);
-        } else {
-            System.out.println("expr " + e);
         }
 
         return Optional.empty();

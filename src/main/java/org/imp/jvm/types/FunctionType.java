@@ -78,6 +78,7 @@ public class FunctionType implements Type {
      */
     public void addSignature(String descriptor, Function signature) {
         signatures.put(descriptor, signature);
+        signature.functionType = this;
     }
 
     public Function getSignature(int pos) {

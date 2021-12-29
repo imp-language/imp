@@ -8,10 +8,7 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
-import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.FunctionType;
-import org.imp.jvm.types.Type;
-import org.imp.jvm.types.UnknownType;
+import org.imp.jvm.types.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -209,8 +206,33 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
     @Override
     public String visitStruct(Stmt.Struct stmt) {
-        StringBuilder result = new StringBuilder("(struct " + stmt.name().source() + " (");
-        result.append(stmt.fields().stream().map(this::print).collect(Collectors.joining(", ")));
+        StringBuilder result = new StringBuilder("struct " + stmt.name().source() + " {\n");
+        var structType = currentEnvironment.getVariableTyped(stmt.name().source(), StructType.class);
+        if (structType != null) {
+            for (var field : structType.fields) {
+                result.append("\t" + field.name + " " + field.type);
+                result.append("\n");
+            }
+        } else {
+
+            for (Stmt.Parameter field : stmt.fields()) {
+                result.append("\t" + field.name().source() + " ");
+                if (displayAnnotations) {
+//                if (t != null) {
+//                    if (!(t instanceof BuiltInType)) {
+//                        name += " : " + t.toString();
+//                    }
+//
+//                } else {
+//                    name += " : $reee";
+//                }
+                }
+
+                if (field.listType()) result.append("[]");
+                result.append("\n");
+            }
+        }
+
         result.append("))");
         return result.toString();
     }
@@ -245,7 +267,7 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
             var function = functionType.getSignature(Function.getDescriptor(parameters));
 
             if (function != null) {
-                result.append(" : ").append(function.toString());
+                result.append(": ").append(function.returnType).append(" ");
             } else {
                 result.append(" : $reee");
             }

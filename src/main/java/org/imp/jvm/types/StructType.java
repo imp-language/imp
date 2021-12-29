@@ -101,9 +101,7 @@ public class StructType implements Type {
 
     @Override
     public String getName() {
-//        if (struct == null) return this.name;
-        if (unknown) return this.identifier.name;
-        return this.parent.name + "/" + identifier.name;
+        return identifier.name;
     }
 
     @Override

@@ -1,4 +1,29 @@
 
+struct Person {
+    fname string
+    lname string
+    dob Date
+}
+
+struct Date {
+    year int
+    month int
+    day int
+}
+
+func hello(name string) void {
+    log("hello, " + name)
+}
+
+func hello(p Person) void {
+    log("HELLO, " + p.fname)
+}
+
+
+
+
+/*
+
 func range(from int, to int) {
     func lambda(i int) {
         val twice = 2*i
@@ -12,21 +37,9 @@ func range(from int, to int) {
     return numbers
 }
 
-func range(from int, to int, step int) {
+lambda = (int) -> int
+range = (int,int) -> List<int>
+      | (int,int,int) -> float
 
-}
-
-
-/*
-struct Employee {
-    name string
-}
-
-val b = 5
-
-
-
-log(9)
-log(9)
 
 */
