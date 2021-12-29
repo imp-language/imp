@@ -104,7 +104,7 @@ public class Parser extends ParserBase {
 
     private Stmt.If parseIf() {
         Expr condition = expression();
-        Stmt.Block trueStmt = block();
+        Stmt.Block trueBlock = block();
         Stmt falseStmt = null;
         if (match(ELSE)) {
             if (match(IF)) {
@@ -115,7 +115,7 @@ public class Parser extends ParserBase {
                 error(peek(), "Invalid end to if-else statement.");
             }
         }
-        return new Stmt.If(condition, trueStmt, falseStmt);
+        return new Stmt.If(condition, trueBlock, falseStmt);
     }
 
     private Stmt.For parseFor() {

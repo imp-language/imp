@@ -234,12 +234,12 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
             sb.append("(if ")
                     .append(print(stmt.condition()))
                     .append("\n\t")
-                    .append(print(stmt.trueStmt()));
+                    .append(print(stmt.trueBlock()));
         } else {
             sb.append("(if-else ")
                     .append(print(stmt.condition()))
                     .append("\n\t")
-                    .append(print(stmt.trueStmt()))
+                    .append(print(stmt.trueBlock()))
                     .append("\n\t")
                     .append(print(stmt.falseStmt()));
         }

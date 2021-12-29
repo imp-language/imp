@@ -4,7 +4,6 @@ import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.expression.Function;
 import org.imp.jvm.types.*;
 
 import java.util.ArrayList;
@@ -100,38 +99,31 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
             }
             childEnvironment.addVariable(param.name().source(), t);
             parameters.add(new Identifier(param.name().source(), t));
-
         }
 
+        var funcType = new FuncType(name, Modifier.NONE, parameters);
+        currentEnvironment.addVariable(name, funcType);
 
-        var returnType = Optional.ofNullable(stmt.returnType());
-
-        var functionType = currentEnvironment.getVariableTyped(name, FunctionType.class);
-
-        // Todo: add overloads back in the mix
-        if (functionType == null) {
-            functionType = new FunctionType(name, null, false);
-            currentEnvironment.addVariable(name, functionType);
-        }
-        var function = new Function(Modifier.NONE, name, parameters, null, null, null);
-
-        if (functionType.getSignatures().containsKey(Function.getDescriptor(parameters))) {
-//            Logger.syntaxError(Errors.DuplicateFunctionOverloads, this, name);
-            System.exit(972);
-        } else {
-            functionType.addSignature(Function.getDescriptor(parameters), function);
-
-        }
 
         currentEnvironment = childEnvironment;
         stmt.body().accept(this);
 
         currentEnvironment = currentEnvironment.getParent();
-        return Optional.of(functionType);
+        return Optional.of(funcType);
     }
 
     @Override
     public Optional<Type> visitIf(Stmt.If stmt) {
+
+        var childEnvironment = stmt.trueBlock().environment();
+        childEnvironment.setParent(currentEnvironment);
+        currentEnvironment = childEnvironment;
+        stmt.trueBlock().accept(this);
+        stmt.falseStmt().accept(this);
+
+        // Todo: accept conditions and etc
+
+        currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
     }
 

@@ -140,14 +140,14 @@ public interface Stmt extends Node {
         }
     }
 
-    record If(Expr condition, Stmt trueStmt, Stmt falseStmt) implements Stmt {
+    record If(Expr condition, Stmt.Block trueBlock, Stmt falseStmt) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIf(this);
         }
 
         @Override
         public List<Node> children() {
-            return list(trueStmt, falseStmt);
+            return list(trueBlock, falseStmt);
         }
     }
 

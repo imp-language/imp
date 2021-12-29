@@ -301,7 +301,7 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
     @Override
     public Statement visitIf(Stmt.If stmt) {
         var condition = stmt.condition().accept(this);
-        var trueBlock = stmt.trueStmt().accept(this);
+        var trueBlock = stmt.trueBlock().accept(this);
         Statement falseBlock = null;
         if (stmt.falseStmt() != null) {
             falseBlock = stmt.falseStmt().accept(this);

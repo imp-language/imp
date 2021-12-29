@@ -1,4 +1,5 @@
-
+/*
+*/
 struct Person {
     fname string
     lname string
@@ -11,18 +12,17 @@ struct Date {
     day int
 }
 
-func hello(name string) void {
-    log("hello, " + name)
+
+
+
+
+func hello(p Person) {
+    if 10 > 5 {
+        return 9
+    } else {
+        return 18
+    }
 }
-
-func hello(p Person) void {
-    log("HELLO, " + p.fname)
-}
-
-
-
-
-/*
 
 func range(from int, to int) {
     func lambda(i int) {
@@ -36,6 +36,15 @@ func range(from int, to int) {
     }
     return numbers
 }
+
+/*
+func printDate(d Date) {
+    val day = "12"
+    return day
+}
+
+
+
 
 lambda = (int) -> int
 range = (int,int) -> List<int>

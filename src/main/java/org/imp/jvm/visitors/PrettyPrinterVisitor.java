@@ -4,13 +4,12 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.expression.Function;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
-import org.imp.jvm.types.*;
+import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.FuncType;
+import org.imp.jvm.types.StructType;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -90,17 +89,6 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
     public String visitLiteralExpr(Expr.Literal expr) {
         String source = expr.literal().source();
         if (expr.literal().type() == TokenType.STRING) source = '"' + source + '"';
-
-//        if (displayAnnotations) {
-//            var t = BuiltInType.getFromToken(expr.literal().type());
-//            if (t != null) {
-//                source += " : " + t.toString();
-//
-//            } else {
-//                System.err.println("This should never happen. All literals should be builtin, for now.");
-//                System.exit(979);
-//            }
-//        }
 
         return source;
     }
@@ -217,16 +205,8 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
             for (Stmt.Parameter field : stmt.fields()) {
                 result.append("\t" + field.name().source() + " ");
-                if (displayAnnotations) {
-//                if (t != null) {
-//                    if (!(t instanceof BuiltInType)) {
-//                        name += " : " + t.toString();
-//                    }
-//
-//                } else {
-//                    name += " : $reee";
-//                }
-                }
+                System.err.println("bad");
+
 
                 if (field.listType()) result.append("[]");
                 result.append("\n");
@@ -244,56 +224,33 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
     @Override
     public String visitFunctionStmt(Stmt.Function stmt) {
-        StringBuilder result = new StringBuilder("func " + stmt.name().source());
-        var childEnvironment = stmt.body().environment();
-        result.append("(");
-        currentEnvironment = childEnvironment;
-        result.append(stmt.parameters().stream().map(this::print).collect(Collectors.joining(", ")));
-        if (stmt.returnType() != null) result.append(") ").append(stmt.returnType().source());
-        result.append(") ");
-        if (displayAnnotations) {
-            var functionType = currentEnvironment.getVariableTyped(stmt.name().source(), FunctionType.class);
-            List<Identifier> parameters = new ArrayList<>();
-            for (var param : stmt.parameters()) {
-                var bt = BuiltInType.getFromString(param.type().source());
-                Type type = null;
-                if (bt != null) {
-                    type = bt;
-                } else {
-                    type = new UnknownType();
-                }
-                parameters.add(new Identifier(param.name().source(), type));
-            }
-            var function = functionType.getSignature(Function.getDescriptor(parameters));
+        String name = stmt.name().source();
+        // Find the FunctionType associated with this statement
+        var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
 
-            if (function != null) {
-                result.append(": ").append(function.returnType).append(" ");
-            } else {
-                result.append(" : $reee");
-            }
+        currentEnvironment = stmt.body().environment();
+
+        if (funcType != null) {
+            String result = "func " + name + "(";
+            result += funcType.parameters.stream().map(identifier -> {
+                return identifier.name + " " + identifier.type;
+            }).collect(Collectors.joining(", "));
+            result += ") " + funcType.returnType + " ";
+
+            result += print(stmt.body());
+            currentEnvironment = currentEnvironment.getParent();
+            return result.toString();
         }
-        result.append(print(stmt.body()));
-        currentEnvironment = currentEnvironment.getParent();
-        return result.toString();
+        return "nope";
     }
 
     @Override
     public String visitIf(Stmt.If stmt) {
         StringBuilder sb = new StringBuilder();
-        if (stmt.falseStmt() == null) {
-            sb.append("(if ")
-                    .append(print(stmt.condition()))
-                    .append("\n\t")
-                    .append(print(stmt.trueStmt()));
-        } else {
-            sb.append("(if-else ")
-                    .append(print(stmt.condition()))
-                    .append("\n\t")
-                    .append(print(stmt.trueStmt()))
-                    .append("\n\t")
-                    .append(print(stmt.falseStmt()));
+        sb.append(s("if", print(stmt.condition()), print(stmt.trueBlock())));
+        if (stmt.falseStmt() != null) {
+            sb.append(s(" else", print(stmt.falseStmt())));
         }
-        sb.append(")");
         return sb.toString();
     }
 

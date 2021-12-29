@@ -80,6 +80,7 @@ public class Compiler {
         // 2. TypeCheckVisitor performs more advanced type unification.
         // a) Determine function return type based on type of expression returned.
         // b) Settle types of fields on structs
+        // c) Error if multiple return statements in a function return different types.
         TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(rootEnvironment);
         for (var stmt : statements) {
             stmt.accept(typeCheckVisitor);

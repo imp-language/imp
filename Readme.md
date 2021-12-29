@@ -95,3 +95,5 @@ To run the packaged Imp compiler JAR:
 ```bash
 java --enable-preview -jar target/imp-0.1.jar examples/scratch.imp
 ```
+
+To see a CLOC visualization, https://codeflower.la/?name=imp&owner=mh15&branch=main.
