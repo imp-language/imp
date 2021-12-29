@@ -89,6 +89,21 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
             System.out.println("return type " + t.get());
         }
 
+        // Todo: associate return types with current function
+        // Each signature has its own return type
+//        List<Identifier> parameters = new ArrayList<>();
+//        for (var param : stmt.parameters()) {
+//            var bt = BuiltInType.getFromString(param.type().source());
+//            Type type = null;
+//            if (bt != null) {
+//                type = bt;
+//            } else {
+//                type = new UnknownType();
+//            }
+//            parameters.add(new Identifier(param.name().source(), type));
+//        }
+//        var function = functionType.getSignature(Function.getDescriptor(parameters));
+
 //        if (e instanceof Expr.Identifier identifier) {
 //            var name = identifier.identifier().source();
 //            var v = currentEnvironment.getVariable(name);

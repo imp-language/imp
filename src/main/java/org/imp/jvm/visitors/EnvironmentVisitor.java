@@ -86,12 +86,14 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         List<Identifier> parameters = new ArrayList<>();
         for (var param : stmt.parameters()) {
             var bt = BuiltInType.getFromString(param.type().source());
+            Type t = null;
             if (bt != null) {
-                childEnvironment.addVariable(param.name().source(), bt);
+                t = bt;
             } else {
-                childEnvironment.addVariable(param.name().source(), new UnknownType());
+                t = new UnknownType();
             }
-            parameters.add(new Identifier(param.name().source(), new UnknownType(param.type().source())));
+            childEnvironment.addVariable(param.name().source(), t);
+            parameters.add(new Identifier(param.name().source(), t));
 
         }
 

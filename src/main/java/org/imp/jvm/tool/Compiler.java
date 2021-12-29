@@ -62,10 +62,10 @@ public class Compiler {
         var printer = new ASTPrinterVisitor();
         System.out.println(printer.print(statements));
 
+
+        // 1. EnvironmentVisitor builds scopes and assigns
+        // UnknownType or Literal types to expressions.
         var rootEnvironment = new Environment();
-
-
-        // 1. For each element in the file, get some information
         List<Type> types = new ArrayList<>();
         EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(rootEnvironment);
         for (var stmt : statements) {
@@ -77,6 +77,9 @@ public class Compiler {
         // but 2.0*x is a float (given that x is a number).
         //Todo the above
 
+        // 2. TypeCheckVisitor performs more advanced type unification.
+        // a) Set function return type based on type of expression returned.
+        //
         TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(rootEnvironment);
         for (var stmt : statements) {
             stmt.accept(typeCheckVisitor);

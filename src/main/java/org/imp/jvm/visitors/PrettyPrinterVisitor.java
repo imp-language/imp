@@ -4,11 +4,16 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.expression.Function;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.Type;
+import org.imp.jvm.types.UnknownType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -205,10 +210,7 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
     @Override
     public String visitStruct(Stmt.Struct stmt) {
         StringBuilder result = new StringBuilder("(struct " + stmt.name().source() + " (");
-
-
         result.append(stmt.fields().stream().map(this::print).collect(Collectors.joining(", ")));
-
         result.append("))");
         return result.toString();
     }
@@ -221,21 +223,29 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
     @Override
     public String visitFunctionStmt(Stmt.Function stmt) {
         StringBuilder result = new StringBuilder("func " + stmt.name().source());
-
         var childEnvironment = stmt.body().environment();
-
         result.append("(");
-
         currentEnvironment = childEnvironment;
         result.append(stmt.parameters().stream().map(this::print).collect(Collectors.joining(", ")));
-
         if (stmt.returnType() != null) result.append(") ").append(stmt.returnType().source());
         result.append(") ");
         if (displayAnnotations) {
-            var t = currentEnvironment.getVariableTyped(stmt.name().source(), FunctionType.class);
-            if (t != null) {
-                result.append(" : ").append(t.toString());
+            var functionType = currentEnvironment.getVariableTyped(stmt.name().source(), FunctionType.class);
+            List<Identifier> parameters = new ArrayList<>();
+            for (var param : stmt.parameters()) {
+                var bt = BuiltInType.getFromString(param.type().source());
+                Type type = null;
+                if (bt != null) {
+                    type = bt;
+                } else {
+                    type = new UnknownType();
+                }
+                parameters.add(new Identifier(param.name().source(), type));
+            }
+            var function = functionType.getSignature(Function.getDescriptor(parameters));
 
+            if (function != null) {
+                result.append(" : ").append(function.toString());
             } else {
                 result.append(" : $reee");
             }
