@@ -83,6 +83,8 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
                     var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
                     if (attempt != null) {
                         param.type = attempt;
+                    } else {
+                        Comptime.TypeNotFound.submit(file, stmt, ut.typeName);
                     }
                 }
             }
@@ -123,7 +125,6 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
                     top.returnType = t.get();
                 } else if (newType != top.returnType) {
                     Comptime.ReturnTypeMismatch.submit(file, stmt, top.name, top.returnType, newType);
-                    System.exit(874);
                 }
             }
         }
@@ -180,8 +181,7 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
         var t2 = expr.right().accept(this);
 
         if (t1.isEmpty() || t2.isEmpty()) {
-            System.err.println("Types in binary expression not determined.");
-            System.exit(969);
+            Comptime.Implementation.submit(file, expr, "Types in binary expression not determined.");
         }
 
         var totalType = t1.get();
@@ -235,10 +235,9 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
     public Optional<Type> visitLiteralExpr(Expr.Literal expr) {
         var t = BuiltInType.getFromToken(expr.literal().type());
         if (t == null) {
-            System.err.println("This should never happen. All literals should be builtin, for now.");
-            System.exit(980);
+            Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
         }
-        return Optional.of(t);
+        return Optional.ofNullable(t);
     }
 
     @Override

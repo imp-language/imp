@@ -17,13 +17,15 @@ struct Date {
 
 
 func hello(p Person) {
+    val b = 4
     if 10 > 5 {
-        return 9.0
+        return 9
 
     } else {
         return 18
     }
 }
+
 
 
 /*

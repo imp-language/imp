@@ -5,6 +5,7 @@ import org.imp.jvm.compiler.BytecodeGenerator;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Program;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
 import org.imp.jvm.runtime.Glue;
@@ -23,12 +24,15 @@ import java.util.Map;
 
 
 public class API {
-    /**
-     * Parse a source file.
-     *
-     * @param filename source
-     * @return ImpFile
-     */
+
+    public static SourceFile parse(File file) {
+        Tokenizer tokenizer = new Tokenizer(file);
+        var parser = new org.imp.jvm.parser.Parser(tokenizer);
+        var statements = parser.parse();
+        Timer.log("Source file parsed");
+        return new SourceFile(file, statements);
+    }
+
     public static ImpFile createSourceFile(String filename) throws FileNotFoundException {
         File file = new File(filename);
 
@@ -64,6 +68,14 @@ public class API {
         return Parser.getAbstractSyntaxTree(content);
     }
 
+    public static Graph<SourceFile, DefaultEdge> dependencyGraph(SourceFile entry) throws FileNotFoundException {
+        DependencyWalker walker = new DependencyWalker();
+        var dependencies = walker.walkDependencies(entry);
+
+
+        return dependencies;
+    }
+
     public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) throws FileNotFoundException {
         DependencyWalker walker = new DependencyWalker();
         var dependencies = walker.walkDependencies(entry);
@@ -89,6 +101,33 @@ public class API {
         return dependencies;
     }
 
+    public static Map<String, SourceFile> gatherImports(SourceFile entry) throws FileNotFoundException {
+        String basePath = entry.file.getName();
+        Map<String, SourceFile> impFileMap = new HashMap<>();
+//        for (var i : entry.imports) {
+//            String relativeFileName = i.getValue();
+//            String filePath = FilenameUtils.concat(basePath, relativeFileName + ".imp");
+//            filePath = FilenameUtils.separatorsToUnix(filePath);
+//
+//
+//            if (Glue.coreModules.containsKey(relativeFileName)) {
+//                entry.stdlibImports.add(relativeFileName);
+//            } else {
+//                ImpFile ast = createSourceFile(filePath);
+//                if (ast == null) {
+//                    Logger.syntaxError(Errors.ModuleNotFound, i, filePath);
+//                    Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");
+//                }
+//                assert ast != null;
+//                ast.validate();
+//                Logger.killIfErrors("Correct semantic errors before compilation can continue.");
+//                impFileMap.put(filePath, ast);
+//                entry.qualifiedImports.add(ast);
+//            }
+//
+//        }
+        return impFileMap;
+    }
 
     public static Map<String, ImpFile> gatherImports(ImpFile entry) throws FileNotFoundException {
         String basePath = FilenameUtils.getPath(entry.name);

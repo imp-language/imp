@@ -232,9 +232,7 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
         if (funcType != null) {
             String result = "func " + name + "(";
-            result += funcType.parameters.stream().map(identifier -> {
-                return identifier.name + " " + identifier.type;
-            }).collect(Collectors.joining(", "));
+            result += funcType.parameters.stream().map(identifier -> identifier.name + " " + identifier.type).collect(Collectors.joining(", "));
             result += ") " + funcType.returnType + " ";
 
             result += print(stmt.body());

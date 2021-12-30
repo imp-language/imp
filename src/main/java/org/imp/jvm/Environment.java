@@ -1,7 +1,10 @@
 package org.imp.jvm;
 
 import org.apache.commons.collections4.map.LinkedMap;
+import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.types.Type;
+
+import java.io.File;
 
 public class Environment {
 
@@ -24,6 +27,14 @@ public class Environment {
 
     public void addVariable(String name, Type type) {
         variables.put(name, type);
+    }
+
+    public void addVariableOrError(String name, Type type, File file, Node node) {
+        if (getVariable(name) != null) {
+            Comptime.Redeclaration.submit(file, node, name);
+        } else {
+            addVariable(name, type);
+        }
     }
 
     // Todo: This is (better but still) bad and errors ofter.

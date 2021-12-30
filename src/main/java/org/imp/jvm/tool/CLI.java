@@ -62,7 +62,7 @@ public class CLI {
     private void run() {
         var imp = new Compiler(this.filename);
         if (!this.silent) {
-//            Timer.LOG = true;
+            Timer.LOG = true;
         }
         String out = null;
         try {

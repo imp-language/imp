@@ -6,17 +6,21 @@ import org.imp.jvm.Stmt;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.types.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visitor<Optional<Type>> {
 
     public final Environment rootEnvironment;
     public Environment currentEnvironment;
+    public final File file;
 
-    public EnvironmentVisitor(Environment rootEnvironment) {
+    public EnvironmentVisitor(Environment rootEnvironment, File file) {
         this.rootEnvironment = rootEnvironment;
+        this.file = file;
         this.currentEnvironment = this.rootEnvironment;
     }
 
@@ -52,11 +56,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         for (var field : stmt.fields()) {
             Type type = null;
             var bt = BuiltInType.getFromString(field.type().source());
-            if (bt != null) {
-                type = bt;
-            } else {
-                type = new UnknownType(field.type().source());
-            }
+            type = Objects.requireNonNullElseGet(bt, () -> new UnknownType(field.type().source()));
 
             String n = field.name().source();
             var f = new Identifier(n, type);
@@ -67,9 +67,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
         // Create struct type object
         StructType structType = new StructType(id, fields);
-
-
-        currentEnvironment.addVariable(name, structType);
+        currentEnvironment.addVariableOrError(name, structType, file, stmt);
 
         return Optional.of(structType);
     }
@@ -91,12 +89,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         List<Identifier> parameters = new ArrayList<>();
         for (var param : stmt.parameters()) {
             var bt = BuiltInType.getFromString(param.type().source());
-            Type t = null;
-            if (bt != null) {
-                t = bt;
-            } else {
-                t = new UnknownType(param.type().source());
-            }
+            Type t = Objects.requireNonNullElseGet(bt, () -> new UnknownType(param.type().source()));
             childEnvironment.addVariable(param.name().source(), t);
             parameters.add(new Identifier(param.name().source(), t));
         }
@@ -104,13 +97,9 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         var funcType = new FuncType(name, Modifier.NONE, parameters);
         if (stmt.returnType() != null) {
             var bt = BuiltInType.getFromString(stmt.returnType().source());
-            if (bt != null) {
-                funcType.returnType = bt;
-            } else {
-                funcType.returnType = new UnknownType(stmt.returnType().source());
-            }
+            funcType.returnType = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.returnType().source()));
         }
-        currentEnvironment.addVariable(name, funcType);
+        currentEnvironment.addVariableOrError(name, funcType, file, stmt);
 
 
         currentEnvironment = childEnvironment;
@@ -166,8 +155,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         } else {
             t = new UnknownType();
         }
-
-        currentEnvironment.addVariable(stmt.name().source(), t);
+        currentEnvironment.addVariableOrError(stmt.name().source(), t, file, stmt);
         return Optional.empty();
     }
 

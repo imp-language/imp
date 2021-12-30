@@ -3,6 +3,7 @@ package org.imp.jvm.visitors;
 import org.apache.commons.text.StringEscapeUtils;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
 
 import java.util.Arrays;
@@ -190,7 +191,7 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
         StringBuilder result = new StringBuilder("(enum " + stmt.name().source() + " (");
 
 
-        result.append(stmt.values().stream().map(val -> val.source()).collect(Collectors.joining(", ")));
+        result.append(stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")));
 
         result.append("))");
         return result.toString();

@@ -3,10 +3,8 @@ package org.imp.jvm.tool;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.Environment;
 import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.parser.Parser;
-import org.imp.jvm.tokenizer.Tokenizer;
+import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.types.Type;
-import org.imp.jvm.visitors.ASTPrinterVisitor;
 import org.imp.jvm.visitors.EnvironmentVisitor;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
@@ -31,66 +29,37 @@ public class Compiler {
 
     public String compile() throws FileNotFoundException {
         File file = new File(filename);
-        Tokenizer tokenizer = new Tokenizer(file);
-        var parser = new Parser(tokenizer);
-        var statements = parser.parse();
-
-        /**
-         * Plan:
-         * 0. Share all exported statements.
-         *      Any type or variable may be exported, including
-         *      functions, enums, structs, typedefs, etc.
-         *
-         * 1. Gather all types defined in the file.
-         *      Store structs, functions and type aliases in the
-         *      current scope, marking them as Unknown or not
-         *      solidified yet.
-         *
-         * 2. Anywhere a type is referenced, match to a real type.
-         *      Look through the types we've just defined as well
-         *      as all types exported from other files.
-         *
-         * 3. Validate all expressions and statements.
-         *      Now that type information has settled, visit
-         *      each expression and statements and determine type
-         *      info, then perform actions needed before codegen.
-         *
-         * 4. Codegen.
-         *      Visit each statement and expression, generating code.
-         */
-
-        var printer = new ASTPrinterVisitor();
-        System.out.println(printer.print(statements));
+        var sourceFile = API.parse(file);
+        Timer.log("build dependency graph");
+        // Todo: dependency graph stuff
 
 
         // 1. EnvironmentVisitor builds scopes and assigns
         // UnknownType or Literal types to expressions.
         var rootEnvironment = new Environment();
         List<Type> types = new ArrayList<>();
-        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(rootEnvironment);
-        for (var stmt : statements) {
+        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(rootEnvironment, file);
+        for (var stmt : sourceFile.stmts) {
 //            StandardTraversal.traverse(stmt, environmentVisitor, null);
             stmt.accept(environmentVisitor);
         }
-
-        // 2. Apply rules for expressions, e.g. 2*x is an int
-        // but 2.0*x is a float (given that x is a number).
-        //Todo the above
+        Timer.log("Environments created");
+        Comptime.killIfErrors("Correct syntax errors before type checking can continue.");
 
         // 2. TypeCheckVisitor performs more advanced type unification.
         // a) Determine function return type based on type of expression returned.
         // b) Settle types of fields on structs
         // c) Error if multiple return statements in a function return different types.
         TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(rootEnvironment, file);
-        for (var stmt : statements) {
+        for (var stmt : sourceFile.stmts) {
             stmt.accept(typeCheckVisitor);
         }
+        Timer.log("Type checking done");
 
+        Comptime.killIfErrors("Correct type errors before compilation can continue.");
 
         var pretty = new PrettyPrinterVisitor(rootEnvironment);
-        System.out.println(pretty.print(statements));
-//        Scope staticScope = new Scope();
-//        MethodVisitor mv = new Me
+        System.out.println(pretty.print(sourceFile.stmts));
 //        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);
 
         return "ree";

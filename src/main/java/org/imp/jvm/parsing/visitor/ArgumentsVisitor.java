@@ -8,14 +8,12 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.statement.Empty;
-import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ListType;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.types.TypeResolver;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ArgumentsVisitor extends ImpParserBaseVisitor<List<Identifier>> {
 

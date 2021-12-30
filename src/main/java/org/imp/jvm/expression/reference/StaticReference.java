@@ -1,7 +1,6 @@
 package org.imp.jvm.expression.reference;
 
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 

@@ -7,11 +7,19 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public enum Comptime {
+    Implementation(-1, "{0}", "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers."),
+
+    TypeNotFound(1, "Type `{0}` does not exist in the current environment.",
+            "Make sure all types are defined or builtin."),
+    Redeclaration(21, "Redeclaration of variable `{0}`.",
+            "You cannot redeclare variables."),
     ReturnTypeMismatch(22,
             "Function `{0}` has return type of `{1}`. Cannot have another return statement with type `{2}`.",
             "Make sure all return statements in your function are returning the same type.");
@@ -26,6 +34,9 @@ public enum Comptime {
         this.code = code;
         this.templateString = templateString;
     }
+
+
+    static List<String> errors = new ArrayList<>();
 
     public void submit(File file, Node node, Object... varargs) {
 
@@ -57,9 +68,21 @@ public enum Comptime {
             s += result + "\n";
             s += suggestion;
 
-            System.out.println(s);
+            errors.add(s);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static boolean hasErrors() {
+        return errors.size() > 0;
+    }
+
+    public static void killIfErrors(String message) {
+        if (hasErrors()) {
+            errors.forEach(System.out::println);
+            System.out.println(message);
+            System.exit(1);
         }
     }
 

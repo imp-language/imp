@@ -5,7 +5,6 @@ import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.scope.Scope;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class TypeResolver {

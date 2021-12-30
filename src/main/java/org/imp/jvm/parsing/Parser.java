@@ -1,6 +1,8 @@
 package org.imp.jvm.parsing;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.ImpLexer;
@@ -9,9 +11,9 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.exception.ThrowingErrorListener;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
 import org.imp.jvm.tool.Timer;
-import org.imp.jvm.typechecker.TypeCheckerMain;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 
 public class Parser {
