@@ -5,20 +5,18 @@ import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Function;
-import org.imp.jvm.visitors.ASTPrinterVisitor;
 import org.imp.jvm.parser.Parser;
-import org.imp.jvm.statement.*;
 import org.imp.jvm.statement.Enum;
+import org.imp.jvm.statement.*;
 import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.tool.Timer;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.Modifier;
+import org.imp.jvm.visitors.ASTPrinterVisitor;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,10 +26,8 @@ public class TypeCheckerMain {
     public static ImpFile getAbstractSyntaxTree2(File file) throws FileNotFoundException {
         String name = FilenameUtils.separatorsToUnix(FilenameUtils.removeExtension(file.getPath()));
         var printer = new ASTPrinterVisitor();
-        BufferedReader reader =
-                new BufferedReader(new FileReader(file));
         Timer.log("Buffer opened");
-        var tokenizer = new Tokenizer(reader);
+        var tokenizer = new Tokenizer(file);
         Timer.log("Lexer created");
 
         var parser = new Parser(tokenizer);

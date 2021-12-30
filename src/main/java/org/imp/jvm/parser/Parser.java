@@ -5,7 +5,6 @@ import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.Tokenizer;
-import org.imp.jvm.typechecker.Annotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +78,7 @@ public class Parser extends ParserBase {
     }
 
     private Stmt statement() {
+        var loc = lok();
         if (check(ERROR)) {
             System.out.println();
         }
@@ -94,15 +94,17 @@ public class Parser extends ParserBase {
         if (match(FOR)) return parseFor();
         if (match(RETURN)) return parseReturn();
         if (check(LBRACE)) return block();
-        else return new Stmt.ExpressionStmt(expression());
+        else return new Stmt.ExpressionStmt(loc, expression());
     }
 
     Stmt.Return parseReturn() {
+        var loc = lok();
         Expr expr = expression();
-        return new Stmt.Return(expr);
+        return new Stmt.Return(loc, expr);
     }
 
     private Stmt.If parseIf() {
+        var loc = lok();
         Expr condition = expression();
         Stmt.Block trueBlock = block();
         Stmt falseStmt = null;
@@ -115,26 +117,28 @@ public class Parser extends ParserBase {
                 error(peek(), "Invalid end to if-else statement.");
             }
         }
-        return new Stmt.If(condition, trueBlock, falseStmt);
+        return new Stmt.If(loc, condition, trueBlock, falseStmt);
     }
 
     private Stmt.For parseFor() {
+        var loc = lok();
         Token name = consume(IDENTIFIER, "Need iterator variable name.");
         consume(IN, "Expected 'in' keyword.");
         Expr condition = expression();
         Stmt.Block block = block();
 
-        return new Stmt.For(new Stmt.ForInCondition(name, condition), block);
+        return new Stmt.For(loc, new Stmt.ForInCondition(loc, name, condition), block);
     }
 
     private Stmt.Variable variable() {
+        var loc = lok();
         Token mutability = consume();
         Token name = consume(IDENTIFIER, "Expected variable name.");
         consume(ASSIGN, "Expected assignment operator.");
 
         Expr expr = expression();
 
-        return new Stmt.Variable(mutability, name, expr);
+        return new Stmt.Variable(loc, mutability, name, expr);
     }
 
     Expr expression() {
@@ -148,7 +152,7 @@ public class Parser extends ParserBase {
 
         if (prefix == null) {
             error(token, "Could not parse.");
-            return new Expr.Bad(new Annotation(), token);
+            return new Expr.Bad(lok(), token);
         }
 
 
@@ -165,6 +169,7 @@ public class Parser extends ParserBase {
     }
 
     private Stmt.Block block() {
+        var loc = lok();
         List<Stmt> statements = new ArrayList<>();
         consume(LBRACE, "Expect '{' before block.");
 
@@ -173,23 +178,26 @@ public class Parser extends ParserBase {
         }
 
         consume(RBRACE, "Expect '}' after block.");
-        return new Stmt.Block(statements, new Environment());
+        return new Stmt.Block(loc, statements, new Environment());
     }
 
     private Stmt.Export export() {
-        return new Stmt.Export(statement());
+        var loc = lok();
+        return new Stmt.Export(loc, statement());
     }
 
     private Stmt.TypeAlias typeAlias() {
+        var loc = lok();
         Token name = consume(IDENTIFIER, "Expected type name.");
         consume(ASSIGN, "Expected assignment.");
         consume(EXTERN, "Expected 'extern' keyword in type alias");
         Token literal = consume(STRING, "Expected string literal.");
 
-        return new Stmt.TypeAlias(name, new Expr.Literal(new Annotation(), literal));
+        return new Stmt.TypeAlias(loc, name, new Expr.Literal(loc, literal));
     }
 
     private Stmt.Struct struct() {
+        var loc = lok();
         Token name = consume(IDENTIFIER, "Expected struct name.");
         consume(LBRACE, "Expected opening curly braces before struct body.");
 
@@ -203,11 +211,12 @@ public class Parser extends ParserBase {
         consume(RBRACE, "Expected opening curly braces before struct body.");
 
 
-        return new Stmt.Struct(name, parameters);
+        return new Stmt.Struct(loc, name, parameters);
     }
 
     private Stmt.Enum parseEnum() {
-        Token name = consume(IDENTIFIER, "Expected struct name.");
+        var loc = lok();
+        Token name = consume(IDENTIFIER, "Expected enum name.");
         consume(LBRACE, "Expected opening curly braces before struct body.");
 
         List<Token> values = new ArrayList<>();
@@ -220,10 +229,11 @@ public class Parser extends ParserBase {
         consume(RBRACE, "Expected opening curly braces before struct body.");
 
 
-        return new Stmt.Enum(name, values);
+        return new Stmt.Enum(loc, name, values);
     }
 
     private Stmt.Function function() {
+        var loc = lok();
         Token name = consume(IDENTIFIER, "Expected function name.");
         consume(LPAREN, "Expected opening parentheses after function name.");
 
@@ -244,10 +254,11 @@ public class Parser extends ParserBase {
 
         Stmt.Block block = block();
 
-        return new Stmt.Function(name, parameters, returnType, block);
+        return new Stmt.Function(loc, name, parameters, returnType, block);
     }
 
     private Stmt.Parameter parameter() {
+        var loc = lok();
         Token name = consume(IDENTIFIER, "Expected field name.");
         Token type = consume(IDENTIFIER, "Expected field type.");
         boolean listType = false;
@@ -256,7 +267,7 @@ public class Parser extends ParserBase {
             consume(RBRACK, "Expected ']' in list type.");
             // Todo: better type expressions
         }
-        return new Stmt.Parameter(name, type, listType);
+        return new Stmt.Parameter(loc, name, type, listType);
     }
 
 

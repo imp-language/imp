@@ -102,6 +102,14 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         }
 
         var funcType = new FuncType(name, Modifier.NONE, parameters);
+        if (stmt.returnType() != null) {
+            var bt = BuiltInType.getFromString(stmt.returnType().source());
+            if (bt != null) {
+                funcType.returnType = bt;
+            } else {
+                funcType.returnType = new UnknownType(stmt.returnType().source());
+            }
+        }
         currentEnvironment.addVariable(name, funcType);
 
 

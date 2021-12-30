@@ -1,16 +1,22 @@
 package org.imp.jvm.tokenizer;
 
-import org.apache.commons.text.StringEscapeUtils;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PushbackReader;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.imp.jvm.tokenizer.TokenType.*;
 
 public class Tokenizer implements Iterator<Token> {
     private PushbackReader reader;
-    private int line = 1;
-    private int col = 1;
+    public int line = 1;
+    public int col = 1;
+
+    private List<String> lines = new ArrayList<>();
 
     public Status getStatus() {
         return status;
@@ -30,13 +36,10 @@ public class Tokenizer implements Iterator<Token> {
     public Tokenizer(File file) {
         try {
             this.reader = new PushbackReader(new FileReader(file), 5);
-        } catch (FileNotFoundException e) {
+            lines = Files.readAllLines(file.toPath());
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public Tokenizer(Reader reader) {
-        this.reader = new PushbackReader(reader, 5);
     }
 
     @Override

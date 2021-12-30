@@ -1,6 +1,7 @@
 package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
+import org.imp.jvm.typechecker.Location;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,138 +51,139 @@ public interface Stmt extends Node {
         return new ArrayList<>(stmts);
     }
 
-    record Enum(Token name, List<Token> values) implements Stmt {
+    record Enum(Location loc, Token name, List<Token> values) implements Stmt {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitEnum(this);
         }
 
         @Override
-        public List<Node> children() {
-            return null;
+        public Location location() {
+            return loc();
         }
     }
 
-    record Struct(Token name, List<Parameter> fields) implements Stmt {
+    record Struct(Location loc, Token name, List<Parameter> fields) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitStruct(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
-    record Block(List<Stmt> statements, Environment environment) implements Stmt {
+    record Block(Location loc, List<Stmt> statements, Environment environment) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBlockStmt(this);
         }
 
-
         @Override
-        public List<Node> children() {
-            return list(statements);
+        public Location location() {
+            return loc();
         }
+
     }
 
-    record Export(Stmt stmt) implements Stmt {
+    record Export(Location loc, Stmt stmt) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitExport(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list(stmt);
+        public Location location() {
+            return loc();
         }
     }
 
-    record ExpressionStmt(Expr expr) implements Stmt {
+    record ExpressionStmt(Location loc, Expr expr) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitExpressionStmt(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
-    record TypeAlias(Token name, Expr.Literal literal) implements Stmt {
+    record TypeAlias(Location loc, Token name, Expr.Literal literal) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitTypeAlias(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
-    record Function(Token name, List<Parameter> parameters, Token returnType, Block body) implements Stmt {
+    record Function(Location loc, Token name, List<Parameter> parameters, Token returnType,
+                    Block body) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFunctionStmt(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
-    record Parameter(Token name, Token type, boolean listType) implements Stmt {
+    record Parameter(Location loc, Token name, Token type, boolean listType) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitParameterStmt(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
-    record If(Expr condition, Stmt.Block trueBlock, Stmt falseStmt) implements Stmt {
+    record If(Location loc, Expr condition, Stmt.Block trueBlock, Stmt falseStmt) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIf(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list(trueBlock, falseStmt);
+        public Location location() {
+            return loc();
         }
     }
 
-    record Return(Expr expr) implements Stmt {
+    record Return(Location loc, Expr expr) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitReturnStmt(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
-    record Variable(Token mutability, Token name, Expr expr) implements Stmt {
+    record Variable(Location loc, Token mutability, Token name, Expr expr) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitVariable(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
 
-    record For(ForCondition condition, Block block) implements Stmt {
+    record For(Location loc, ForCondition condition, Block block) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFor(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list(block);
+        public Location location() {
+            return loc();
         }
     }
 
@@ -190,14 +192,14 @@ public interface Stmt extends Node {
     }
 
 
-    record ForInCondition(Token name, Expr expr) implements ForCondition {
+    record ForInCondition(Location loc, Token name, Expr expr) implements ForCondition {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitForInCondition(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 

@@ -1,7 +1,7 @@
 package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.typechecker.Annotation;
+import org.imp.jvm.typechecker.Location;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public interface Expr extends Node {
         return new ArrayList<>(exprs);
     }
 
-    record EmptyList(Token type) implements Expr {
+    record EmptyList(Location loc, Token type) implements Expr {
 
         @Override
         public <R> R accept(Visitor<R> visitor) {
@@ -64,195 +64,167 @@ public interface Expr extends Node {
         }
 
         @Override
-        public List<Node> children() {
-            return null;
+        public Location location() {
+            return loc();
         }
     }
 
 
     // error
-    record Bad(Annotation annotation, Token... badTokens) implements Expr {
+    record Bad(Location loc, Token... badTokens) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBad(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
     // expression operator expression
-    record Assign(Annotation annotation, Expr left, Expr right) implements Expr {
+    record Assign(Location loc, Expr left, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitAssignExpr(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list(left, right);
+        public Location location() {
+            return loc();
         }
     }
 
 
     // expression operator expression
-    record Binary(Annotation annotation, Expr left, Token operator, Expr right) implements Expr {
+    record Binary(Location loc, Expr left, Token operator, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBinaryExpr(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
-    record Call(Annotation annotation, Expr item, List<Expr> arguments) implements Expr {
+    record Call(Location loc, Expr item, List<Expr> arguments) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitCall(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
     // LPAREN expression RPAREN
-    record Grouping(Annotation annotation, Expr expr) implements Expr {
+    record Grouping(Location loc, Expr expr) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitGroupingExpr(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
     // expression comparison expression
-    record Logical(Annotation annotation, Expr left, Token comparison, Expr right) implements Expr {
+    record Logical(Location loc, Expr left, Token comparison, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLogicalExpr(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
     // literal number, boolean or string
-    record Literal(Annotation annotation, Token literal) implements Expr {
+    record Literal(Location loc, Token literal) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralExpr(this);
         }
 
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
     }
 
     // literal number, boolean or string
-    record LiteralList(Annotation annotation, List<Expr> entries) implements Expr {
+    record LiteralList(Location loc, List<Expr> entries) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralList(this);
         }
 
-
         @Override
-        public List<Node> children() {
-            return list();
+        public Location location() {
+            return loc();
         }
+
     }
 
 
     // identifier
-    record Identifier(Annotation annotation, Token identifier) implements Expr {
+    record Identifier(Location location, Token identifier) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIdentifierExpr(this);
         }
 
-        @Override
-        public List<Node> children() {
-            return list();
-        }
     }
 
     // operator expression
-    record Prefix(Annotation annotation, Token operator, Expr right) implements Expr {
+    record Prefix(Location location, Token operator, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPrefix(this);
         }
 
-        @Override
-        public List<Node> children() {
-            return list();
-        }
     }
 
     // expression operator
-    record Postfix(Annotation annotation, Expr expr, Token operator) implements Expr {
+    record Postfix(Location location, Expr expr, Token operator) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPostfixExpr(this);
         }
 
-        @Override
-        public List<Node> children() {
-            return list();
-        }
     }
 
 
     // expression operator
-    record New(Annotation annotation, Expr call) implements Expr {
+    record New(Location location, Expr call) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitNew(this);
         }
 
-        @Override
-        public List<Node> children() {
-            return list();
-        }
     }
 
     // expression . expression
-    record PropertyAccess(Annotation annotation, Expr left, Expr right) implements Expr {
+    record PropertyAccess(Location location, Expr left, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPropertyAccess(this);
         }
 
-        @Override
-        public List<Node> children() {
-            return list();
-        }
     }
 
     // expression[expression]
-    record IndexAccess(Annotation annotation, Expr left, Expr right) implements Expr {
+    record IndexAccess(Location location, Expr left, Expr right) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIndexAccess(this);
         }
 
-        @Override
-        public List<Node> children() {
-            return list();
-        }
     }
 
     // expression ... expression
-    record Range(Annotation annotation, Expr left, Expr right) implements Expr {
+    record Range(Location location, Expr left, Expr right) implements Expr {
 
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitRange(this);
         }
 
-        @Override
-        public List<Node> children() {
-            return list(left, right);
-        }
     }
 
 

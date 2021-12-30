@@ -31,10 +31,9 @@ public class API {
      */
     public static ImpFile createSourceFile(String filename) throws FileNotFoundException {
         File file = new File(filename);
-        BufferedReader reader =
-                new BufferedReader(new FileReader(file));
+
         Timer.log("Buffer opened");
-        var tokenizer = new Tokenizer(reader);
+        var tokenizer = new Tokenizer(file);
         Timer.log("Lexer created");
 
         var parser = new org.imp.jvm.parser.Parser(tokenizer);

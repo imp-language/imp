@@ -3,20 +3,24 @@ package org.imp.jvm.visitors;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.types.*;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.Stack;
 
 public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visitor<Optional<Type>> {
 
     public final Environment rootEnvironment;
+    public final File file;
     public Environment currentEnvironment;
 
     private final Stack<FuncType> functionStack = new Stack<>();
 
-    public TypeCheckVisitor(Environment rootEnvironment) {
+    public TypeCheckVisitor(Environment rootEnvironment, File file) {
         this.rootEnvironment = rootEnvironment;
+        this.file = file;
         this.currentEnvironment = this.rootEnvironment;
     }
 
@@ -114,10 +118,11 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
         if (t.isPresent()) {
             if (functionStack.size() > 0) {
                 var newType = t.get();
-                if (functionStack.peek().returnType == BuiltInType.VOID) {
-                    functionStack.peek().returnType = t.get();
-                } else if (newType != functionStack.peek().returnType) {
-                    System.err.println("Cannot return multiple types from the same function.");
+                var top = functionStack.peek();
+                if (top.returnType == BuiltInType.VOID) {
+                    top.returnType = t.get();
+                } else if (newType != top.returnType) {
+                    Comptime.ReturnTypeMismatch.submit(file, stmt, top.name, top.returnType, newType);
                     System.exit(874);
                 }
             }

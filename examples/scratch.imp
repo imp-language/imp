@@ -18,10 +18,18 @@ struct Date {
 
 func hello(p Person) {
     if 10 > 5 {
-        return 9
+        return 9.0
+
     } else {
         return 18
     }
+}
+
+
+/*
+func printDate(d Date) {
+    val day = "12"
+    return day
 }
 
 func range(from int, to int) {
@@ -36,13 +44,6 @@ func range(from int, to int) {
     }
     return numbers
 }
-
-/*
-func printDate(d Date) {
-    val day = "12"
-    return day
-}
-
 
 
 

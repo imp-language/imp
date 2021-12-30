@@ -81,7 +81,7 @@ public class Compiler {
         // a) Determine function return type based on type of expression returned.
         // b) Settle types of fields on structs
         // c) Error if multiple return statements in a function return different types.
-        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(rootEnvironment);
+        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(rootEnvironment, file);
         for (var stmt : statements) {
             stmt.accept(typeCheckVisitor);
         }

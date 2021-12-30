@@ -1,7 +1,8 @@
 package org.imp.jvm;
 
-import java.util.List;
+import org.imp.jvm.typechecker.Location;
 
 public interface Node {
-    List<Node> children();
+    Location location();
+
 }
