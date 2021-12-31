@@ -142,6 +142,11 @@ public class CodegenVisitor implements Stmt.Visitor<Generator>, Expr.Visitor<Voi
     }
 
     @Override
+    public Generator visitImport(Stmt.Import stmt) {
+        return null;
+    }
+
+    @Override
     public Generator visitReturnStmt(Stmt.Return stmt) {
         return null;
     }

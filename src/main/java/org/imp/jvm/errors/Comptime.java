@@ -18,6 +18,7 @@ public enum Comptime {
 
     TypeNotFound(1, "Type `{0}` does not exist in the current environment.",
             "Make sure all types are defined or builtin."),
+    ModuleNotFound(12, "Module `{0}` is not found.", "Is the module misspelled?"),
     Redeclaration(21, "Redeclaration of variable `{0}`.",
             "You cannot redeclare variables."),
     ReturnTypeMismatch(22,

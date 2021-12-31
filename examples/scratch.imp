@@ -1,22 +1,11 @@
+import "person"
+
 /*
-*/
-struct Person {
-    fname string
-    lname string
-    dob Date
-}
-
-struct Date {
-    year int
-    month int
-    day int
-}
 
 
 
 
-
-func hello(p Person) {
+func hello(p person.Person) {
     val b = 4
     if 10 > 5 {
         return 9
@@ -26,6 +15,7 @@ func hello(p Person) {
     }
 }
 
+*/
 
 
 /*

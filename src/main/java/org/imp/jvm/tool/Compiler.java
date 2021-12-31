@@ -3,6 +3,7 @@ package org.imp.jvm.tool;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.Environment;
 import org.imp.jvm.domain.ImpFile;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.visitors.EnvironmentVisitor;
@@ -30,8 +31,9 @@ public class Compiler {
     public String compile() throws FileNotFoundException {
         File file = new File(filename);
         var sourceFile = API.parse(file);
+        Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(sourceFile);
+        Comptime.killIfErrors("Correct dependency errors before continuing.");
         Timer.log("build dependency graph");
-        // Todo: dependency graph stuff
 
 
         // 1. EnvironmentVisitor builds scopes and assigns

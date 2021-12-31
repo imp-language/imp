@@ -1,0 +1,7 @@
+import "date"
+
+export struct Person {
+    fname string
+    lname string
+    dob date.Date
+}

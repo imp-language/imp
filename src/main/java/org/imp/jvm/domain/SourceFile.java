@@ -14,4 +14,9 @@ public class SourceFile {
         this.file = file;
         this.stmts = stmts;
     }
+
+    @Override
+    public String toString() {
+        return file.getName();
+    }
 }

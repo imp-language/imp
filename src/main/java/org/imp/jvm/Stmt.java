@@ -4,51 +4,61 @@ import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.typechecker.Location;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public interface Stmt extends Node {
     <R> R accept(Visitor<R> visitor);
 
 
+    default List<Node> list(List<Stmt> stmts) {
+        return new ArrayList<>(stmts);
+    }
+
     interface Visitor<R> {
         R visit(Stmt stmt);
 
         R visitBlockStmt(Block stmt);
 
-        R visitExport(Export stmt);
-
         R visitEnum(Enum stmt);
 
-        R visitStruct(Struct stmt);
+        R visitExport(Export stmt);
 
         R visitExpressionStmt(ExpressionStmt stmt);
-
-        R visitFunctionStmt(Function stmt);
-
-        R visitIf(If stmt);
-
-        R visitReturnStmt(Return stmt);
-
-        R visitVariable(Variable stmt);
-
-        R visitParameterStmt(Parameter stmt);
 
         R visitFor(For stmt);
 
         R visitForInCondition(ForInCondition stmt);
 
+        R visitFunctionStmt(Function stmt);
+
+        R visitIf(If stmt);
+
+        R visitImport(Import stmt);
+
+        R visitParameterStmt(Parameter stmt);
+
+        R visitReturnStmt(Return stmt);
+
+        R visitStruct(Struct stmt);
+
         R visitTypeAlias(TypeAlias stmt);
+
+        R visitVariable(Variable stmt);
     }
 
-    default List<Node> list(Stmt... stmts) {
-        List<Node> list = new ArrayList<>();
-        Collections.addAll(list, stmts);
-        return list;
+    interface ForCondition extends Stmt {
     }
 
-    default List<Node> list(List<Stmt> stmts) {
-        return new ArrayList<>(stmts);
+    record Import(Location loc, Token stringLiteral) implements Stmt {
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitImport(this);
+        }
+
+        @Override
+        public Location location() {
+            return loc();
+        }
     }
 
     record Enum(Location loc, Token name, List<Token> values) implements Stmt {
@@ -175,7 +185,6 @@ public interface Stmt extends Node {
         }
     }
 
-
     record For(Location loc, ForCondition condition, Block block) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFor(this);
@@ -186,11 +195,6 @@ public interface Stmt extends Node {
             return loc();
         }
     }
-
-
-    interface ForCondition extends Stmt {
-    }
-
 
     record ForInCondition(Location loc, Token name, Expr expr) implements ForCondition {
         public <R> R accept(Visitor<R> visitor) {

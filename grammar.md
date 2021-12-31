@@ -7,7 +7,7 @@ In EBNF:
 The top level of any Imp program is the `program` rule.
 
 ```ebnf
-program        → statement* EOF ;
+program        → import* statement* EOF ;
 ```
 
 A program is a series of statements.
@@ -27,6 +27,10 @@ statement      → expression
                
                ;
                
+import         → "import" stringLiteral
+               | "import" stringLiteral "as" identifier
+               | "from" stringLiteral "import" identifierList // todo
+               ;
 
 export         → "export" statement ;
 typeAlias      → "type" identifier "=" "extern" STRING ;

@@ -15,23 +15,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<String> {
-    public boolean displayAnnotations = true;
-
-
     public final Environment rootEnvironment;
+    public boolean displayAnnotations = true;
     public Environment currentEnvironment;
+    private int indent = 0;
 
     public PrettyPrinterVisitor(Environment rootEnvironment) {
         this.rootEnvironment = rootEnvironment;
         this.currentEnvironment = this.rootEnvironment;
-    }
-
-    String print(Expr expr) {
-        return expr.accept(this);
-    }
-
-    String print(Stmt stmt) {
-        return stmt.accept(this);
     }
 
     public String print(List<Stmt> stmts) {
@@ -42,79 +33,14 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
         return sb.toString();
     }
 
-
-    private String s(Expr... exprs) {
-        StringBuilder builder = new StringBuilder();
-
-        List<Expr> exprList = Arrays.asList(exprs);
-
-        return exprList.stream().map(this::print).collect(Collectors.joining(" "));
-    }
-
-    private String s(String... strs) {
-        StringBuilder builder = new StringBuilder();
-
-        List<String> strList = Arrays.asList(strs);
-
-        return String.join(" ", strList);
-    }
-
-
     @Override
-    public String visitAssignExpr(Expr.Assign expr) {
-        return s(print(expr.left()), "=", print(expr.right()));
-    }
-
-    @Override
-    public String visitBinaryExpr(Expr.Binary expr) {
-        return s(print(expr.left()), expr.operator().representation(), print(expr.right()));
-    }
-
-    @Override
-    public String visitGroupingExpr(Expr.Grouping expr) {
-        return s("(", print(expr), ")");
-    }
-
-    @Override
-    public String visitIdentifierExpr(Expr.Identifier expr) {
-        return expr.identifier().source();
-    }
-
-    @Override
-    public String visitLogicalExpr(Expr.Logical expr) {
+    public String visit(Stmt stmt) {
         return null;
     }
 
     @Override
-    public String visitLiteralExpr(Expr.Literal expr) {
-        String source = expr.literal().source();
-        if (expr.literal().type() == TokenType.STRING) source = '"' + source + '"';
-
-        return source;
-    }
-
-    @Override
-    public String visitLiteralList(Expr.LiteralList expr) {
-        return "[" + expr.entries().stream().map(this::print).collect(Collectors.joining(",")) + "]";
-    }
-
-    @Override
-    public String visitPrefix(Expr.Prefix expr) {
-        return s(expr.operator().source(), print(expr.right()));
-    }
-
-    @Override
-    public String visitCall(Expr.Call expr) {
-        StringBuilder result = new StringBuilder(print(expr.item()) + "(");
-        result.append(expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")));
-
-        result.append(")");
-        return result.toString();
-    }
-
-    @Override
-    public String visitPostfixExpr(Expr.Postfix expr) {
-        return s(expr.operator().source(), print(expr.expr()));
+    public String visitAssignExpr(Expr.Assign expr) {
+        return s(print(expr.left()), "=", print(expr.right()));
     }
 
     @Override
@@ -126,40 +52,8 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
     }
 
     @Override
-    public String visitNew(Expr.New expr) {
-        return s("new", print(expr.call()));
-    }
-
-    @Override
-    public String visitPropertyAccess(Expr.PropertyAccess expr) {
-        return s(print(expr.left()), ".", print(expr.right()));
-    }
-
-    // Todo: relate to binary expressions somehow
-    @Override
-    public String visitRange(Expr.Range range) {
-        return print(range.left()) + ".." + print(range.right());
-    }
-
-    @Override
-    public String visitEmptyList(Expr.EmptyList emptyList) {
-        return emptyList.type().source() + "[]";
-    }
-
-    @Override
-    public String visitIndexAccess(Expr.IndexAccess expr) {
-        return print(expr.left()) + "[" + print(expr.right()) + "]";
-    }
-
-    @Override
-    public String visit(Stmt stmt) {
-        return null;
-    }
-
-    private int indent = 0;
-
-    String tabs() {
-        return "\n" + "\t".repeat(indent);
+    public String visitBinaryExpr(Expr.Binary expr) {
+        return s(print(expr.left()), expr.operator().representation(), print(expr.right()));
     }
 
     @Override
@@ -177,8 +71,17 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
     }
 
     @Override
-    public String visitExport(Stmt.Export stmt) {
-        return s("export", print(stmt.stmt()));
+    public String visitCall(Expr.Call expr) {
+        StringBuilder result = new StringBuilder(print(expr.item()) + "(");
+        result.append(expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")));
+
+        result.append(")");
+        return result.toString();
+    }
+
+    @Override
+    public String visitEmptyList(Expr.EmptyList emptyList) {
+        return emptyList.type().source() + "[]";
     }
 
     @Override
@@ -190,6 +93,172 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
         result.append("))");
         return result.toString();
+    }
+
+    @Override
+    public String visitExport(Stmt.Export stmt) {
+        return s("export", print(stmt.stmt()));
+    }
+
+    @Override
+    public String visitExpressionStmt(Stmt.ExpressionStmt stmt) {
+        return print(stmt.expr());
+    }
+
+    @Override
+    public String visitFor(Stmt.For stmt) {
+        var childEnvironment = stmt.block().environment();
+        currentEnvironment = childEnvironment;
+        String str = s("for", print(stmt.condition()), print(stmt.block()));
+        currentEnvironment = currentEnvironment.getParent();
+        return str;
+    }
+
+    @Override
+    public String visitForInCondition(Stmt.ForInCondition stmt) {
+        var name = stmt.name().source();
+        var t = currentEnvironment.getVariable(stmt.name().source());
+        if (displayAnnotations) {
+            if (t != null) {
+                name += " : " + t.toString();
+
+            } else {
+                name += " : $reee";
+            }
+        }
+        return s(name, "in", print(stmt.expr()));
+    }
+
+    @Override
+    public String visitFunctionStmt(Stmt.Function stmt) {
+        String name = stmt.name().source();
+        // Find the FunctionType associated with this statement
+        var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
+
+        currentEnvironment = stmt.body().environment();
+
+        if (funcType != null) {
+            String result = "func " + name + "(";
+            result += funcType.parameters.stream().map(identifier -> identifier.name + " " + identifier.type).collect(Collectors.joining(", "));
+            result += ") " + funcType.returnType + " ";
+
+            result += print(stmt.body());
+            currentEnvironment = currentEnvironment.getParent();
+            return result.toString();
+        }
+        return "nope";
+    }
+
+    @Override
+    public String visitGroupingExpr(Expr.Grouping expr) {
+        return s("(", print(expr), ")");
+    }
+
+    @Override
+    public String visitIdentifierExpr(Expr.Identifier expr) {
+        return expr.identifier().source();
+    }
+
+    @Override
+    public String visitIf(Stmt.If stmt) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(s("if", print(stmt.condition()), print(stmt.trueBlock())));
+        if (stmt.falseStmt() != null) {
+            sb.append(s(" else", print(stmt.falseStmt())));
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String visitImport(Stmt.Import stmt) {
+        return "import " + '"' + stmt.stringLiteral().source() + '"';
+    }
+
+    @Override
+    public String visitIndexAccess(Expr.IndexAccess expr) {
+        return print(expr.left()) + "[" + print(expr.right()) + "]";
+    }
+
+    @Override
+    public String visitLiteralExpr(Expr.Literal expr) {
+        String source = expr.literal().source();
+        if (expr.literal().type() == TokenType.STRING) source = '"' + source + '"';
+
+        return source;
+    }
+
+    @Override
+    public String visitLiteralList(Expr.LiteralList expr) {
+        return "[" + expr.entries().stream().map(this::print).collect(Collectors.joining(",")) + "]";
+    }
+
+    @Override
+    public String visitLogicalExpr(Expr.Logical expr) {
+        return null;
+    }
+
+    @Override
+    public String visitNew(Expr.New expr) {
+        return s("new", print(expr.call()));
+    }
+
+    @Override
+    public String visitParameterStmt(Stmt.Parameter stmt) {
+        String name = stmt.name().source();
+        var t = currentEnvironment.getVariable(stmt.name().source());
+        if (displayAnnotations) {
+            if (t != null) {
+                if (!(t instanceof BuiltInType)) {
+                    name += " : " + t.toString();
+                }
+
+            } else {
+                name += " : $reee";
+            }
+        }
+        String result = name + " " + stmt.type().source();
+
+        if (stmt.listType()) result += "[]";
+        return result;
+    }
+
+    @Override
+    public String visitPostfixExpr(Expr.Postfix expr) {
+        return s(expr.operator().source(), print(expr.expr()));
+    }
+
+    @Override
+    public String visitPrefix(Expr.Prefix expr) {
+        return s(expr.operator().source(), print(expr.right()));
+    }
+
+    @Override
+    public String visitPropertyAccess(Expr.PropertyAccess expr) {
+        return s(print(expr.left()), ".", print(expr.right()));
+    }
+
+    // Todo: relate to binary expressions somehow
+    @Override
+    public String visitRange(Expr.Range range) {
+        return print(range.left()) + ".." + print(range.right());
+    }
+
+    @Override
+    public String visitReturnStmt(Stmt.Return stmt) {
+        var s = print(stmt.expr());
+        if (stmt.expr() instanceof Expr.Identifier) {
+
+            if (displayAnnotations) {
+                var t = currentEnvironment.getVariable(s);
+                if (t != null) {
+                    s += " : " + t.toString();
+
+                } else {
+                    s += " : $reee";
+                }
+            }
+        }
+        return s("return", s);
     }
 
     @Override
@@ -218,56 +287,8 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
     }
 
     @Override
-    public String visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        return print(stmt.expr());
-    }
-
-    @Override
-    public String visitFunctionStmt(Stmt.Function stmt) {
-        String name = stmt.name().source();
-        // Find the FunctionType associated with this statement
-        var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
-
-        currentEnvironment = stmt.body().environment();
-
-        if (funcType != null) {
-            String result = "func " + name + "(";
-            result += funcType.parameters.stream().map(identifier -> identifier.name + " " + identifier.type).collect(Collectors.joining(", "));
-            result += ") " + funcType.returnType + " ";
-
-            result += print(stmt.body());
-            currentEnvironment = currentEnvironment.getParent();
-            return result.toString();
-        }
-        return "nope";
-    }
-
-    @Override
-    public String visitIf(Stmt.If stmt) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(s("if", print(stmt.condition()), print(stmt.trueBlock())));
-        if (stmt.falseStmt() != null) {
-            sb.append(s(" else", print(stmt.falseStmt())));
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public String visitReturnStmt(Stmt.Return stmt) {
-        var s = print(stmt.expr());
-        if (stmt.expr() instanceof Expr.Identifier) {
-
-            if (displayAnnotations) {
-                var t = currentEnvironment.getVariable(s);
-                if (t != null) {
-                    s += " : " + t.toString();
-
-                } else {
-                    s += " : $reee";
-                }
-            }
-        }
-        return s("return", s);
+    public String visitTypeAlias(Stmt.TypeAlias stmt) {
+        return "(type " + stmt.name().source() + " extern " + print(stmt.literal()) + ")";
     }
 
     @Override
@@ -288,55 +309,31 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
         return s(stmt.mutability().source(), name, "=", print(stmt.expr()));
     }
 
-
-    @Override
-    public String visitParameterStmt(Stmt.Parameter stmt) {
-        String name = stmt.name().source();
-        var t = currentEnvironment.getVariable(stmt.name().source());
-        if (displayAnnotations) {
-            if (t != null) {
-                if (!(t instanceof BuiltInType)) {
-                    name += " : " + t.toString();
-                }
-
-            } else {
-                name += " : $reee";
-            }
-        }
-        String result = name + " " + stmt.type().source();
-
-        if (stmt.listType()) result += "[]";
-        return result;
+    String print(Expr expr) {
+        return expr.accept(this);
     }
 
-
-    @Override
-    public String visitFor(Stmt.For stmt) {
-        var childEnvironment = stmt.block().environment();
-        currentEnvironment = childEnvironment;
-        String str = s("for", print(stmt.condition()), print(stmt.block()));
-        currentEnvironment = currentEnvironment.getParent();
-        return str;
+    String print(Stmt stmt) {
+        return stmt.accept(this);
     }
 
-    @Override
-    public String visitForInCondition(Stmt.ForInCondition stmt) {
-        var name = stmt.name().source();
-        var t = currentEnvironment.getVariable(stmt.name().source());
-        if (displayAnnotations) {
-            if (t != null) {
-                name += " : " + t.toString();
-
-            } else {
-                name += " : $reee";
-            }
-        }
-        return s(name, "in", print(stmt.expr()));
+    String tabs() {
+        return "\n" + "\t".repeat(indent);
     }
 
+    private String s(Expr... exprs) {
+        StringBuilder builder = new StringBuilder();
 
-    @Override
-    public String visitTypeAlias(Stmt.TypeAlias stmt) {
-        return "(type " + stmt.name().source() + " extern " + print(stmt.literal()) + ")";
+        List<Expr> exprList = Arrays.asList(exprs);
+
+        return exprList.stream().map(this::print).collect(Collectors.joining(" "));
+    }
+
+    private String s(String... strs) {
+        StringBuilder builder = new StringBuilder();
+
+        List<String> strList = Arrays.asList(strs);
+
+        return String.join(" ", strList);
     }
 }

@@ -1,12 +1,14 @@
 package org.imp.jvm.tool;
 
 
-import org.tomlj.Toml;
+import org.imp.jvm.tool.manifest.Version;
 import org.tomlj.TomlParseResult;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class ProjectParser {
     private static final String PATH_NAME = "project.name";
@@ -14,39 +16,39 @@ public class ProjectParser {
     private static final String PATH_ENTRY = "project.entry";
 
     public static void main(String[] args) throws IOException {
-        Path source = Paths.get("examples/imp.toml");
-        TomlParseResult result = Toml.parse(source);
-        result.errors().forEach(error -> System.err.println(error.toString()));
-        validate(result);
+        Properties prop = new Properties();
+        prop.load(new FileReader("examples/imp.properties"));
+        List<String> authors = null;
+
+        var manifest = new Manifest(
+                prop.getProperty("name"),
+                Version.from(prop.getProperty("version")),
+                getOrDefault(prop, "description", ""),
+                authors,
+                getOrDefault(prop, "homepage", ""),
+                getOrDefault(prop, "docs", ""),
+                getOrDefault(prop, "repo", ""),
+                getOrDefault(prop, "license", ""),
+                null,
+                getOrDefault(prop, "publish", false),
+                getOrDefault(prop, "imp", new Version(1, 0, 0, ""))
+        );
+        System.out.println(manifest);
+    }
+
+    static <T> T getOrDefault(Properties prop, String key, T defaultValue) {
+        if (prop.contains(key)) {
+            return (T) prop.getProperty(key);
+        } else {
+            return defaultValue;
+        }
     }
 
     public static ImpProjectConfiguration validate(TomlParseResult toml) {
 
-        String name = "";
-        String version = "";
-        String entry = "";
+        var authors = toml.getArray("package.authors").toList().stream().map(Object::toString).collect(Collectors.toList());
 
-        if (toml.contains(PATH_NAME)) {
-            name = toml.getString(PATH_NAME);
-        } else {
-            throw new RuntimeException(PATH_NAME + " not found in 'imp.toml'.");
-        }
 
-        if (toml.contains(PATH_VERSION)) {
-            version = toml.getString(PATH_VERSION);
-        } else {
-            throw new RuntimeException(PATH_VERSION + " not found in 'imp.toml'.");
-        }
-
-        if (toml.contains(PATH_ENTRY)) {
-            entry = toml.getString(PATH_ENTRY);
-        } else {
-            throw new RuntimeException(PATH_ENTRY + " not found in 'imp.toml'.");
-        }
-
-        ImpProjectConfiguration pack = new ImpProjectConfiguration(name, version, entry);
-
-        System.out.println(pack);
-        return pack;
+        return null;
     }
 }

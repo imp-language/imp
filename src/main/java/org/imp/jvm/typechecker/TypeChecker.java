@@ -311,6 +311,11 @@ public class TypeChecker implements Expr.Visitor<Expression>, Stmt.Visitor<State
     }
 
     @Override
+    public Statement visitImport(Stmt.Import stmt) {
+        return null;
+    }
+
+    @Override
     public Statement visitReturnStmt(Stmt.Return stmt) {
         var expression = stmt.expr().accept(this);
         return new Return(expression);

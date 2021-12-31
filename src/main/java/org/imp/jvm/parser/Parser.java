@@ -83,6 +83,7 @@ public class Parser extends ParserBase {
             System.out.println();
         }
 
+        if (match(IMPORT)) return importStmt();
         if (match(EXPORT)) return export();
 
         if (match(TYPE)) return typeAlias();
@@ -184,6 +185,11 @@ public class Parser extends ParserBase {
     private Stmt.Export export() {
         var loc = lok();
         return new Stmt.Export(loc, statement());
+    }
+
+    private Stmt.Import importStmt() {
+        var loc = lok();
+        return new Stmt.Import(loc, consume(STRING, "Import must be followed by a string."));
     }
 
     private Stmt.TypeAlias typeAlias() {

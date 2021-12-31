@@ -249,6 +249,11 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
     }
 
     @Override
+    public String visitImport(Stmt.Import stmt) {
+        return "(export " + stmt.stringLiteral().source() + ")";
+    }
+
+    @Override
     public String visitReturnStmt(Stmt.Return stmt) {
         return parenthesize("return", stmt.expr());
     }

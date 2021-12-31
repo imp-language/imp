@@ -1,4 +1,0 @@
-[project]
-name = "hello_imp"
-version = "0.0.1"
-entry = "scratch.imp"

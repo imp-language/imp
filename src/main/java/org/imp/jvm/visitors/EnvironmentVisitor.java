@@ -125,6 +125,11 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
     }
 
     @Override
+    public Optional<Type> visitImport(Stmt.Import stmt) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<Type> visitReturnStmt(Stmt.Return stmt) {
         // Set the return type of the function to the type of the
         // expression you are returning.
