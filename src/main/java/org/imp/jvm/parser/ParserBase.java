@@ -1,9 +1,9 @@
 package org.imp.jvm.parser;
 
+import org.imp.jvm.Location;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.tokenizer.Tokenizer;
-import org.imp.jvm.typechecker.Location;
 
 import java.util.ArrayList;
 import java.util.HashMap;

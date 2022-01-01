@@ -12,7 +12,7 @@ public class Environment {
     private Environment parent;
 
 
-    // Type aliases, functions, structs, and enums
+    // Type aliases, functions, structs, and enums (Don't use, Todo: deprecate)
     private final LinkedMap<String, Type> types = new LinkedMap<>();
     // Variables referencing values of the above
     private final LinkedMap<String, Type> variables = new LinkedMap<>();

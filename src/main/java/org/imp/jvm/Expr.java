@@ -1,7 +1,6 @@
 package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.typechecker.Location;
 
 import java.util.ArrayList;
 import java.util.Collections;

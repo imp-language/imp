@@ -1,10 +1,10 @@
 package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.typechecker.Location;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public interface Stmt extends Node {
     <R> R accept(Visitor<R> visitor);
@@ -40,6 +40,8 @@ public interface Stmt extends Node {
         R visitReturnStmt(Return stmt);
 
         R visitStruct(Struct stmt);
+
+        R visitType(Type stmt);
 
         R visitTypeAlias(TypeAlias stmt);
 
@@ -141,9 +143,21 @@ public interface Stmt extends Node {
         }
     }
 
-    record Parameter(Location loc, Token name, Token type, boolean listType) implements Stmt {
+    record Parameter(Location loc, Token name, Type type) implements Stmt {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitParameterStmt(this);
+        }
+
+        @Override
+        public Location location() {
+            return loc();
+        }
+    }
+
+    record Type(Location loc, Token identifier, Optional<Type> next, boolean listType) implements Stmt {
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitType(this);
         }
 
         @Override

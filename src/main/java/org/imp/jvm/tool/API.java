@@ -12,7 +12,6 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
 import org.imp.jvm.runtime.Glue;
 import org.imp.jvm.tokenizer.Tokenizer;
-import org.imp.jvm.typechecker.TypeCheckerMain;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.Attribute;
@@ -50,11 +49,7 @@ public class API {
         if (file.exists()) {
             Timer.log("entry file found");
 //            ast = Parser.getAbstractSyntaxTree(file);
-            try {
-                ast = TypeCheckerMain.getAbstractSyntaxTree2(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            //                ast = TypeCheckerMain.getAbstractSyntaxTree2(file);
             Timer.log("ANTLR visitor complete");
         }
         return ast;

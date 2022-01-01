@@ -87,6 +87,8 @@ loopCondition  → identifier "in" expression
                
                ;
                
-type           → identifier ("[" "]")? ; // Todo: better type expressions
+type           → identifier ("[" "]")? 
+               | identifier "." type
+               ;
 
 ```

@@ -8,6 +8,7 @@ import org.imp.jvm.tokenizer.Tokenizer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.imp.jvm.tokenizer.TokenType.*;
 
@@ -266,14 +267,31 @@ public class Parser extends ParserBase {
     private Stmt.Parameter parameter() {
         var loc = lok();
         Token name = consume(IDENTIFIER, "Expected field name.");
-        Token type = consume(IDENTIFIER, "Expected field type.");
+        var type = type();
+
+        return new Stmt.Parameter(loc, name, type);
+    }
+
+    private Stmt.Type type() {
+        var loc = lok();
+
+        // get the identifier first
+        Token identifier = consume(IDENTIFIER, "Expected type name.");
+
+        // Check for [] denoting a list type
         boolean listType = false;
         if (match(LBRACK)) {
             listType = true;
             consume(RBRACK, "Expected ']' in list type.");
-            // Todo: better type expressions
         }
-        return new Stmt.Parameter(loc, name, type, listType);
+
+        Optional<Stmt.Type> t = Optional.empty();
+        // Check for . denoting qualified type
+        if (match(DOT)) {
+            t = Optional.of(type());
+        }
+
+        return new Stmt.Type(loc, identifier, t, listType);
     }
 
 

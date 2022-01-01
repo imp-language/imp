@@ -73,6 +73,14 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
     }
 
     @Override
+    public Optional<Type> visitType(Stmt.Type type) {
+        // if no type.next exists, treat as normal type
+        // if type.next exists, make an unknown type and pass to TypeCheckVisitor
+        // Todo: above ^^
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<Type> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
         return Optional.empty();
     }
