@@ -3,6 +3,7 @@ package org.imp.jvm.parser;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.Util;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.Tokenizer;
 
@@ -185,7 +186,20 @@ public class Parser extends ParserBase {
 
     private Stmt.Export export() {
         var loc = lok();
-        return new Stmt.Export(loc, statement());
+        var stmt = statement();
+        if (Util.instanceOfOne(stmt,
+                Stmt.Struct.class,
+                Stmt.TypeAlias.class,
+                Stmt.Variable.class,
+                Stmt.Enum.class,
+                Stmt.Function.class
+        )) {
+            return new Stmt.Export(loc, stmt);
+        } else {
+            System.err.println("Can only export struct, type alias, variable, enum or function.");
+            System.exit(65);
+            return null;
+        }
     }
 
     private Stmt.Import importStmt() {

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visitor<Optional<Type>> {
+public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     public final Environment rootEnvironment;
     public Environment currentEnvironment;
@@ -104,7 +104,6 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
     public Optional<Type> visitFunctionStmt(Stmt.Function stmt) {
         String name = stmt.name().source();
 
-
         var childEnvironment = stmt.body().environment();
         childEnvironment.setParent(currentEnvironment);
 
@@ -122,7 +121,6 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
             funcType.returnType = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.returnType().source()));
         }
         currentEnvironment.addVariableOrError(name, funcType, file, stmt);
-
 
         currentEnvironment = childEnvironment;
         stmt.body().accept(this);
@@ -166,7 +164,6 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitVariable(Stmt.Variable stmt) {
-
         Type t;
         if (stmt.expr() instanceof Expr.Literal literal) {
             t = BuiltInType.getFromToken(literal.literal().type());
@@ -193,7 +190,6 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitFor(Stmt.For stmt) {
-
         var childEnvironment = stmt.block().environment();
         childEnvironment.setParent(currentEnvironment);
 

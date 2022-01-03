@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<String> {
+public class PrettyPrinterVisitor implements IVisitor<String> {
     public final Environment rootEnvironment;
     public boolean displayAnnotations = true;
     public Environment currentEnvironment;
@@ -139,9 +139,8 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
 
         if (funcType != null) {
             String result = "func " + name + "(";
-            result += funcType.parameters.stream().map(identifier -> identifier.name + " " + identifier.type).collect(Collectors.joining(", "));
+            result += stmt.parameters().stream().map(parameter -> parameter.name().source() + " " + parameter.type().accept(this)).collect(Collectors.joining(", "));
             result += ") " + funcType.returnType + " ";
-
             result += print(stmt.body());
             currentEnvironment = currentEnvironment.getParent();
             return result.toString();

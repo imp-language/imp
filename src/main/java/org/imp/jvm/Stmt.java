@@ -51,6 +51,10 @@ public interface Stmt extends Node {
     interface ForCondition extends Stmt {
     }
 
+    interface Exportable extends Stmt {
+        String identifier();
+    }
+
     // Maybe remove quotes from imports?
     record Import(Location loc, Token stringLiteral) implements Stmt {
         @Override
@@ -64,10 +68,15 @@ public interface Stmt extends Node {
         }
     }
 
-    record Enum(Location loc, Token name, List<Token> values) implements Stmt {
+    record Enum(Location loc, Token name, List<Token> values) implements Exportable {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitEnum(this);
+        }
+
+        @Override
+        public String identifier() {
+            return name.source();
         }
 
         @Override
@@ -76,7 +85,7 @@ public interface Stmt extends Node {
         }
     }
 
-    record Struct(Location loc, Token name, List<Parameter> fields) implements Stmt {
+    record Struct(Location loc, Token name, List<Parameter> fields) implements Exportable {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitStruct(this);
         }
@@ -84,6 +93,11 @@ public interface Stmt extends Node {
         @Override
         public Location location() {
             return loc();
+        }
+
+        @Override
+        public String identifier() {
+            return name.source();
         }
     }
 
@@ -121,7 +135,7 @@ public interface Stmt extends Node {
         }
     }
 
-    record TypeAlias(Location loc, Token name, Expr.Literal literal) implements Stmt {
+    record TypeAlias(Location loc, Token name, Expr.Literal literal) implements Exportable {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitTypeAlias(this);
         }
@@ -130,10 +144,15 @@ public interface Stmt extends Node {
         public Location location() {
             return loc();
         }
+
+        @Override
+        public String identifier() {
+            return name.source();
+        }
     }
 
     record Function(Location loc, Token name, List<Parameter> parameters, Token returnType,
-                    Block body) implements Stmt {
+                    Block body) implements Exportable {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFunctionStmt(this);
         }
@@ -141,6 +160,11 @@ public interface Stmt extends Node {
         @Override
         public Location location() {
             return loc();
+        }
+
+        @Override
+        public String identifier() {
+            return name.source();
         }
     }
 
@@ -189,7 +213,7 @@ public interface Stmt extends Node {
         }
     }
 
-    record Variable(Location loc, Token mutability, Token name, Expr expr) implements Stmt {
+    record Variable(Location loc, Token mutability, Token name, Expr expr) implements Exportable {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitVariable(this);
         }
@@ -197,6 +221,11 @@ public interface Stmt extends Node {
         @Override
         public Location location() {
             return loc();
+        }
+
+        @Override
+        public String identifier() {
+            return name.source();
         }
     }
 

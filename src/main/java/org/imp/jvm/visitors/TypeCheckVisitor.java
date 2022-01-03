@@ -2,8 +2,8 @@ package org.imp.jvm.visitors;
 
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
-import org.imp.jvm.Help;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.types.*;
 
@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Optional;
 import java.util.Stack;
 
-public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visitor<Optional<Type>> {
+public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     public final Environment rootEnvironment;
     public final File file;
@@ -54,7 +54,7 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
     public Optional<Type> visitStruct(Stmt.Struct struct) {
         var structType = currentEnvironment.getVariableTyped(struct.name().source(), StructType.class);
         if (structType != null) {
-            Help.zip(struct.fields(), structType.fields, (a, b) -> {
+            Util.zip(struct.fields(), structType.fields, (a, b) -> {
                 if (b.type instanceof UnknownType ut) {
                     var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
                     if (attempt != null) {
@@ -98,6 +98,7 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
                     }
                 }
             }
+
             currentEnvironment = stmt.body().environment();
             stmt.body().accept(this);
 
@@ -210,7 +211,6 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
             default -> {
             }
         }
-
 
         return Optional.of(totalType);
     }

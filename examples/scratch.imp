@@ -1,10 +1,14 @@
 import "person"
 
-export struct Person {
-    fname string
-    lname string
-    dob date.Date
+
+func b(a int) {
 }
+
+func hello(p person.Person) {
+    // Todo: struct access on these guys
+}
+
+
 /*
 
 

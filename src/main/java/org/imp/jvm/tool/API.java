@@ -12,6 +12,8 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
 import org.imp.jvm.runtime.Glue;
 import org.imp.jvm.tokenizer.Tokenizer;
+import org.imp.jvm.types.Type;
+import org.imp.jvm.visitors.EnvironmentVisitor;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.Attribute;
@@ -26,12 +28,37 @@ import java.util.Map;
 
 public class API {
 
+    /**
+     * Tokenize, parse, and build environments for a file.
+     *
+     * @return SourceFile with exports gathered.
+     */
     public static SourceFile parse(File file) {
         Tokenizer tokenizer = new Tokenizer(file);
         var parser = new org.imp.jvm.parser.Parser(tokenizer);
         var statements = parser.parse();
-        Timer.log("Source file parsed");
-        return new SourceFile(file, statements);
+
+        var source = new SourceFile(file, statements);
+        // EnvironmentVisitor builds scopes and assigns
+        // UnknownType or Literal types to expressions.
+        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(source.rootEnvironment, file);
+        source.acceptVisitor(environmentVisitor);
+        Comptime.killIfErrors("Correct syntax errors before type checking can continue.");
+
+
+        // Process all exports in the current file
+        source.filter(Stmt.Export.class, (exportStmt) -> {
+            if (exportStmt.stmt() instanceof Stmt.Exportable exportable) {
+                String identifier = exportable.identifier();
+                Type type = source.rootEnvironment.getVariable(identifier);
+                if (type != null) {
+                    source.exports.put(identifier, type);
+                }
+            }
+            return null;
+        });
+
+        return source;
     }
 
     public static ImpFile createSourceFile(String filename) throws FileNotFoundException {
@@ -115,25 +142,24 @@ public class API {
         return dependencies;
     }
 
-    public static Map<String, SourceFile> gatherImports(SourceFile entry) throws FileNotFoundException {
-        String basePath = FilenameUtils.getPath(entry.file.getPath());
+    public static Map<String, SourceFile> gatherImports(SourceFile current) {
+        String basePath = FilenameUtils.getPath(current.file.getPath());
         Map<String, SourceFile> fileMap = new HashMap<>();
-        for (var stmt : entry.stmts) {
-            if (stmt instanceof Stmt.Import importStmt) {
-                String relativePath = importStmt.stringLiteral().source();
-                String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
-                filePath = FilenameUtils.separatorsToUnix(filePath);
-                System.out.println(filePath);
-                var file = new File(filePath);
-                if (file.exists()) {
-                    SourceFile sourceFile = parse(file);
-                    fileMap.put(filePath, sourceFile);
-                } else {
-                    Comptime.ModuleNotFound.submit(entry.file, stmt, relativePath);
-                }
 
+
+        current.filter(Stmt.Import.class, (importStmt) -> {
+            String relativePath = importStmt.stringLiteral().source();
+            String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
+            filePath = FilenameUtils.separatorsToUnix(filePath);
+            var file = new File(filePath);
+            if (file.exists()) {
+                SourceFile next = parse(file);
+                fileMap.put(filePath, next);
+                current.imports.put(filePath, next);
             }
-        }
+            return null;
+        });
+
 
         return fileMap;
     }

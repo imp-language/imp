@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<String> {
+public class ASTPrinterVisitor implements IVisitor<String> {
     String print(Expr expr) {
         return expr.accept(this);
     }

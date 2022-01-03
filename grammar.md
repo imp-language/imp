@@ -32,7 +32,7 @@ import         → "import" stringLiteral
                | "from" stringLiteral "import" identifierList // todo
                ;
 
-export         → "export" statement ;
+export         → "export" (struct | typeAlias | variable | enum | function) ;
 typeAlias      → "type" identifier "=" "extern" STRING ;
 struct         → "struct" identifier "{" (parameter ","?)* ;
 enum           → "enum" identifier "{" (IDENTIFIER ","?)* "}" ;

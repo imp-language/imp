@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Help {
+public class Util {
     public static <A, B, O> void zipMap(List<A> a, List<B> b, BiFunction<A, B, O> lambda) throws ArrayIndexOutOfBoundsException {
         if (a.size() == b.size()) {
             var c = Stream.of(a, b).map(Objects::toString).collect(Collectors.joining(", "));
@@ -33,5 +33,17 @@ public class Help {
         } else {
             throw new ArrayIndexOutOfBoundsException("Can't zip two Lists with differing number of elements.");
         }
+    }
+
+    /**
+     * Is Object o an instance of one of the following classes?
+     */
+    public static boolean instanceOfOne(Object o, Class<?>... clazz) {
+        for (Class<?> c : clazz) {
+            if (c.isInstance(o)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
