@@ -40,6 +40,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
     @Override
     public Optional<Type> visitExport(Stmt.Export stmt) {
+        stmt.stmt().accept(this);
         return Optional.empty();
     }
 
@@ -54,9 +55,9 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
 
         // At this point we do not know of any custom types that exist.
         for (var field : stmt.fields()) {
-            Type type = null;
-            var bt = BuiltInType.getFromString(field.type().source());
-            type = Objects.requireNonNullElseGet(bt, () -> new UnknownType(field.type().source()));
+            Type type = field.type().accept(this).get();
+//            var bt = BuiltInType.getFromString(field.type().source());
+//            type = Objects.requireNonNullElseGet(bt, () -> new UnknownType(field.type().source()));
 
             String n = field.name().source();
             var f = new Identifier(n, type);
@@ -73,11 +74,25 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
     }
 
     @Override
-    public Optional<Type> visitType(Stmt.Type type) {
+    public Optional<Type> visitType(Stmt.Type stmt) {
+        Type type;
         // if no type.next exists, treat as normal type
+        if (stmt.next().isEmpty()) {
+            var bt = BuiltInType.getFromString(stmt.identifier().source());
+            type = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.identifier().source()));
+        }
         // if type.next exists, make an unknown type and pass to TypeCheckVisitor
+        else {
+            String path = stmt.identifier().source();
+            var ptr = stmt.next();
+            while (ptr.isPresent()) {
+                path += "." + ptr.get().identifier().source();
+                ptr = ptr.get().next();
+            }
+            type = new UnknownType(path);
+        }
         // Todo: above ^^
-        return Optional.empty();
+        return Optional.of(type);
     }
 
     @Override
@@ -96,8 +111,7 @@ public class EnvironmentVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Vi
         // Annotate parameters in the current scope
         List<Identifier> parameters = new ArrayList<>();
         for (var param : stmt.parameters()) {
-            var bt = BuiltInType.getFromString(param.type().source());
-            Type t = Objects.requireNonNullElseGet(bt, () -> new UnknownType(param.type().source()));
+            Type t = param.type().accept(this).get();
             childEnvironment.addVariable(param.name().source(), t);
             parameters.add(new Identifier(param.name().source(), t));
         }

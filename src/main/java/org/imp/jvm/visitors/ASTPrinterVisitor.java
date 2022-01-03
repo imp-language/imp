@@ -209,6 +209,18 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
     }
 
     @Override
+    public String visitType(Stmt.Type stmt) {
+        // if no type.next exists, treat as normal type
+        if (stmt.next().isEmpty()) {
+            return stmt.identifier().source();
+        }
+        // if type.next exists, make an unknown type and pass to TypeCheckVisitor
+        else {
+            return parenthesize("type " + stmt.identifier().source(), stmt.next().get());
+        }
+    }
+
+    @Override
     public String visitExpressionStmt(Stmt.ExpressionStmt stmt) {
         return print(stmt.expr());
     }
@@ -266,9 +278,10 @@ public class ASTPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<Str
 
     @Override
     public String visitParameterStmt(Stmt.Parameter stmt) {
-        String result = stmt.name().source() + " " + stmt.type().source();
+        String result = stmt.name().source() + " " + stmt.type().accept(this);
 
-        if (stmt.listType()) result += "[]";
+        // Todo: below
+//        if (stmt.listType()) result += "[]";
         return result;
     }
 

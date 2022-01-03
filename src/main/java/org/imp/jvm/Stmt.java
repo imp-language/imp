@@ -51,6 +51,7 @@ public interface Stmt extends Node {
     interface ForCondition extends Stmt {
     }
 
+    // Maybe remove quotes from imports?
     record Import(Location loc, Token stringLiteral) implements Stmt {
         @Override
         public <R> R accept(Visitor<R> visitor) {

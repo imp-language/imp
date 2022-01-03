@@ -2,6 +2,7 @@ package org.imp.jvm.visitors;
 
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
+import org.imp.jvm.Help;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.types.*;
@@ -40,6 +41,7 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
 
     @Override
     public Optional<Type> visitExport(Stmt.Export stmt) {
+        stmt.stmt().accept(this);
         return Optional.empty();
     }
 
@@ -52,16 +54,24 @@ public class TypeCheckVisitor implements Stmt.Visitor<Optional<Type>>, Expr.Visi
     public Optional<Type> visitStruct(Stmt.Struct struct) {
         var structType = currentEnvironment.getVariableTyped(struct.name().source(), StructType.class);
         if (structType != null) {
-            for (var field : structType.fields) {
-                if (field.type instanceof UnknownType ut) {
+            Help.zip(struct.fields(), structType.fields, (a, b) -> {
+                if (b.type instanceof UnknownType ut) {
                     var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
                     if (attempt != null) {
-                        field.type = attempt;
+                        b.type = attempt;
+                    } else {
+                        Comptime.TypeNotFound.submit(file, a, ut.typeName);
                     }
                 }
-            }
+            });
+
         }
 
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitType(Stmt.Type stmt) {
         return Optional.empty();
     }
 

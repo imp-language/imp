@@ -2,6 +2,7 @@ package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.Environment;
+import org.imp.jvm.Stmt;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
@@ -42,11 +43,19 @@ public class Compiler {
         List<Type> types = new ArrayList<>();
         EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(rootEnvironment, file);
         for (var stmt : sourceFile.stmts) {
-//            StandardTraversal.traverse(stmt, environmentVisitor, null);
             stmt.accept(environmentVisitor);
         }
         Timer.log("Environments created");
         Comptime.killIfErrors("Correct syntax errors before type checking can continue.");
+
+        // Todo: Before the TypeCheckVisitor runs, we need to
+        // add all qualified imports to the root environment
+        for (var stmt : sourceFile.stmts) {
+            if (stmt instanceof Stmt.Import importStmt) {
+                System.out.println(importStmt);
+            }
+        }
+
 
         // 2. TypeCheckVisitor performs more advanced type unification.
         // a) Determine function return type based on type of expression returned.
@@ -62,6 +71,10 @@ public class Compiler {
 
         var pretty = new PrettyPrinterVisitor(rootEnvironment);
         System.out.println(pretty.print(sourceFile.stmts));
+
+
+//        var astPrint = new ASTPrinterVisitor();
+//        System.out.println(astPrint.print(sourceFile.stmts));
 //        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);
 
         return "ree";

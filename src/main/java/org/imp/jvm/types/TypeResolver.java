@@ -2,8 +2,10 @@ package org.imp.jvm.types;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
+import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -46,7 +48,7 @@ public class TypeResolver {
                 return builtInType.get();
             }
         } else if (text.length() > 0) {
-            return new StructType(text);
+            return new StructType(new Identifier(text, new UnknownType()), new ArrayList<>());
         }
         return null;
     }

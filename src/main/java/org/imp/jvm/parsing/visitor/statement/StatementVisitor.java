@@ -14,8 +14,8 @@ import org.imp.jvm.expression.Function;
 import org.imp.jvm.expression.Literal;
 import org.imp.jvm.parsing.visitor.expression.ExpressionVisitor;
 import org.imp.jvm.parsing.visitor.expression.LiteralVisitor;
-import org.imp.jvm.statement.*;
 import org.imp.jvm.statement.Enum;
+import org.imp.jvm.statement.*;
 import org.imp.jvm.types.*;
 
 import java.util.*;
@@ -121,7 +121,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
         var id = new Identifier(name, BuiltInType.STRUCT);
 
         // Create struct type object
-        StructType structType = new StructType(id, fields, parent, scope);
+        StructType structType = new StructType(id, fields);
 
         // Create struct object
         Struct struct = new Struct(structType);

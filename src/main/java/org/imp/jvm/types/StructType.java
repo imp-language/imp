@@ -31,21 +31,6 @@ public class StructType implements Type {
         this.scope = null;
     }
 
-    public StructType(Identifier identifier, List<Identifier> fields, ImpFile parent, Scope scope) {
-        this.identifier = identifier;
-        this.fields = fields;
-        this.parent = parent;
-        this.scope = scope;
-    }
-
-    public StructType(String temporaryName) {
-        this.unknown = true;
-        this.scope = null;
-        this.identifier = new Identifier(temporaryName, this);
-        this.fields = null;
-        this.parent = null;
-    }
-
     /**
      * @param fieldName String name
      * @return type of struct field if fieldName exists in this struct

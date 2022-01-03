@@ -216,9 +216,9 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
                 name += " : $reee";
             }
         }
-        String result = name + " " + stmt.type().source();
-
-        if (stmt.listType()) result += "[]";
+        String result = name + " " + stmt.type().accept(this);
+//Todo: below
+//        if (stmt.listType()) result += "[]";
         return result;
     }
 
@@ -276,14 +276,26 @@ public class PrettyPrinterVisitor implements Expr.Visitor<String>, Stmt.Visitor<
                 result.append("\t" + field.name().source() + " ");
                 System.err.println("bad");
 
-
-                if (field.listType()) result.append("[]");
+// Todo: below
+//                if (field.listType()) result.append("[]");
                 result.append("\n");
             }
         }
 
         result.append("))");
         return result.toString();
+    }
+
+    @Override
+    public String visitType(Stmt.Type stmt) {
+        // if no type.next exists, treat as normal type
+        if (stmt.next().isEmpty()) {
+            return stmt.identifier().source();
+        }
+        // if type.next exists, make an unknown type and pass to TypeCheckVisitor
+        else {
+            return stmt.identifier().source() + "." + stmt.next().get().accept(this);
+        }
     }
 
     @Override
