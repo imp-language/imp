@@ -83,13 +83,13 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
         }
         // if type.next exists, make an unknown type and pass to TypeCheckVisitor
         else {
-            String path = stmt.identifier().source();
+            StringBuilder path = new StringBuilder(stmt.identifier().source());
             var ptr = stmt.next();
             while (ptr.isPresent()) {
-                path += "." + ptr.get().identifier().source();
+                path.append(".").append(ptr.get().identifier().source());
                 ptr = ptr.get().next();
             }
-            type = new UnknownType(path);
+            type = new UnknownType(path.toString());
         }
         // Todo: above ^^
         return Optional.of(type);
@@ -170,11 +170,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
         } else if (stmt.expr() instanceof Expr.EmptyList emptyList) {
             Type generic = null;
             var bt = BuiltInType.getFromString(emptyList.type().source());
-            if (bt != null) {
-                generic = bt;
-            } else {
-                generic = new UnknownType();
-            }
+            generic = Objects.requireNonNullElseGet(bt, UnknownType::new);
             t = new ListType(generic);
         } else {
             t = new UnknownType();

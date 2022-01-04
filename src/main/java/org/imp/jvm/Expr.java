@@ -2,8 +2,6 @@ package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public interface Expr extends Node {
@@ -44,16 +42,6 @@ public interface Expr extends Node {
     }
 
     <R> R accept(Visitor<R> visitor);
-
-    default List<Node> list(Expr... exprs) {
-        List<Node> list = new ArrayList<>();
-        Collections.addAll(list, exprs);
-        return list;
-    }
-
-    default List<Node> list(List<Expr> exprs) {
-        return new ArrayList<>(exprs);
-    }
 
     record EmptyList(Location loc, Token type) implements Expr {
 

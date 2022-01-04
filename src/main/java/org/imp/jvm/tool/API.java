@@ -61,7 +61,7 @@ public class API {
         return source;
     }
 
-    public static ImpFile createSourceFile(String filename) throws FileNotFoundException {
+    public static ImpFile createSourceFile(String filename) {
         File file = new File(filename);
 
         Timer.log("Buffer opened");
@@ -70,7 +70,6 @@ public class API {
 
         var parser = new org.imp.jvm.parser.Parser(tokenizer);
         var statements = parser.parse();
-
 
         ImpFile ast = null;
         if (file.exists()) {

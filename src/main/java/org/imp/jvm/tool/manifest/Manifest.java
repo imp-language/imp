@@ -28,7 +28,7 @@ public record Manifest(
         String imp
 
 ) {
-    static String manifestPath = "imp.toml";
+    static final String manifestPath = "imp.toml";
 
     /**
      * Used by Imp CLI in a similar manner to `npm init`

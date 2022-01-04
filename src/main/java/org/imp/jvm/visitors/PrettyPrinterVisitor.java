@@ -61,22 +61,20 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         StringBuilder sb = new StringBuilder("{");
         indent++;
         for (var stmt : block.statements()) {
-            sb.append(tabs() + print(stmt));
+            sb.append(tabs()).append(print(stmt));
         }
 
-
         indent--;
-        sb.append(tabs() + "}");
+        sb.append(tabs()).append("}");
         return sb.toString();
     }
 
     @Override
     public String visitCall(Expr.Call expr) {
-        StringBuilder result = new StringBuilder(print(expr.item()) + "(");
-        result.append(expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")));
 
-        result.append(")");
-        return result.toString();
+        String result = print(expr.item()) + "(" + expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")) +
+                ")";
+        return result;
     }
 
     @Override
@@ -86,13 +84,10 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitEnum(Stmt.Enum stmt) {
-        StringBuilder result = new StringBuilder("(enum " + stmt.name().source() + " (");
 
-
-        result.append(stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")));
-
-        result.append("))");
-        return result.toString();
+        String result = "(enum " + stmt.name().source() + " (" + stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")) +
+                "))";
+        return result;
     }
 
     @Override
@@ -107,8 +102,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitFor(Stmt.For stmt) {
-        var childEnvironment = stmt.block().environment();
-        currentEnvironment = childEnvironment;
+        currentEnvironment = stmt.block().environment();
         String str = s("for", print(stmt.condition()), print(stmt.block()));
         currentEnvironment = currentEnvironment.getParent();
         return str;
@@ -120,7 +114,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         var t = currentEnvironment.getVariable(stmt.name().source());
         if (displayAnnotations) {
             if (t != null) {
-                name += " : " + t.toString();
+                name += " : " + t;
 
             } else {
                 name += " : $reee";
@@ -143,7 +137,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
             result += ") " + funcType.returnType + " ";
             result += print(stmt.body());
             currentEnvironment = currentEnvironment.getParent();
-            return result.toString();
+            return result;
         }
         return "nope";
     }
@@ -208,7 +202,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         if (displayAnnotations) {
             if (t != null) {
                 if (!(t instanceof BuiltInType)) {
-                    name += " : " + t.toString();
+                    name += " : " + t;
                 }
 
             } else {
@@ -250,7 +244,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
             if (displayAnnotations) {
                 var t = currentEnvironment.getVariable(s);
                 if (t != null) {
-                    s += " : " + t.toString();
+                    s += " : " + t;
 
                 } else {
                     s += " : $reee";
@@ -266,13 +260,13 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         var structType = currentEnvironment.getVariableTyped(stmt.name().source(), StructType.class);
         if (structType != null) {
             for (var field : structType.fields) {
-                result.append("\t" + field.name + " " + field.type);
+                result.append("\t").append(field.name).append(" ").append(field.type);
                 result.append("\n");
             }
         } else {
 
             for (Stmt.Parameter field : stmt.fields()) {
-                result.append("\t" + field.name().source() + " ");
+                result.append("\t").append(field.name().source()).append(" ");
                 System.err.println("bad");
 
 // Todo: below
@@ -310,7 +304,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         if (displayAnnotations) {
             var t = currentEnvironment.getVariable(name);
             if (t != null) {
-                name += " : " + t.toString();
+                name += " : " + t;
 
             } else {
                 name += " : $reee";

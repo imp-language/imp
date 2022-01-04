@@ -146,8 +146,8 @@ public class ParserBase {
         return mRead.get(distance);
     }
 
-    boolean isAtEnd() {
-        return peek().type() == EOF;
+    boolean notAtEnd() {
+        return peek().type() != EOF;
     }
 
     /**

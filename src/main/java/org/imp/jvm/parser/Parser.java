@@ -67,7 +67,7 @@ public class Parser extends ParserBase {
     public List<Stmt> parse() {
         List<Stmt> stmts = new ArrayList<>();
 
-        while (!isAtEnd()) {
+        while (notAtEnd()) {
 
             // If a statement is poorly formed, we mark it
             // as such and continue to attempt to parse the
@@ -176,7 +176,7 @@ public class Parser extends ParserBase {
         List<Stmt> statements = new ArrayList<>();
         consume(LBRACE, "Expect '{' before block.");
 
-        while (!check(RBRACE) && !isAtEnd()) {
+        while (!check(RBRACE) && notAtEnd()) {
             statements.add(statement());
         }
 

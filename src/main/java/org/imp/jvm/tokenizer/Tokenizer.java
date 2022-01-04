@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PushbackReader;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import static org.imp.jvm.tokenizer.TokenType.*;
 
@@ -15,8 +12,6 @@ public class Tokenizer implements Iterator<Token> {
     private PushbackReader reader;
     public int line = 1;
     public int col = 1;
-
-    private List<String> lines = new ArrayList<>();
 
     public Status getStatus() {
         return status;
@@ -36,7 +31,6 @@ public class Tokenizer implements Iterator<Token> {
     public Tokenizer(File file) {
         try {
             this.reader = new PushbackReader(new FileReader(file), 5);
-            lines = Files.readAllLines(file.toPath());
         } catch (IOException e) {
             e.printStackTrace();
         }

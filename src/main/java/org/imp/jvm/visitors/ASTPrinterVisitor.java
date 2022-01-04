@@ -124,11 +124,10 @@ public class ASTPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitCall(Expr.Call expr) {
-        StringBuilder result = new StringBuilder("(call " + print(expr.item()) + " (");
-        result.append(expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")));
 
-        result.append("))");
-        return result.toString();
+        String result = "(call " + print(expr.item()) + " (" + expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")) +
+                "))";
+        return result;
     }
 
     @Override
@@ -188,24 +187,18 @@ public class ASTPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitEnum(Stmt.Enum stmt) {
-        StringBuilder result = new StringBuilder("(enum " + stmt.name().source() + " (");
 
-
-        result.append(stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")));
-
-        result.append("))");
-        return result.toString();
+        String result = "(enum " + stmt.name().source() + " (" + stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")) +
+                "))";
+        return result;
     }
 
     @Override
     public String visitStruct(Stmt.Struct stmt) {
-        StringBuilder result = new StringBuilder("(struct " + stmt.name().source() + " (");
 
-
-        result.append(stmt.fields().stream().map(this::print).collect(Collectors.joining(", ")));
-
-        result.append("))");
-        return result.toString();
+        String result = "(struct " + stmt.name().source() + " (" + stmt.fields().stream().map(this::print).collect(Collectors.joining(", ")) +
+                "))";
+        return result;
     }
 
     @Override
@@ -288,11 +281,10 @@ public class ASTPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitFor(Stmt.For stmt) {
-        StringBuilder sb = new StringBuilder("(for ");
-        sb.append(print(stmt.condition()))
-                .append("\n\t")
-                .append(print(stmt.block()));
-        return sb.toString();
+        String sb = "(for " + print(stmt.condition()) +
+                "\n\t" +
+                print(stmt.block());
+        return sb;
     }
 
     @Override

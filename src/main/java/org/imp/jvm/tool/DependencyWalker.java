@@ -18,7 +18,7 @@ public class DependencyWalker {
 
     }
 
-    private void recurse(SourceFile file) throws FileNotFoundException {
+    private void recurse(SourceFile file) {
         var imports = API.gatherImports(file);
 
         for (var impFile : imports.values()) {

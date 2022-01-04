@@ -76,11 +76,7 @@ public class Arithmetic extends Expression {
                 case DIVIDE -> goalType.getDivideOpcode();
                 // Todo: Modulus
                 case MODULUS -> 0;
-                case LESS -> 0;
-                case GREATER -> 0;
-                case LESS_OR_EQUAL -> 0;
-                case GRATER_OR_EQAL -> 0;
-                case INDEX -> 0;
+                case LESS, GREATER, LESS_OR_EQUAL, GRATER_OR_EQAL, INDEX -> 0;
             };
             mv.visitInsn(op);
         }

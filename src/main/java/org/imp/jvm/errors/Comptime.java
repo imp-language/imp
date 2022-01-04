@@ -37,7 +37,7 @@ public enum Comptime {
     }
 
 
-    static List<String> errors = new ArrayList<>();
+    static final List<String> errors = new ArrayList<>();
 
     public void submit(File file, Node node, Object... varargs) {
 

@@ -99,7 +99,7 @@ public class Batteries {
         return Files.readString(fileName);
     }
 
-    public static String read() throws IOException {
+    public static String read() {
         Scanner in = new Scanner(System.in);
         String s = in.nextLine();
         in.close();

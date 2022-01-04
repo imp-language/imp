@@ -4,7 +4,6 @@ import org.imp.jvm.tool.Timer;
 import org.openjdk.jmh.annotations.Benchmark;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class TokenizerMain {
 
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         new TokenizerMain().lexerBenchMark();
 

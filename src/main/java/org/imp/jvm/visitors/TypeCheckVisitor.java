@@ -155,7 +155,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
         if (t.isPresent()) {
             currentEnvironment.setVariableType(stmt.name().source(), t.get());
-
         }
         return Optional.empty();
     }
