@@ -5,9 +5,11 @@ import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
+import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.types.*;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Stack;
 
@@ -87,19 +89,22 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
         var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
         if (funcType != null) {
             functionStack.add(funcType);
+            var childEnvironment = stmt.body().environment();
 
             for (var param : funcType.parameters) {
                 if (param.type instanceof UnknownType ut) {
                     var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
                     if (attempt != null) {
                         param.type = attempt;
+                        childEnvironment.setVariableType(param.name, attempt);
+
                     } else {
                         Comptime.TypeNotFound.submit(file, stmt, ut.typeName);
                     }
                 }
             }
 
-            currentEnvironment = stmt.body().environment();
+            currentEnvironment = childEnvironment;
             stmt.body().accept(this);
 
             currentEnvironment = currentEnvironment.getParent();
@@ -232,7 +237,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitIdentifierExpr(Expr.Identifier expr) {
-        return Optional.of(currentEnvironment.getVariable(expr.identifier().source()));
+        return Optional.ofNullable(currentEnvironment.getVariable(expr.identifier().source()));
     }
 
     @Override
@@ -276,6 +281,34 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitPropertyAccess(Expr.PropertyAccess expr) {
+        var left = expr.left();
+        var right = expr.right();
+
+        // 1. Get type of left-hand component
+        var lType = left.accept(this);
+        if (lType.isPresent()) {
+            // 2. Find available fields in said type
+            //    (For now, StructType only)
+            var structType = (StructType) lType.get();
+            // 3. See if the right expression is available in the right
+            String rightId = "dob";
+            var field = StructType.findStructField(structType, rightId);
+            if (field.isPresent()) {
+                var type = field.get().type;
+                System.out.println(type);
+
+                var n = type.getName().split("\\.");
+                var p = Path.of("examples", n[0]);
+
+                var fieldType = ExportTable.get(p.toString(), n[1]);
+                System.out.println(fieldType);
+            }
+
+
+        }
+        //    (only Identifier, PropertyAccess, and FunctionCall can be a right side expression here)
+        // 4. Return the type of the rightmost expression (after recursion)
+
         return Optional.empty();
     }
 

@@ -1,5 +1,7 @@
 package org.imp.jvm;
 
+import org.imp.jvm.domain.scope.Identifier;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -45,5 +47,9 @@ public class Util {
             }
         }
         return false;
+    }
+
+    public static String parameterString(List<Identifier> parameters) {
+        return parameters.stream().map(p -> p.name + " " + p.type).collect(Collectors.joining(", "));
     }
 }

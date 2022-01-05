@@ -3,7 +3,6 @@ package org.imp.jvm.tool;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
@@ -15,14 +14,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class Compiler {
 
     public final String filename;
-
-    public List<String> filenames;
 
     public Compiler(String filename) {
 
@@ -32,30 +28,32 @@ public class Compiler {
     public String compile() throws FileNotFoundException {
         File file = new File(filename);
         var entry = API.parse(file);
-        Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(entry);
+//        Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(entry);
         Comptime.killIfErrors("Correct dependency errors before continuing.");
+
+        System.out.println(ExportTable.dump());
         Timer.log("build dependency graph");
 
         // Todo: Before the TypeCheckVisitor runs, we need to
         // add all qualified imports to the root environment
 
-        System.out.println("Imports:");
+//        System.out.println("Imports:");
         entry.filter(Stmt.Import.class, (importStmt) -> {
-            System.out.println(importStmt);
+//            System.out.println(importStmt);
             return null;
         });
         // Todo: move this stuff (adding qualified imports to the root environment)
         // to the dependency graph shit
-        for (var path : entry.imports.keySet()) {
-            var moduleName = FilenameUtils.getBaseName(path);
-            var imported = entry.imports.get(path);
-            for (var key : imported.exports.keySet()) {
-                var value = imported.exports.get(key);
-                var qualifiedName = moduleName + "." + key;
-                System.out.println(qualifiedName);
-                entry.rootEnvironment.addVariable(qualifiedName, value);
-            }
-        }
+//        for (var path : entry.getImports().keySet()) {
+//            var moduleName = FilenameUtils.getBaseName(path);
+//            var imported = entry.getImports().get(path);
+//            for (var key : imported.exports.keySet()) {
+//                var value = imported.exports.get(key);
+//                var qualifiedName = moduleName + "." + key;
+//                System.out.println(qualifiedName);
+//                entry.rootEnvironment.addVariable(qualifiedName, value);
+//            }
+//        }
 
         // 2. TypeCheckVisitor performs more advanced type unification.
         // a) Determine function return type based on type of expression returned.

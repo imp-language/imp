@@ -1,5 +1,6 @@
 package org.imp.jvm.types;
 
+import org.imp.jvm.Util;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
@@ -14,15 +15,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class StructType implements Type {
-
-
     public final Identifier identifier;
     public final Scope scope;
 
+    // Todo: replace with Map<String,Type>
     public final List<Identifier> fields;
     public final ImpFile parent;
 
-    private boolean unknown = false;
 
     public StructType(Identifier identifier, List<Identifier> fields) {
         this.identifier = identifier;
@@ -40,7 +39,7 @@ public class StructType implements Type {
     }
 
     /**
-     * Recursively attempt to find the type of a method access expression.
+     * Recursively attempt to find the type of the method access expression.
      *
      * @param parent    starting point, already known
      * @param fieldPath list of identifiers
@@ -81,7 +80,7 @@ public class StructType implements Type {
 
     @Override
     public String toString() {
-        return getName();
+        return "struct " + getName() + " {" + Util.parameterString(fields) + "}";
     }
 
     @Override

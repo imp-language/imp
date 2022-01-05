@@ -204,7 +204,10 @@ public class Parser extends ParserBase {
 
     private Stmt.Import importStmt() {
         var loc = lok();
-        return new Stmt.Import(loc, consume(STRING, "Import must be followed by a string."));
+        var str = consume(STRING, "Import must be followed by a string.");
+        consume(AS, "Import must contain qualifier.");
+        var id = consume(IDENTIFIER, "Import must contain qualifier.");
+        return new Stmt.Import(loc, str, id);
     }
 
     private Stmt.TypeAlias typeAlias() {

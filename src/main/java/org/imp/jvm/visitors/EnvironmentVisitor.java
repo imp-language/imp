@@ -3,6 +3,7 @@ package org.imp.jvm.visitors;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.types.*;
 
@@ -16,11 +17,13 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     public final Environment rootEnvironment;
     public Environment currentEnvironment;
-    public final File file;
+    public final SourceFile source;
+    final File file;
 
-    public EnvironmentVisitor(Environment rootEnvironment, File file) {
+    public EnvironmentVisitor(Environment rootEnvironment, SourceFile source) {
         this.rootEnvironment = rootEnvironment;
-        this.file = file;
+        this.source = source;
+        this.file = source.file;
         this.currentEnvironment = this.rootEnvironment;
     }
 
@@ -146,6 +149,15 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitImport(Stmt.Import stmt) {
+        // Add all exports from the imported module into the current environment
+        String basePath = source.basePath();
+        // Todo:
+        // It's impossible to query the MultiKeyMap for values that match one key instead
+        // of both keys, so we need a different solution. Got to do the SQLite thing I
+        // do believe.
+
+//        var type
+
         return Optional.empty();
     }
 

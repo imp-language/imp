@@ -227,7 +227,8 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitPropertyAccess(Expr.PropertyAccess expr) {
-        return s(print(expr.left()), ".", print(expr.right()));
+
+        return print(expr.left()) + "." + print(expr.right());
     }
 
     // Todo: relate to binary expressions somehow

@@ -39,12 +39,27 @@ public class API {
         var statements = parser.parse();
 
         var source = new SourceFile(file, statements);
+        String basePath = source.basePath();
+
+        // Get all qualified imports (but don't load them)
+        source.filter(Stmt.Import.class, (importStmt) -> {
+            String relativePath = importStmt.stringLiteral().source();
+            String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
+            filePath = FilenameUtils.separatorsToUnix(filePath);
+            var f = new File(filePath);
+            System.out.println(relativePath);
+            if (f.exists()) {
+                SourceFile next = parse(f);
+                source.addImport(f, next);
+            }
+            return null;
+        });
+
         // EnvironmentVisitor builds scopes and assigns
         // UnknownType or Literal types to expressions.
-        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(source.rootEnvironment, file);
+        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(source.rootEnvironment, source);
         source.acceptVisitor(environmentVisitor);
         Comptime.killIfErrors("Correct syntax errors before type checking can continue.");
-
 
         // Process all exports in the current file
         source.filter(Stmt.Export.class, (exportStmt) -> {
@@ -53,6 +68,7 @@ public class API {
                 Type type = source.rootEnvironment.getVariable(identifier);
                 if (type != null) {
                     source.exports.put(identifier, type);
+                    ExportTable.add(source, identifier, type);
                 }
             }
             return null;
@@ -154,7 +170,8 @@ public class API {
             if (file.exists()) {
                 SourceFile next = parse(file);
                 fileMap.put(filePath, next);
-                current.imports.put(filePath, next);
+//                System.out.println(filePath);
+                current.addImport(file, next);
             }
             return null;
         });

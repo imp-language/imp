@@ -18,6 +18,7 @@ public class UnknownType implements Type {
     }
 
     public UnknownType() {
+        this.typeName = "";
         id = counter;
         counter++;
     }
@@ -25,12 +26,12 @@ public class UnknownType implements Type {
 
     @Override
     public String toString() {
-        return "$" + id;
+        return "$" + getName();
     }
 
     @Override
     public String getName() {
-        return "<unknown>";
+        return typeName.length() > 0 ? typeName : "<unknown>";
     }
 
     @Override

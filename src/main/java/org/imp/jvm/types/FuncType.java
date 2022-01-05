@@ -1,5 +1,6 @@
 package org.imp.jvm.types;
 
+import org.imp.jvm.Util;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.types.overloads.OperatorOverload;
@@ -16,6 +17,11 @@ public class FuncType implements Type {
         this.name = name;
         this.modifier = modifier;
         this.parameters = parameters;
+    }
+
+    @Override
+    public String toString() {
+        return "func " + name + "(" + Util.parameterString(parameters) + ") " + returnType;
     }
 
     @Override

@@ -56,7 +56,7 @@ public interface Stmt extends Node {
     }
 
     // Maybe remove quotes from imports?
-    record Import(Location loc, Token stringLiteral) implements Stmt {
+    record Import(Location loc, Token stringLiteral, Token identifier) implements Stmt {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitImport(this);

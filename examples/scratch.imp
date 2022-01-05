@@ -1,11 +1,19 @@
-import "person"
+import "person" as p
 
 
-func b(a int) {
+
+
+func hello(person p.Person) {
+    // Todo: struct access on these guys
+    val day = person.dob
+
+
+
+
+    log(day)
 }
 
-func hello(p person.Person) {
-    // Todo: struct access on these guys
+export func pub() {
 }
 
 

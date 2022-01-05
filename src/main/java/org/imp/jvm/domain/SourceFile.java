@@ -1,6 +1,7 @@
 package org.imp.jvm.domain;
 
 import org.apache.commons.collections4.map.LinkedMap;
+import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.types.Type;
@@ -14,7 +15,9 @@ public class SourceFile {
     public final File file;
     public final List<Stmt> stmts;
     public final LinkedMap<String, Type> exports = new LinkedMap<>();
-    public final LinkedMap<String, SourceFile> imports = new LinkedMap<>();
+
+    // filename -> SourceFile
+    private final LinkedMap<String, SourceFile> imports = new LinkedMap<>();
 
     public final Environment rootEnvironment = new Environment();
 
@@ -22,6 +25,20 @@ public class SourceFile {
 
         this.file = file;
         this.stmts = stmts;
+    }
+
+    public SourceFile getImport(String filepath) {
+        return imports.get(filepath);
+    }
+
+    public LinkedMap<String, SourceFile> getImports() {
+        return imports;
+    }
+
+    public void addImport(File file, SourceFile sourceFile) {
+        String s = FilenameUtils.separatorsToUnix(file.getPath());
+        s = FilenameUtils.removeExtension(s);
+        imports.put(s, sourceFile);
     }
 
     @Override
@@ -41,5 +58,9 @@ public class SourceFile {
         for (var s : this.stmts) {
             s.accept(visitor);
         }
+    }
+
+    public String basePath() {
+        return FilenameUtils.getPath(file.getPath());
     }
 }
