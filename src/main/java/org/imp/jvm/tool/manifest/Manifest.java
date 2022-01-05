@@ -2,6 +2,7 @@ package org.imp.jvm.tool.manifest;
 
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,20 +43,19 @@ public record Manifest(
     }
 
     /**
-     * Get the current project's `imp.toml`
+     * Get the current project's manifest file
      *
      * @return a Manifest object based on the current working directory.
      */
-    public static Manifest get() {
+    public static Manifest get() throws FileNotFoundException {
         TomlMapper mapper = new TomlMapper();
         String pwd = System.getProperty("user.dir");
         Path p = Path.of(pwd, manifestPath);
         try {
             return mapper.readValue(Files.readString(p), Manifest.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FileNotFoundException("Manifest not found.");
         }
-        return null;
     }
 
     public record Dependency(

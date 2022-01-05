@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public class ExportTable {
 
+    public static String createTable = "create table ExportTable (source string, name string)";
+
     // Eventually this will be backed by SQLite or something
     private static final MultiKeyMap<String, Type> table = new MultiKeyMap<>();
 
