@@ -18,8 +18,8 @@ import java.util.List;
 
 public class ClassGenerator {
     private static final int CLASS_VERSION = 52;
-    private ClassWriter classWriter;
     private final String packageName;
+    private ClassWriter classWriter;
 
     public ClassGenerator(String packageName) {
         this.packageName = packageName;
@@ -84,8 +84,6 @@ public class ClassGenerator {
         }
         closure.generate(classWriter);
 
-
-
         for (var field : closureParams) {
             Type type = field.type;
             String descriptor = type.getDescriptor();
@@ -109,9 +107,7 @@ public class ClassGenerator {
             function.generate(classWriter);
         }
 
-
         addConstructor(functionType.parent, classWriter, Collections.emptyList(), null);
-
 
         classWriter.visitEnd();
 
@@ -128,17 +124,15 @@ public class ClassGenerator {
      */
     public ClassWriter generate(StructType structType) {
         classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
-        String name = structType.identifier.name;
+        String name = structType.name;
 
         String qualifiedName = packageName + "/" + name;
 
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
-
         assert structType.fields != null;
 
         addConstructor(structType.parent, classWriter, structType.fields, structType);
-
 
         for (var field : structType.fields) {
             Type type = field.type;
@@ -148,7 +142,6 @@ public class ClassGenerator {
             FieldVisitor fieldVisitor = classWriter.visitField(Opcodes.ACC_PUBLIC, field.name, descriptor, null, defaultValue);
             fieldVisitor.visitEnd();
         }
-
 
         classWriter.visitEnd();
 
@@ -178,7 +171,6 @@ public class ClassGenerator {
                 null
         );
 
-
         for (String element : enumType.elements.keySet()) {
             FieldVisitor fv = classWriter.visitField(Opcodes.ACC_PUBLIC
                             + Opcodes.ACC_FINAL
@@ -190,7 +182,6 @@ public class ClassGenerator {
             // Todo: generate the optional expression of an enum element
 
         }
-
 
         classWriter.visitEnd();
 

@@ -17,9 +17,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     public final Environment rootEnvironment;
     public final File file;
-    public Environment currentEnvironment;
-
     private final Stack<FuncType> functionStack = new Stack<>();
+    public Environment currentEnvironment;
 
     public TypeCheckVisitor(Environment rootEnvironment, File file) {
         this.rootEnvironment = rootEnvironment;
@@ -34,10 +33,59 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
+    public Optional<Type> visitAssignExpr(Expr.Assign expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitBad(Expr.Bad expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitBinaryExpr(Expr.Binary expr) {
+        var t1 = expr.left().accept(this);
+        var t2 = expr.right().accept(this);
+
+        if (t1.isEmpty() || t2.isEmpty()) {
+            Comptime.Implementation.submit(file, expr, "Types in binary expression not determined.");
+        }
+
+        var totalType = t1.get();
+
+        switch (expr.operator().type()) {
+            case ADD, SUB, MUL, DIV, MOD -> {
+                if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
+                    totalType = BuiltInType.widen(bt1, bt2);
+                }
+            }
+            default -> {
+            }
+        }
+
+        return Optional.of(totalType);
+    }
+
+    @Override
     public Optional<Type> visitBlockStmt(Stmt.Block block) {
         for (var stmt : block.statements()) {
             stmt.accept(this);
         }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitCall(Expr.Call expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitEmptyList(Expr.EmptyList emptyList) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitEnum(Stmt.Enum stmt) {
         return Optional.empty();
     }
 
@@ -48,37 +96,23 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitEnum(Stmt.Enum stmt) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitStruct(Stmt.Struct struct) {
-        var structType = currentEnvironment.getVariableTyped(struct.name().source(), StructType.class);
-        if (structType != null) {
-            Util.zip(struct.fields(), structType.fields, (a, b) -> {
-                if (b.type instanceof UnknownType ut) {
-                    var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
-                    if (attempt != null) {
-                        b.type = attempt;
-                    } else {
-                        Comptime.TypeNotFound.submit(file, a, ut.typeName);
-                    }
-                }
-            });
-
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitType(Stmt.Type stmt) {
-        return Optional.empty();
-    }
-
-    @Override
     public Optional<Type> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitFor(Stmt.For stmt) {
+
+        currentEnvironment = stmt.block().environment();
+        stmt.condition().accept(this);
+        stmt.block().accept(this);
+        currentEnvironment = currentEnvironment.getParent();
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitForInCondition(Stmt.ForInCondition stmt) {
         return Optional.empty();
     }
 
@@ -116,6 +150,16 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
+    public Optional<Type> visitGroupingExpr(Expr.Grouping expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitIdentifierExpr(Expr.Identifier expr) {
+        return Optional.ofNullable(currentEnvironment.getVariable(expr.identifier().source()));
+    }
+
+    @Override
     public Optional<Type> visitIf(Stmt.If stmt) {
         var childEnvironment = stmt.trueBlock().environment();
         childEnvironment.setParent(currentEnvironment);
@@ -129,6 +173,98 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitImport(Stmt.Import stmt) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitIndexAccess(Expr.IndexAccess expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitLiteralExpr(Expr.Literal expr) {
+        var t = BuiltInType.getFromToken(expr.literal().type());
+        if (t == null) {
+            Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
+        }
+        return Optional.ofNullable(t);
+    }
+
+    @Override
+    public Optional<Type> visitLiteralList(Expr.LiteralList expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitLogicalExpr(Expr.Logical expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitNew(Expr.New expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitParameterStmt(Stmt.Parameter stmt) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitPostfixExpr(Expr.Postfix expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitPrefix(Expr.Prefix expr) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitPropertyAccess(Expr.PropertyAccess expr) {
+        var left = expr.left();
+        var right = expr.right();
+
+        // 1. Get type of left-hand component
+        var lType = left.accept(this);
+//        var rType = right.accept(this);
+        if (lType.isPresent()) {
+            // 2. Find available fields in said type
+            //    (For now, StructType only)
+            var structType = (StructType) lType.get();
+            System.out.println(structType);
+            // 3. See if the right expression is available in the right
+            // Todo: figure out how to do this (it should be a flat list of identifiers as we don't have methods yet)
+            String rightId = "dob";
+            var t = structType.findType(rightId);
+            if (t.isPresent()) {
+                System.out.println(t.get());
+            } else {
+                // Todo: Property access error
+                System.err.println("bad");
+            }
+
+            System.exit(9);
+            var field = StructType.findStructField(structType, rightId);
+            if (field.isPresent()) {
+                var type = field.get().type;
+                System.out.println(type);
+
+                var n = type.getName().split("\\.");
+                var p = Path.of("examples", n[0]);
+
+                var fieldType = ExportTable.get(p.toString(), n[1]);
+                System.out.println(fieldType);
+            }
+        }
+        //    (only Identifier, PropertyAccess, and FunctionCall can be a right side expression here)
+        // 4. Return the type of the rightmost expression (after recursion)
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Type> visitRange(Expr.Range range) {
         return Optional.empty();
     }
 
@@ -153,35 +289,27 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitVariable(Stmt.Variable stmt) {
+    public Optional<Type> visitStruct(Stmt.Struct struct) {
+        var structType = currentEnvironment.getVariableTyped(struct.name().source(), StructType.class);
+        if (structType != null) {
+            Util.zip(struct.fields(), structType.fields, (a, b) -> {
+                if (b.type instanceof UnknownType ut) {
+                    var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
+                    if (attempt != null) {
+                        b.type = attempt;
+                    } else {
+                        Comptime.TypeNotFound.submit(file, a, ut.typeName);
+                    }
+                }
+            });
 
-        var expr = stmt.expr();
-        var t = expr.accept(this);
-
-        if (t.isPresent()) {
-            currentEnvironment.setVariableType(stmt.name().source(), t.get());
         }
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitParameterStmt(Stmt.Parameter stmt) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitFor(Stmt.For stmt) {
-
-        currentEnvironment = stmt.block().environment();
-        stmt.condition().accept(this);
-        stmt.block().accept(this);
-        currentEnvironment = currentEnvironment.getParent();
 
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitForInCondition(Stmt.ForInCondition stmt) {
+    public Optional<Type> visitType(Stmt.Type stmt) {
         return Optional.empty();
     }
 
@@ -191,134 +319,14 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitAssignExpr(Expr.Assign expr) {
-        return Optional.empty();
-    }
+    public Optional<Type> visitVariable(Stmt.Variable stmt) {
 
-    @Override
-    public Optional<Type> visitBinaryExpr(Expr.Binary expr) {
-        var t1 = expr.left().accept(this);
-        var t2 = expr.right().accept(this);
+        var expr = stmt.expr();
+        var t = expr.accept(this);
 
-        if (t1.isEmpty() || t2.isEmpty()) {
-            Comptime.Implementation.submit(file, expr, "Types in binary expression not determined.");
+        if (t.isPresent()) {
+            currentEnvironment.setVariableType(stmt.name().source(), t.get());
         }
-
-        var totalType = t1.get();
-
-        switch (expr.operator().type()) {
-            case ADD, SUB, MUL, DIV, MOD -> {
-                if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
-                    totalType = BuiltInType.widen(bt1, bt2);
-                }
-            }
-            default -> {
-            }
-        }
-
-        return Optional.of(totalType);
-    }
-
-
-    @Override
-    public Optional<Type> visitBad(Expr.Bad expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitCall(Expr.Call expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitGroupingExpr(Expr.Grouping expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitIdentifierExpr(Expr.Identifier expr) {
-        return Optional.ofNullable(currentEnvironment.getVariable(expr.identifier().source()));
-    }
-
-    @Override
-    public Optional<Type> visitIndexAccess(Expr.IndexAccess expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitLogicalExpr(Expr.Logical expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitLiteralExpr(Expr.Literal expr) {
-        var t = BuiltInType.getFromToken(expr.literal().type());
-        if (t == null) {
-            Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
-        }
-        return Optional.ofNullable(t);
-    }
-
-    @Override
-    public Optional<Type> visitLiteralList(Expr.LiteralList expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitNew(Expr.New expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitPrefix(Expr.Prefix expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitPostfixExpr(Expr.Postfix expr) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitPropertyAccess(Expr.PropertyAccess expr) {
-        var left = expr.left();
-        var right = expr.right();
-
-        // 1. Get type of left-hand component
-        var lType = left.accept(this);
-        if (lType.isPresent()) {
-            // 2. Find available fields in said type
-            //    (For now, StructType only)
-            var structType = (StructType) lType.get();
-            // 3. See if the right expression is available in the right
-            String rightId = "dob";
-            var field = StructType.findStructField(structType, rightId);
-            if (field.isPresent()) {
-                var type = field.get().type;
-                System.out.println(type);
-
-                var n = type.getName().split("\\.");
-                var p = Path.of("examples", n[0]);
-
-                var fieldType = ExportTable.get(p.toString(), n[1]);
-                System.out.println(fieldType);
-            }
-
-
-        }
-        //    (only Identifier, PropertyAccess, and FunctionCall can be a right side expression here)
-        // 4. Return the type of the rightmost expression (after recursion)
-
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitRange(Expr.Range range) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Type> visitEmptyList(Expr.EmptyList emptyList) {
         return Optional.empty();
     }
 }

@@ -13,23 +13,23 @@ public class ExternalType implements Type {
     }
 
     @Override
-    public String toString() {
-        return getName();
+    public int getAddOpcode() {
+        return 0;
     }
 
     @Override
-    public String getName() {
-        return foundClass.getName();
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
-        return foundClass;
+    public Object getDefaultValue() {
+        return null;
     }
 
     @Override
     public String getDescriptor() {
         return foundClass.descriptorString();
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        return 0;
     }
 
     @Override
@@ -43,8 +43,18 @@ public class ExternalType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
+    public int getMultiplyOpcode() {
+        return 0;
+    }
+
+    @Override
+    public String getName() {
+        return foundClass.getName();
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 
     @Override
@@ -53,8 +63,8 @@ public class ExternalType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        return 0;
+    public int getStoreVariableOpcode() {
+        return Opcodes.ASTORE;
     }
 
     @Override
@@ -63,18 +73,8 @@ public class ExternalType implements Type {
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        return 0;
-    }
-
-    @Override
-    public Object getDefaultValue() {
-        return null;
+    public Class<?> getTypeClass() {
+        return foundClass;
     }
 
     @Override
@@ -83,7 +83,12 @@ public class ExternalType implements Type {
     }
 
     @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
+    public String kind() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

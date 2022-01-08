@@ -25,7 +25,7 @@ public class BytecodeGenerator {
 
         // Generate bytecode for each Struct defined in the Imp file
         for (var struct : impFile.structTypes) {
-            code.put(impFile.packageName + "/" + struct.identifier.name, classGenerator.generate(struct).toByteArray());
+            code.put(impFile.packageName + "/" + struct.name, classGenerator.generate(struct).toByteArray());
         }
 
         // Generate bytecode for each Enum defined in the Imp file

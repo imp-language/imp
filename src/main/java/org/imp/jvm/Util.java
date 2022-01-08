@@ -1,7 +1,10 @@
 package org.imp.jvm;
 
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.types.Type;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -10,18 +13,20 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Util {
-    public static <A, B, O> void zipMap(List<A> a, List<B> b, BiFunction<A, B, O> lambda) throws ArrayIndexOutOfBoundsException {
+    public static <A, B, O> Stream<O> zipMap(List<A> a, List<B> b, BiFunction<A, B, O> lambda) throws ArrayIndexOutOfBoundsException {
+        var l = new ArrayList<O>();
         if (a.size() == b.size()) {
             var c = Stream.of(a, b).map(Objects::toString).collect(Collectors.joining(", "));
             var i1 = a.iterator();
             var i2 = b.iterator();
             while (i1.hasNext() && i2.hasNext()) {
                 var o = lambda.apply(i1.next(), i2.next());
-                System.out.println(o);
+                l.add(o);
             }
         } else {
             throw new ArrayIndexOutOfBoundsException("Can't zip two Lists with differing number of elements.");
         }
+        return l.stream();
     }
 
     public static <A, B, O> void zip(List<A> a, List<B> b, BiConsumer<A, B> lambda) throws ArrayIndexOutOfBoundsException {
@@ -51,5 +56,11 @@ public class Util {
 
     public static String parameterString(List<Identifier> parameters) {
         return parameters.stream().map(p -> p.name + " " + p.type).collect(Collectors.joining(", "));
+    }
+
+    public static String parameterString(String[] names, Type[] types) {
+        return zipMap(Arrays.asList(names), Arrays.asList(types), (name, type) -> {
+            return name + " " + type;
+        }).collect(Collectors.joining(", "));
     }
 }

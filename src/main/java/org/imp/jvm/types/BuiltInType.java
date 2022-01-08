@@ -7,10 +7,11 @@ import org.imp.jvm.types.overloads.StringOverloads;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum BuiltInType implements Type {
+public enum BuiltInType implements Type, Serializable {
     BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT, false, false),
     INT("int", int.class, "I", TypeSpecificOpcodes.INT, 0, true),
     FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT, 0.0f, true),
@@ -90,10 +91,6 @@ public enum BuiltInType implements Type {
         };
     }
 
-    public boolean canBeWidenedTo(BuiltInType bigger) {
-        return widenings.get(this) < widenings.get(bigger);
-    }
-
     public static BuiltInType widen(BuiltInType a, BuiltInType b) {
         if (widenings.get(a) > widenings.get(b)) {
             return a;
@@ -101,89 +98,9 @@ public enum BuiltInType implements Type {
         return b;
     }
 
-
-    @Override
-    public String toString() {
-        return getName();
+    public boolean canBeWidenedTo(BuiltInType bigger) {
+        return widenings.get(this) < widenings.get(bigger);
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
-        return typeClass;
-    }
-
-    @Override
-    public String getDescriptor() {
-        return descriptor;
-    }
-
-    @Override
-    public String getInternalName() {
-        return getDescriptor();
-    }
-
-    @Override
-    public int getLoadVariableOpcode() {
-        return opcodes.getLoad();
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return opcodes.getStore();
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return opcodes.getReturn();
-    }
-
-    @Override
-    public int getAddOpcode() {
-        return opcodes.getAdd();
-    }
-
-    @Override
-    public int getSubtractOpcode() {
-        return opcodes.getSubstract();
-    }
-
-    @Override
-    public int getMultiplyOpcode() {
-        return opcodes.getMultiply();
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        return opcodes.getDivide();
-    }
-
-    @Override
-    public Object getDefaultValue() {
-        return this.defaultValue;
-    }
-
-    @Override
-    public boolean isNumeric() {
-        return isNumeric;
-    }
-
-    @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        if (this == STRING) {
-            if (operator == Operator.INDEX) {
-                return new StringOverloads();
-            }
-        }
-
-
-        return null;
-    }
-
 
     public void doBoxing(MethodVisitor mv) {
         switch (this) {
@@ -238,5 +155,91 @@ public enum BuiltInType implements Type {
                 System.exit(29);
             }
         }
+    }
+
+    @Override
+    public int getAddOpcode() {
+        return opcodes.getAdd();
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return this.defaultValue;
+    }
+
+    @Override
+    public String getDescriptor() {
+        return descriptor;
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        return opcodes.getDivide();
+    }
+
+    @Override
+    public String getInternalName() {
+        return getDescriptor();
+    }
+
+    @Override
+    public int getLoadVariableOpcode() {
+        return opcodes.getLoad();
+    }
+
+    @Override
+    public int getMultiplyOpcode() {
+        return opcodes.getMultiply();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        if (this == STRING) {
+            if (operator == Operator.INDEX) {
+                return new StringOverloads();
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public int getReturnOpcode() {
+        return opcodes.getReturn();
+    }
+
+    @Override
+    public int getStoreVariableOpcode() {
+        return opcodes.getStore();
+    }
+
+    @Override
+    public int getSubtractOpcode() {
+        return opcodes.getSubstract();
+    }
+
+    @Override
+    public Class<?> getTypeClass() {
+        return typeClass;
+    }
+
+    @Override
+    public boolean isNumeric() {
+        return isNumeric;
+    }
+
+    @Override
+    public String kind() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

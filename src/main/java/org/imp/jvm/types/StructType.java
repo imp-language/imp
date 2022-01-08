@@ -10,24 +10,40 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class StructType implements Type {
-    public final Identifier identifier;
+public class StructType implements Type, Serializable {
     public final Scope scope;
-
     // Todo: replace with Map<String,Type>
     public final List<Identifier> fields;
+    public final String[] fieldNames;
+    public final Type[] fieldTypes;
     public final ImpFile parent;
+    public String name;
 
+    public String qualifiedName;
 
-    public StructType(Identifier identifier, List<Identifier> fields) {
-        this.identifier = identifier;
-        this.fields = fields;
+    public StructType(String name, String[] fieldNames, Type[] fieldTypes) {
+        this.name = name;
+        this.fields = Collections.emptyList();
+        this.fieldNames = fieldNames;
+        this.fieldTypes = fieldTypes;
         this.parent = null;
         this.scope = null;
+    }
+
+    public StructType(String name, List<Identifier> identifiers) {
+        this.name = name;
+        this.fields = identifiers;
+        this.fieldNames = new String[0];
+        this.fieldTypes = new Type[0];
+        this.parent = null;
+        this.scope = null;
+
     }
 
     /**
@@ -36,6 +52,16 @@ public class StructType implements Type {
      */
     public static Optional<Identifier> findStructField(StructType st, String fieldName) {
         return st.fields.stream().filter(id -> id.name.equals(fieldName)).findFirst();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj instanceof StructType o) {
+            return this.name.equals(o.name);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -67,35 +93,33 @@ public class StructType implements Type {
         return validatedPath;
     }
 
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj instanceof StructType o) {
-            return this.identifier.name.equals(o.identifier.name);
-        } else {
-            return false;
+    public Optional<Type> findType(String name) {
+        for (int i = 0; i < fieldNames.length; i++) {
+            if (fieldNames[i].equals(name)) {
+                return Optional.of(fieldTypes[i]);
+            }
         }
+        return Optional.empty();
     }
 
     @Override
-    public String toString() {
-        return "struct " + getName() + " {" + Util.parameterString(fields) + "}";
+    public int getAddOpcode() {
+        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
-    public String getName() {
-        return identifier.name;
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
+    public Object getDefaultValue() {
         return null;
     }
 
     @Override
     public String getDescriptor() {
         return "L" + getInternalName() + ";";
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
@@ -109,8 +133,18 @@ public class StructType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
+    public int getMultiplyOpcode() {
+        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 
     @Override
@@ -119,8 +153,8 @@ public class StructType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
+    public int getStoreVariableOpcode() {
+        return Opcodes.ASTORE;
     }
 
     @Override
@@ -129,17 +163,7 @@ public class StructType implements Type {
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public Object getDefaultValue() {
+    public Class<?> getTypeClass() {
         return null;
     }
 
@@ -149,7 +173,12 @@ public class StructType implements Type {
     }
 
     @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
+    public String kind() {
+        return "struct";
+    }
+
+    @Override
+    public String toString() {
+        return "struct " + getName() + " {" + Util.parameterString(fieldNames, fieldTypes) + "}";
     }
 }

@@ -5,12 +5,13 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.types.overloads.OperatorOverload;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class FuncType implements Type {
-    public final String name;
+public class FuncType implements Type, Serializable {
     public final Modifier modifier;
     public final List<Identifier> parameters;
+    public String name;
     public Type returnType = BuiltInType.VOID;
 
     public FuncType(String name, Modifier modifier, List<Identifier> parameters) {
@@ -20,23 +21,23 @@ public class FuncType implements Type {
     }
 
     @Override
-    public String toString() {
-        return "func " + name + "(" + Util.parameterString(parameters) + ") " + returnType;
+    public int getAddOpcode() {
+        return 0;
     }
 
     @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
+    public Object getDefaultValue() {
         return null;
     }
 
     @Override
     public String getDescriptor() {
         return null;
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        return 0;
     }
 
     @Override
@@ -50,8 +51,18 @@ public class FuncType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
+    public int getMultiplyOpcode() {
         return 0;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 
     @Override
@@ -60,7 +71,7 @@ public class FuncType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
+    public int getStoreVariableOpcode() {
         return 0;
     }
 
@@ -70,17 +81,7 @@ public class FuncType implements Type {
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        return 0;
-    }
-
-    @Override
-    public Object getDefaultValue() {
+    public Class<?> getTypeClass() {
         return null;
     }
 
@@ -90,7 +91,12 @@ public class FuncType implements Type {
     }
 
     @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
+    public String kind() {
+        return "function";
+    }
+
+    @Override
+    public String toString() {
+        return "func " + name + "(" + Util.parameterString(parameters) + ") " + returnType;
     }
 }

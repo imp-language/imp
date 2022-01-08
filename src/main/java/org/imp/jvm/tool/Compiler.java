@@ -13,7 +13,6 @@ import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,13 +29,12 @@ public class Compiler {
     public String compile() throws FileNotFoundException {
         String pwd = System.getProperty("user.dir");
 
-
         File file = new File(filename);
         var entry = API.parse(file);
         Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(entry);
         Comptime.killIfErrors("Correct dependency errors before continuing.");
 
-        System.out.println(ExportTable.dump());
+//        System.out.println(ExportTable.dump());
         Timer.log("build dependency graph");
 
         // Todo: Before the TypeCheckVisitor runs, we need to

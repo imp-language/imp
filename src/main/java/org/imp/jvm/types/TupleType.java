@@ -21,26 +21,23 @@ public class TupleType implements Type {
     }
 
     @Override
-    public String toString() {
-        String repr = types.stream().map(Object::toString)
-                .collect(Collectors.joining(", "));
-
-        return "(" + repr + ")";
+    public int getAddOpcode() {
+        return 0;
     }
 
     @Override
-    public String getName() {
-        return this.parent.name + "/Tuple_" + name;
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
+    public Object getDefaultValue() {
         return null;
     }
 
     @Override
     public String getDescriptor() {
         return null;
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        return 0;
     }
 
     @Override
@@ -54,8 +51,18 @@ public class TupleType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
+    public int getMultiplyOpcode() {
         return 0;
+    }
+
+    @Override
+    public String getName() {
+        return this.parent.name + "/Tuple_" + name;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 
     @Override
@@ -64,7 +71,7 @@ public class TupleType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
+    public int getStoreVariableOpcode() {
         return 0;
     }
 
@@ -74,17 +81,7 @@ public class TupleType implements Type {
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        return 0;
-    }
-
-    @Override
-    public Object getDefaultValue() {
+    public Class<?> getTypeClass() {
         return null;
     }
 
@@ -94,7 +91,15 @@ public class TupleType implements Type {
     }
 
     @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
+    public String kind() {
+        return "tuple";
+    }
+
+    @Override
+    public String toString() {
+        String repr = types.stream().map(Object::toString)
+                .collect(Collectors.joining(", "));
+
+        return "(" + repr + ")";
     }
 }

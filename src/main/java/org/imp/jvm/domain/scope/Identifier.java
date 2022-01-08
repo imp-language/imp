@@ -6,8 +6,10 @@ import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Type;
 import org.objectweb.asm.MethodVisitor;
 
+import java.io.Serializable;
 
-public class Identifier extends Expression {
+
+public class Identifier extends Expression implements Serializable {
     public String name;
 
     public Identifier(String name, Type type) {
@@ -25,13 +27,13 @@ public class Identifier extends Expression {
     }
 
     @Override
-    public String toString() {
-        return name + " " + type.getName();
+    public void generate(MethodVisitor mv, Scope scope) {
+
     }
 
     @Override
-    public void generate(MethodVisitor mv, Scope scope) {
-
+    public String toString() {
+        return name + " " + type.getName();
     }
 
     @Override

@@ -16,21 +16,24 @@ public class EnumType implements Type {
         this.elements = elements;
     }
 
-
     @Override
-
-    public String getName() {
-        return null;
+    public int getAddOpcode() {
+        return 0;
     }
 
     @Override
-    public Class<?> getTypeClass() {
+    public Object getDefaultValue() {
         return null;
     }
 
     @Override
     public String getDescriptor() {
         return null;
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        return 0;
     }
 
     @Override
@@ -44,8 +47,19 @@ public class EnumType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
+    public int getMultiplyOpcode() {
         return 0;
+    }
+
+    @Override
+
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 
     @Override
@@ -54,7 +68,7 @@ public class EnumType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
+    public int getStoreVariableOpcode() {
         return 0;
     }
 
@@ -64,17 +78,7 @@ public class EnumType implements Type {
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        return 0;
-    }
-
-    @Override
-    public Object getDefaultValue() {
+    public Class<?> getTypeClass() {
         return null;
     }
 
@@ -84,7 +88,7 @@ public class EnumType implements Type {
     }
 
     @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
+    public String kind() {
+        return "enum";
     }
 }

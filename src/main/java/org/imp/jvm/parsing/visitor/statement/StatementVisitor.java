@@ -38,8 +38,60 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
     @Override
-    public Literal visitLiteralExpression(ImpParser.LiteralExpressionContext ctx) {
-        return ctx.accept(literalVisitor);
+    public Assignment visitAssignment(ImpParser.AssignmentContext ctx) {
+        Expression recipient = ctx.expression(0).accept(expressionVisitor);
+        recipient.setCtx(ctx.expression(0), parent.name);
+//        Expression provider = ctx.expression(1).accept(expressionVisitor);
+//        provider.setCtx(ctx.expression(1), parent.name);
+
+        return (Assignment) recipient;
+    }
+
+    @Override
+    public Statement visitAssignmentExpression(ImpParser.AssignmentExpressionContext ctx) {
+        return ctx.accept(expressionVisitor);
+    }
+
+    @Override
+    public Block visitBlock(ImpParser.BlockContext ctx) {
+        if (ctx.statementList() != null) {
+            List<ImpParser.StatementContext> blockStatementsCtx = ctx.statementList().statement();
+
+            // Child blocks inherit the parent block's scope
+            Scope newScope = new Scope(scope);
+
+            StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
+            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
+            return new Block(statements, newScope);
+        }
+        return new Block();
+    }
+
+    @Override
+    public Statement visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
+        return expressionVisitor.visitCallStatementExpression(ctx);
+    }
+
+    @Override
+    public Statement visitEnumStatement(ImpParser.EnumStatementContext ctx) {
+        var name = ctx.identifier().getText();
+        var blockCtx = ctx.enumDef();
+
+        Map<String, Optional<Expression>> elements = new HashMap<>();
+        for (var enumDef : blockCtx) {
+            String key = enumDef.identifier().getText();
+            Expression e = null;
+            if (enumDef.expression() != null) {
+                e = enumDef.expression().accept(expressionVisitor);
+            }
+            Optional<Expression> expression = Optional.ofNullable(e);
+
+            elements.put(key, expression);
+        }
+        EnumType enumType = new EnumType(name, elements);
+        Enum enumStatement = new Enum(enumType);
+        enumStatement.setCtx(ctx, parent.name);
+        return enumStatement;
     }
 
     @Override
@@ -56,6 +108,20 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     @Override
     public Statement visitFunctionDefinition(ImpParser.FunctionDefinitionContext ctx) {
         return ctx.function().accept(expressionVisitor);
+    }
+
+    @Override
+    public If visitIfStatement(ImpParser.IfStatementContext ctx) {
+        Expression condition = ctx.expression().accept(expressionVisitor);
+
+        Statement trueStatement = ctx.trueStatement.accept(this);
+
+        Statement falseStatement = null;
+        if (ctx.falseStatement != null) {
+            falseStatement = ctx.falseStatement.accept(this);
+        }
+
+        return new If(condition, trueStatement, falseStatement);
     }
 
     @Override
@@ -79,102 +145,13 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
     @Override
-    public Statement visitCallStatementExpression(ImpParser.CallStatementExpressionContext ctx) {
-        return expressionVisitor.visitCallStatementExpression(ctx);
-    }
-
-    @Override
-    public Statement visitMethodCallExpression(ImpParser.MethodCallExpressionContext ctx) {
-        return expressionVisitor.visitMethodCallExpression(ctx);
-    }
-
-    @Override
-    public Statement visitPostIncrementExpression(ImpParser.PostIncrementExpressionContext ctx) {
-        return expressionVisitor.visitPostIncrementExpression(ctx);
-    }
-
-    @Override
-    public Statement visitStructStatement(ImpParser.StructStatementContext ctx) {
-        var fieldCtx = ctx.structBlock().fieldDef();
-
-
-        List<Identifier> fields = new ArrayList<>();
-
-        // At this point we do not know of any custom types that exist.
-        for (var fCtx : fieldCtx) {
-//            Type t = TypeResolver.getFromTypeContext(types.get(i), scope);
-            ImpParser.TypeContext typeContext = fCtx.type();
-            ImpParser.IdentifierContext identifierContext = fCtx.identifier();
-
-            if (typeContext == null || typeContext.getText().length() < 1) {
-                Logger.syntaxError(Errors.MissingFieldType, new Empty(identifierContext, parent.name), ctx.getText(), Errors.getLocation(ctx.getStart()));
-            }
-            Type t = TypeResolver.getTemporaryType(typeContext);
-
-
-            String n = identifierContext.getText();
-            var field = new Identifier(n, t);
-            field.setCtx(fCtx, parent.name);
-            fields.add(field);
-        }
-        String name = ctx.identifier().getText();
-        var id = new Identifier(name, BuiltInType.STRUCT);
-
-        // Create struct type object
-        StructType structType = new StructType(id, fields);
-
-        // Create struct object
-        Struct struct = new Struct(structType);
-        struct.setCtx(ctx, parent.name);
-
-        // Add struct to scope
-        scope.addType(name, structType);
-
-        return struct;
-    }
-
-    @Override
-    public Block visitBlock(ImpParser.BlockContext ctx) {
-        if (ctx.statementList() != null) {
-            List<ImpParser.StatementContext> blockStatementsCtx = ctx.statementList().statement();
-
-            // Child blocks inherit the parent block's scope
-            Scope newScope = new Scope(scope);
-
-            StatementVisitor statementVisitor = new StatementVisitor(newScope, parent);
-            List<Statement> statements = blockStatementsCtx.stream().map(stmt -> stmt.accept(statementVisitor)).collect(Collectors.toList());
-            return new Block(statements, newScope);
-        }
-        return new Block();
-    }
-
-
-
-
-    @Override
-    public Return visitReturnStatement(ImpParser.ReturnStatementContext ctx) {
-        Expression expression = ctx.expression().accept(expressionVisitor);
-        return new Return(expression);
-    }
-
-    @Override
-    public If visitIfStatement(ImpParser.IfStatementContext ctx) {
-        Expression condition = ctx.expression().accept(expressionVisitor);
-
-        Statement trueStatement = ctx.trueStatement.accept(this);
-
-        Statement falseStatement = null;
-        if (ctx.falseStatement != null) {
-            falseStatement = ctx.falseStatement.accept(this);
-        }
-
-        return new If(condition, trueStatement, falseStatement);
+    public Literal visitLiteralExpression(ImpParser.LiteralExpressionContext ctx) {
+        return ctx.accept(literalVisitor);
     }
 
     @Override
     public Loop visitLoopStatement(ImpParser.LoopStatementContext ctx) {
         ImpParser.LoopConditionContext conditionContext = ctx.loopCondition();
-
 
         if (conditionContext instanceof ImpParser.ForLoopConditionContext cond) {
             // loop val i = 0; i < 10; i++ { }
@@ -210,6 +187,75 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
     }
 
     @Override
+    public Statement visitMethodCallExpression(ImpParser.MethodCallExpressionContext ctx) {
+        return expressionVisitor.visitMethodCallExpression(ctx);
+    }
+
+    @Override
+    public Statement visitPostIncrementExpression(ImpParser.PostIncrementExpressionContext ctx) {
+        return expressionVisitor.visitPostIncrementExpression(ctx);
+    }
+
+    @Override
+    public Return visitReturnStatement(ImpParser.ReturnStatementContext ctx) {
+        Expression expression = ctx.expression().accept(expressionVisitor);
+        return new Return(expression);
+    }
+
+    @Override
+    public Statement visitStructStatement(ImpParser.StructStatementContext ctx) {
+        var fieldCtx = ctx.structBlock().fieldDef();
+
+        List<Identifier> fields = new ArrayList<>();
+
+        // At this point we do not know of any custom types that exist.
+        for (var fCtx : fieldCtx) {
+//            Type t = TypeResolver.getFromTypeContext(types.get(i), scope);
+            ImpParser.TypeContext typeContext = fCtx.type();
+            ImpParser.IdentifierContext identifierContext = fCtx.identifier();
+
+            if (typeContext == null || typeContext.getText().length() < 1) {
+                Logger.syntaxError(Errors.MissingFieldType, new Empty(identifierContext, parent.name), ctx.getText(), Errors.getLocation(ctx.getStart()));
+            }
+            Type t = TypeResolver.getTemporaryType(typeContext);
+
+            String n = identifierContext.getText();
+            var field = new Identifier(n, t);
+            field.setCtx(fCtx, parent.name);
+            fields.add(field);
+        }
+        String name = ctx.identifier().getText();
+        var id = new Identifier(name, BuiltInType.STRUCT);
+
+        // Create struct type object
+        StructType structType = new StructType(id.name, fields);
+
+        // Create struct object
+        Struct struct = new Struct(structType);
+        struct.setCtx(ctx, parent.name);
+
+        // Add struct to scope
+        scope.addType(name, structType);
+
+        return struct;
+    }
+
+    @Override
+    public Statement visitTypeAliasStatement(ImpParser.TypeAliasStatementContext ctx) {
+
+        String name = ctx.identifier().getText();
+
+        String extern = ctx.stringLiteral().getText();
+        extern = StringUtils.removeStart(extern, "\"");
+        extern = StringUtils.removeEnd(extern, "\"");
+
+        var typeAlias = new TypeAlias(name, extern);
+        typeAlias.setCtx(ctx, parent.name);
+
+        return typeAlias;
+    }
+
+    @Override
     public Declaration visitVariableStatement(ImpParser.VariableStatementContext ctx) {
         Mutability mutability = Mutability.Val;
 
@@ -241,58 +287,5 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             System.exit(1);
         }
         return declaration;
-    }
-
-
-    @Override
-    public Assignment visitAssignment(ImpParser.AssignmentContext ctx) {
-        Expression recipient = ctx.expression(0).accept(expressionVisitor);
-        recipient.setCtx(ctx.expression(0), parent.name);
-//        Expression provider = ctx.expression(1).accept(expressionVisitor);
-//        provider.setCtx(ctx.expression(1), parent.name);
-
-        return (Assignment) recipient;
-    }
-
-    @Override
-    public Statement visitAssignmentExpression(ImpParser.AssignmentExpressionContext ctx) {
-        return ctx.accept(expressionVisitor);
-    }
-
-    @Override
-    public Statement visitEnumStatement(ImpParser.EnumStatementContext ctx) {
-        var name = ctx.identifier().getText();
-        var blockCtx = ctx.enumDef();
-
-        Map<String, Optional<Expression>> elements = new HashMap<>();
-        for (var enumDef : blockCtx) {
-            String key = enumDef.identifier().getText();
-            Expression e = null;
-            if (enumDef.expression() != null) {
-                e = enumDef.expression().accept(expressionVisitor);
-            }
-            Optional<Expression> expression = Optional.ofNullable(e);
-
-            elements.put(key, expression);
-        }
-        EnumType enumType = new EnumType(name, elements);
-        Enum enumStatement = new Enum(enumType);
-        enumStatement.setCtx(ctx, parent.name);
-        return enumStatement;
-    }
-
-    @Override
-    public Statement visitTypeAliasStatement(ImpParser.TypeAliasStatementContext ctx) {
-
-        String name = ctx.identifier().getText();
-
-        String extern = ctx.stringLiteral().getText();
-        extern = StringUtils.removeStart(extern, "\"");
-        extern = StringUtils.removeEnd(extern, "\"");
-
-        var typeAlias = new TypeAlias(name, extern);
-        typeAlias.setCtx(ctx, parent.name);
-
-        return typeAlias;
     }
 }

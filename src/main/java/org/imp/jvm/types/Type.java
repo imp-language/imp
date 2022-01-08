@@ -4,31 +4,38 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.types.overloads.OperatorOverload;
 
 public interface Type {
-    String getName();
+    int getAddOpcode();
 
-    Class<?> getTypeClass();
+    Object getDefaultValue();
 
     String getDescriptor();
+
+    int getDivideOpcode();
 
     String getInternalName();
 
     int getLoadVariableOpcode();
 
-    int getStoreVariableOpcode();
+    int getMultiplyOpcode();
+
+    String getName();
+
+    OperatorOverload getOperatorOverload(Operator operator);
 
     int getReturnOpcode();
 
-    int getAddOpcode();
+    int getStoreVariableOpcode();
 
     int getSubtractOpcode();
 
-    int getMultiplyOpcode();
-
-    int getDivideOpcode();
-
-    Object getDefaultValue();
+    Class<?> getTypeClass();
 
     boolean isNumeric();
 
-    OperatorOverload getOperatorOverload(Operator operator);
+    /**
+     * The kind we serialize to in SQL.
+     *
+     * @return "function"|"struct"|"enum"|"variable"|"alias"
+     */
+    String kind();
 }

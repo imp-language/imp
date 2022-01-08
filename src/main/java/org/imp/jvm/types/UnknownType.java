@@ -5,11 +5,9 @@ import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
 public class UnknownType implements Type {
-    public String typeName = null;
-
-    final int id;
-
     static int counter = 1;
+    final int id;
+    public String typeName = null;
 
     public UnknownType(String typeName) {
         this.typeName = typeName;
@@ -23,25 +21,24 @@ public class UnknownType implements Type {
         counter++;
     }
 
-
     @Override
-    public String toString() {
-        return "$" + getName();
+    public int getAddOpcode() {
+        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
-    public String getName() {
-        return typeName.length() > 0 ? typeName : "<unknown>";
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
+    public Object getDefaultValue() {
         return null;
     }
 
     @Override
     public String getDescriptor() {
         return "L" + getInternalName() + ";";
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
@@ -55,8 +52,18 @@ public class UnknownType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
+    public int getMultiplyOpcode() {
+        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
+    }
+
+    @Override
+    public String getName() {
+        return typeName.length() > 0 ? typeName : "<unknown>";
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 
     @Override
@@ -65,8 +72,8 @@ public class UnknownType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
+    public int getStoreVariableOpcode() {
+        return Opcodes.ASTORE;
     }
 
     @Override
@@ -75,17 +82,7 @@ public class UnknownType implements Type {
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public Object getDefaultValue() {
+    public Class<?> getTypeClass() {
         return null;
     }
 
@@ -95,7 +92,12 @@ public class UnknownType implements Type {
     }
 
     @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
+    public String kind() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "$" + getName();
     }
 }

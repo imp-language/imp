@@ -16,26 +16,6 @@ public class ListType implements Type {
     }
 
     @Override
-    public String toString() {
-        return getName();
-    }
-
-    @Override
-    public String getName() {
-        return "List<" + contentType + ">";
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
-        return java.util.List.class;
-    }
-
-    @Override
-    public String getDescriptor() {
-        return "Ljava/util/List;";
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -44,8 +24,23 @@ public class ListType implements Type {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(contentType);
+    public int getAddOpcode() {
+        return 0;
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return null;
+    }
+
+    @Override
+    public String getDescriptor() {
+        return "Ljava/util/List;";
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        return 0;
     }
 
     @Override
@@ -59,8 +54,18 @@ public class ListType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
+    public int getMultiplyOpcode() {
+        return 0;
+    }
+
+    @Override
+    public String getName() {
+        return "List<" + contentType + ">";
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return new ListOverloads();
     }
 
     @Override
@@ -69,8 +74,8 @@ public class ListType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        return 0;
+    public int getStoreVariableOpcode() {
+        return Opcodes.ASTORE;
     }
 
     @Override
@@ -79,18 +84,13 @@ public class ListType implements Type {
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        return 0;
+    public Class<?> getTypeClass() {
+        return java.util.List.class;
     }
 
     @Override
-    public int getDivideOpcode() {
-        return 0;
-    }
-
-    @Override
-    public Object getDefaultValue() {
-        return null;
+    public int hashCode() {
+        return Objects.hash(contentType);
     }
 
     @Override
@@ -99,7 +99,12 @@ public class ListType implements Type {
     }
 
     @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return new ListOverloads();
+    public String kind() {
+        return "list";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

@@ -164,9 +164,32 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
         String importName = stmt.stringLiteral().source();
         Path importPath = Path.of(basePath, importName);
 
+        String alias = stmt.identifier().source();
+
         System.out.println(importPath);
 
-        ExportTable.getExportsFromSource(importPath);
+        var results = ExportTable.getExportsFromSource(importPath);
+
+        for (var result : results) {
+            var typeName = alias + "." + result.name();
+            switch (result.kind()) {
+                case "struct" -> {
+                    var st = (StructType) result.o();
+                    st.name = typeName;
+                    st.qualifiedName = result.qualifiedName();
+                    this.currentEnvironment.addVariableOrError(typeName, st, file, stmt);
+                }
+                case "function" -> {
+                    var funcType = (FuncType) result.o();
+                    funcType.name = typeName;
+                    this.currentEnvironment.addVariableOrError(typeName, funcType, file, stmt);
+                }
+                default -> {
+                    System.err.println("Bad deserialization.");
+                    System.exit(62);
+                }
+            }
+        }
 
         // Todo:
         // It's impossible to query the MultiKeyMap for values that match one key instead
@@ -243,23 +266,19 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitStruct(Stmt.Struct stmt) {
-        List<Identifier> fields = new ArrayList<>();
+        var fieldNames = new String[stmt.fields().size()];
+        var fieldTypes = new Type[stmt.fields().size()];
 
         // At this point we do not know of any custom types that exist.
-        for (var field : stmt.fields()) {
-            Type type = field.type().accept(this).get();
-//            var bt = BuiltInType.getFromString(field.type().source());
-//            type = Objects.requireNonNullElseGet(bt, () -> new UnknownType(field.type().source()));
-
-            String n = field.name().source();
-            var f = new Identifier(n, type);
-            fields.add(f);
+        for (int i = 0; i < fieldNames.length; i++) {
+            var field = stmt.fields().get(i);
+            fieldNames[i] = field.name().source();
+            fieldTypes[i] = field.type().accept(this).get();
         }
         String name = stmt.name().source();
-        var id = new Identifier(name, BuiltInType.STRUCT);
 
         // Create struct type object
-        StructType structType = new StructType(id, fields);
+        StructType structType = new StructType(name, fieldNames, fieldTypes);
         currentEnvironment.addVariableOrError(name, structType, file, stmt);
 
         return Optional.of(structType);
@@ -281,7 +300,10 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
                 path.append(".").append(ptr.get().identifier().source());
                 ptr = ptr.get().next();
             }
-            type = new UnknownType(path.toString());
+            type = Objects.requireNonNullElse(
+                    currentEnvironment.getVariableTyped(path.toString(), StructType.class),
+                    new UnknownType(path.toString())
+            );
         }
         // Todo: above ^^
         return Optional.of(type);

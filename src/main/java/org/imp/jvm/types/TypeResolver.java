@@ -2,7 +2,6 @@ package org.imp.jvm.types;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
-import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class TypeResolver {
                 return builtInType.get();
             }
         } else if (text.length() > 0) {
-            return new StructType(new Identifier(text, new UnknownType()), new ArrayList<>());
+            return new StructType(text, new ArrayList<>());
         }
         return null;
     }
@@ -84,7 +83,7 @@ public class TypeResolver {
                 .filter(type -> type.getName().equals(finalTypeName))
                 .findFirst();
     }
-    
+
 
     public static Optional<BuiltInType> getBuiltInTypeByClass(Class<?> c) {
         return Arrays.stream(BuiltInType.values())

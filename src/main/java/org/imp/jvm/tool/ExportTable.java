@@ -4,11 +4,18 @@ import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.*;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ExportTable {
 
@@ -27,7 +34,15 @@ public class ExportTable {
                     create table ExportTable
                     (
                         qualifiedName string primary key not null,
-                        source string not null
+                        name string not null,
+                        source string not null,
+                        kind string not null,
+                        -- struct fields
+                        structFields string,
+                        structTypes string,
+                        -- serialized
+                        objectName string,
+                        object blob
                     );
                     """);
 
@@ -54,7 +69,10 @@ public class ExportTable {
                 throw new SQLException("ExportTable does not exist in the database.");
             }
 
-            psAddExport = connection.prepareStatement("replace into ExportTable(qualifiedName, source) values (?, ?)");
+            psAddExport = connection.prepareStatement("""
+                    replace into ExportTable(qualifiedName, name, source, kind, structFields, structTypes, objectName, object) 
+                    values (?,?,?,?,?,?,?,?)
+                    """);
             psGetExportFromSource = connection.prepareStatement("select * from ExportTable where source=?");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,13 +85,39 @@ public class ExportTable {
      * @param source unix-separated path
      * @param name   type name
      */
-    public static void addSQL(String source, String name) {
+    public static void addSQL(String source, String name, Type type) {
         try {
             String qualifiedName = source + ":" + name;
+
             psAddExport.setString(1, qualifiedName);
-            psAddExport.setString(2, source);
+            psAddExport.setString(2, name);
+            psAddExport.setString(3, source);
+            psAddExport.setString(4, type.kind());
+
+            if (type instanceof StructType st) {
+                String structFields = st.fields.stream().map(f -> f.name).collect(Collectors.joining(","));
+                psAddExport.setString(5, structFields);
+                String structTypes = st.fields.stream().map(f -> f.type.getName()).collect(Collectors.joining(","));
+                psAddExport.setString(6, structTypes);
+            } else {
+                psAddExport.setString(5, null);
+                psAddExport.setString(6, null);
+            }
+
+            psAddExport.setString(7, type.getClass().getName());
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(type);
+            byte[] employeeAsBytes = baos.toByteArray();
+
+            var b = new SerialBlob(employeeAsBytes);
+
+            psAddExport.setBytes(8, employeeAsBytes);
             psAddExport.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -81,17 +125,37 @@ public class ExportTable {
     /**
      * Get all exports from a certain source.
      */
-    public static void getExportsFromSource(Path sourcePath) {
-        String source = FilenameUtils.separatorsToUnix(sourcePath.toString());
+    public static List<ExportResult> getExportsFromSource(Path path) {
+        String sourcePath = FilenameUtils.separatorsToUnix(path.toString());
         try {
-            psGetExportFromSource.setString(1, source);
+            psGetExportFromSource.setString(1, sourcePath);
             ResultSet rs = psGetExportFromSource.executeQuery();
+
+            List<ExportResult> types = new ArrayList<>();
             while (rs.next()) {
-                System.out.println(rs.getString(1) + ", " + rs.getString(2));
+                ByteArrayInputStream bais = new ByteArrayInputStream(rs.getBytes(8));
+                ObjectInputStream ois = new ObjectInputStream(bais);
+                Type o = (Type) ois.readObject();
+
+                types.add(new ExportResult(
+                        rs.getString(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5).split(","),
+                        rs.getString(6).split(","),
+                        o
+                ));
             }
+            return types;
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+        return Collections.emptyList();
     }
 
     public static void add(SourceFile source, String name, Type type) {
@@ -111,5 +175,10 @@ public class ExportTable {
             s.append(StringUtils.rightPad(k1.toString(), 35)).append("\t").append(k2).append("\n");
         });
         return s.toString();
+    }
+
+    public record ExportResult(String qualifiedName, String name, String source, String kind, String[] structFields,
+                               String[] structTypes, Object o) {
+
     }
 }

@@ -6,5 +6,5 @@ export struct Date {
 
 
 export struct Something {
-    s string
+    data string
 }

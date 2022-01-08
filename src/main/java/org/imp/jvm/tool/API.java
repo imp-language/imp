@@ -69,10 +69,9 @@ public class API {
                 if (type != null) {
                     source.exports.put(identifier, type);
                     ExportTable.add(source, identifier, type);
-                    ExportTable.addSQL(source.path(), identifier);
+                    ExportTable.addSQL(source.path(), identifier, type);
                     // Todo: figure out what data to store in the table.
                     // Is it as simple as a list of fields and their types?
-                    System.out.println("r");
                 }
             }
             return null;
