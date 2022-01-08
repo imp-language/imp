@@ -3,6 +3,7 @@ package org.imp.jvm.tool;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.domain.ImpFile;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
@@ -12,6 +13,7 @@ import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,9 +28,12 @@ public class Compiler {
     }
 
     public String compile() throws FileNotFoundException {
+        String pwd = System.getProperty("user.dir");
+
+
         File file = new File(filename);
         var entry = API.parse(file);
-//        Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(entry);
+        Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(entry);
         Comptime.killIfErrors("Correct dependency errors before continuing.");
 
         System.out.println(ExportTable.dump());

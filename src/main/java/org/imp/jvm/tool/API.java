@@ -69,6 +69,10 @@ public class API {
                 if (type != null) {
                     source.exports.put(identifier, type);
                     ExportTable.add(source, identifier, type);
+                    ExportTable.addSQL(source.path(), identifier);
+                    // Todo: figure out what data to store in the table.
+                    // Is it as simple as a list of fields and their types?
+                    System.out.println("r");
                 }
             }
             return null;
@@ -161,7 +165,6 @@ public class API {
         String basePath = FilenameUtils.getPath(current.file.getPath());
         Map<String, SourceFile> fileMap = new HashMap<>();
 
-
         current.filter(Stmt.Import.class, (importStmt) -> {
             String relativePath = importStmt.stringLiteral().source();
             String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
@@ -176,7 +179,6 @@ public class API {
             return null;
         });
 
-
         return fileMap;
     }
 
@@ -188,7 +190,6 @@ public class API {
             String relativeFileName = i.getValue();
             String filePath = FilenameUtils.concat(basePath, relativeFileName + ".imp");
             filePath = FilenameUtils.separatorsToUnix(filePath);
-
 
             if (Glue.coreModules.containsKey(relativeFileName)) {
                 entry.stdlibImports.add(relativeFileName);
@@ -230,7 +231,6 @@ public class API {
                 File tmp = new File(fileName);
                 tmp.getParentFile().mkdirs();
 
-
                 OutputStream output = null;
                 try {
                     output = new FileOutputStream(fileName);
@@ -244,14 +244,10 @@ public class API {
             }
         }
 
-
         Logger.killIfErrors("Errored during bytecode generation.");
-
 
         return null;
     }
-
-
 
 
 }

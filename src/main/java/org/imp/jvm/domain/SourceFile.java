@@ -8,6 +8,7 @@ import org.imp.jvm.types.Type;
 import org.imp.jvm.visitors.IVisitor;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Function;
 
@@ -15,11 +16,9 @@ public class SourceFile {
     public final File file;
     public final List<Stmt> stmts;
     public final LinkedMap<String, Type> exports = new LinkedMap<>();
-
+    public final Environment rootEnvironment = new Environment();
     // filename -> SourceFile
     private final LinkedMap<String, SourceFile> imports = new LinkedMap<>();
-
-    public final Environment rootEnvironment = new Environment();
 
     public SourceFile(File file, List<Stmt> stmts) {
 
@@ -27,12 +26,10 @@ public class SourceFile {
         this.stmts = stmts;
     }
 
-    public SourceFile getImport(String filepath) {
-        return imports.get(filepath);
-    }
-
-    public LinkedMap<String, SourceFile> getImports() {
-        return imports;
+    public <R> void acceptVisitor(IVisitor<R> visitor) {
+        for (var s : this.stmts) {
+            s.accept(visitor);
+        }
     }
 
     public void addImport(File file, SourceFile sourceFile) {
@@ -41,9 +38,8 @@ public class SourceFile {
         imports.put(s, sourceFile);
     }
 
-    @Override
-    public String toString() {
-        return file.getName();
+    public String basePath() {
+        return FilenameUtils.separatorsToUnix(FilenameUtils.getPath(file.getPath()));
     }
 
     public <T extends Stmt, R> void filter(Class<T> kind, Function<T, R> function) {
@@ -54,13 +50,24 @@ public class SourceFile {
         }
     }
 
-    public <R> void acceptVisitor(IVisitor<R> visitor) {
-        for (var s : this.stmts) {
-            s.accept(visitor);
-        }
+    public SourceFile getImport(String filepath) {
+        return imports.get(filepath);
     }
 
-    public String basePath() {
-        return FilenameUtils.getPath(file.getPath());
+    public LinkedMap<String, SourceFile> getImports() {
+        return imports;
+    }
+
+    public String name() {
+        return FilenameUtils.removeExtension(file.getName());
+    }
+
+    public String path() {
+        return FilenameUtils.separatorsToUnix(Path.of(basePath(), name()).toString());
+    }
+
+    @Override
+    public String toString() {
+        return file.getName();
     }
 }

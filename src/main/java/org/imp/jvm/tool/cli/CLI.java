@@ -1,11 +1,13 @@
 package org.imp.jvm.tool.cli;
 
 import org.imp.jvm.tool.Compiler;
+import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.tool.Timer;
 import org.imp.jvm.tool.manifest.Manifest;
 import picocli.CommandLine;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 
 @CommandLine.Command(name = "imp", subcommands = {
         NewCommand.class,
@@ -47,6 +49,13 @@ public class CLI implements Runnable {
         try {
             manifest = Manifest.get();
             assert manifest != null;
+
+            String pwd = System.getProperty("user.dir");
+            ExportTable.initDB(Path.of(pwd, ".compile", "imp.db"));
+
+            // Connect to db
+            ExportTable.connectDB(Path.of(pwd, ".compile", "imp.db"));
+
             var imp = new Compiler(manifest.entry());
             Timer.LOG = true;
             var out = imp.compile();

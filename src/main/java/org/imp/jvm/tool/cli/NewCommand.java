@@ -8,7 +8,10 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,7 +52,7 @@ class NewCommand implements Runnable {
             Files.createDirectories(Path.of(pwd, projectName, ".compile"));
 
             // Create the Export Table
-            initDB(Path.of(pwd, projectName, ".compile", "ExportTable.db"));
+            initDB(Path.of(pwd, projectName, ".compile", "imp.db"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,33 +61,18 @@ class NewCommand implements Runnable {
         System.out.println("Creating new project of name " + p.toString());
     }
 
-
-    private void makeManifest(Path p) throws IOException {
-        Manifest manifest = Manifest.create(projectName, "0.0.1", "main.imp");
-        TomlMapper mapper = new TomlMapper();
-        mapper.writeValue(p.toFile(), manifest);
-    }
-
-    private String makeSampleFile() {
-        String template = """
-                log("hello, {0}!")
-                """;
-        Set<String> randoms = new HashSet<>();
-        Object[] objs = {"ree"};
-        return new MessageFormat(template).format(objs);
-    }
-
     private void initDB(Path dbPath) {
-        Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath.toString());
-            Statement statement = connection.createStatement();
+            ExportTable.connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath.toString());
+            Statement statement = ExportTable.connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
-            statement.executeUpdate("drop table if exists ExportTable");
-            statement.executeUpdate(ExportTable.createTable);
-            
+//            statement.executeUpdate("drop table if exists ExportTable");
+//            statement.executeUpdate(ExportTable.createTable);
+
+            ExportTable.initDB(dbPath);
+
             statement.executeUpdate("drop table if exists person");
             statement.executeUpdate("create table person (id integer, name string)");
             statement.executeUpdate("insert into person values(1, 'leo')");
@@ -100,14 +88,29 @@ class NewCommand implements Runnable {
             // it probably means no database file is found
             System.err.println(e.getMessage());
         } finally {
-            try {
-                if (connection != null)
-                    connection.close();
-            } catch (SQLException e) {
-                // connection close failed.
-                System.err.println(e.getMessage());
-            }
+//            try {
+//                if (ExportTable.conn != null)
+//                    ExportTable.conn.close();
+//            } catch (SQLException e) {
+//                // connection close failed.
+//                System.err.println(e.getMessage());
+//            }
         }
+    }
+
+    private void makeManifest(Path p) throws IOException {
+        Manifest manifest = Manifest.create(projectName, "0.0.1", "main.imp");
+        TomlMapper mapper = new TomlMapper();
+        mapper.writeValue(p.toFile(), manifest);
+    }
+
+    private String makeSampleFile() {
+        String template = """
+                log("hello, {0}!")
+                """;
+        Set<String> randoms = new HashSet<>();
+        Object[] objs = {"ree"};
+        return new MessageFormat(template).format(objs);
     }
 }
 
