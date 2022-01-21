@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class PrettyPrinterVisitor implements IVisitor<String> {
     public final Environment rootEnvironment;
-    public boolean displayAnnotations = true;
+    public final boolean displayAnnotations = true;
     public Environment currentEnvironment;
     private int indent = 0;
 
@@ -72,9 +72,8 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitCall(Expr.Call expr) {
 
-        String result = print(expr.item()) + "(" + expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")) +
+        return print(expr.item()) + "(" + expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")) +
                 ")";
-        return result;
     }
 
     @Override
@@ -85,9 +84,8 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitEnum(Stmt.Enum stmt) {
 
-        String result = "(enum " + stmt.name().source() + " (" + stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")) +
+        return "(enum " + stmt.name().source() + " (" + stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")) +
                 "))";
-        return result;
     }
 
     @Override
@@ -209,10 +207,9 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
                 name += " : $reee";
             }
         }
-        String result = name + " " + stmt.type().accept(this);
-//Todo: below
+        //Todo: below
 //        if (stmt.listType()) result += "[]";
-        return result;
+        return name + " " + stmt.type().accept(this);
     }
 
     @Override

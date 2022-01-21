@@ -20,10 +20,7 @@ public class TypeResolver {
             return scope.getType(tsc.identifier().getText());
         } else if (typeContext instanceof ImpParser.TypeListContext typeListContext) {
             Optional<BuiltInType> builtInType = getBuiltInType(typeListContext.t.getText());
-            if (builtInType.isPresent()) {
-                return new ListType(builtInType.get());
-            }
-            return null;
+            return builtInType.map(ListType::new).orElse(null);
         } else {
             System.err.println("reea");
         }

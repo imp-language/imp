@@ -64,14 +64,5 @@ public class CLI implements Runnable {
         }
     }
 
-    private void build() {
-//        var imp = new Compiler(this.filename);
-//        Timer.LOG = true;
-//        try {
-//            var out = imp.compile();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-    }
 }
 

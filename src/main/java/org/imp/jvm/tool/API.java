@@ -180,7 +180,7 @@ public class API {
         return fileMap;
     }
 
-    public static Map<String, ImpFile> gatherImports(ImpFile entry) throws FileNotFoundException {
+    public static Map<String, ImpFile> gatherImports(ImpFile entry) {
         String basePath = FilenameUtils.getPath(entry.name);
 
         Map<String, ImpFile> impFileMap = new HashMap<>();

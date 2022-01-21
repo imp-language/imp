@@ -57,6 +57,7 @@ public class Environment {
     public <T> T getVariableTyped(String name, Class<T> clazz) {
         var v = getVariable(name);
         if (clazz.isInstance(v)) {
+            //noinspection unchecked
             return (T) v;
         }
         return null;

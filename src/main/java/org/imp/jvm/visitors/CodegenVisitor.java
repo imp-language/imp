@@ -3,11 +3,9 @@ package org.imp.jvm.visitors;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.types.FuncType;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
-import org.imp.jvm.types.UnknownType;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
@@ -22,10 +20,10 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public final Environment rootEnvironment;
     public final File file;
     public final Map<String, byte[]> code;
+    final int flags = ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS;
     private final Stack<FuncType> functionStack = new Stack<>();
+    private final ClassWriter cw = new ClassWriter(flags);
     public Environment currentEnvironment;
-    int flags = ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS;
-    private ClassWriter cw = new ClassWriter(flags);
 
 
     public CodegenVisitor(Environment rootEnvironment, File file, Map<String, byte[]> code) {
@@ -105,34 +103,16 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitFunctionStmt(Stmt.Function stmt) {
-
-        // Find the FunctionType associated with this statement
         var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
-        if (funcType != null) {
-            functionStack.add(funcType);
-            var childEnvironment = stmt.body().environment();
+        // Todo: more function shit
 
-            for (var param : funcType.parameters) {
-                if (param.type instanceof UnknownType ut) {
-                    var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
-                    if (attempt != null) {
-                        param.type = attempt;
-                        childEnvironment.setVariableType(param.name, attempt);
+        String name = "Function_" + funcType.name;
+        String qualifiedName = "packageName" + "/" + name;
+        cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
-                    } else {
-                        Comptime.TypeNotFound.submit(file, stmt, ut.typeName);
-                    }
-                }
-            }
+        cw.visitEnd();
+        code.put("packageName" + "/" + name, cw.toByteArray());
 
-            currentEnvironment = childEnvironment;
-            stmt.body().accept(this);
-
-            currentEnvironment = currentEnvironment.getParent();
-            functionStack.pop();
-
-
-        }
         return Optional.empty();
     }
 
@@ -148,13 +128,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitIf(Stmt.If stmt) {
-        var childEnvironment = stmt.trueBlock().environment();
-        childEnvironment.setParent(currentEnvironment);
-        currentEnvironment = childEnvironment;
-        stmt.trueBlock().accept(this);
-        stmt.falseStmt().accept(this);
-
-        currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
     }
 
@@ -228,6 +201,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         String qualifiedName = "packageName" + "/" + name;
         cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
+//        addConstructor(structType.parent, classWriter, structType.fields, structType);
+
         for (int i = 0; i < structType.fieldNames.length; i++) {
             Type type = structType.fieldTypes[i];
             String descriptor = type.getDescriptor();
@@ -258,4 +233,5 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitVariable(Stmt.Variable stmt) {
         return Optional.empty();
     }
+
 }

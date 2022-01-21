@@ -65,7 +65,7 @@ public class ExportTable {
             }
 
             psAddExport = connection.prepareStatement("""
-                    replace into ExportTable(qualifiedName, name, source, kind, objectName, object) 
+                    replace into ExportTable(qualifiedName, name, source, kind, objectName, object)
                     values (?,?,?,?,?,?)
                     """);
             psGetExportFromSource = connection.prepareStatement("select * from ExportTable where source=?");
@@ -100,9 +100,7 @@ public class ExportTable {
 
             psAddExport.setBytes(6, employeeAsBytes);
             psAddExport.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -132,11 +130,7 @@ public class ExportTable {
                 ));
             }
             return types;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return Collections.emptyList();
@@ -155,9 +149,7 @@ public class ExportTable {
 
     public static String dump() {
         StringBuilder s = new StringBuilder();
-        table.forEach((k1, k2) -> {
-            s.append(StringUtils.rightPad(k1.toString(), 35)).append("\t").append(k2).append("\n");
-        });
+        table.forEach((k1, k2) -> s.append(StringUtils.rightPad(k1.toString(), 35)).append("\t").append(k2).append("\n"));
         return s.toString();
     }
 

@@ -21,7 +21,7 @@ import java.util.Set;
         description = "Create a new Imp project."
 )
 class NewCommand implements Runnable {
-    static boolean DEBUG = true;
+    static final boolean DEBUG = true;
 
 
     @CommandLine.Parameters(paramLabel = "<projectName>",
@@ -58,7 +58,7 @@ class NewCommand implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println("Creating new project of name " + p.toString());
+        System.out.println("Creating new project of name " + p);
     }
 
     private void initDB(Path dbPath) {

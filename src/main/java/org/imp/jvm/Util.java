@@ -59,9 +59,7 @@ public class Util {
     }
 
     public static String parameterString(String[] names, Type[] types) {
-        return zipMap(Arrays.asList(names), Arrays.asList(types), (name, type) -> {
-            return name + " " + type;
-        }).collect(Collectors.joining(", "));
+        return zipMap(Arrays.asList(names), Arrays.asList(types), (name, type) -> name + " " + type).collect(Collectors.joining(", "));
     }
 
     public static void println(Object o) {

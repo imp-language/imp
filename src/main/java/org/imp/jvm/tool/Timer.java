@@ -13,13 +13,12 @@ import static com.diogonunes.jcolor.Attribute.TEXT_COLOR;
 public class Timer {
 
     private static final long startTime = System.nanoTime();
-    private static long time = startTime;
     private static final String TIME_SYMBOL = "◔ ";
-
     /**
      * Change Timer.Log to `true` to enable messages
      */
     public static boolean LOG = false;
+    private static long time = startTime;
 
     public static void log(String message) {
         if (LOG) {
@@ -34,6 +33,7 @@ public class Timer {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static float logTotalTime() {
         if (LOG) {
             long current = System.nanoTime();
