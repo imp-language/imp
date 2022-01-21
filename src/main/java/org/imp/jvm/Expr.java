@@ -5,14 +5,18 @@ import org.imp.jvm.tokenizer.Token;
 import java.util.List;
 
 public interface Expr extends Node {
+    <R> R accept(Visitor<R> visitor);
+
     interface Visitor<R> {
         R visitAssignExpr(Assign expr);
 
-        R visitBinaryExpr(Binary expr);
-
         R visitBad(Bad expr);
 
+        R visitBinaryExpr(Binary expr);
+
         R visitCall(Call expr);
+
+        R visitEmptyList(EmptyList emptyList);
 
         R visitGroupingExpr(Grouping expr);
 
@@ -20,28 +24,22 @@ public interface Expr extends Node {
 
         R visitIndexAccess(IndexAccess expr);
 
-        R visitLogicalExpr(Logical expr);
-
         R visitLiteralExpr(Literal expr);
 
         R visitLiteralList(LiteralList expr);
 
+        R visitLogicalExpr(Logical expr);
+
         R visitNew(New expr);
-
-        R visitPrefix(Prefix expr);
-
 
         R visitPostfixExpr(Postfix expr);
 
+        R visitPrefix(Prefix expr);
 
         R visitPropertyAccess(PropertyAccess expr);
 
         R visitRange(Range range);
-
-        R visitEmptyList(EmptyList emptyList);
     }
-
-    <R> R accept(Visitor<R> visitor);
 
     record EmptyList(Location loc, Token type) implements Expr {
 
@@ -189,7 +187,7 @@ public interface Expr extends Node {
     }
 
     // expression . expression
-    record PropertyAccess(Location location, Expr left, Expr right) implements Expr {
+    record PropertyAccess(Location location, List<Expr> exprs) implements Expr {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitPropertyAccess(this);
         }

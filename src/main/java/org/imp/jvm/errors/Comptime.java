@@ -18,17 +18,24 @@ public enum Comptime {
 
     TypeNotFound(1, "Type `{0}` does not exist in the current environment.",
             "Make sure all types are defined or builtin."),
+    TypeNotResolved(2, "Variable `{0}` cannot be resolved to a type.",
+            "Make sure all variables are properly spelled etc."),
     ModuleNotFound(12, "Module `{0}` is not found.", "Is the module misspelled?"),
     Redeclaration(21, "Redeclaration of variable `{0}`.",
             "You cannot redeclare variables."),
     ReturnTypeMismatch(22,
             "Function `{0}` has return type of `{1}`. Cannot have another return statement with type `{2}`.",
-            "Make sure all return statements in your function are returning the same type.");
+            "Make sure all return statements in your function are returning the same type."),
+    PropertyNotFound(3, "Type `{0}` contains no field `{1}`.", null)
+    //
+    ;
 
 
+    static final List<String> errors = new ArrayList<>();
     public final String suggestion;
     public final int code;
     public final String templateString;
+
 
     Comptime(int code, String templateString, String suggestion) {
         this.suggestion = suggestion;
@@ -36,8 +43,17 @@ public enum Comptime {
         this.templateString = templateString;
     }
 
+    public static boolean hasErrors() {
+        return errors.size() > 0;
+    }
 
-    static final List<String> errors = new ArrayList<>();
+    public static void killIfErrors(String message) {
+        if (hasErrors()) {
+            errors.forEach(System.out::println);
+            System.out.println(message);
+            System.exit(1);
+        }
+    }
 
     public void submit(File file, Node node, Object... varargs) {
 
@@ -67,23 +83,13 @@ public enum Comptime {
             String s = file.getName() + "@" + loc.line() + ":" + loc.col() + " Error[" + code + ", " + name() + "] ";
             s += MessageFormat.format(templateString, varargs) + "\n";
             s += result + "\n";
-            s += suggestion;
+            if (suggestion != null) {
+                s += suggestion;
+            }
 
             errors.add(s);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public static boolean hasErrors() {
-        return errors.size() > 0;
-    }
-
-    public static void killIfErrors(String message) {
-        if (hasErrors()) {
-            errors.forEach(System.out::println);
-            System.out.println(message);
-            System.exit(1);
         }
     }
 

@@ -5,11 +5,10 @@ import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
-import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.types.*;
 
 import java.io.File;
-import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Stack;
 
@@ -222,41 +221,88 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitPropertyAccess(Expr.PropertyAccess expr) {
-        var left = expr.left();
-        var right = expr.right();
+        // For now, assume all expr chains are identifiers
+        var exprs = expr.exprs();
 
-        // 1. Get type of left-hand component
-        var lType = left.accept(this);
-//        var rType = right.accept(this);
-        if (lType.isPresent()) {
-            // 2. Find available fields in said type
-            //    (For now, StructType only)
-            var structType = (StructType) lType.get();
-            System.out.println(structType);
-            // 3. See if the right expression is available in the right
-            // Todo: figure out how to do this (it should be a flat list of identifiers as we don't have methods yet)
-            String rightId = "dob";
-            var t = structType.findType(rightId);
-            if (t.isPresent()) {
-                System.out.println(t.get());
-            } else {
-                // Todo: Property access error
-                System.err.println("bad");
+        var start = exprs.get(0);
+        var startType = start.accept(this);
+        Type t;
+        if (startType.isPresent()) {
+            t = startType.get();
+            for (int i = 1; i < exprs.size(); i++) {
+                if (t instanceof StructType structType) {
+                    System.out.println(structType);
+                    var identifier = (Expr.Identifier) exprs.get(i);
+                    var id = identifier.identifier().source();
+                    if (Arrays.asList(structType.fieldNames).contains(id)) {
+                        System.out.println("reeee");
+                        // Ok, continue to next step
+                        int idx = Arrays.asList(structType.fieldNames).indexOf(id);
+                        t = structType.fieldTypes[idx];
+                        if (t instanceof StructType) {
+                            structType = (StructType) t;
+                        } else {
+                            break;
+                        }
+                    } else {
+                        Comptime.PropertyNotFound.submit(file, exprs.get(i), t.getName(), id);
+                    }
+
+
+                } else if (t instanceof BuiltInType builtInType) {
+                    System.out.println(builtInType);
+                }
             }
-
-            System.exit(9);
-            var field = StructType.findStructField(structType, rightId);
-            if (field.isPresent()) {
-                var type = field.get().type;
-                System.out.println(type);
-
-                var n = type.getName().split("\\.");
-                var p = Path.of("examples", n[0]);
-
-                var fieldType = ExportTable.get(p.toString(), n[1]);
-                System.out.println(fieldType);
-            }
+            System.out.println(t);
+            return Optional.of(t);
+        } else {
+            // Todo: Property access error
+            System.err.println("bad");
         }
+
+//        System.exit(-1);
+
+//        var left = expr.left();
+//        var right = expr.right();
+//        // Left is usually an identifier
+//        var lType = left.accept(this);
+//        if (right instanceof Expr.Identifier identifier) {
+//
+//        } else {
+//
+//        }
+//
+//        // 1. Get type of left-hand component
+////        var rType = right.accept(this);
+//        if (lType.isPresent()) {
+//            // 2. Find available fields in said type
+//            //    (For now, StructType only)
+//            var structType = (StructType) lType.get();
+//            System.out.println(structType);
+//            // 3. See if the right expression is available in the right
+//            // Todo: figure out how to do this (it should be a flat list of identifiers as we don't have methods yet)
+//            String rightId = "dob";
+//            var t = structType.findType(rightId);
+//            if (t.isPresent()) {
+//                System.out.println(t.get());
+//            } else {
+//                // Todo: Property access error
+//                System.err.println("bad");
+//            }
+//
+//            System.exit(9);
+//            var field = StructType.findStructField(structType, rightId);
+//            if (field.isPresent()) {
+//                var type = field.get().type;
+//                System.out.println(type);
+//
+//                var n = type.getName().split("\\.");
+//                var p = Path.of("examples", n[0]);
+//
+//                var fieldType = ExportTable.get(p.toString(), n[1]);
+//                System.out.println(fieldType);
+//            }
+//        }
         //    (only Identifier, PropertyAccess, and FunctionCall can be a right side expression here)
         // 4. Return the type of the rightmost expression (after recursion)
 
@@ -326,6 +372,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
         if (t.isPresent()) {
             currentEnvironment.setVariableType(stmt.name().source(), t.get());
+        } else {
+            Comptime.TypeNotResolved.submit(file, expr, stmt.name().source());
         }
         return Optional.empty();
     }

@@ -33,8 +33,17 @@ public interface InfixParselet {
     record PropertyAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             var loc = parser.lok();
-            Expr right = parser.expression(precedence() - 1);
-            return new Expr.PropertyAccess(loc, left, right);
+            List<Expr> exprs = new ArrayList<>();
+            exprs.add(left);
+            Expr right = parser.expression(precedence());
+            exprs.add(right);
+            while (parser.peek().type() == TokenType.DOT) {
+                parser.consume();
+                right = parser.expression(precedence());
+                exprs.add(right);
+            }
+            System.out.println(exprs);
+            return new Expr.PropertyAccess(loc, exprs);
         }
 
 
@@ -47,7 +56,7 @@ public interface InfixParselet {
     record IndexAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             var loc = parser.lok();
-            Expr right = parser.expression();
+            Expr right = parser.expression(precedence());
             parser.consume(TokenType.RBRACK, "Expected ']' after index access.");
             return new Expr.IndexAccess(loc, left, right);
 
@@ -56,7 +65,7 @@ public interface InfixParselet {
 
         @Override
         public int precedence() {
-            return Precedence.PREFIX;
+            return Precedence.POSTFIX;
         }
     }
 
@@ -94,7 +103,6 @@ public interface InfixParselet {
                 parser.optional(TokenType.COMMA);
                 parser.consume(TokenType.RPAREN, "Expected closing ')' after function call.");
             }
-
 
             return new Expr.Call(loc, left, args);
         }

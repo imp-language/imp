@@ -11,6 +11,8 @@ import java.util.List;
 public class FuncType implements Type, Serializable {
     public final Modifier modifier;
     public final List<Identifier> parameters;
+    //    public final String[] fieldNames;
+//    public final Type[] fieldTypes;
     public String name;
     public Type returnType = BuiltInType.VOID;
 

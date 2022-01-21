@@ -4,7 +4,6 @@ import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.domain.SourceFile;
-import org.imp.jvm.types.StructType;
 import org.imp.jvm.types.Type;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ExportTable {
 
@@ -37,9 +35,6 @@ public class ExportTable {
                         name string not null,
                         source string not null,
                         kind string not null,
-                        -- struct fields
-                        structFields string,
-                        structTypes string,
                         -- serialized
                         objectName string,
                         object blob
@@ -70,8 +65,8 @@ public class ExportTable {
             }
 
             psAddExport = connection.prepareStatement("""
-                    replace into ExportTable(qualifiedName, name, source, kind, structFields, structTypes, objectName, object) 
-                    values (?,?,?,?,?,?,?,?)
+                    replace into ExportTable(qualifiedName, name, source, kind, objectName, object) 
+                    values (?,?,?,?,?,?)
                     """);
             psGetExportFromSource = connection.prepareStatement("select * from ExportTable where source=?");
         } catch (SQLException e) {
@@ -94,17 +89,7 @@ public class ExportTable {
             psAddExport.setString(3, source);
             psAddExport.setString(4, type.kind());
 
-            if (type instanceof StructType st) {
-                String structFields = st.fields.stream().map(f -> f.name).collect(Collectors.joining(","));
-                psAddExport.setString(5, structFields);
-                String structTypes = st.fields.stream().map(f -> f.type.getName()).collect(Collectors.joining(","));
-                psAddExport.setString(6, structTypes);
-            } else {
-                psAddExport.setString(5, null);
-                psAddExport.setString(6, null);
-            }
-
-            psAddExport.setString(7, type.getClass().getName());
+            psAddExport.setString(5, type.getClass().getName());
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -113,7 +98,7 @@ public class ExportTable {
 
             var b = new SerialBlob(employeeAsBytes);
 
-            psAddExport.setBytes(8, employeeAsBytes);
+            psAddExport.setBytes(6, employeeAsBytes);
             psAddExport.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -133,7 +118,7 @@ public class ExportTable {
 
             List<ExportResult> types = new ArrayList<>();
             while (rs.next()) {
-                ByteArrayInputStream bais = new ByteArrayInputStream(rs.getBytes(8));
+                ByteArrayInputStream bais = new ByteArrayInputStream(rs.getBytes(6));
                 ObjectInputStream ois = new ObjectInputStream(bais);
                 Type o = (Type) ois.readObject();
 
@@ -142,8 +127,7 @@ public class ExportTable {
                         rs.getString(2),
                         rs.getString(3),
                         rs.getString(4),
-                        rs.getString(5).split(","),
-                        rs.getString(6).split(","),
+                        rs.getString(5),
                         o
                 ));
             }
@@ -177,8 +161,8 @@ public class ExportTable {
         return s.toString();
     }
 
-    public record ExportResult(String qualifiedName, String name, String source, String kind, String[] structFields,
-                               String[] structTypes, Object o) {
+    public record ExportResult(String qualifiedName, String name, String source, String kind, String objectName
+            , Object o) {
 
     }
 }

@@ -164,7 +164,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitImport(Stmt.Import stmt) {
-        return "import " + '"' + stmt.stringLiteral().source() + '"';
+        return "import " + '"' + stmt.stringLiteral().source() + "\" " + stmt.identifier().source();
     }
 
     @Override
@@ -227,8 +227,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitPropertyAccess(Expr.PropertyAccess expr) {
-
-        return print(expr.left()) + "." + print(expr.right());
+        return expr.exprs().stream().map(this::print).collect(Collectors.joining("."));
     }
 
     // Todo: relate to binary expressions somehow
