@@ -9,6 +9,7 @@ import org.imp.jvm.visitors.IVisitor;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -26,10 +27,13 @@ public class SourceFile {
         this.stmts = stmts;
     }
 
-    public <R> void acceptVisitor(IVisitor<R> visitor) {
+    public <R> List<R> acceptVisitor(IVisitor<R> visitor) {
+        List<R> results = new ArrayList<>();
         for (var s : this.stmts) {
-            s.accept(visitor);
+            var r = s.accept(visitor);
+            results.add(r);
         }
+        return results;
     }
 
     public void addImport(File file, SourceFile sourceFile) {
@@ -57,6 +61,7 @@ public class SourceFile {
     public LinkedMap<String, SourceFile> getImports() {
         return imports;
     }
+
 
     public String name() {
         return FilenameUtils.removeExtension(file.getName());

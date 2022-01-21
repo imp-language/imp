@@ -53,6 +53,20 @@ public class Compiler {
 //        System.out.println(astPrint.print(entry.stmts));
 //        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);
 
+        Iterator<SourceFile> iterator = new DepthFirstIterator<>(dependencyGraph, entry);
+        Map<String, SourceFile> compilationSet = new HashMap<>();
+        while (iterator.hasNext()) {
+            SourceFile impFile = iterator.next();
+            if (!compilationSet.containsKey(impFile.path())) {
+                compilationSet.put(impFile.path(), impFile);
+            }
+        }
+
+        API.buildProgram(compilationSet);
+        Timer.log("generate bytecode");
+
+        Timer.LOG = true;
+        Timer.logTotalTime();
         return "ree";
     }
 

@@ -209,6 +209,44 @@ public class API {
         return impFileMap;
     }
 
+
+    public static void buildProgram(Map<String, SourceFile> compilationSet) {
+        BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
+        // Todo: bytecode generation visitor!
+        for (var key : compilationSet.keySet()) {
+            var source = compilationSet.get(key);
+            System.out.println("Generating " + source.path());
+            var byteUnits = bytecodeGenerator.generate(source);
+
+            String className = source.name();
+            for (var byteUnit : byteUnits.entrySet()) {
+                String qualifiedName = className;
+                if (!byteUnit.getKey().equals("main")) {
+                    qualifiedName = byteUnit.getKey();
+                }
+                String fileName = ".compile/" + qualifiedName + ".class";
+
+//                System.out.println("Writing: " + fileName);
+
+                File tmp = new File(fileName);
+                tmp.getParentFile().mkdirs();
+
+                OutputStream output = null;
+                try {
+                    output = new FileOutputStream(fileName);
+                    output.write(byteUnit.getValue());
+                    output.close();
+                } catch (IOException e) {
+                    System.err.println("The above call to mkdirs() should have worked.");
+                    System.exit(9);
+                }
+
+            }
+        }
+        Logger.killIfErrors("Errored during bytecode generation.");
+
+    }
+
     public static Program createProgram(Map<String, ImpFile> files) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         Logger.killIfErrors("Errored during bytecode generation.");
