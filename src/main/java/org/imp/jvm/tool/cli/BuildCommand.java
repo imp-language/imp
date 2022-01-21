@@ -1,5 +1,6 @@
 package org.imp.jvm.tool.cli;
 
+import org.imp.jvm.Util;
 import picocli.CommandLine;
 
 @CommandLine.Command(
@@ -11,7 +12,7 @@ class BuildCommand implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Building project");
+        Util.println("Building project");
     }
 
 }

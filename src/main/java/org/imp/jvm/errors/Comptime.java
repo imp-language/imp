@@ -2,6 +2,7 @@ package org.imp.jvm.errors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.Node;
+import org.imp.jvm.Util;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public enum Comptime {
     public static void killIfErrors(String message) {
         if (hasErrors()) {
             errors.forEach(System.out::println);
-            System.out.println(message);
+            Util.println(message);
             System.exit(1);
         }
     }
@@ -64,8 +65,7 @@ public enum Comptime {
             int limit = 3;
 
             Stream<String> lines = Files.lines(file.toPath());
-            var selection = lines.skip(line).limit(limit)
-                    .collect(Collectors.toList());
+            var selection = lines.skip(line).limit(limit).toList();
 
             int startLine = line;
             int endLine = line + limit;

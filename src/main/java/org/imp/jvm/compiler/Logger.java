@@ -1,5 +1,6 @@
 package org.imp.jvm.compiler;
 
+import org.imp.jvm.Util;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.statement.Statement;
 
@@ -26,7 +27,7 @@ public class Logger {
     public static void killIfErrors(String message) {
         if (hasErrors()) {
             Logger.getSyntaxErrors().forEach(System.out::println);
-            System.out.println(message);
+            Util.println(message);
             System.exit(1);
         }
     }

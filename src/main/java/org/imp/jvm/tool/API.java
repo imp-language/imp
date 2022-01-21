@@ -47,7 +47,6 @@ public class API {
             String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
             filePath = FilenameUtils.separatorsToUnix(filePath);
             var f = new File(filePath);
-            System.out.println(relativePath);
             if (f.exists()) {
                 SourceFile next = parse(f);
                 source.addImport(f, next);

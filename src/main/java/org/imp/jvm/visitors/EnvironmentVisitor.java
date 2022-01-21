@@ -166,8 +166,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
         String alias = stmt.identifier().source();
 
-        System.out.println(importPath);
-
         var results = ExportTable.getExportsFromSource(importPath);
 
         for (var result : results) {

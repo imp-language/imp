@@ -231,19 +231,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
             t = startType.get();
             for (int i = 1; i < exprs.size(); i++) {
                 if (t instanceof StructType structType) {
-                    System.out.println(structType);
                     var identifier = (Expr.Identifier) exprs.get(i);
                     var id = identifier.identifier().source();
                     if (Arrays.asList(structType.fieldNames).contains(id)) {
-                        System.out.println("reeee");
                         // Ok, continue to next step
                         int idx = Arrays.asList(structType.fieldNames).indexOf(id);
                         t = structType.fieldTypes[idx];
-                        if (t instanceof StructType) {
-                            structType = (StructType) t;
-                        } else {
-                            break;
-                        }
                     } else {
                         Comptime.PropertyNotFound.submit(file, exprs.get(i), t.getName(), id);
                     }
@@ -253,7 +246,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
                     System.out.println(builtInType);
                 }
             }
-            System.out.println(t);
             return Optional.of(t);
         } else {
             // Todo: Property access error

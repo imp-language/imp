@@ -63,4 +63,8 @@ public class Util {
             return name + " " + type;
         }).collect(Collectors.joining(", "));
     }
+
+    public static void println(Object o) {
+        System.out.println(o);
+    }
 }

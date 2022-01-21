@@ -9,13 +9,11 @@ import java.io.File;
 public class Environment {
 
 
-    private Environment parent;
-
-
     // Type aliases, functions, structs, and enums (Don't use, Todo: deprecate)
     private final LinkedMap<String, Type> types = new LinkedMap<>();
     // Variables referencing values of the above
     private final LinkedMap<String, Type> variables = new LinkedMap<>();
+    private Environment parent;
 
     public Environment() {
         this.parent = null;
@@ -37,13 +35,12 @@ public class Environment {
         }
     }
 
-    // Todo: This is (better but still) bad and errors ofter.
-    public <T> T getVariableTyped(String name, Class<T> clazz) {
-        var v = getVariable(name);
-        if (clazz.isInstance(v)) {
-            return (T) v;
-        }
-        return null;
+    public Environment getParent() {
+        return parent;
+    }
+
+    public void setParent(Environment parent) {
+        this.parent = parent;
     }
 
     public Type getVariable(String name) {
@@ -56,20 +53,21 @@ public class Environment {
         return null;
     }
 
+    // Todo: This is (better but still) bad and errors ofter.
+    public <T> T getVariableTyped(String name, Class<T> clazz) {
+        var v = getVariable(name);
+        if (clazz.isInstance(v)) {
+            return (T) v;
+        }
+        return null;
+    }
+
     public void setVariableType(String name, Type type) {
         if (variables.get(name) != null) {
             variables.put(name, type);
         } else {
-            System.err.println("reee");
+//            System.err.println("reee");
         }
-    }
-
-    public Environment getParent() {
-        return parent;
-    }
-
-    public void setParent(Environment parent) {
-        this.parent = parent;
     }
 
 }

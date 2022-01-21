@@ -42,7 +42,6 @@ public interface InfixParselet {
                 right = parser.expression(precedence());
                 exprs.add(right);
             }
-            System.out.println(exprs);
             return new Expr.PropertyAccess(loc, exprs);
         }
 
