@@ -25,4 +25,12 @@ public final class DescriptorFactory {
         String returnDescriptor = returnType.getDescriptor();
         return parametersDescriptor + returnDescriptor;
     }
+
+    public static String getDescriptor(Collection<Type> types, Type returnType) {
+        String parametersDescriptor = types.stream()
+                .map(Type::getDescriptor)
+                .collect(Collectors.joining("", "(", ")"));
+        String returnDescriptor = returnType.getDescriptor();
+        return parametersDescriptor + returnDescriptor;
+    }
 }

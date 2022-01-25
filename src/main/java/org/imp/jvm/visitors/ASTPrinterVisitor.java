@@ -279,16 +279,4 @@ public class ASTPrinterVisitor implements IVisitor<String> {
         return builder.toString();
     }
 
-    private String parenthesize2(String name, List<Expr> exprs) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("(").append(name);
-        for (Expr expr : exprs) {
-            builder.append(" ");
-            builder.append(expr.accept(this));
-        }
-        builder.append(")");
-
-        return builder.toString();
-    }
 }

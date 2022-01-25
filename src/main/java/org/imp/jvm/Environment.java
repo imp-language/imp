@@ -35,6 +35,18 @@ public class Environment {
         }
     }
 
+    /**
+     * @param varName name to search for
+     * @return index of local variable in frame
+     */
+    public int getLocalVariableIndex(String varName) {
+        // `this` and `super` usually occupy position 0 so we start at position 1?
+        if (getVariable(varName) == null) {
+            throw new Error("variable lost somewhere during compilation.");
+        }
+        return variables.indexOf(varName) + 1;
+    }
+
     public Environment getParent() {
         return parent;
     }

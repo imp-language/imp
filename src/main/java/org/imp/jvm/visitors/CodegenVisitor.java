@@ -1,16 +1,16 @@
 package org.imp.jvm.visitors;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.types.FuncType;
-import org.imp.jvm.types.StructType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.compiler.DescriptorFactory;
+import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.types.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
@@ -18,7 +18,7 @@ import java.util.Stack;
 public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     private static final int CLASS_VERSION = 61;
     public final Environment rootEnvironment;
-    public final File file;
+    public final SourceFile file;
     public final Map<String, byte[]> code;
     final int flags = ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS;
     private final Stack<FuncType> functionStack = new Stack<>();
@@ -26,7 +26,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Environment currentEnvironment;
 
 
-    public CodegenVisitor(Environment rootEnvironment, File file, Map<String, byte[]> code) {
+    public CodegenVisitor(Environment rootEnvironment, SourceFile file, Map<String, byte[]> code) {
         this.rootEnvironment = rootEnvironment;
         this.file = file;
         this.currentEnvironment = this.rootEnvironment;
@@ -40,7 +40,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitAssignExpr(Expr.Assign expr) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
@@ -50,29 +50,30 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitBinaryExpr(Expr.Binary expr) {
-
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitBlockStmt(Stmt.Block block) {
-
+        for (var stmt : block.statements()) {
+            stmt.accept(this);
+        }
         return Optional.empty();
     }
 
     @Override
     public Optional<ClassWriter> visitCall(Expr.Call expr) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitEmptyList(Expr.EmptyList emptyList) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitEnum(Stmt.Enum stmt) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
@@ -82,53 +83,71 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitFor(Stmt.For stmt) {
-
-        currentEnvironment = stmt.block().environment();
-        stmt.condition().accept(this);
-        stmt.block().accept(this);
-        currentEnvironment = currentEnvironment.getParent();
-
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitForInCondition(Stmt.ForInCondition stmt) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitFunctionStmt(Stmt.Function stmt) {
         var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
-        // Todo: more function shit
+        functionStack.add(funcType);
+        var childEnvironment = stmt.body().environment();
 
+        // Generate class
         String name = "Function_" + funcType.name;
-        String qualifiedName = "packageName" + "/" + name;
+        String qualifiedName = file.path() + "/" + name;
         cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
+        // Generate invoker method
+        String descriptor = DescriptorFactory.getMethodDescriptor(funcType.parameters, funcType.returnType);
+        funcType.mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "invoke", descriptor, null, null);
+        funcType.mv.visitCode();
+
+        // Generate function body
+        currentEnvironment = childEnvironment;
+        stmt.body().accept(this);
+
+        // Finish generating invoker function
+
+        funcType.mv.visitMaxs(-1, -1);
+        funcType.mv.visitEnd();
+
         cw.visitEnd();
-        code.put("packageName" + "/" + name, cw.toByteArray());
+        code.put(qualifiedName, cw.toByteArray());
+
+        currentEnvironment = currentEnvironment.getParent();
+        functionStack.pop();
 
         return Optional.empty();
     }
 
     @Override
     public Optional<ClassWriter> visitGroupingExpr(Expr.Grouping expr) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitIdentifierExpr(Expr.Identifier expr) {
+
+        var funcType = functionStack.peek();
+        var type = currentEnvironment.getVariable(expr.identifier().source());
+        var index = currentEnvironment.getLocalVariableIndex(expr.identifier().source());
+        funcType.mv.visitVarInsn(type.getLoadVariableOpcode(), index);
         return Optional.empty();
     }
 
     @Override
     public Optional<ClassWriter> visitIf(Stmt.If stmt) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
@@ -139,56 +158,71 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitIndexAccess(Expr.IndexAccess expr) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitLiteralExpr(Expr.Literal expr) {
+        var funcType = functionStack.peek();
+        var transformed = TypeResolver.getValueFromString(expr.literal().source(), BuiltInType.getFromToken(expr.literal().type()));
+        funcType.mv.visitLdcInsn(transformed);
         return Optional.empty();
     }
 
     @Override
     public Optional<ClassWriter> visitLiteralList(Expr.LiteralList expr) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitLogicalExpr(Expr.Logical expr) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitNew(Expr.New expr) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitParameterStmt(Stmt.Parameter stmt) {
-        return Optional.empty();
+
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitPostfixExpr(Expr.Postfix expr) {
-        return Optional.empty();
+
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitPrefix(Expr.Prefix expr) {
-        return Optional.empty();
+
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitPropertyAccess(Expr.PropertyAccess expr) {
-        return Optional.empty();
+
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitRange(Expr.Range range) {
-        return Optional.empty();
+
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitReturnStmt(Stmt.Return stmt) {
+        var funcType = functionStack.peek();
+
+        stmt.expr().accept(this);
+//        var type = currentEnvironment.getVariable(stmt.identifier());
+//        Type type = expression.type;
+        // Todo: need to bubble up the type from expression
+        funcType.mv.visitInsn(BuiltInType.INT.getReturnOpcode());
         return Optional.empty();
     }
 
@@ -198,7 +232,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var structType = currentEnvironment.getVariableTyped(struct.name().source(), StructType.class);
 
         String name = structType.name;
-        String qualifiedName = "packageName" + "/" + name;
+        String qualifiedName = file.path() + "/" + name;
         cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
 //        addConstructor(structType.parent, classWriter, structType.fields, structType);
@@ -214,23 +248,32 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         cw.visitEnd();
 
-        code.put("packageName" + "/" + structType.name, cw.toByteArray());
+        code.put(qualifiedName, cw.toByteArray());
 
         return Optional.of(cw);
     }
 
     @Override
     public Optional<ClassWriter> visitType(Stmt.Type stmt) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitTypeAlias(Stmt.TypeAlias stmt) {
-        return Optional.empty();
+        throw new NotImplementedException("method not implemented");
     }
 
     @Override
     public Optional<ClassWriter> visitVariable(Stmt.Variable stmt) {
+        // The fact that each variable in the block (environment) is known at this point
+        // means it's possible to do compiler optimizations like moving all declarations
+        // to one initialization at the beginning of the block or function.
+        var funcType = functionStack.peek();
+
+        stmt.expr().accept(this);
+        int index = currentEnvironment.getLocalVariableIndex(stmt.identifier());
+        var type = currentEnvironment.getVariable(stmt.identifier());
+        funcType.mv.visitVarInsn(type.getStoreVariableOpcode(), index);
         return Optional.empty();
     }
 

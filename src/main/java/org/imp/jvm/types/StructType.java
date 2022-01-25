@@ -114,7 +114,8 @@ public class StructType implements Type, Serializable {
 
     @Override
     public String getDescriptor() {
-        return "L" + getInternalName() + ";";
+        String n = qualifiedName.replace(":", "/");
+        return "L" + n + ";";
     }
 
     @Override

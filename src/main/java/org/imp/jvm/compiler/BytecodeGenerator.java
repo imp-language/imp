@@ -62,7 +62,7 @@ public class BytecodeGenerator {
         String cleanedPath = source.path();
 
         // Generate bytecode for each Type defined in the Imp file
-        var codegenVisitor = new CodegenVisitor(source.rootEnvironment, source.file, code);
+        var codegenVisitor = new CodegenVisitor(source.rootEnvironment, source, code);
         // Todo: refactor CodegenVisitor to use most of the logic from the last pass at codegen
 
         var results = source.acceptVisitor(codegenVisitor);
@@ -109,6 +109,6 @@ public class BytecodeGenerator {
 
         */
 
-        return code;
+        return codegenVisitor.code;
     }
 }
