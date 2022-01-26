@@ -96,7 +96,7 @@ public class API {
             //                ast = TypeCheckerMain.getAbstractSyntaxTree2(file);
             Timer.log("ANTLR visitor complete");
         }
-        return ast;
+        return null;
     }
 
     /**
@@ -228,9 +228,10 @@ public class API {
 //                System.out.println("Writing: " + fileName);
 
                 File tmp = new File(fileName);
+                //noinspection ResultOfMethodCallIgnored
                 tmp.getParentFile().mkdirs();
 
-                OutputStream output = null;
+                OutputStream output;
                 try {
                     output = new FileOutputStream(fileName);
                     output.write(byteUnit.getValue());
@@ -264,9 +265,10 @@ public class API {
 //                System.out.println("Writing: " + fileName);
 
                 File tmp = new File(fileName);
+                //noinspection ResultOfMethodCallIgnored
                 tmp.getParentFile().mkdirs();
 
-                OutputStream output = null;
+                OutputStream output;
                 try {
                     output = new FileOutputStream(fileName);
                     output.write(byteUnit.getValue());

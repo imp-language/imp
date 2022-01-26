@@ -9,24 +9,11 @@ import java.util.Iterator;
 import static org.imp.jvm.tokenizer.TokenType.*;
 
 public class Tokenizer implements Iterator<Token> {
-    private PushbackReader reader;
+    private final StringBuilder sb = new StringBuilder();
     public int line = 1;
     public int col = 1;
-
-    public Status getStatus() {
-        return status;
-    }
-
+    private PushbackReader reader;
     private Status status = Status.Whole;
-
-    enum Status {
-        Whole, // do codegen, all input is correct
-        Partial, // attempt to parse, some errors
-        Fatal // bad, exit
-    }
-
-
-    private final StringBuilder sb = new StringBuilder();
 
     public Tokenizer(File file) {
         try {
@@ -34,6 +21,10 @@ public class Tokenizer implements Iterator<Token> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     @Override
@@ -68,7 +59,6 @@ public class Tokenizer implements Iterator<Token> {
             String content = String.valueOf(new char[]{c, next});
             var longToken = TokenType.find(content);
 
-
             if (longToken == null && shortToken == null) {
                 advance();
                 advance();
@@ -88,16 +78,64 @@ public class Tokenizer implements Iterator<Token> {
 
     }
 
-    private String consumeString() {
-        advance();
-        char p = peek();
-        while (p != '"' && p != '\0') {
-            sb.append(advance());
-            p = peek();
+    /**
+     * Call advance() on all tokens considered whitespace or comments
+     */
+    void skipWhitespace() {
+        while (true) {
+            char c = peek();
+            switch (c) {
+                case ' ':
+                case '\r':
+                case '\t':
+                case '\n':
+                    advance();
+                    break;
+                case '/':
+                    if (peekNext() == '/') {
+                        // A comment goes until the end of the line.
+                        var b = 0;
+                        while (peek() != '\n'/* && !isAtEnd()*/) advance();
+                    } else if (peekNext() == '*') {
+                        advance();
+                        advance();
+                        String nextTwo;
+                        do {
+                            advance();
+                            nextTwo = String.valueOf(peek()) + peekNext();
+                        } while (!nextTwo.equals("*/"));
+                        advance();
+                        advance();
+                    } else {
+                        return;
+                    }
+                    break;
+                default:
+                    return;
+            }
         }
-        // consume the closing quotation marks
-        advance();
-        return clearStringBuilder();
+    }
+
+    /**
+     * Advance along the input stream.
+     *
+     * @return char
+     */
+    private char advance() {
+        try {
+            int i = reader.read();
+            if (i == -1) return '\0';
+            if (i == '\n') {
+                line++;
+                col = 1;
+            } else {
+                col++;
+            }
+            return (char) i;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return '\0';
     }
 
     private String clearStringBuilder() {
@@ -152,27 +190,28 @@ public class Tokenizer implements Iterator<Token> {
         return new Token(type, line, col, value);
     }
 
-
-    /**
-     * Advance along the input stream.
-     *
-     * @return char
-     */
-    private char advance() {
-        try {
-            int i = reader.read();
-            if (i == -1) return '\0';
-            if (i == '\n') {
-                line++;
-                col = 1;
-            } else {
-                col++;
-            }
-            return (char) i;
-        } catch (IOException e) {
-            e.printStackTrace();
+    private String consumeString() {
+        advance();
+        char p = peek();
+        while (p != '"' && p != '\0') {
+            sb.append(advance());
+            p = peek();
         }
-        return '\0';
+        // consume the closing quotation marks
+        advance();
+        return clearStringBuilder();
+    }
+
+    private boolean isAlpha(char c) {
+        return Character.isLetter(c) || c == '_';
+    }
+
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     /**
@@ -211,53 +250,9 @@ public class Tokenizer implements Iterator<Token> {
         return '\0';
     }
 
-    private boolean isAlpha(char c) {
-        return Character.isLetter(c) || c == '_';
-    }
-
-    private boolean isAlphaNumeric(char c) {
-        return isAlpha(c) || isDigit(c);
-    }
-
-    private boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
-    }
-
-    /**
-     * Call advance() on all tokens considered whitespace or comments
-     */
-    void skipWhitespace() {
-        while (true) {
-            char c = peek();
-            switch (c) {
-                case ' ':
-                case '\r':
-                case '\t':
-                case '\n':
-                    advance();
-                    break;
-                case '/':
-                    if (peekNext() == '/') {
-                        // A comment goes until the end of the line.
-                        var b = 0;
-                        while (peek() != '\n'/* && !isAtEnd()*/) advance();
-                    } else if (peekNext() == '*') {
-                        advance();
-                        advance();
-                        String nextTwo = "";
-                        do {
-                            advance();
-                            nextTwo = String.valueOf(peek()) + peekNext();
-                        } while (!nextTwo.equals("*/"));
-                        advance();
-                        advance();
-                    } else {
-                        return;
-                    }
-                    break;
-                default:
-                    return;
-            }
-        }
+    enum Status {
+        Whole, // do codegen, all input is correct
+        Partial, // attempt to parse, some errors
+        Fatal // bad, exit
     }
 }

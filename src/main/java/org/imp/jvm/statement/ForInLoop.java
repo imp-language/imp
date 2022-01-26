@@ -25,9 +25,40 @@ public class ForInLoop extends Loop {
     }
 
     @Override
+    public void generate(MethodVisitor mv, Scope scope) {
+        Label end = new Label();
+        Label loop = new Label();
+
+        expression.generate(mv, scope);
+        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List", "iterator", "()Ljava/util/Iterator;", true);
+        int iteratorIndex = block.scope.getLocalVariableIndex("iterator");
+        mv.visitVarInsn(Opcodes.ASTORE, iteratorIndex);
+
+        mv.visitLabel(loop);
+
+        mv.visitVarInsn(Opcodes.ALOAD, iteratorIndex);
+        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true);
+        mv.visitJumpInsn(Opcodes.IFEQ, end);
+        mv.visitVarInsn(Opcodes.ALOAD, iteratorIndex);
+
+        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true);
+        int nextIndex = block.scope.getLocalVariableIndex(iteratorName);
+        LocalVariable i = block.scope.getLocalVariable(iteratorName);
+        if (i.type instanceof BuiltInType bt) {
+            bt.doUnboxing(mv);
+        }
+
+        mv.visitVarInsn(i.type.getStoreVariableOpcode(), nextIndex);
+
+        block.generate(mv, block.scope);
+
+        mv.visitJumpInsn(Opcodes.GOTO, loop);
+        mv.visitLabel(end);
+    }
+
+    @Override
     public void validate(Scope scope) {
         expression.validate(scope);
-
 
         // Check that the expression can be iterated upon
         // Until the Imp type hierarchy develops, we will
@@ -61,39 +92,5 @@ public class ForInLoop extends Loop {
         block.validate(block.scope);
 
 
-    }
-
-    @Override
-    public void generate(MethodVisitor mv, Scope scope) {
-        Label end = new Label();
-        Label loop = new Label();
-
-        expression.generate(mv, scope);
-        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List", "iterator", "()Ljava/util/Iterator;", true);
-        int iteratorIndex = block.scope.getLocalVariableIndex("iterator");
-        mv.visitVarInsn(Opcodes.ASTORE, iteratorIndex);
-
-        mv.visitLabel(loop);
-
-        mv.visitVarInsn(Opcodes.ALOAD, iteratorIndex);
-        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true);
-        mv.visitJumpInsn(Opcodes.IFEQ, end);
-        mv.visitVarInsn(Opcodes.ALOAD, iteratorIndex);
-
-        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true);
-        int nextIndex = block.scope.getLocalVariableIndex(iteratorName);
-        LocalVariable i = block.scope.getLocalVariable(iteratorName);
-        if (i.type instanceof BuiltInType bt) {
-            bt.doUnboxing(mv);
-        } else {
-//            mv.visitTypeInsn(Opcodes.CHECKCAST, i.type.getInternalName());
-        }
-
-        mv.visitVarInsn(i.type.getStoreVariableOpcode(), nextIndex);
-
-        block.generate(mv, block.scope);
-
-        mv.visitJumpInsn(Opcodes.GOTO, loop);
-        mv.visitLabel(end);
     }
 }

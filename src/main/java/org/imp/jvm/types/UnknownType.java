@@ -7,7 +7,7 @@ import org.objectweb.asm.Opcodes;
 public class UnknownType implements Type {
     static int counter = 1;
     final int id;
-    public String typeName = null;
+    public String typeName;
 
     public UnknownType(String typeName) {
         this.typeName = typeName;
@@ -53,7 +53,7 @@ public class UnknownType implements Type {
 
     @Override
     public int getMultiplyOpcode() {
-        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
+        throw new RuntimeException("Multiplication operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
@@ -78,7 +78,7 @@ public class UnknownType implements Type {
 
     @Override
     public int getSubtractOpcode() {
-        throw new RuntimeException("Substraction operation not (yet ;) ) supported for custom objects");
+        throw new RuntimeException("Subtraction operation not (yet ;) ) supported for custom objects");
     }
 
     @Override

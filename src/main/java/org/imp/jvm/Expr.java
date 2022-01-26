@@ -315,7 +315,7 @@ public abstract class Expr implements Node {
     }
 
     // expression ... expression
-    public class Range extends Expr {
+    public static class Range extends Expr {
         public final Expr left;
         public final Expr right;
 

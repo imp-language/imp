@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 public class StructInit extends Expression {
     public final StructType structType;
-    private final String structName;
     public final List<Expression> arguments;
     public final Type owner;
+    private final String structName;
 
 
     public StructInit(String structName, List<Expression> arguments, Type owner) {
@@ -33,8 +33,8 @@ public class StructInit extends Expression {
     public void generate(MethodVisitor mv, Scope scope) {
 
         String ownerDescriptor = this.type.getInternalName();
-        mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor); //NEW instruction takes object decriptor as an input
-        mv.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our brand new object
+        mv.visitTypeInsn(Opcodes.NEW, ownerDescriptor); //NEW instruction takes object descriptor as an input
+        mv.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our new object
 
         List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, BuiltInType.VOID);

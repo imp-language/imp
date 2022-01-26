@@ -79,9 +79,8 @@ public class Environment {
     public void setVariableType(String name, Type type) {
         if (variables.get(name) != null) {
             variables.put(name, type);
-        } else {
-//            System.err.println("reee");
-        }
+        }  //            System.err.println("reee");
+
     }
 
 }

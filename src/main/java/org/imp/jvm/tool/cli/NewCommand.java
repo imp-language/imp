@@ -80,13 +80,13 @@ class NewCommand implements Runnable {
             // it probably means no database file is found
             System.err.println(e.getMessage());
         } finally {
-//            try {
-//                if (ExportTable.conn != null)
-//                    ExportTable.conn.close();
-//            } catch (SQLException e) {
-//                // connection close failed.
-//                System.err.println(e.getMessage());
-//            }
+            try {
+                if (ExportTable.connection != null)
+                    ExportTable.connection.close();
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
         }
     }
 

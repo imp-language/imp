@@ -19,6 +19,11 @@ public class Arithmetic extends Expression {
         this.right = right;
     }
 
+    private static Type getCommonType(Expression left, Expression right) {
+        if (right.type == BuiltInType.STRING) return BuiltInType.STRING;
+        return left.type;
+    }
+
     public void generate(MethodVisitor mv, Scope scope) {
         if (type.equals(BuiltInType.STRING)) {
             mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
@@ -76,7 +81,7 @@ public class Arithmetic extends Expression {
                 case DIVIDE -> goalType.getDivideOpcode();
                 // Todo: Modulus
                 case MODULUS -> 0;
-                case LESS, GREATER, LESS_OR_EQUAL, GRATER_OR_EQAL, INDEX -> 0;
+                case LESS, GREATER, LESS_OR_EQUAL, GREATER_OR_EQUAL, INDEX -> 0;
             };
             mv.visitInsn(op);
         }
@@ -87,11 +92,6 @@ public class Arithmetic extends Expression {
         left.validate(scope);
         right.validate(scope);
         this.type = getCommonType(left, right);
-    }
-
-    private static Type getCommonType(Expression left, Expression right) {
-        if (right.type == BuiltInType.STRING) return BuiltInType.STRING;
-        return left.type;
     }
 
 

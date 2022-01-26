@@ -4,13 +4,7 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
-public class ExternalType implements Type {
-
-    public final Class<?> foundClass;
-
-    public ExternalType(Class<?> foundClass) {
-        this.foundClass = foundClass;
-    }
+public record ExternalType(Class<?> foundClass) implements Type {
 
     @Override
     public int getAddOpcode() {

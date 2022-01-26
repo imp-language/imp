@@ -4,15 +4,8 @@ import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.tool.Timer;
 
 import java.io.File;
-import java.util.HashMap;
-
-import static org.imp.jvm.parser.ParserMain.Method.TEST;
 
 public class ParserMain {
-    public static void test(String root) {
-        var dirs = new HashMap<String, Method>();
-        dirs.put("if", TEST);
-    }
 
     public static void main(String[] args) {
 

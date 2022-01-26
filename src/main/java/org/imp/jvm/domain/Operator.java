@@ -13,7 +13,7 @@ public enum Operator {
     LESS("<", Opcodes.IFLT),
     GREATER(">", Opcodes.IFGT),
     LESS_OR_EQUAL("<=", Opcodes.IFLE),
-    GRATER_OR_EQAL(">=", Opcodes.IFGE),
+    GREATER_OR_EQUAL(">=", Opcodes.IFGE),
     INDEX("[]", Opcodes.IFEQ);
 
     private final String sign;
@@ -24,13 +24,13 @@ public enum Operator {
         this.opcode = opcode;
     }
 
-    public int getOpcode() {
-        return opcode;
-    }
-
     public static Operator fromString(String sign) {
         return Arrays.stream(values()).filter(cmpSign -> cmpSign.sign.equals(sign))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Sign not implemented"));
+    }
+
+    public int getOpcode() {
+        return opcode;
     }
 }

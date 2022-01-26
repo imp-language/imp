@@ -221,7 +221,7 @@ public enum BuiltInType implements Type, Serializable {
 
     @Override
     public int getSubtractOpcode() {
-        return opcodes.getSubstract();
+        return opcodes.getSubtract();
     }
 
     @Override

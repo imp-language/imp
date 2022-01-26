@@ -343,7 +343,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
         if (stmt.expr() instanceof Expr.Literal literal) {
             t = BuiltInType.getFromToken(literal.literal.type());
         } else if (stmt.expr() instanceof Expr.EmptyList emptyList) {
-            Type generic = null;
+            Type generic;
             var bt = BuiltInType.getFromString(emptyList.tokenType.source());
             generic = Objects.requireNonNullElseGet(bt, UnknownType::new);
             t = new ListType(generic);

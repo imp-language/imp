@@ -90,14 +90,8 @@ public class ClassGenerator {
             if (type instanceof BuiltInType builtInType) {
                 descriptor = Box.class.descriptorString();
             }
-            Object defaultValue = null;
-            if (type instanceof BuiltInType) {
-                defaultValue = type.getDefaultValue();
-            }
 
-            defaultValue = null;
-
-            FieldVisitor fieldVisitor = classWriter.visitField(Opcodes.ACC_PUBLIC, field.name, descriptor, null, defaultValue);
+            FieldVisitor fieldVisitor = classWriter.visitField(Opcodes.ACC_PUBLIC, field.name, descriptor, null, null);
             fieldVisitor.visitEnd();
         }
 

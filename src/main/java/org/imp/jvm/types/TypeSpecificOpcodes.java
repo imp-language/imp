@@ -30,31 +30,31 @@ public enum TypeSpecificOpcodes {
         this.div = div;
     }
 
-    public int getLoad() {
-        return load;
-    }
-
-    public int getStore() {
-        return store;
-    }
-
-    public int getReturn() {
-        return ret;
-    }
-
     public int getAdd() {
         return add;
     }
 
-    public int getSubstract() {
-        return sub;
+    public int getDivide() {
+        return div;
+    }
+
+    public int getLoad() {
+        return load;
     }
 
     public int getMultiply() {
         return mul;
     }
 
-    public int getDivide() {
-        return div;
+    public int getReturn() {
+        return ret;
+    }
+
+    public int getStore() {
+        return store;
+    }
+
+    public int getSubtract() {
+        return sub;
     }
 }

@@ -265,7 +265,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             mutability = Mutability.Mut;
         }
 
-        // Variable initialization or iterator descructuring?
+        // Variable initialization or iterator destructuring?
         ImpParser.IteratorDestructuringContext iteratorDestructuringContext = ctx.iteratorDestructuring();
         ImpParser.VariableInitializeContext variableInitializeContext = ctx.variableInitialize();
         Declaration declaration = null;

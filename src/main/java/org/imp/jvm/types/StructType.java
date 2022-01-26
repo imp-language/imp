@@ -135,7 +135,7 @@ public class StructType implements Type, Serializable {
 
     @Override
     public int getMultiplyOpcode() {
-        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
+        throw new RuntimeException("Multiplication operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
@@ -160,7 +160,7 @@ public class StructType implements Type, Serializable {
 
     @Override
     public int getSubtractOpcode() {
-        throw new RuntimeException("Substraction operation not (yet ;) ) supported for custom objects");
+        throw new RuntimeException("Subtraction operation not (yet ;) ) supported for custom objects");
     }
 
     @Override

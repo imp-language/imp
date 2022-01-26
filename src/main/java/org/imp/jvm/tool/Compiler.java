@@ -17,9 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Compiler {
-
-    public final String filename;
+public record Compiler(String filename) {
 
     public Compiler(String filename) {
 
@@ -70,10 +68,10 @@ public class Compiler {
     }
 
 
-    public String compileold() throws FileNotFoundException {
+    public String compileOld() throws FileNotFoundException {
         // Walk the dependency tree
         var entry = API.createSourceFile(filename);
-        Graph<ImpFile, DefaultEdge> dependencyGraph = null;
+        Graph<ImpFile, DefaultEdge> dependencyGraph;
         dependencyGraph = API.dependencyGraph(entry);
         Timer.log("build dependency graph");
         entry.validate();
