@@ -3,8 +3,10 @@ package org.imp.jvm.visitors;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
+import org.imp.jvm.Util;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.types.*;
 
@@ -81,7 +83,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        return Optional.empty();
+        return stmt.expr().accept(this);
     }
 
     @Override
@@ -139,7 +141,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitIdentifierExpr(Expr.Identifier expr) {
-        return Optional.empty();
+        return Optional.ofNullable(currentEnvironment.getVariable(expr.identifier.source()));
     }
 
     @Override
@@ -241,6 +243,15 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitPropertyAccess(Expr.PropertyAccess expr) {
+        var exprs = expr.exprs;
+        var start = exprs.get(0);
+        var startType = start.accept(this);
+        if (startType.isPresent()) {
+            if (startType.get() instanceof ExternalType externalType) {
+                // Todo(CURRENT): resolve the external static method call
+                System.out.println("resolving external method");
+            }
+        }
         return Optional.empty();
     }
 
@@ -255,7 +266,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
         // expression you are returning.
         var e = stmt.expr();
         if (e instanceof Expr.Identifier identifier) {
-            var name = identifier.identifier().source();
+            var name = identifier.identifier.source();
             var v = currentEnvironment.getVariable(name);
         }
 
@@ -309,17 +320,31 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitTypeAlias(Stmt.TypeAlias stmt) {
-        return Optional.empty();
+        String identifier = stmt.identifier();
+        String extern = stmt.literal().literal.source();
+
+        var c = Util.getClass(extern);
+        if (c.isEmpty()) {
+            Comptime.ExternNotFound.submit(file, stmt.literal(), extern);
+            return Optional.empty();
+        }
+        Class<?> foundClass = c.get();
+
+        // Add a new type to the scope
+        ExternalType type = new ExternalType(foundClass);
+        currentEnvironment.addVariable(identifier, type);
+
+        return Optional.of(type);
     }
 
     @Override
     public Optional<Type> visitVariable(Stmt.Variable stmt) {
         Type t;
         if (stmt.expr() instanceof Expr.Literal literal) {
-            t = BuiltInType.getFromToken(literal.literal().type());
+            t = BuiltInType.getFromToken(literal.literal.type());
         } else if (stmt.expr() instanceof Expr.EmptyList emptyList) {
             Type generic = null;
-            var bt = BuiltInType.getFromString(emptyList.type().source());
+            var bt = BuiltInType.getFromString(emptyList.tokenType.source());
             generic = Objects.requireNonNullElseGet(bt, UnknownType::new);
             t = new ListType(generic);
         } else {

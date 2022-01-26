@@ -67,9 +67,6 @@ public class BytecodeGenerator {
 
         var results = source.acceptVisitor(codegenVisitor);
 
-        System.out.println(results);
-
-
 
         /*
         ClassGenerator classGenerator = new ClassGenerator(cleanedPath);

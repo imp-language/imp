@@ -50,7 +50,6 @@ public class Compiler {
         Util.println(pretty.print(entry.stmts));
 
 //        var astPrint = new ASTPrinterVisitor();
-//        System.out.println(astPrint.print(entry.stmts));
 //        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);
 
         Iterator<SourceFile> iterator = new DepthFirstIterator<>(dependencyGraph, entry);

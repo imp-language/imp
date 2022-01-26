@@ -49,7 +49,6 @@ public class Parser extends ParserBase {
 
         infixLeft(RANGE, Precedence.COMPARISON);
 
-
         // Comparisons
         infixLeft(EQUAL, Precedence.COMPARISON);
         infixLeft(LT, Precedence.COMPARISON);
@@ -79,71 +78,6 @@ public class Parser extends ParserBase {
         return stmts;
     }
 
-    private Stmt statement() {
-        var loc = lok();
-        if (check(ERROR)) {
-            System.out.println();
-        }
-
-        if (match(IMPORT)) return importStmt();
-        if (match(EXPORT)) return export();
-
-        if (match(TYPE)) return typeAlias();
-        if (match(STRUCT)) return struct();
-        if (match(FUNC)) return function();
-        if (match(ENUM)) return parseEnum();
-        if (match(IF)) return parseIf();
-        if (check(MUT) || check(VAL)) return variable();
-        if (match(FOR)) return parseFor();
-        if (match(RETURN)) return parseReturn();
-        if (check(LBRACE)) return block();
-        else return new Stmt.ExpressionStmt(loc, expression());
-    }
-
-    Stmt.Return parseReturn() {
-        var loc = lok();
-        Expr expr = expression();
-        return new Stmt.Return(loc, expr);
-    }
-
-    private Stmt.If parseIf() {
-        var loc = lok();
-        Expr condition = expression();
-        Stmt.Block trueBlock = block();
-        Stmt falseStmt = null;
-        if (match(ELSE)) {
-            if (match(IF)) {
-                falseStmt = parseIf();
-            } else if (check(LBRACE)) {
-                falseStmt = block();
-            } else {
-                error(peek(), "Invalid end to if-else statement.");
-            }
-        }
-        return new Stmt.If(loc, condition, trueBlock, falseStmt);
-    }
-
-    private Stmt.For parseFor() {
-        var loc = lok();
-        Token name = consume(IDENTIFIER, "Need iterator variable name.");
-        consume(IN, "Expected 'in' keyword.");
-        Expr condition = expression();
-        Stmt.Block block = block();
-
-        return new Stmt.For(loc, new Stmt.ForInCondition(loc, name, condition), block);
-    }
-
-    private Stmt.Variable variable() {
-        var loc = lok();
-        Token mutability = consume();
-        Token name = consume(IDENTIFIER, "Expected variable name.");
-        consume(ASSIGN, "Expected assignment operator.");
-
-        Expr expr = expression();
-
-        return new Stmt.Variable(loc, mutability, name, expr);
-    }
-
     Expr expression() {
         return expression(0);
     }
@@ -158,7 +92,6 @@ public class Parser extends ParserBase {
             return new Expr.Bad(lok(), token);
         }
 
-
         Expr left = prefix.parse(this, token);
 
         while (precedence < getPrecedence()) {
@@ -169,6 +102,12 @@ public class Parser extends ParserBase {
         }
 
         return left;
+    }
+
+    Stmt.Return parseReturn() {
+        var loc = lok();
+        Expr expr = expression();
+        return new Stmt.Return(loc, expr);
     }
 
     private Stmt.Block block() {
@@ -202,60 +141,6 @@ public class Parser extends ParserBase {
         }
     }
 
-    private Stmt.Import importStmt() {
-        var loc = lok();
-        var str = consume(STRING, "Import must be followed by a string.");
-        consume(AS, "Import must contain qualifier.");
-        var id = consume(IDENTIFIER, "Import must contain qualifier.");
-        return new Stmt.Import(loc, str, id);
-    }
-
-    private Stmt.TypeAlias typeAlias() {
-        var loc = lok();
-        Token name = consume(IDENTIFIER, "Expected type name.");
-        consume(ASSIGN, "Expected assignment.");
-        consume(EXTERN, "Expected 'extern' keyword in type alias");
-        Token literal = consume(STRING, "Expected string literal.");
-
-        return new Stmt.TypeAlias(loc, name, new Expr.Literal(loc, literal));
-    }
-
-    private Stmt.Struct struct() {
-        var loc = lok();
-        Token name = consume(IDENTIFIER, "Expected struct name.");
-        consume(LBRACE, "Expected opening curly braces before struct body.");
-
-        List<Stmt.Parameter> parameters = new ArrayList<>();
-        while (!check(RBRACE)) {
-            Stmt.Parameter parameter = parameter();
-            optional(COMMA);
-            parameters.add(parameter);
-        }
-
-        consume(RBRACE, "Expected opening curly braces before struct body.");
-
-
-        return new Stmt.Struct(loc, name, parameters);
-    }
-
-    private Stmt.Enum parseEnum() {
-        var loc = lok();
-        Token name = consume(IDENTIFIER, "Expected enum name.");
-        consume(LBRACE, "Expected opening curly braces before struct body.");
-
-        List<Token> values = new ArrayList<>();
-        while (!check(RBRACE)) {
-            Token value = consume(IDENTIFIER, "Expected enum value.");
-            optional(COMMA);
-            values.add(value);
-        }
-
-        consume(RBRACE, "Expected opening curly braces before struct body.");
-
-
-        return new Stmt.Enum(loc, name, values);
-    }
-
     private Stmt.Function function() {
         var loc = lok();
         Token name = consume(IDENTIFIER, "Expected function name.");
@@ -275,10 +160,17 @@ public class Parser extends ParserBase {
             returnType = consume();
         }
 
-
         Stmt.Block block = block();
 
         return new Stmt.Function(loc, name, parameters, returnType, block);
+    }
+
+    private Stmt.Import importStmt() {
+        var loc = lok();
+        var str = consume(STRING, "Import must be followed by a string.");
+        consume(AS, "Import must contain qualifier.");
+        var id = consume(IDENTIFIER, "Import must contain qualifier.");
+        return new Stmt.Import(loc, str, id);
     }
 
     private Stmt.Parameter parameter() {
@@ -287,6 +179,88 @@ public class Parser extends ParserBase {
         var type = type();
 
         return new Stmt.Parameter(loc, name, type);
+    }
+
+    private Stmt.Enum parseEnum() {
+        var loc = lok();
+        Token name = consume(IDENTIFIER, "Expected enum name.");
+        consume(LBRACE, "Expected opening curly braces before struct body.");
+
+        List<Token> values = new ArrayList<>();
+        while (!check(RBRACE)) {
+            Token value = consume(IDENTIFIER, "Expected enum value.");
+            optional(COMMA);
+            values.add(value);
+        }
+
+        consume(RBRACE, "Expected opening curly braces before struct body.");
+
+        return new Stmt.Enum(loc, name, values);
+    }
+
+    private Stmt.For parseFor() {
+        var loc = lok();
+        Token name = consume(IDENTIFIER, "Need iterator variable name.");
+        consume(IN, "Expected 'in' keyword.");
+        Expr condition = expression();
+        Stmt.Block block = block();
+
+        return new Stmt.For(loc, new Stmt.ForInCondition(loc, name, condition), block);
+    }
+
+    private Stmt.If parseIf() {
+        var loc = lok();
+        Expr condition = expression();
+        Stmt.Block trueBlock = block();
+        Stmt falseStmt = null;
+        if (match(ELSE)) {
+            if (match(IF)) {
+                falseStmt = parseIf();
+            } else if (check(LBRACE)) {
+                falseStmt = block();
+            } else {
+                error(peek(), "Invalid end to if-else statement.");
+            }
+        }
+        return new Stmt.If(loc, condition, trueBlock, falseStmt);
+    }
+
+    private Stmt statement() {
+        var loc = lok();
+        if (check(ERROR)) {
+            throw new Error("wut");
+        }
+
+        if (match(IMPORT)) return importStmt();
+        if (match(EXPORT)) return export();
+
+        if (match(TYPE)) return typeAlias();
+        if (match(STRUCT)) return struct();
+        if (match(FUNC)) return function();
+        if (match(ENUM)) return parseEnum();
+        if (match(IF)) return parseIf();
+        if (check(MUT) || check(VAL)) return variable();
+        if (match(FOR)) return parseFor();
+        if (match(RETURN)) return parseReturn();
+        if (check(LBRACE)) return block();
+        else return new Stmt.ExpressionStmt(loc, expression());
+    }
+
+    private Stmt.Struct struct() {
+        var loc = lok();
+        Token name = consume(IDENTIFIER, "Expected struct name.");
+        consume(LBRACE, "Expected opening curly braces before struct body.");
+
+        List<Stmt.Parameter> parameters = new ArrayList<>();
+        while (!check(RBRACE)) {
+            Stmt.Parameter parameter = parameter();
+            optional(COMMA);
+            parameters.add(parameter);
+        }
+
+        consume(RBRACE, "Expected opening curly braces before struct body.");
+
+        return new Stmt.Struct(loc, name, parameters);
     }
 
     private Stmt.Type type() {
@@ -309,6 +283,27 @@ public class Parser extends ParserBase {
         }
 
         return new Stmt.Type(loc, identifier, t, listType);
+    }
+
+    private Stmt.TypeAlias typeAlias() {
+        var loc = lok();
+        Token name = consume(IDENTIFIER, "Expected type name.");
+        consume(ASSIGN, "Expected assignment.");
+        consume(EXTERN, "Expected 'extern' keyword in type alias");
+        Token literal = consume(STRING, "Expected string literal.");
+
+        return new Stmt.TypeAlias(loc, name, new Expr.Literal(loc, literal));
+    }
+
+    private Stmt.Variable variable() {
+        var loc = lok();
+        Token mutability = consume();
+        Token name = consume(IDENTIFIER, "Expected variable name.");
+        consume(ASSIGN, "Expected assignment operator.");
+
+        Expr expr = expression();
+
+        return new Stmt.Variable(loc, mutability, name, expr);
     }
 
 

@@ -3,10 +3,7 @@ package org.imp.jvm;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.types.Type;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -64,5 +61,20 @@ public class Util {
 
     public static void println(Object o) {
         System.out.println(o);
+    }
+
+
+    /**
+     * Find class on classpath.
+     *
+     * @param externalName descriptor
+     */
+    public static Optional<Class<?>> getClass(String externalName) {
+        try {
+            Class<?> c = Class.forName(externalName);
+            return Optional.of(c);
+        } catch (ClassNotFoundException e) {
+            return Optional.empty();
+        }
     }
 }

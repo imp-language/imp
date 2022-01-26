@@ -1,0 +1,5 @@
+type System = extern "java.lang.System"
+
+export func log(obj any) {
+    System.out.println(obj)
+}

@@ -87,6 +87,7 @@ public enum BuiltInType implements Type, Serializable {
             case "double" -> BuiltInType.DOUBLE;
             case "bool" -> BuiltInType.BOOLEAN;
             case "string" -> BuiltInType.STRING;
+            case "any" -> BuiltInType.ANY;
             default -> null;
         };
     }

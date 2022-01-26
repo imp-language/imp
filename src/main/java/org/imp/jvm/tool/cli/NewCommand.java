@@ -1,6 +1,7 @@
 package org.imp.jvm.tool.cli;
 
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
+import org.imp.jvm.Util;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.tool.manifest.Manifest;
 import picocli.CommandLine;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
@@ -58,7 +58,7 @@ class NewCommand implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println("Creating new project of name " + p);
+        Util.println("Creating new project of name " + p);
     }
 
     private void initDB(Path dbPath) {
@@ -74,15 +74,7 @@ class NewCommand implements Runnable {
             ExportTable.initDB(dbPath);
 
             statement.executeUpdate("drop table if exists person");
-            statement.executeUpdate("create table person (id integer, name string)");
-            statement.executeUpdate("insert into person values(1, 'leo')");
-            statement.executeUpdate("insert into person values(2, 'yui')");
-            ResultSet rs = statement.executeQuery("select * from person");
-            while (rs.next()) {
-                // read the result set
-                System.out.println("name = " + rs.getString("name"));
-                System.out.println("id = " + rs.getInt("id"));
-            }
+
         } catch (SQLException e) {
             // if the error message is "out of memory",
             // it probably means no database file is found

@@ -1,12 +1,14 @@
 package org.imp.jvm.tool;
 
+import org.imp.jvm.Util;
 import org.imp.jvm.domain.ImpFile;
 
 import java.io.IOException;
 import java.util.*;
 
-import static com.diogonunes.jcolor.Ansi.*;
-import static com.diogonunes.jcolor.Attribute.*;
+import static com.diogonunes.jcolor.Ansi.colorize;
+import static com.diogonunes.jcolor.Attribute.BLUE_TEXT;
+import static com.diogonunes.jcolor.Attribute.YELLOW_TEXT;
 
 
 /**
@@ -30,7 +32,7 @@ public class REPL {
     }
 
     public void start() {
-        System.out.println(colorize(START_MESSAGE, BLUE_TEXT()));
+        Util.println(colorize(START_MESSAGE, BLUE_TEXT()));
         System.out.println(colorize(HELP_MESSAGE, BLUE_TEXT()));
 
         while (true) {
@@ -49,6 +51,10 @@ public class REPL {
             }
         }
 
+    }
+
+    private ImpFile parse(String line) {
+        return API.createReplFile(line);
     }
 
     private ImpFile read() {
@@ -74,12 +80,6 @@ public class REPL {
 
         } while (impFile == null);
 
-
         return impFile;
-    }
-
-
-    private ImpFile parse(String line) {
-        return API.createReplFile(line);
     }
 }

@@ -11,6 +11,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
@@ -63,6 +64,37 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitCall(Expr.Call expr) {
+
+        var funcType = functionStack.peek();
+        expr.item.accept(this);
+
+        if (expr.item.type instanceof FuncType callType) {
+            // Initialize the first-class function object
+            String ownerDescriptor = callType.getDescriptor();
+            String methodDescriptor = DescriptorFactory.getMethodDescriptor(Collections.emptyList(), BuiltInType.VOID);
+            funcType.mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
+
+            funcType.mv.visitVarInsn(Opcodes.ASTORE, 2);
+
+            // Load the First Class Function object
+            int index = 2;
+            funcType.mv.visitVarInsn(Opcodes.ALOAD, index);
+
+            // Generate arguments
+            for (var arg : expr.arguments) {
+                arg.accept(this);
+            }
+
+            // Call the invoke method
+            methodDescriptor = DescriptorFactory.getMethodDescriptor(funcType.parameters, funcType.returnType);
+            funcType.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
+
+
+        } else {
+            System.err.println("Bad!");
+            System.exit(43);
+        }
+
         throw new NotImplementedException("method not implemented");
     }
 
@@ -83,7 +115,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        throw new NotImplementedException("method not implemented");
+        stmt.expr().accept(this);
+        return Optional.empty();
     }
 
     @Override
@@ -139,8 +172,9 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitIdentifierExpr(Expr.Identifier expr) {
 
         var funcType = functionStack.peek();
-        var type = currentEnvironment.getVariable(expr.identifier().source());
-        var index = currentEnvironment.getLocalVariableIndex(expr.identifier().source());
+        var type = currentEnvironment.getVariable(expr.identifier.source());
+        expr.type = type;
+        var index = currentEnvironment.getLocalVariableIndex(expr.identifier.source());
         funcType.mv.visitVarInsn(type.getLoadVariableOpcode(), index);
         return Optional.empty();
     }
@@ -164,7 +198,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitLiteralExpr(Expr.Literal expr) {
         var funcType = functionStack.peek();
-        var transformed = TypeResolver.getValueFromString(expr.literal().source(), BuiltInType.getFromToken(expr.literal().type()));
+        var transformed = TypeResolver.getValueFromString(expr.literal.source(), BuiltInType.getFromToken(expr.literal.type()));
         funcType.mv.visitLdcInsn(transformed);
         return Optional.empty();
     }
@@ -205,7 +239,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitPropertyAccess(Expr.PropertyAccess expr) {
 
-        throw new NotImplementedException("method not implemented");
+//        throw new NotImplementedException("method not implemented");
+        return Optional.empty();
     }
 
     @Override
@@ -217,12 +252,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitReturnStmt(Stmt.Return stmt) {
         var funcType = functionStack.peek();
-
         stmt.expr().accept(this);
-//        var type = currentEnvironment.getVariable(stmt.identifier());
-//        Type type = expression.type;
-        // Todo: need to bubble up the type from expression
-        funcType.mv.visitInsn(BuiltInType.INT.getReturnOpcode());
+        funcType.mv.visitInsn(stmt.expr().type.getReturnOpcode());
         return Optional.empty();
     }
 
@@ -260,7 +291,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitTypeAlias(Stmt.TypeAlias stmt) {
-        throw new NotImplementedException("method not implemented");
+//        throw new NotImplementedException("method not implemented");
+        return Optional.empty();
     }
 
     @Override
@@ -274,6 +306,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         int index = currentEnvironment.getLocalVariableIndex(stmt.identifier());
         var type = currentEnvironment.getVariable(stmt.identifier());
         funcType.mv.visitVarInsn(type.getStoreVariableOpcode(), index);
+
         return Optional.empty();
     }
 

@@ -1,6 +1,7 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.imp.jvm.Util;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
 import static com.diogonunes.jcolor.Attribute.TEXT_COLOR;
@@ -28,7 +29,7 @@ public class Timer {
             time = current;
             String formattedRuntime = String.format("%.2fms", runtime);
             formattedRuntime = StringUtils.rightPad(formattedRuntime, 10);
-            System.out.println(colorize(TIME_SYMBOL + formattedRuntime + message, TEXT_COLOR(104)));
+            Util.println(colorize(TIME_SYMBOL + formattedRuntime + message, TEXT_COLOR(104)));
             time = System.nanoTime();
         }
     }

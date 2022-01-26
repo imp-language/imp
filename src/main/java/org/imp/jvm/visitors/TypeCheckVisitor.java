@@ -43,16 +43,22 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitBinaryExpr(Expr.Binary expr) {
-        var t1 = expr.left().accept(this);
-        var t2 = expr.right().accept(this);
+        var t1 = expr.left.accept(this);
+        var t2 = expr.right.accept(this);
 
         if (t1.isEmpty() || t2.isEmpty()) {
             Comptime.Implementation.submit(file, expr, "Types in binary expression not determined.");
+            return Optional.empty();
+        }
+
+        if (t1.get() == BuiltInType.ANY || t2.get() == BuiltInType.ANY) {
+            Comptime.CannotApplyOperator.submit(file, expr, expr.operator.source(), t1.get(), t2.get());
+            return Optional.empty();
         }
 
         var totalType = t1.get();
 
-        switch (expr.operator().type()) {
+        switch (expr.operator.type()) {
             case ADD, SUB, MUL, DIV, MOD -> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     totalType = BuiltInType.widen(bt1, bt2);
@@ -155,7 +161,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitIdentifierExpr(Expr.Identifier expr) {
-        return Optional.ofNullable(currentEnvironment.getVariable(expr.identifier().source()));
+        return Optional.ofNullable(currentEnvironment.getVariable(expr.identifier.source()));
     }
 
     @Override
@@ -182,7 +188,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitLiteralExpr(Expr.Literal expr) {
-        var t = BuiltInType.getFromToken(expr.literal().type());
+        var t = BuiltInType.getFromToken(expr.literal.type());
         if (t == null) {
             Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
         }
@@ -222,7 +228,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     @Override
     public Optional<Type> visitPropertyAccess(Expr.PropertyAccess expr) {
         // For now, assume all expr chains are identifiers
-        var exprs = expr.exprs();
+        var exprs = expr.exprs;
 
         var start = exprs.get(0);
         var startType = start.accept(this);
@@ -232,7 +238,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
             for (int i = 1; i < exprs.size(); i++) {
                 if (t instanceof StructType structType) {
                     var identifier = (Expr.Identifier) exprs.get(i);
-                    var id = identifier.identifier().source();
+                    var id = identifier.identifier.source();
                     if (Arrays.asList(structType.fieldNames).contains(id)) {
                         // Ok, continue to next step
                         int idx = Arrays.asList(structType.fieldNames).indexOf(id);
@@ -353,6 +359,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitTypeAlias(Stmt.TypeAlias stmt) {
+        var externalType = currentEnvironment.getVariableTyped(stmt.identifier(), ExternalType.class);
+
         return Optional.empty();
     }
 

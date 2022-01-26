@@ -40,20 +40,20 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitAssignExpr(Expr.Assign expr) {
-        return s(print(expr.left()), "=", print(expr.right()));
+        return s(print(expr.left), "=", print(expr.right));
     }
 
     @Override
     public String visitBad(Expr.Bad expr) {
         String result = "(BAD ";
-        result += (Arrays.stream(expr.badTokens()).map(tok -> StringEscapeUtils.escapeJava(tok.source())).collect(Collectors.joining(", ")));
+        result += (Arrays.stream(expr.badTokens).map(tok -> StringEscapeUtils.escapeJava(tok.source())).collect(Collectors.joining(", ")));
         result += "))";
         return result;
     }
 
     @Override
     public String visitBinaryExpr(Expr.Binary expr) {
-        return s(print(expr.left()), expr.operator().representation(), print(expr.right()));
+        return s(print(expr.left), expr.operator.representation(), print(expr.right));
     }
 
     @Override
@@ -72,13 +72,13 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitCall(Expr.Call expr) {
 
-        return print(expr.item()) + "(" + expr.arguments().stream().map(this::print).collect(Collectors.joining(", ")) +
+        return print(expr.item) + "(" + expr.arguments.stream().map(this::print).collect(Collectors.joining(", ")) +
                 ")";
     }
 
     @Override
     public String visitEmptyList(Expr.EmptyList emptyList) {
-        return emptyList.type().source() + "[]";
+        return emptyList.tokenType.source() + "[]";
     }
 
     @Override
@@ -147,7 +147,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitIdentifierExpr(Expr.Identifier expr) {
-        return expr.identifier().source();
+        return expr.identifier.source();
     }
 
     @Override
@@ -167,20 +167,20 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitIndexAccess(Expr.IndexAccess expr) {
-        return print(expr.left()) + "[" + print(expr.right()) + "]";
+        return print(expr.left) + "[" + print(expr.right) + "]";
     }
 
     @Override
     public String visitLiteralExpr(Expr.Literal expr) {
-        String source = expr.literal().source();
-        if (expr.literal().type() == TokenType.STRING) source = '"' + source + '"';
+        String source = expr.literal.source();
+        if (expr.literal.type() == TokenType.STRING) source = '"' + source + '"';
 
         return source;
     }
 
     @Override
     public String visitLiteralList(Expr.LiteralList expr) {
-        return "[" + expr.entries().stream().map(this::print).collect(Collectors.joining(",")) + "]";
+        return "[" + expr.entries.stream().map(this::print).collect(Collectors.joining(",")) + "]";
     }
 
     @Override
@@ -190,7 +190,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitNew(Expr.New expr) {
-        return s("new", print(expr.call()));
+        return s("new", print(expr.call));
     }
 
     @Override
@@ -214,23 +214,23 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitPostfixExpr(Expr.Postfix expr) {
-        return s(expr.operator().source(), print(expr.expr()));
+        return s(expr.operator.source(), print(expr.expr));
     }
 
     @Override
     public String visitPrefix(Expr.Prefix expr) {
-        return s(expr.operator().source(), print(expr.right()));
+        return s(expr.operator.source(), print(expr.right));
     }
 
     @Override
     public String visitPropertyAccess(Expr.PropertyAccess expr) {
-        return expr.exprs().stream().map(this::print).collect(Collectors.joining("."));
+        return expr.exprs.stream().map(this::print).collect(Collectors.joining("."));
     }
 
     // Todo: relate to binary expressions somehow
     @Override
     public String visitRange(Expr.Range range) {
-        return print(range.left()) + ".." + print(range.right());
+        return print(range.left) + ".." + print(range.right);
     }
 
     @Override
@@ -290,7 +290,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitTypeAlias(Stmt.TypeAlias stmt) {
-        return "(type " + stmt.name().source() + " extern " + print(stmt.literal()) + ")";
+        return "type " + stmt.name().source() + " = extern " + print(stmt.literal());
     }
 
     @Override

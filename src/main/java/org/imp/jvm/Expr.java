@@ -1,13 +1,26 @@
 package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
+import org.imp.jvm.types.Type;
 
 import java.util.List;
 
-public interface Expr extends Node {
-    <R> R accept(Visitor<R> visitor);
+public abstract class Expr implements Node {
+    public final Location location;
+    public Type type;
 
-    interface Visitor<R> {
+    protected Expr(Location location) {
+        this.location = location;
+    }
+
+    public abstract <R> R accept(Visitor<R> visitor);
+
+    @Override
+    public Location location() {
+        return location;
+    }
+
+    public interface Visitor<R> {
         R visitAssignExpr(Assign expr);
 
         R visitBad(Bad expr);
@@ -41,174 +54,282 @@ public interface Expr extends Node {
         R visitRange(Range range);
     }
 
-    record EmptyList(Location loc, Token type) implements Expr {
+    // error
+    public static final class Bad extends Expr {
+
+        public final Token[] badTokens;
+
+        public Bad(Location loc, Token... badTokens) {
+            super(loc);
+            this.badTokens = badTokens;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBad(this);
+        }
+
+
+    }
+
+    // expression operator expression
+    public static final class Assign extends Expr {
+
+        public final Expr left;
+        public final Expr right;
+
+        public Assign(Location loc, Expr left, Expr right) {
+            super(loc);
+            this.left = left;
+            this.right = right;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitAssignExpr(this);
+        }
+
+
+    }
+
+    // expression operator expression
+    public static final class Binary extends Expr {
+
+        public final Expr left;
+        public final Token operator;
+        public final Expr right;
+
+        public Binary(Location loc, Expr left, Token operator, Expr right) {
+            super(loc);
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBinaryExpr(this);
+        }
+
+
+    }
+
+    public static final class Call extends Expr {
+
+        public final Expr item;
+        public final List<Expr> arguments;
+
+        public Call(Location loc, Expr item, List<Expr> arguments) {
+            super(loc);
+            this.item = item;
+            this.arguments = arguments;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitCall(this);
+        }
+
+
+    }
+
+    // LPAREN expression RPAREN
+    public static final class Grouping extends Expr {
+
+        public final Expr expr;
+
+        Grouping(Location loc, Expr expr) {
+            super(loc);
+            this.expr = expr;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitGroupingExpr(this);
+        }
+
+
+    }
+
+    // expression comparison expression
+    public static final class Logical extends Expr {
+
+        public final Expr left;
+        public final Token comparison;
+        public final Expr right;
+
+        Logical(Location loc, Expr left, Token comparison, Expr right) {
+            super(loc);
+            this.left = left;
+            this.comparison = comparison;
+            this.right = right;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLogicalExpr(this);
+        }
+
+
+    }
+
+    // literal number, boolean or string
+    public static final class Literal extends Expr {
+
+        public final Token literal;
+
+        public Literal(Location loc, Token literal) {
+            super(loc);
+            this.literal = literal;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLiteralExpr(this);
+        }
+
+
+    }
+
+    // literal number, boolean or string
+    public static final class LiteralList extends Expr {
+
+        public final List<Expr> entries;
+
+        public LiteralList(Location loc, List<Expr> entries) {
+            super(loc);
+            this.entries = entries;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLiteralList(this);
+        }
+
+
+    }
+
+    // operator expression
+    public static final class Prefix extends Expr {
+
+        public final Token operator;
+        public final Expr right;
+
+        public Prefix(Location location, Token operator, Expr right) {
+            super(location);
+            this.operator = operator;
+            this.right = right;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitPrefix(this);
+        }
+
+
+    }
+
+    // expression operator
+    public static final class Postfix extends Expr {
+
+        public final Expr expr;
+        public final Token operator;
+
+        public Postfix(Location location, Expr expr, Token operator) {
+            super(location);
+            this.expr = expr;
+            this.operator = operator;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitPostfixExpr(this);
+        }
+
+
+    }
+
+    // expression . expression
+    public static final class PropertyAccess extends Expr {
+        public final List<Expr> exprs;
+
+        public PropertyAccess(Location location, List<Expr> exprs) {
+            super(location);
+            this.exprs = exprs;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitPropertyAccess(this);
+        }
+    }
+
+    // expression[expression]
+    public static class IndexAccess extends Expr {
+        public final Expr left;
+        public final Expr right;
+
+        public IndexAccess(Location location, Expr left, Expr right) {
+            super(location);
+            this.left = left;
+            this.right = right;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitIndexAccess(this);
+        }
+    }
+
+    // expression operator
+    public static class New extends Expr {
+        public final Expr call;
+
+        public New(Location location, Expr call) {
+            super(location);
+            this.call = call;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitNew(this);
+        }
+
+
+    }
+
+    public static class EmptyList extends Expr {
+        public final Token tokenType;
+
+        public EmptyList(Location loc, Token tokenType) {
+            super(loc);
+            this.tokenType = tokenType;
+        }
 
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitEmptyList(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
     }
-
-
-    // error
-    record Bad(Location loc, Token... badTokens) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitBad(this);
-        }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
-    }
-
-    // expression operator expression
-    record Assign(Location loc, Expr left, Expr right) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitAssignExpr(this);
-        }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
-    }
-
-
-    // expression operator expression
-    record Binary(Location loc, Expr left, Token operator, Expr right) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitBinaryExpr(this);
-        }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
-    }
-
-    record Call(Location loc, Expr item, List<Expr> arguments) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitCall(this);
-        }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
-    }
-
-    // LPAREN expression RPAREN
-    record Grouping(Location loc, Expr expr) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitGroupingExpr(this);
-        }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
-    }
-
-    // expression comparison expression
-    record Logical(Location loc, Expr left, Token comparison, Expr right) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitLogicalExpr(this);
-        }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
-    }
-
-    // literal number, boolean or string
-    record Literal(Location loc, Token literal) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitLiteralExpr(this);
-        }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
-    }
-
-    // literal number, boolean or string
-    record LiteralList(Location loc, List<Expr> entries) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitLiteralList(this);
-        }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
-
-    }
-
 
     // identifier
-    record Identifier(Location location, Token identifier) implements Expr {
+    public static class Identifier extends Expr {
+        public final Token identifier;
+
+        public Identifier(Location location, Token identifier) {
+            super(location);
+            this.identifier = identifier;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIdentifierExpr(this);
         }
-
-    }
-
-    // operator expression
-    record Prefix(Location location, Token operator, Expr right) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitPrefix(this);
-        }
-
-    }
-
-    // expression operator
-    record Postfix(Location location, Expr expr, Token operator) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitPostfixExpr(this);
-        }
-
-    }
-
-
-    // expression operator
-    record New(Location location, Expr call) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitNew(this);
-        }
-
-    }
-
-    // expression . expression
-    record PropertyAccess(Location location, List<Expr> exprs) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitPropertyAccess(this);
-        }
-
-    }
-
-    // expression[expression]
-    record IndexAccess(Location location, Expr left, Expr right) implements Expr {
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitIndexAccess(this);
-        }
-
     }
 
     // expression ... expression
-    record Range(Location location, Expr left, Expr right) implements Expr {
+    public class Range extends Expr {
+        public final Expr left;
+        public final Expr right;
+
+        Range(Location location, Expr left, Expr right) {
+            super(location);
+            this.left = left;
+            this.right = right;
+        }
 
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitRange(this);
         }
+
 
     }
 

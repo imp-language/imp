@@ -215,7 +215,6 @@ public class API {
         // Todo: bytecode generation visitor!
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);
-            System.out.println("Generating " + source.path());
             var byteUnits = bytecodeGenerator.generate(source);
 
             String className = source.name();

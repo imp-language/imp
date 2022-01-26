@@ -19,6 +19,7 @@ public class Environment {
         this.parent = null;
     }
 
+    @Deprecated
     public void addType(String name, Type type) {
         variables.put(name, type);
     }
