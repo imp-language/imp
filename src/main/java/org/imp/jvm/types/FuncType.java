@@ -18,6 +18,8 @@ public class FuncType implements Type, Serializable {
     public Type returnType = BuiltInType.VOID;
 
     public MethodVisitor mv = null; // careful!
+    // Todo: refactor this to have a subclass with a generate method using in CodegenVisitor
+    public boolean glue = false;
 
     // Todo: refactor to use the String[] pattern from StructType instead of List<Identifier>
     public FuncType(String name, Modifier modifier, List<Identifier> parameters) {

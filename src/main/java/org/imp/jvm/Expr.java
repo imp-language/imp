@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class Expr implements Node {
     public final Location location;
-    public Type type;
+    public Type realType;
 
     protected Expr(Location location) {
         this.location = location;

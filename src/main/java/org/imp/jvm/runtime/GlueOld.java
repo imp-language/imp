@@ -1,12 +1,14 @@
 package org.imp.jvm.runtime;
 
-import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.runtime.stdlib.Batteries;
 import org.imp.jvm.runtime.stdlib.Math;
 import org.imp.jvm.runtime.stdlib.Process;
-import org.imp.jvm.types.*;
+import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Expose standard library methods to Imp programs
  */
-public class Glue {
+public class GlueOld {
 
     public static final Map<String, Class<?>> coreModules = new HashMap<>();
 
@@ -25,43 +27,18 @@ public class Glue {
         coreModules.put("process", Process.class);
     }
 
-    public static List<FuncType> getExports(String module) {
-        var result = new ArrayList<FuncType>();
-        if (coreModules.containsKey(module)) {
-            var c = coreModules.get(module);
-            var m = c.getMethods();
-            for (var method : m) {
-                String name = method.getName();
-                if (method.getDeclaringClass().equals(Object.class)) {
-                    continue;
-                }
-                var parameters = new ArrayList<Identifier>();
-                for (var p : method.getParameterTypes()) {
-                    var id = new Identifier("_", new ExternalType(p));
-                    parameters.add(id);
-                }
-                var funcType = new FuncType(name, Modifier.NONE, parameters);
-                funcType.glue = true;
-                result.add(funcType);
-
-            }
-
-        }
-        return result;
-    }
-
     /**
      * Find method from the standard library.
      *
      * @param moduleName batteries, math, path, etc
      * @param methodName the name of the standard library method
-     * @param source     current file
+     * @param owner      current file
      * @return the function type
      */
-    public static FunctionType findStandardLibraryFunction(String moduleName, String methodName, SourceFile source) {
+    public static FunctionType findStandardLibraryFunction(String moduleName, String methodName, ImpFile owner) {
         if (!coreModules.containsKey(moduleName)) return null;
         var c = coreModules.get(moduleName);
-        return findFunction(c, methodName, source);
+        return findFunction(c, methodName, owner);
     }
 
     private static Function buildImpFunctionFromJavaMethod(Method method, FunctionType functionType) {
@@ -85,27 +62,25 @@ public class Glue {
     }
 
 
-    private static FunctionType findFunction(Class<?> module, String methodName, SourceFile source) {
+    private static FunctionType findFunction(Class<?> module, String methodName, ImpFile owner) {
         String finalMethodName = methodName;
         List<Method> methods = Arrays.stream(module.getMethods())
                 .filter(m -> m.getName().equals(finalMethodName) || m.getName().equals("_" + finalMethodName))
                 .collect(Collectors.toList());
 
-        System.out.println(methods);
+        if (methods.size() > 0) {
+            // Some methods in the JVM implementation of `batteries` must be prefixed
+            // (we use a "_") to avoid using Java reserved words like `float` or `int`.
+            if (methods.get(0).getName().startsWith("_")) methodName = "_" + methodName;
+            FunctionType functionType = new FunctionType(methodName, owner, false);
 
-//        if (methods.size() > 0) {
-//            // Some methods in the JVM implementation of `batteries` must be prefixed
-//            // (we use a "_") to avoid using Java reserved words like `float` or `int`.
-//            if (methods.get(0).getName().startsWith("_")) methodName = "_" + methodName;
-//            FunctionType functionType = new FunctionType(methodName, source, false);
-//
-//            for (var method : methods) {
-//                Function function = buildImpFunctionFromJavaMethod(method, functionType);
-//                functionType.addSignature(Function.getDescriptor(function.parameters), function);
-//            }
-//
-//            return functionType;
-//        }
+            for (var method : methods) {
+                Function function = buildImpFunctionFromJavaMethod(method, functionType);
+                functionType.addSignature(Function.getDescriptor(function.parameters), function);
+            }
+
+            return functionType;
+        }
         return null;
     }
 

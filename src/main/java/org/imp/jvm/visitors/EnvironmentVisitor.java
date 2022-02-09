@@ -7,6 +7,7 @@ import org.imp.jvm.Util;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.errors.Comptime;
+import org.imp.jvm.runtime.Glue;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.types.*;
 
@@ -54,7 +55,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitBlockStmt(Stmt.Block block) {
-        for (var stmt : block.statements()) {
+        for (var stmt : block.statements) {
             stmt.accept(this);
         }
         return Optional.empty();
@@ -77,23 +78,23 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitExport(Stmt.Export stmt) {
-        stmt.stmt().accept(this);
+        stmt.stmt.accept(this);
         return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        return stmt.expr().accept(this);
+        return stmt.expr.accept(this);
     }
 
     @Override
     public Optional<Type> visitFor(Stmt.For stmt) {
-        var childEnvironment = stmt.block().environment();
+        var childEnvironment = stmt.block.environment;
         childEnvironment.setParent(currentEnvironment);
 
         currentEnvironment = childEnvironment;
-        stmt.condition().accept(this);
-        stmt.block().accept(this);
+        stmt.condition.accept(this);
+        stmt.block.accept(this);
         currentEnvironment = currentEnvironment.getParent();
 
         return Optional.empty();
@@ -101,34 +102,34 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitForInCondition(Stmt.ForInCondition stmt) {
-        currentEnvironment.addVariable(stmt.name().source(), new UnknownType());
+        currentEnvironment.addVariable(stmt.name.source(), new UnknownType());
         return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitFunctionStmt(Stmt.Function stmt) {
-        String name = stmt.name().source();
+        String name = stmt.name.source();
 
-        var childEnvironment = stmt.body().environment();
+        var childEnvironment = stmt.body.environment;
         childEnvironment.setParent(currentEnvironment);
 
         // Annotate parameters in the current scope
         List<Identifier> parameters = new ArrayList<>();
-        for (var param : stmt.parameters()) {
-            Type t = param.type().accept(this).get();
-            childEnvironment.addVariable(param.name().source(), t);
-            parameters.add(new Identifier(param.name().source(), t));
+        for (var param : stmt.parameters) {
+            Type t = param.type.accept(this).get();
+            childEnvironment.addVariable(param.name.source(), t);
+            parameters.add(new Identifier(param.name.source(), t));
         }
 
         var funcType = new FuncType(name, Modifier.NONE, parameters);
-        if (stmt.returnType() != null) {
-            var bt = BuiltInType.getFromString(stmt.returnType().source());
-            funcType.returnType = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.returnType().source()));
+        if (stmt.returnType != null) {
+            var bt = BuiltInType.getFromString(stmt.returnType.source());
+            funcType.returnType = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.returnType.source()));
         }
         currentEnvironment.addVariableOrError(name, funcType, file, stmt);
 
         currentEnvironment = childEnvironment;
-        stmt.body().accept(this);
+        stmt.body.accept(this);
 
         currentEnvironment = currentEnvironment.getParent();
         return Optional.of(funcType);
@@ -147,11 +148,11 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
     @Override
     public Optional<Type> visitIf(Stmt.If stmt) {
 
-        var childEnvironment = stmt.trueBlock().environment();
+        var childEnvironment = stmt.trueBlock.environment;
         childEnvironment.setParent(currentEnvironment);
         currentEnvironment = childEnvironment;
-        stmt.trueBlock().accept(this);
-        stmt.falseStmt().accept(this);
+        stmt.trueBlock.accept(this);
+        stmt.falseStmt.accept(this);
 
         // Todo: accept conditions and etc
 
@@ -163,40 +164,43 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
     public Optional<Type> visitImport(Stmt.Import stmt) {
         // Add all exports from the imported module into the current environment
         String basePath = source.basePath();
-        String importName = stmt.stringLiteral().source();
+        String importName = stmt.stringLiteral.source();
         Path importPath = Path.of(basePath, importName);
 
-        String alias = stmt.identifier().source();
+        if (stmt.identifier.isPresent()) {
+            var results = ExportTable.getExportsFromSource(importPath);
+            String alias = stmt.identifier.get().source();
 
-        var results = ExportTable.getExportsFromSource(importPath);
-
-        for (var result : results) {
-            var typeName = alias + "." + result.name();
-            switch (result.kind()) {
-                case "struct" -> {
-                    var st = (StructType) result.o();
-                    st.name = typeName;
-                    st.qualifiedName = result.qualifiedName();
-                    this.currentEnvironment.addVariableOrError(typeName, st, file, stmt);
-                }
-                case "function" -> {
-                    var funcType = (FuncType) result.o();
-                    funcType.name = typeName;
-                    this.currentEnvironment.addVariableOrError(typeName, funcType, file, stmt);
-                }
-                default -> {
-                    System.err.println("Bad deserialization.");
-                    System.exit(62);
+            for (var result : results) {
+                var typeName = alias + "." + result.name();
+                switch (result.kind()) {
+                    case "struct" -> {
+                        var st = (StructType) result.o();
+                        st.name = typeName;
+                        st.qualifiedName = result.qualifiedName();
+                        this.currentEnvironment.addVariableOrError(typeName, st, file, stmt);
+                    }
+                    case "function" -> {
+                        var funcType = (FuncType) result.o();
+                        funcType.name = typeName;
+                        this.currentEnvironment.addVariableOrError(typeName, funcType, file, stmt);
+                    }
+                    default -> {
+                        System.err.println("Bad deserialization.");
+                        System.exit(62);
+                    }
                 }
             }
+        } else if (Glue.coreModules.containsKey(importName)) {
+            // Look in Glue
+            System.out.println("glue " + importName);
+            var ree = Glue.getExports(importName);
+            for (var ft : ree) {
+                var typeName = ft.name;
+                this.currentEnvironment.addVariableOrError(typeName, ft, file, stmt);
+            }
+
         }
-
-        // Todo:
-        // It's impossible to query the MultiKeyMap for values that match one key instead
-        // of both keys, so we need a different solution. Got to do the SQLite thing I
-        // do believe.
-
-//        var type
 
         return Optional.empty();
     }
@@ -248,7 +252,39 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
         var startType = start.accept(this);
         if (startType.isPresent()) {
             if (startType.get() instanceof ExternalType externalType) {
-                // Todo(CURRENT): resolve the external static method call
+                // Todo: resolve the external static method call
+                /*
+                 * Notes:
+                 * use f = c.getDeclaredField(String) to get a Field like "out" here
+                 * then do fieldType = f.type to get the type of said field
+                 * method = fieldType.getMethod("println", ...)
+                 *
+                 * All in all, we *replace* the PropertyAccess expression somehow
+                 * with a note for the next steps to treat the entire expr as an
+                 * external method call. Our job is to decide what method to call.
+                 */
+                try {
+                    var c = externalType.foundClass();
+
+                    var id = ((Expr.Identifier) exprs.get(1)).identifier.source();
+
+                    var f = c.getDeclaredField(id);
+                    var fieldType = f.getType();
+
+                    System.out.println(fieldType);
+
+                    var expr2 = exprs.get(2);
+                    if (expr2 instanceof Expr.Call call) {
+                        var funcName = ((Expr.Identifier) call.item).identifier.source();
+
+//                    var m = fieldType.getMethod("println", types);
+                    }
+
+
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+
                 System.out.println("resolving external method");
             }
         }
@@ -264,7 +300,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
     public Optional<Type> visitReturnStmt(Stmt.Return stmt) {
         // Set the return type of the function to the type of the
         // expression you are returning.
-        var e = stmt.expr();
+        var e = stmt.expr;
         if (e instanceof Expr.Identifier identifier) {
             var name = identifier.identifier.source();
             var v = currentEnvironment.getVariable(name);
@@ -275,16 +311,16 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitStruct(Stmt.Struct stmt) {
-        var fieldNames = new String[stmt.fields().size()];
-        var fieldTypes = new Type[stmt.fields().size()];
+        var fieldNames = new String[stmt.fields.size()];
+        var fieldTypes = new Type[stmt.fields.size()];
 
         // At this point we do not know of any custom types that exist.
         for (int i = 0; i < fieldNames.length; i++) {
-            var field = stmt.fields().get(i);
-            fieldNames[i] = field.name().source();
-            fieldTypes[i] = field.type().accept(this).get();
+            var field = stmt.fields.get(i);
+            fieldNames[i] = field.name.source();
+            fieldTypes[i] = field.type.accept(this).get();
         }
-        String name = stmt.name().source();
+        String name = stmt.name.source();
 
         // Create struct type object
         StructType structType = new StructType(name, fieldNames, fieldTypes);
@@ -297,17 +333,17 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
     public Optional<Type> visitType(Stmt.Type stmt) {
         Type type;
         // if no type.next exists, treat as normal type
-        if (stmt.next().isEmpty()) {
-            var bt = BuiltInType.getFromString(stmt.identifier().source());
-            type = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.identifier().source()));
+        if (stmt.next.isEmpty()) {
+            var bt = BuiltInType.getFromString(stmt.identifier.source());
+            type = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.identifier.source()));
         }
         // if type.next exists, make an unknown type and pass to TypeCheckVisitor
         else {
-            StringBuilder path = new StringBuilder(stmt.identifier().source());
-            var ptr = stmt.next();
+            StringBuilder path = new StringBuilder(stmt.identifier.source());
+            var ptr = stmt.next;
             while (ptr.isPresent()) {
-                path.append(".").append(ptr.get().identifier().source());
-                ptr = ptr.get().next();
+                path.append(".").append(ptr.get().identifier.source());
+                ptr = ptr.get().next;
             }
             type = Objects.requireNonNullElse(
                     currentEnvironment.getVariableTyped(path.toString(), StructType.class),
@@ -321,11 +357,11 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
     @Override
     public Optional<Type> visitTypeAlias(Stmt.TypeAlias stmt) {
         String identifier = stmt.identifier();
-        String extern = stmt.literal().literal.source();
+        String extern = stmt.literal.literal.source();
 
         var c = Util.getClass(extern);
         if (c.isEmpty()) {
-            Comptime.ExternNotFound.submit(file, stmt.literal(), extern);
+            Comptime.ExternNotFound.submit(file, stmt.literal, extern);
             return Optional.empty();
         }
         Class<?> foundClass = c.get();
@@ -340,9 +376,9 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
     @Override
     public Optional<Type> visitVariable(Stmt.Variable stmt) {
         Type t;
-        if (stmt.expr() instanceof Expr.Literal literal) {
+        if (stmt.expr instanceof Expr.Literal literal) {
             t = BuiltInType.getFromToken(literal.literal.type());
-        } else if (stmt.expr() instanceof Expr.EmptyList emptyList) {
+        } else if (stmt.expr instanceof Expr.EmptyList emptyList) {
             Type generic;
             var bt = BuiltInType.getFromString(emptyList.tokenType.source());
             generic = Objects.requireNonNullElseGet(bt, UnknownType::new);
@@ -350,7 +386,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
         } else {
             t = new UnknownType();
         }
-        currentEnvironment.addVariableOrError(stmt.name().source(), t, file, stmt);
+        currentEnvironment.addVariableOrError(stmt.name.source(), t, file, stmt);
         return Optional.empty();
     }
 }

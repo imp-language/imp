@@ -73,7 +73,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitBlockStmt(Stmt.Block block) {
-        for (var stmt : block.statements()) {
+        for (var stmt : block.statements) {
             stmt.accept(this);
         }
         return Optional.empty();
@@ -81,6 +81,21 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitCall(Expr.Call expr) {
+
+        var e = expr.item.accept(this);
+        if (e.isPresent()) {
+            var ft = (FuncType) e.get();
+            var returnType = ((FuncType) e.get()).returnType;
+
+            for (var arg : expr.arguments) {
+                arg.accept(this);
+            }
+            return Optional.of(returnType);
+        } else {
+            // Todo: pass missing method name
+            Comptime.MethodNotFound.submit(file, expr.item, "name");
+        }
+
         return Optional.empty();
     }
 
@@ -96,21 +111,21 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitExport(Stmt.Export stmt) {
-        stmt.stmt().accept(this);
+        stmt.stmt.accept(this);
         return Optional.empty();
     }
 
     @Override
     public Optional<Type> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        return Optional.empty();
+        return stmt.expr.accept(this);
     }
 
     @Override
     public Optional<Type> visitFor(Stmt.For stmt) {
 
-        currentEnvironment = stmt.block().environment();
-        stmt.condition().accept(this);
-        stmt.block().accept(this);
+        currentEnvironment = stmt.block.environment;
+        stmt.condition.accept(this);
+        stmt.block.accept(this);
         currentEnvironment = currentEnvironment.getParent();
 
         return Optional.empty();
@@ -125,10 +140,10 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     public Optional<Type> visitFunctionStmt(Stmt.Function stmt) {
 
         // Find the FunctionType associated with this statement
-        var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
+        var funcType = currentEnvironment.getVariableTyped(stmt.name.source(), FuncType.class);
         if (funcType != null) {
             functionStack.add(funcType);
-            var childEnvironment = stmt.body().environment();
+            var childEnvironment = stmt.body.environment;
 
             for (var param : funcType.parameters) {
                 if (param.type instanceof UnknownType ut) {
@@ -144,7 +159,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
             }
 
             currentEnvironment = childEnvironment;
-            stmt.body().accept(this);
+            stmt.body.accept(this);
 
             currentEnvironment = currentEnvironment.getParent();
             functionStack.pop();
@@ -161,16 +176,20 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitIdentifierExpr(Expr.Identifier expr) {
-        return Optional.ofNullable(currentEnvironment.getVariable(expr.identifier.source()));
+        var t = currentEnvironment.getVariable(expr.identifier.source());
+        if (t != null) {
+            expr.realType = t;
+        }
+        return Optional.ofNullable(t);
     }
 
     @Override
     public Optional<Type> visitIf(Stmt.If stmt) {
-        var childEnvironment = stmt.trueBlock().environment();
+        var childEnvironment = stmt.trueBlock.environment;
         childEnvironment.setParent(currentEnvironment);
         currentEnvironment = childEnvironment;
-        stmt.trueBlock().accept(this);
-        stmt.falseStmt().accept(this);
+        stmt.trueBlock.accept(this);
+        stmt.falseStmt.accept(this);
 
         currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
@@ -316,7 +335,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     public Optional<Type> visitReturnStmt(Stmt.Return stmt) {
         // Set the return type of the function to the type of the
         // expression you are returning.
-        var t = stmt.expr().accept(this);
+        var t = stmt.expr.accept(this);
 
         if (t.isPresent()) {
             if (functionStack.size() > 0) {
@@ -334,9 +353,9 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitStruct(Stmt.Struct struct) {
-        var structType = currentEnvironment.getVariableTyped(struct.name().source(), StructType.class);
+        var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
         if (structType != null) {
-            Util.zip(struct.fields(), structType.fields, (a, b) -> {
+            Util.zip(struct.fields, structType.fields, (a, b) -> {
                 if (b.type instanceof UnknownType ut) {
                     var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
                     if (attempt != null) {
@@ -367,13 +386,13 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     @Override
     public Optional<Type> visitVariable(Stmt.Variable stmt) {
 
-        var expr = stmt.expr();
+        var expr = stmt.expr;
         var t = expr.accept(this);
 
         if (t.isPresent()) {
-            currentEnvironment.setVariableType(stmt.name().source(), t.get());
+            currentEnvironment.setVariableType(stmt.name.source(), t.get());
         } else {
-            Comptime.TypeNotResolved.submit(file, expr, stmt.name().source());
+            Comptime.TypeNotResolved.submit(file, expr, stmt.name.source());
         }
         return Optional.empty();
     }

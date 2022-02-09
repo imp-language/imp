@@ -9,7 +9,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.ModuleReference;
 import org.imp.jvm.expression.reference.VariableReference;
-import org.imp.jvm.runtime.Glue;
+import org.imp.jvm.runtime.GlueOld;
 import org.imp.jvm.runtime.stdlib.Batteries;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
@@ -96,7 +96,7 @@ public class FunctionCall extends Expression {
             var moduleReference = (ModuleReference) variableReference.reference;
             this.argTypes = this.argTypes.subList(1, this.argTypes.size());
             this.arguments = this.arguments.subList(1, this.arguments.size());
-            this.moduleClass = Glue.coreModules.get(moduleReference.name);
+            this.moduleClass = GlueOld.coreModules.get(moduleReference.name);
         }
 
         if (functionType.isStatic) {
@@ -270,7 +270,7 @@ public class FunctionCall extends Expression {
         FunctionType functionType;
 
         // 1. Functions in the always-imported "batteries" module
-        functionType = Glue.findStandardLibraryFunction("batteries", this.name, this.owner);
+        functionType = GlueOld.findStandardLibraryFunction("batteries", this.name, this.owner);
         if (functionType != null) return functionType;
 
         // 2. Functions defined in the current scope.
@@ -288,7 +288,7 @@ public class FunctionCall extends Expression {
                     String moduleName = moduleReference.name;
                     if (this.owner.stdlibImports.contains(moduleName)) {
                         // 3. Functions from any imported standard library modules.
-                        functionType = Glue.findStandardLibraryFunction(moduleName, this.name, this.owner);
+                        functionType = GlueOld.findStandardLibraryFunction(moduleName, this.name, this.owner);
                     } else {
                         // 4. Functions from user defined modules.
                         var importedFile = this.owner.qualifiedImports.stream().filter(impFile -> impFile.getBaseName().equals(moduleName)).findFirst();

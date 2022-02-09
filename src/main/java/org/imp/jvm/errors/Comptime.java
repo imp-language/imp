@@ -29,7 +29,8 @@ public enum Comptime {
             "Make sure all return statements in your function are returning the same type."),
     PropertyNotFound(6, "Type `{0}` contains no field `{1}`.", null),
     CannotApplyOperator(7, "Operator `{0}` cannot be applied to types `{1}` and `{2}`", null),
-    ExternNotFound(8, "External object `{0}` not found.", "Ensure the external type you are referencing actually exists.")
+    ExternNotFound(8, "External object `{0}` not found.", "Ensure the external type you are referencing actually exists."),
+    MethodNotFound(9, "Method `{0}` not found.", null);
 
     //
     ;

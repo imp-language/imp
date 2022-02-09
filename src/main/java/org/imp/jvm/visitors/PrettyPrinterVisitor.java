@@ -60,7 +60,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     public String visitBlockStmt(Stmt.Block block) {
         StringBuilder sb = new StringBuilder("{");
         indent++;
-        for (var stmt : block.statements()) {
+        for (var stmt : block.statements) {
             sb.append(tabs()).append(print(stmt));
         }
 
@@ -84,32 +84,32 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitEnum(Stmt.Enum stmt) {
 
-        return "(enum " + stmt.name().source() + " (" + stmt.values().stream().map(Token::source).collect(Collectors.joining(", ")) +
+        return "(enum " + stmt.name.source() + " (" + stmt.values.stream().map(Token::source).collect(Collectors.joining(", ")) +
                 "))";
     }
 
     @Override
     public String visitExport(Stmt.Export stmt) {
-        return s("export", print(stmt.stmt()));
+        return s("export", print(stmt.stmt));
     }
 
     @Override
     public String visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        return print(stmt.expr());
+        return print(stmt.expr);
     }
 
     @Override
     public String visitFor(Stmt.For stmt) {
-        currentEnvironment = stmt.block().environment();
-        String str = s("for", print(stmt.condition()), print(stmt.block()));
+        currentEnvironment = stmt.block.environment;
+        String str = s("for", print(stmt.condition), print(stmt.block));
         currentEnvironment = currentEnvironment.getParent();
         return str;
     }
 
     @Override
     public String visitForInCondition(Stmt.ForInCondition stmt) {
-        var name = stmt.name().source();
-        var t = currentEnvironment.getVariable(stmt.name().source());
+        var name = stmt.name.source();
+        var t = currentEnvironment.getVariable(stmt.name.source());
         if (displayAnnotations) {
             if (t != null) {
                 name += " : " + t;
@@ -118,22 +118,22 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
                 name += " : $reee";
             }
         }
-        return s(name, "in", print(stmt.expr()));
+        return s(name, "in", print(stmt.expr));
     }
 
     @Override
     public String visitFunctionStmt(Stmt.Function stmt) {
-        String name = stmt.name().source();
+        String name = stmt.name.source();
         // Find the FunctionType associated with this statement
-        var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
+        var funcType = currentEnvironment.getVariableTyped(stmt.name.source(), FuncType.class);
 
-        currentEnvironment = stmt.body().environment();
+        currentEnvironment = stmt.body.environment;
 
         if (funcType != null) {
             String result = "func " + name + "(";
-            result += stmt.parameters().stream().map(parameter -> parameter.name().source() + " " + parameter.type().accept(this)).collect(Collectors.joining(", "));
+            result += stmt.parameters.stream().map(parameter -> parameter.name.source() + " " + parameter.type.accept(this)).collect(Collectors.joining(", "));
             result += ") " + funcType.returnType + " ";
-            result += print(stmt.body());
+            result += print(stmt.body);
             currentEnvironment = currentEnvironment.getParent();
             return result;
         }
@@ -153,16 +153,19 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitIf(Stmt.If stmt) {
         StringBuilder sb = new StringBuilder();
-        sb.append(s("if", print(stmt.condition()), print(stmt.trueBlock())));
-        if (stmt.falseStmt() != null) {
-            sb.append(s(" else", print(stmt.falseStmt())));
+        sb.append(s("if", print(stmt.condition), print(stmt.trueBlock)));
+        if (stmt.falseStmt != null) {
+            sb.append(s(" else", print(stmt.falseStmt)));
         }
         return sb.toString();
     }
 
     @Override
     public String visitImport(Stmt.Import stmt) {
-        return "import " + '"' + stmt.stringLiteral().source() + "\" " + stmt.identifier().source();
+
+        String s = "import " + '"' + stmt.stringLiteral.source() + "\"";
+        if (stmt.identifier.isPresent()) s += " as " + stmt.identifier.get().source();
+        return s;
     }
 
     @Override
@@ -195,8 +198,8 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitParameterStmt(Stmt.Parameter stmt) {
-        String name = stmt.name().source();
-        var t = currentEnvironment.getVariable(stmt.name().source());
+        String name = stmt.name.source();
+        var t = currentEnvironment.getVariable(stmt.name.source());
         if (displayAnnotations) {
             if (t != null) {
                 if (!(t instanceof BuiltInType)) {
@@ -209,7 +212,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         }
         //Todo: below
 //        if (stmt.listType()) result += "[]";
-        return name + " " + stmt.type().accept(this);
+        return name + " " + stmt.type.accept(this);
     }
 
     @Override
@@ -235,8 +238,8 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitReturnStmt(Stmt.Return stmt) {
-        var s = print(stmt.expr());
-        if (stmt.expr() instanceof Expr.Identifier) {
+        var s = print(stmt.expr);
+        if (stmt.expr instanceof Expr.Identifier) {
 
             if (displayAnnotations) {
                 var t = currentEnvironment.getVariable(s);
@@ -253,8 +256,8 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitStruct(Stmt.Struct stmt) {
-        StringBuilder result = new StringBuilder("struct " + stmt.name().source() + " {\n");
-        var structType = currentEnvironment.getVariableTyped(stmt.name().source(), StructType.class);
+        StringBuilder result = new StringBuilder("struct " + stmt.name.source() + " {\n");
+        var structType = currentEnvironment.getVariableTyped(stmt.name.source(), StructType.class);
         if (structType != null) {
             for (var field : structType.fields) {
                 result.append("\t").append(field.name).append(" ").append(field.type);
@@ -262,8 +265,8 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
             }
         } else {
 
-            for (Stmt.Parameter field : stmt.fields()) {
-                result.append("\t").append(field.name().source()).append(" ");
+            for (Stmt.Parameter field : stmt.fields) {
+                result.append("\t").append(field.name.source()).append(" ");
                 System.err.println("bad");
 
 // Todo: below
@@ -279,24 +282,24 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitType(Stmt.Type stmt) {
         // if no type.next exists, treat as normal type
-        if (stmt.next().isEmpty()) {
-            return stmt.identifier().source();
+        if (stmt.next.isEmpty()) {
+            return stmt.identifier.source();
         }
         // if type.next exists, make an unknown type and pass to TypeCheckVisitor
         else {
-            return stmt.identifier().source() + "." + stmt.next().get().accept(this);
+            return stmt.identifier.source() + "." + stmt.next.get().accept(this);
         }
     }
 
     @Override
     public String visitTypeAlias(Stmt.TypeAlias stmt) {
-        return "type " + stmt.name().source() + " = extern " + print(stmt.literal());
+        return "type " + stmt.name.source() + " = extern " + print(stmt.literal);
     }
 
     @Override
     public String visitVariable(Stmt.Variable stmt) {
 
-        var name = stmt.name().source();
+        var name = stmt.name.source();
 
         if (displayAnnotations) {
             var t = currentEnvironment.getVariable(name);
@@ -308,7 +311,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
             }
         }
 
-        return s(stmt.mutability().source(), name, "=", print(stmt.expr()));
+        return s(stmt.mutability.source(), name, "=", print(stmt.expr));
     }
 
     String print(Expr expr) {

@@ -2,19 +2,25 @@ package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public interface Stmt extends Node {
-    <R> R accept(Visitor<R> visitor);
+public abstract class Stmt implements Node {
+    public final Location location;
+    public boolean inMain = false;
 
-
-    default List<Node> list(List<Stmt> stmts) {
-        return new ArrayList<>(stmts);
+    protected Stmt(Location location) {
+        this.location = location;
     }
 
-    interface Visitor<R> {
+    public abstract <R> R accept(Visitor<R> visitor);
+
+    @Override
+    public Location location() {
+        return location;
+    }
+
+    public interface Visitor<R> {
         R visit(Stmt stmt);
 
         R visitBlockStmt(Block stmt);
@@ -48,52 +54,63 @@ public interface Stmt extends Node {
         R visitVariable(Variable stmt);
     }
 
-    interface ForCondition extends Stmt {
-    }
-
-    interface Exportable extends Stmt {
+    public interface Exportable {
         String identifier();
     }
 
     // Maybe remove quotes from imports?
-    record Import(Location loc, Token stringLiteral, Token identifier) implements Stmt {
+    public static final class Import extends Stmt {
+        public final Token stringLiteral;
+        public final Optional<Token> identifier;
+
+        public Import(Location loc, Token stringLiteral, Optional<Token> identifier) {
+            super(loc);
+            this.stringLiteral = stringLiteral;
+            this.identifier = identifier;
+        }
+
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitImport(this);
         }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
     }
 
-    record Enum(Location loc, Token name, List<Token> values) implements Exportable {
+    public static final class Enum extends Stmt implements Exportable {
+        public final Token name;
+        public final List<Token> values;
+
+        public Enum(Location loc, Token name, List<Token> values) {
+            super(loc);
+            this.name = name;
+            this.values = values;
+        }
+
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitEnum(this);
         }
 
+
         @Override
         public String identifier() {
             return name.source();
         }
-
-        @Override
-        public Location location() {
-            return loc();
-        }
     }
 
-    record Struct(Location loc, Token name, List<Parameter> fields) implements Exportable {
+    public static final class Struct extends Stmt implements Exportable {
+        public final Token name;
+        public final List<Parameter> fields;
+
+        public Struct(Location loc, Token name, List<Parameter> fields) {
+            super(loc);
+            this.name = name;
+            this.fields = fields;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitStruct(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
 
         @Override
         public String identifier() {
@@ -101,127 +118,184 @@ public interface Stmt extends Node {
         }
     }
 
-    record Block(Location loc, List<Stmt> statements, Environment environment) implements Stmt {
+    public static final class Block extends Stmt {
+        public final List<Stmt> statements;
+        public final Environment environment;
+
+        public Block(Location loc, List<Stmt> statements, Environment environment) {
+            super(loc);
+            this.statements = statements;
+            this.environment = environment;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitBlockStmt(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
 
     }
 
-    record Export(Location loc, Stmt stmt) implements Stmt {
+    public static final class Export extends Stmt {
+        public final Stmt stmt;
+
+        public Export(Location loc, Stmt stmt) {
+            super(loc);
+            this.stmt = stmt;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitExport(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
+
     }
 
-    record ExpressionStmt(Location loc, Expr expr) implements Stmt {
+    public static final class ExpressionStmt extends Stmt {
+        public final Expr expr;
+
+        public ExpressionStmt(Location loc, Expr expr) {
+            super(loc);
+            this.expr = expr;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitExpressionStmt(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
     }
 
-    record TypeAlias(Location loc, Token name, Expr.Literal literal) implements Exportable {
+    public static final class TypeAlias extends Stmt implements Exportable {
+        public final Token name;
+        public final Expr.Literal literal;
+
+        public TypeAlias(Location loc, Token name, Expr.Literal literal) {
+            super(loc);
+            this.name = name;
+            this.literal = literal;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitTypeAlias(this);
         }
 
         @Override
-        public Location location() {
-            return loc();
-        }
-
-        @Override
         public String identifier() {
             return name.source();
         }
     }
 
-    record Function(Location loc, Token name, List<Parameter> parameters, Token returnType,
-                    Block body) implements Exportable {
+    public static final class Function extends Stmt implements Exportable {
+        public final Token name;
+        public final Block body;
+        public final List<Parameter> parameters;
+        public final Token returnType;
+
+        public Function(Location loc, Token name, List<Parameter> parameters, Token returnType,
+                        Block body) {
+            super(loc);
+            this.name = name;
+            this.parameters = parameters;
+            this.returnType = returnType;
+            this.body = body;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFunctionStmt(this);
         }
 
         @Override
-        public Location location() {
-            return loc();
-        }
-
-        @Override
         public String identifier() {
             return name.source();
         }
+
     }
 
-    record Parameter(Location loc, Token name, Type type) implements Stmt {
+    public static final class Parameter extends Stmt {
+        public final Token name;
+        public final Type type;
+
+        public Parameter(Location loc, Token name, Type type) {
+            super(loc);
+            this.name = name;
+            this.type = type;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitParameterStmt(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
+
     }
 
-    record Type(Location loc, Token identifier, Optional<Type> next, boolean listType) implements Stmt {
+    public static final class Type extends Stmt {
+        public final Token identifier;
+        public final Optional<Type> next;
+        private final boolean listType;
+
+        public Type(Location loc, Token identifier, Optional<Type> next, boolean listType) {
+            super(loc);
+            this.identifier = identifier;
+            this.next = next;
+            this.listType = listType;
+        }
+
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitType(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
     }
 
-    record If(Location loc, Expr condition, Stmt.Block trueBlock, Stmt falseStmt) implements Stmt {
+    public static final class If extends Stmt {
+        public final Block trueBlock;
+        public final Stmt falseStmt;
+        public final Expr condition;
+
+        public If(Location loc, Expr condition, Block trueBlock, Stmt falseStmt) {
+            super(loc);
+            this.condition = condition;
+            this.trueBlock = trueBlock;
+            this.falseStmt = falseStmt;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIf(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
+
     }
 
-    record Return(Location loc, Expr expr) implements Stmt {
+    public static final class Return extends Stmt {
+        public final Expr expr;
+
+        public Return(Location loc, Expr expr) {
+            super(loc);
+            this.expr = expr;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitReturnStmt(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
+
     }
 
-    record Variable(Location loc, Token mutability, Token name, Expr expr) implements Exportable {
+    public static final class Variable extends Stmt implements Exportable {
+        public final Token name;
+        public final Expr expr;
+        public final Token mutability;
+
+        public Variable(Location loc, Token mutability, Token name, Expr expr) {
+            super(loc);
+            this.mutability = mutability;
+            this.name = name;
+            this.expr = expr;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitVariable(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
 
         @Override
         public String identifier() {
@@ -229,26 +303,38 @@ public interface Stmt extends Node {
         }
     }
 
-    record For(Location loc, ForCondition condition, Block block) implements Stmt {
+    public static final class For extends Stmt {
+        public final Stmt condition;
+        public final Block block;
+
+        public For(Location loc, Stmt condition, Block block) {
+            super(loc);
+            this.condition = condition;
+            this.block = block;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFor(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
     }
 
-    record ForInCondition(Location loc, Token name, Expr expr) implements ForCondition {
+    public static final class ForInCondition extends Stmt {
+        public final Token name;
+        public final Expr expr;
+
+        public ForInCondition(Location loc, Token name, Expr expr) {
+            super(loc);
+            this.name = name;
+            this.expr = expr;
+        }
+
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitForInCondition(this);
         }
 
-        @Override
-        public Location location() {
-            return loc();
-        }
+
     }
+
 
 }

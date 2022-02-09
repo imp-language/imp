@@ -66,15 +66,33 @@ public class Parser extends ParserBase {
     public List<Stmt> parse() {
         List<Stmt> stmts = new ArrayList<>();
 
-        while (notAtEnd()) {
+        var loc = lok();
+        var main = new Stmt.Function(
+                loc,
+                new Token(IDENTIFIER, loc.line(), loc.col(), "main"),
+                new ArrayList<>(),
+                new Token(TYPE, loc.line(), loc.col(), "void"),
+                new Stmt.Block(loc, new ArrayList<>(), new Environment())
+        );
 
-            // If a statement is poorly formed, we mark it
-            // as such and continue to attempt to parse the
-            // other statements in the file.
+        while (notAtEnd()) {
             var stmt = statement();
             if (stmt == null) break;
-            stmts.add(stmt);
+
+            if (stmt instanceof Stmt.Import) {
+                stmts.add(stmt);
+            } else if (stmt instanceof Stmt.Function) {
+                stmts.add(stmt);
+            } else if (stmt instanceof Stmt.Export exportStmt) {
+                var subStmt = exportStmt.stmt;
+                if (subStmt instanceof Stmt.Enum || subStmt instanceof Stmt.Struct || subStmt instanceof Stmt.Function) {
+                    stmts.add(exportStmt);
+                }
+            } else {
+                main.body.statements.add(stmt);
+            }
         }
+        stmts.add(main);
         return stmts;
     }
 
@@ -168,8 +186,11 @@ public class Parser extends ParserBase {
     private Stmt.Import importStmt() {
         var loc = lok();
         var str = consume(STRING, "Import must be followed by a string.");
-        consume(AS, "Import must contain qualifier.");
-        var id = consume(IDENTIFIER, "Import must contain qualifier.");
+
+        Optional<Token> id = Optional.empty();
+        if (match(AS)) {
+            id = Optional.of(consume());
+        }
         return new Stmt.Import(loc, str, id);
     }
 

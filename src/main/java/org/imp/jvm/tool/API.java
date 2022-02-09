@@ -10,7 +10,7 @@ import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
-import org.imp.jvm.runtime.Glue;
+import org.imp.jvm.runtime.GlueOld;
 import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.types.Type;
 import org.imp.jvm.visitors.EnvironmentVisitor;
@@ -43,7 +43,7 @@ public class API {
 
         // Get all qualified imports (but don't load them)
         source.filter(Stmt.Import.class, (importStmt) -> {
-            String relativePath = importStmt.stringLiteral().source();
+            String relativePath = importStmt.stringLiteral.source();
             String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
             filePath = FilenameUtils.separatorsToUnix(filePath);
             var f = new File(filePath);
@@ -62,7 +62,7 @@ public class API {
 
         // Process all exports in the current file
         source.filter(Stmt.Export.class, (exportStmt) -> {
-            if (exportStmt.stmt() instanceof Stmt.Exportable exportable) {
+            if (exportStmt.stmt instanceof Stmt.Exportable exportable) {
                 String identifier = exportable.identifier();
                 Type type = source.rootEnvironment.getVariable(identifier);
                 if (type != null) {
@@ -164,7 +164,7 @@ public class API {
         Map<String, SourceFile> fileMap = new HashMap<>();
 
         current.filter(Stmt.Import.class, (importStmt) -> {
-            String relativePath = importStmt.stringLiteral().source();
+            String relativePath = importStmt.stringLiteral.source();
             String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
             filePath = FilenameUtils.separatorsToUnix(filePath);
             var file = new File(filePath);
@@ -189,7 +189,7 @@ public class API {
             String filePath = FilenameUtils.concat(basePath, relativeFileName + ".imp");
             filePath = FilenameUtils.separatorsToUnix(filePath);
 
-            if (Glue.coreModules.containsKey(relativeFileName)) {
+            if (GlueOld.coreModules.containsKey(relativeFileName)) {
                 entry.stdlibImports.add(relativeFileName);
             } else {
                 ImpFile ast = createSourceFile(filePath);
@@ -215,33 +215,25 @@ public class API {
         // Todo: bytecode generation visitor!
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);
-            var byteUnits = bytecodeGenerator.generate(source);
+            var byteUnit = bytecodeGenerator.generate(source);
 
-            String className = source.name();
-            for (var byteUnit : byteUnits.entrySet()) {
-                String qualifiedName = className;
-                if (!byteUnit.getKey().equals("main")) {
-                    qualifiedName = byteUnit.getKey();
-                }
-                String fileName = ".compile/" + qualifiedName + ".class";
+            String qualifiedName = source.name();
+            String fileName = ".compile/Class_" + qualifiedName + ".class";
 
-//                System.out.println("Writing: " + fileName);
+            File tmp = new File(fileName);
+            //noinspection ResultOfMethodCallIgnored
+            tmp.getParentFile().mkdirs();
 
-                File tmp = new File(fileName);
-                //noinspection ResultOfMethodCallIgnored
-                tmp.getParentFile().mkdirs();
-
-                OutputStream output;
-                try {
-                    output = new FileOutputStream(fileName);
-                    output.write(byteUnit.getValue());
-                    output.close();
-                } catch (IOException e) {
-                    System.err.println("The above call to mkdirs() should have worked.");
-                    System.exit(9);
-                }
-
+            OutputStream output;
+            try {
+                output = new FileOutputStream(fileName);
+                output.write(byteUnit);
+                output.close();
+            } catch (IOException e) {
+                System.err.println("The above call to mkdirs() should have worked.");
+                System.exit(9);
             }
+
         }
         Logger.killIfErrors("Errored during bytecode generation.");
 

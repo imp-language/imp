@@ -6,32 +6,36 @@ import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.runtime.stdlib.Batteries;
 import org.imp.jvm.types.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
-    private static final int CLASS_VERSION = 61;
     public final Environment rootEnvironment;
     public final SourceFile file;
-    public final Map<String, byte[]> code;
-    final int flags = ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS;
+    public final ClassWriter cw;
     private final Stack<FuncType> functionStack = new Stack<>();
-    private final ClassWriter cw = new ClassWriter(flags);
+    private final FuncType defaultFuncType;
     public Environment currentEnvironment;
 
-
-    public CodegenVisitor(Environment rootEnvironment, SourceFile file, Map<String, byte[]> code) {
+    public CodegenVisitor(Environment rootEnvironment, SourceFile file, ClassWriter cw) {
         this.rootEnvironment = rootEnvironment;
         this.file = file;
         this.currentEnvironment = this.rootEnvironment;
-        this.code = code;
+        this.cw = cw;
+
+        this.defaultFuncType = new FuncType("main", Modifier.NONE, new ArrayList<>());
+
+
     }
 
     @Override
@@ -56,7 +60,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitBlockStmt(Stmt.Block block) {
-        for (var stmt : block.statements()) {
+        for (var stmt : block.statements) {
             stmt.accept(this);
         }
         return Optional.empty();
@@ -68,26 +72,43 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var funcType = functionStack.peek();
         expr.item.accept(this);
 
-        if (expr.item.type instanceof FuncType callType) {
-            // Initialize the first-class function object
-            String ownerDescriptor = callType.getDescriptor();
-            String methodDescriptor = DescriptorFactory.getMethodDescriptor(Collections.emptyList(), BuiltInType.VOID);
-            funcType.mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
+        if (expr.item.realType instanceof FuncType callType) {
+            if (callType.glue) {
+                String owner = Batteries.class.getName().replace('.', '/');
+                /*
+                 * Before calling the function, we must consider 3 cases:
+                 *
+                 * 1. The call is to `log(...args)`, we must generate the code to pass varargs to the function
+                 * 2. The call is to `log(arg)`, we just have to cast the value to Object.
+                 * 3. The call is to any other function, just generate the arguments.
+                 */
+                String name = callType.name;
+                List<Identifier> params = callType.parameters.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
+                Type returnType = callType.returnType;
+                String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
+                // Generate arguments
+                for (var arg : expr.arguments) {
+                    arg.accept(this);
+                    if (arg.realType != null && arg.realType instanceof BuiltInType bt) {
+                        bt.doBoxing(funcType.mv);
+                    }
+                }
 
-            funcType.mv.visitVarInsn(Opcodes.ASTORE, 2);
+                funcType.mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
+            } else {
+                // Generate arguments
+                for (var arg : expr.arguments) {
+                    arg.accept(this);
+                }
 
-            // Load the First Class Function object
-            int index = 2;
-            funcType.mv.visitVarInsn(Opcodes.ALOAD, index);
+                // Call the invoke method
+                String methodDescriptor = DescriptorFactory.getMethodDescriptor(callType.parameters, callType.returnType);
+                String name = "Function_" + callType.name;
+                String owner = file.path() + "/Class_" + file.name();
 
-            // Generate arguments
-            for (var arg : expr.arguments) {
-                arg.accept(this);
+                funcType.mv.visitVarInsn(Opcodes.ALOAD, 0);
+                funcType.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, methodDescriptor, false);
             }
-
-            // Call the invoke method
-            methodDescriptor = DescriptorFactory.getMethodDescriptor(funcType.parameters, funcType.returnType);
-            funcType.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
 
 
         } else {
@@ -95,7 +116,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             System.exit(43);
         }
 
-        throw new NotImplementedException("method not implemented");
+        return Optional.empty();
     }
 
     @Override
@@ -110,12 +131,12 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitExport(Stmt.Export stmt) {
-        return stmt.stmt().accept(this);
+        return stmt.stmt.accept(this);
     }
 
     @Override
     public Optional<ClassWriter> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
-        stmt.expr().accept(this);
+        stmt.expr.accept(this);
         return Optional.empty();
     }
 
@@ -131,23 +152,22 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitFunctionStmt(Stmt.Function stmt) {
-        var funcType = currentEnvironment.getVariableTyped(stmt.name().source(), FuncType.class);
+        // TODO(Current) add a static main method to the class
+        var funcType = currentEnvironment.getVariableTyped(stmt.name.source(), FuncType.class);
         functionStack.add(funcType);
-        var childEnvironment = stmt.body().environment();
+        var childEnvironment = stmt.body.environment;
 
         // Generate class
         String name = "Function_" + funcType.name;
-        String qualifiedName = file.path() + "/" + name;
-        cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
         // Generate invoker method
         String descriptor = DescriptorFactory.getMethodDescriptor(funcType.parameters, funcType.returnType);
-        funcType.mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "invoke", descriptor, null, null);
+        funcType.mv = cw.visitMethod(Opcodes.ACC_PUBLIC, name, descriptor, null, null);
         funcType.mv.visitCode();
 
         // Generate function body
         currentEnvironment = childEnvironment;
-        stmt.body().accept(this);
+        stmt.body.accept(this);
 
         // Finish generating invoker function
 
@@ -155,7 +175,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         funcType.mv.visitEnd();
 
         cw.visitEnd();
-        code.put(qualifiedName, cw.toByteArray());
+//        code.put(qualifiedName, cw.toByteArray());
 
         currentEnvironment = currentEnvironment.getParent();
         functionStack.pop();
@@ -173,9 +193,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         var funcType = functionStack.peek();
         var type = currentEnvironment.getVariable(expr.identifier.source());
-        expr.type = type;
-        var index = currentEnvironment.getLocalVariableIndex(expr.identifier.source());
-        funcType.mv.visitVarInsn(type.getLoadVariableOpcode(), index);
+        expr.realType = type;
+        if (type instanceof FuncType ft) {
+
+        } else {
+            var index = currentEnvironment.getLocalVariableIndex(expr.identifier.source());
+            funcType.mv.visitVarInsn(type.getLoadVariableOpcode(), index);
+        }
         return Optional.empty();
     }
 
@@ -252,19 +276,19 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitReturnStmt(Stmt.Return stmt) {
         var funcType = functionStack.peek();
-        stmt.expr().accept(this);
-        funcType.mv.visitInsn(stmt.expr().type.getReturnOpcode());
+        stmt.expr.accept(this);
+        funcType.mv.visitInsn(stmt.expr.realType.getReturnOpcode());
         return Optional.empty();
     }
 
     @Override
     public Optional<ClassWriter> visitStruct(Stmt.Struct struct) {
         // Codegen a new JVM class representing an Imp struct
-        var structType = currentEnvironment.getVariableTyped(struct.name().source(), StructType.class);
+        var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
 
         String name = structType.name;
         String qualifiedName = file.path() + "/" + name;
-        cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
+//        cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
 //        addConstructor(structType.parent, classWriter, structType.fields, structType);
 
@@ -279,7 +303,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         cw.visitEnd();
 
-        code.put(qualifiedName, cw.toByteArray());
+        // Todo: generate internal classes
+//        code.put(qualifiedName, cw.toByteArray());
 
         return Optional.of(cw);
     }
@@ -302,12 +327,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // to one initialization at the beginning of the block or function.
         var funcType = functionStack.peek();
 
-        stmt.expr().accept(this);
+        stmt.expr.accept(this);
         int index = currentEnvironment.getLocalVariableIndex(stmt.identifier());
         var type = currentEnvironment.getVariable(stmt.identifier());
-        funcType.mv.visitVarInsn(type.getStoreVariableOpcode(), index);
+        funcType.mv.visitVarInsn(type.getStoreVariableOpcode(), 1);
 
         return Optional.empty();
     }
+
 
 }
