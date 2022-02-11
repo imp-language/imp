@@ -3,10 +3,8 @@ package org.imp.jvm.runtime;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.expression.Function;
-import org.imp.jvm.runtime.stdlib.Batteries;
-import org.imp.jvm.runtime.stdlib.Math;
-import org.imp.jvm.runtime.stdlib.Process;
 import org.imp.jvm.types.*;
+import org.imp.runtime.Batteries;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -21,8 +19,6 @@ public class Glue {
 
     static {
         coreModules.put("batteries", Batteries.class);
-        coreModules.put("math", Math.class);
-        coreModules.put("process", Process.class);
     }
 
     public static List<FuncType> getExports(String module) {

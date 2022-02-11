@@ -193,7 +193,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
             }
         } else if (Glue.coreModules.containsKey(importName)) {
             // Look in Glue
-            System.out.println("glue " + importName);
             var ree = Glue.getExports(importName);
             for (var ft : ree) {
                 var typeName = ft.name;

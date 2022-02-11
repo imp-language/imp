@@ -1,9 +1,6 @@
 package org.imp.jvm.tokenizer;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PushbackReader;
+import java.io.*;
 import java.util.Iterator;
 
 import static org.imp.jvm.tokenizer.TokenType.*;
@@ -15,12 +12,8 @@ public class Tokenizer implements Iterator<Token> {
     private PushbackReader reader;
     private Status status = Status.Whole;
 
-    public Tokenizer(File file) {
-        try {
-            this.reader = new PushbackReader(new FileReader(file), 5);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Tokenizer(File file) throws FileNotFoundException {
+        this.reader = new PushbackReader(new FileReader(file), 5);
     }
 
     public Status getStatus() {

@@ -7,6 +7,7 @@ import org.imp.jvm.tool.manifest.Manifest;
 import picocli.CommandLine;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 
 @CommandLine.Command(name = "imp", subcommands = {
@@ -37,6 +38,29 @@ public class CLI implements Runnable {
         int result = new CommandLine(new CLI()).execute(args);
     }
 
+    /**
+     * Run the compiled JVM class, including the Imp runtime
+     * files.
+     *
+     * @param className filename
+     * @throws IOException          if process cannot be started
+     * @throws InterruptedException if process is interrupted
+     */
+    public void execute(String className) throws IOException, InterruptedException {
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "java",
+//                "-verbose:class",
+                "--enable-preview",
+                "-cp",
+                ".compile" + System.getProperty("path.separator") + "../target/classes",
+                className
+        );
+        processBuilder.inheritIO();
+        Process process = processBuilder.start();
+
+        int status = process.waitFor();
+        if (status != 0) System.err.println("Process finished with exit code " + status);
+    }
 
     @Override
     public void run() {
@@ -45,24 +69,37 @@ public class CLI implements Runnable {
             return;
         }
 
-        Manifest manifest;
+        Manifest manifest = null;
         try {
             manifest = Manifest.get();
             assert manifest != null;
-
-            String pwd = System.getProperty("user.dir");
-            ExportTable.initDB(Path.of(pwd, ".compile", "imp.db"));
-
-            // Connect to db
-            ExportTable.connectDB(Path.of(pwd, ".compile", "imp.db"));
-
-            var imp = new Compiler(manifest.entry());
-            Timer.LOG = true;
-            var out = imp.compile();
         } catch (FileNotFoundException e) {
             System.err.println("Manifest not found. Switch directories to an imp project, or run `imp new`.");
+            System.exit(UnixErrors.ENOENT);
+        }
+        String pwd = System.getProperty("user.dir");
+        ExportTable.initDB(Path.of(pwd, ".compile", "imp.db"));
+
+        // Connect to db
+        ExportTable.connectDB(Path.of(pwd, ".compile", "imp.db"));
+
+        var imp = new Compiler();
+        Timer.LOG = true;
+        String classPath = null;
+        try {
+            classPath = imp.compile(manifest.entry());
+        } catch (FileNotFoundException e) {
+            System.err.println("Manifest.entry points to a file that does not exist.");
+            System.exit(UnixErrors.ENOENT);
+        }
+
+        try {
+            execute(classPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
-
 }
 

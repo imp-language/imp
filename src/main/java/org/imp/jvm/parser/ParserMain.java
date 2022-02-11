@@ -4,10 +4,11 @@ import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.tool.Timer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class ParserMain {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
 //        var printer = new ASTPrinterVisitor();
 

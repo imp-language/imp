@@ -7,8 +7,8 @@ import org.imp.jvm.Stmt;
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.runtime.stdlib.Batteries;
 import org.imp.jvm.types.*;
+import org.imp.runtime.Batteries;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
@@ -55,7 +55,70 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitBinaryExpr(Expr.Binary expr) {
-        throw new NotImplementedException("method not implemented");
+        var funcType = functionStack.peek();
+        var mv = funcType.mv;
+        var left = expr.left;
+        var right = expr.right;
+        if (expr.realType.equals(BuiltInType.STRING)) {
+            mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+            mv.visitInsn(Opcodes.DUP);
+            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+
+            expr.left.accept(this);
+
+            String leftExprDescriptor = expr.left.realType.getDescriptor();
+            String descriptor = "(" + leftExprDescriptor + ")Ljava/lang/StringBuilder;";
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
+
+            expr.right.accept(this);
+
+            String rightExprDescriptor = expr.right.realType.getDescriptor();
+            descriptor = "(" + rightExprDescriptor + ")Ljava/lang/StringBuilder;";
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+        } else {
+            Type goalType = expr.realType;
+            if (left.realType.equals(right.realType)) {
+                expr.left.accept(this);
+                expr.right.accept(this);
+            } else {
+                // the types don't match
+                if (left.realType == BuiltInType.INT && right.realType == BuiltInType.FLOAT) {
+                    expr.left.accept(this);
+                    mv.visitInsn(Opcodes.I2F);
+                    expr.right.accept(this);
+                    goalType = BuiltInType.FLOAT;
+                } else if (left.realType == BuiltInType.FLOAT && right.realType == BuiltInType.INT) {
+                    expr.left.accept(this);
+                    expr.right.accept(this);
+                    mv.visitInsn(Opcodes.I2F);
+                    goalType = BuiltInType.FLOAT;
+                } else if (left.realType == BuiltInType.INT && right.realType == BuiltInType.DOUBLE) {
+                    expr.left.accept(this);
+                    mv.visitInsn(Opcodes.I2D);
+                    expr.right.accept(this);
+                    goalType = BuiltInType.DOUBLE;
+                } else if (left.realType == BuiltInType.DOUBLE && right.realType == BuiltInType.INT) {
+                    expr.left.accept(this);
+                    expr.right.accept(this);
+                    mv.visitInsn(Opcodes.I2D);
+                    goalType = BuiltInType.DOUBLE;
+                }
+
+            }
+            int op = switch (expr.operator.type()) {
+                case ADD -> goalType.getAddOpcode();
+                case SUB -> goalType.getSubtractOpcode();
+                case MUL -> goalType.getMultiplyOpcode();
+                case DIV -> goalType.getDivideOpcode();
+                // Todo: Modulus
+                case MOD -> 0;
+                case LT, GT, LE, GE -> 0;
+                default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
+            };
+            mv.visitInsn(op);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -74,6 +137,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         if (expr.item.realType instanceof FuncType callType) {
             if (callType.glue) {
+                // Todo: make more flexible for multiple stdlib classes
                 String owner = Batteries.class.getName().replace('.', '/');
                 /*
                  * Before calling the function, we must consider 3 cases:
@@ -340,6 +404,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         stmt.expr.accept(this);
         int index = currentEnvironment.getLocalVariableIndex(stmt.identifier());
         var type = currentEnvironment.getVariable(stmt.identifier());
+        // Todo: indexes need to be better
         funcType.mv.visitVarInsn(type.getStoreVariableOpcode(), 1);
 
         return Optional.empty();

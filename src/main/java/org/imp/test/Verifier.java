@@ -66,8 +66,8 @@ public class Verifier {
         List<String> solutionLines = FileUtils.readLines(new File(solutionPath), StandardCharsets.UTF_8);
 
         // 1. Compile imp source file
-        var imp = new Compiler(sourcePath);
-        String classFilePath = imp.compile();
+        var imp = new Compiler();
+        String classFilePath = imp.compile(sourcePath);
 
         // 2. Execute compiled imp file
         Process proc = Runner.spawn(classFilePath);

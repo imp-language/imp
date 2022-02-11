@@ -26,7 +26,8 @@ public record Manifest(
         String license,
         Set<String> keywords,
         boolean publish,
-        String imp
+        String imp,
+        String runtime
 
 ) {
     static final String manifestPath = "imp.toml";
@@ -39,7 +40,10 @@ public record Manifest(
      */
     public static Manifest create(String name, String version, String entry) {
         return new Manifest(name, version, entry,
-                "", new ArrayList<>(), "", "", "", "", new HashSet<>(), false, "");
+                "", new ArrayList<>(),
+                "", "", "",
+                "", new HashSet<>(),
+                false, "", "");
     }
 
     /**
@@ -52,7 +56,9 @@ public record Manifest(
         String pwd = System.getProperty("user.dir");
         Path p = Path.of(pwd, manifestPath);
         try {
-            return mapper.readValue(Files.readString(p), Manifest.class);
+            var manifest = mapper.readValue(Files.readString(p), Manifest.class);
+
+            return manifest;
         } catch (IOException e) {
             throw new FileNotFoundException("Manifest not found.");
         }

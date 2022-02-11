@@ -68,6 +68,11 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
             }
         }
 
+        expr.left.realType = t1.get();
+        expr.right.realType = t2.get();
+
+        expr.realType = totalType;
+
         return Optional.of(totalType);
     }
 

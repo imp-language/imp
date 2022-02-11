@@ -1,7 +1,6 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.Util;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
@@ -17,14 +16,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public record Compiler(String filename) {
+public record Compiler() {
 
-    public Compiler(String filename) {
 
-        this.filename = FilenameUtils.separatorsToUnix(filename);
-    }
-
-    public String compile() throws FileNotFoundException {
+    public String compile(String filename) throws FileNotFoundException {
+        filename = FilenameUtils.separatorsToUnix(filename);
+//        Timer.LOG = false;
         String pwd = System.getProperty("user.dir");
 
         File file = new File(filename);
@@ -45,7 +42,7 @@ public record Compiler(String filename) {
         Comptime.killIfErrors("Correct type errors before compilation can continue.");
 
         var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
-        Util.println(pretty.print(entry.stmts));
+//        Util.println(pretty.print(entry.stmts));
 
 //        var astPrint = new ASTPrinterVisitor();
 //        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);
@@ -64,13 +61,16 @@ public record Compiler(String filename) {
 
         Timer.LOG = true;
         Timer.logTotalTime();
-        return "ree";
+
+        String entryPath = entry.path() + ".Class_" + entry.path();
+
+        return entryPath;
     }
 
 
     public String compileOld() throws FileNotFoundException {
         // Walk the dependency tree
-        var entry = API.createSourceFile(filename);
+        var entry = API.createSourceFile("filename");
         Graph<ImpFile, DefaultEdge> dependencyGraph;
         dependencyGraph = API.dependencyGraph(entry);
         Timer.log("build dependency graph");
@@ -91,7 +91,6 @@ public record Compiler(String filename) {
 
         var program = API.createProgram(compilationSet);
         Timer.log("generate bytecode");
-        Timer.LOG = true;
         Timer.logTotalTime();
 
         return entry.getClassName() + "/" + "Entry";

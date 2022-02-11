@@ -33,7 +33,7 @@ public class API {
      *
      * @return SourceFile with exports gathered.
      */
-    public static SourceFile parse(File file) {
+    public static SourceFile parse(File file) throws FileNotFoundException {
         Tokenizer tokenizer = new Tokenizer(file);
         var parser = new org.imp.jvm.parser.Parser(tokenizer);
         var statements = parser.parse();
@@ -48,7 +48,12 @@ public class API {
             filePath = FilenameUtils.separatorsToUnix(filePath);
             var f = new File(filePath);
             if (f.exists()) {
-                SourceFile next = parse(f);
+                SourceFile next = null;
+                try {
+                    next = parse(f);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 source.addImport(f, next);
             }
             return null;
@@ -79,7 +84,7 @@ public class API {
         return source;
     }
 
-    public static ImpFile createSourceFile(String filename) {
+    public static ImpFile createSourceFile(String filename) throws FileNotFoundException {
         File file = new File(filename);
 
         Timer.log("Buffer opened");
@@ -169,7 +174,12 @@ public class API {
             filePath = FilenameUtils.separatorsToUnix(filePath);
             var file = new File(filePath);
             if (file.exists()) {
-                SourceFile next = parse(file);
+                SourceFile next = null;
+                try {
+                    next = parse(file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 fileMap.put(filePath, next);
 //                System.out.println(filePath);
                 current.addImport(file, next);
@@ -192,7 +202,12 @@ public class API {
             if (GlueOld.coreModules.containsKey(relativeFileName)) {
                 entry.stdlibImports.add(relativeFileName);
             } else {
-                ImpFile ast = createSourceFile(filePath);
+                ImpFile ast = null;
+                try {
+                    ast = createSourceFile(filePath);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 if (ast == null) {
                     Logger.syntaxError(Errors.ModuleNotFound, i, filePath);
                     Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");

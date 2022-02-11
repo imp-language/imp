@@ -4,13 +4,22 @@ import org.imp.jvm.tool.Timer;
 import org.openjdk.jmh.annotations.Benchmark;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TokenizerMain {
 
+    public static void main(String[] args) throws FileNotFoundException {
+
+        new TokenizerMain().lexerBenchMark();
+
+        Timer.LOG = true;
+        Timer.logTotalTime();
+    }
+
     @Benchmark
-    public void lexerBenchMark() {
+    public void lexerBenchMark() throws FileNotFoundException {
         //            File file = new File("examples/long.imp");
         File file = new File("examples/scratch.imp");
         Timer.log("Buffer opened");
@@ -26,13 +35,5 @@ public class TokenizerMain {
 
         Timer.log("Source file tokenized.");
 
-    }
-
-    public static void main(String[] args) {
-
-        new TokenizerMain().lexerBenchMark();
-
-        Timer.LOG = true;
-        Timer.logTotalTime();
     }
 }
