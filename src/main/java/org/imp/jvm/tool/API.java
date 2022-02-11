@@ -218,7 +218,7 @@ public class API {
             var byteUnit = bytecodeGenerator.generate(source);
 
             String qualifiedName = source.name();
-            String fileName = ".compile/Class_" + qualifiedName + ".class";
+            String fileName = ".compile/" + qualifiedName + "/Class_" + qualifiedName + ".class";
 
             File tmp = new File(fileName);
             //noinspection ResultOfMethodCallIgnored

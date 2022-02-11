@@ -65,8 +65,15 @@ public class Parser extends ParserBase {
 
     public List<Stmt> parse() {
         List<Stmt> stmts = new ArrayList<>();
-
         var loc = lok();
+
+        var type = new Stmt.Type(loc, new Token(TYPE, 0, 0, "String[]"), Optional.empty(), false);
+        Stmt.Parameter varArgs = new Stmt.Parameter(loc, new Token(IDENTIFIER, 0, 0, "args"), type);
+//        varArgs.type = BuiltInType.STRING_ARR;
+//        varArgs.name = "args";
+        var args = new ArrayList<Stmt.Parameter>();
+        args.add(varArgs);
+
         var main = new Stmt.Function(
                 loc,
                 new Token(IDENTIFIER, loc.line(), loc.col(), "main"),

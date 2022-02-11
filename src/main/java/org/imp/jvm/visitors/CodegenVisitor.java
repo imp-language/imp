@@ -107,7 +107,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 String owner = file.path() + "/Class_" + file.name();
 
                 funcType.mv.visitVarInsn(Opcodes.ALOAD, 0);
-                funcType.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, methodDescriptor, false);
+                funcType.mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             }
 
 
@@ -152,17 +152,22 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitFunctionStmt(Stmt.Function stmt) {
-        // TODO(Current) add a static main method to the class
         var funcType = currentEnvironment.getVariableTyped(stmt.name.source(), FuncType.class);
         functionStack.add(funcType);
         var childEnvironment = stmt.body.environment;
 
         // Generate class
         String name = "Function_" + funcType.name;
-
+        var opcodes = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
         // Generate invoker method
         String descriptor = DescriptorFactory.getMethodDescriptor(funcType.parameters, funcType.returnType);
-        funcType.mv = cw.visitMethod(Opcodes.ACC_PUBLIC, name, descriptor, null, null);
+
+        if (funcType.name.equals("main")) {
+            name = "main";
+            descriptor = "([Ljava/lang/String;)V";
+        }
+
+        funcType.mv = cw.visitMethod(opcodes, name, descriptor, null, null);
         funcType.mv.visitCode();
 
         // Generate function body
@@ -176,6 +181,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         cw.visitEnd();
 //        code.put(qualifiedName, cw.toByteArray());
+
+        // All methods must return something, even voids
+        if (funcType.name.equals("main")) {
+            funcType.mv.visitInsn(Opcodes.RETURN);
+        }
 
         currentEnvironment = currentEnvironment.getParent();
         functionStack.pop();
