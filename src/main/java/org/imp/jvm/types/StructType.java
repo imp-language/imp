@@ -144,6 +144,11 @@ public class StructType implements Type, Serializable {
     }
 
     @Override
+    public int getNegOpcode() {
+        return 0;
+    }
+
+    @Override
     public OperatorOverload getOperatorOverload(Operator operator) {
         return null;
     }

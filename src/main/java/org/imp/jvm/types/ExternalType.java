@@ -47,6 +47,11 @@ public record ExternalType(Class<?> foundClass) implements Type {
     }
 
     @Override
+    public int getNegOpcode() {
+        return 0;
+    }
+
+    @Override
     public OperatorOverload getOperatorOverload(Operator operator) {
         return null;
     }

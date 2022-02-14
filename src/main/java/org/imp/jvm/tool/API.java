@@ -238,7 +238,6 @@ public class API {
             String fileName = moduleLocation + "/.compile/" + base + "/Class_" + qualifiedName + ".class";
 
             fileName = Path.of(source.projectRoot, ".compile", base + ".class").toString();
-            System.out.println("out: " + fileName + ", module: " + moduleLocation);
 
             File tmp = new File(fileName);
             //noinspection ResultOfMethodCallIgnored

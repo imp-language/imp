@@ -8,13 +8,13 @@ import org.imp.jvm.Stmt;
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
@@ -25,7 +25,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public final SourceFile file;
     public final ClassWriter cw;
     private final Stack<FuncType> functionStack = new Stack<>();
-    private final FuncType defaultFuncType;
     public Environment currentEnvironment;
 
     public CodegenVisitor(Environment rootEnvironment, SourceFile file, ClassWriter cw) {
@@ -33,10 +32,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         this.file = file;
         this.currentEnvironment = this.rootEnvironment;
         this.cw = cw;
-
-        this.defaultFuncType = new FuncType("main", Modifier.NONE, new ArrayList<>());
-
-
     }
 
     @Override
@@ -244,7 +239,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         funcType.mv.visitMaxs(-1, -1);
         funcType.mv.visitEnd();
 
-        cw.visitEnd();
 //        code.put(qualifiedName, cw.toByteArray());
 
         // All methods must return something, even voids
@@ -272,7 +266,9 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         if (type instanceof FuncType ft) {
 
         } else {
-            var index = currentEnvironment.getLocalVariableIndex(expr.identifier.source());
+            // Todo: TERRIBLE hack that sparsely does locals on even indices only
+            // See https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.6.1
+            var index = (funcType.locals.indexOf(expr.identifier.source()) * 2) + funcType.localOffset;
             funcType.mv.visitVarInsn(type.getLoadVariableOpcode(), index);
         }
         return Optional.empty();
@@ -331,8 +327,16 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitPrefix(Expr.Prefix expr) {
+        var mv = functionStack.peek().mv;
 
-        throw new NotImplementedException("method not implemented");
+        expr.right.accept(this);
+
+        var t = expr.right.realType;
+        if (expr.operator.type() == TokenType.SUB) {
+            mv.visitInsn(t.getNegOpcode());
+            expr.realType = t;
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -403,10 +407,14 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var funcType = functionStack.peek();
 
         stmt.expr.accept(this);
-        int index = currentEnvironment.getLocalVariableIndex(stmt.identifier());
+
+        // Add another local to the function
+        stmt.localIndex = (funcType.locals.size() * 2) + funcType.localOffset;
+        funcType.locals.add(stmt.identifier());
+
         var type = currentEnvironment.getVariable(stmt.identifier());
         // Todo: indexes need to be better
-        funcType.mv.visitVarInsn(type.getStoreVariableOpcode(), 1);
+        funcType.mv.visitVarInsn(type.getStoreVariableOpcode(), stmt.localIndex);
 
         return Optional.empty();
     }

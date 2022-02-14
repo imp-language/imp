@@ -33,7 +33,6 @@ public enum Comptime {
     MethodNotFound(9, "Method `{0}` not found.", null);
 
     //
-    ;
 
 
     static final List<String> errors = new ArrayList<>();

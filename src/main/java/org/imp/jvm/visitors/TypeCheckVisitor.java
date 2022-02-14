@@ -212,7 +212,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitLiteralExpr(Expr.Literal expr) {
-        var t = BuiltInType.getFromToken(expr.literal.type());
+        var t = expr.realType;
         if (t == null) {
             Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
         }
@@ -246,7 +246,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitPrefix(Expr.Prefix expr) {
-        return Optional.empty();
+        return expr.right.accept(this);
     }
 
     @Override

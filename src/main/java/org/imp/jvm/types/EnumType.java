@@ -58,6 +58,11 @@ public class EnumType implements Type {
     }
 
     @Override
+    public int getNegOpcode() {
+        return 0;
+    }
+
+    @Override
     public OperatorOverload getOperatorOverload(Operator operator) {
         return null;
     }

@@ -199,6 +199,11 @@ public enum BuiltInType implements Type, Serializable {
     }
 
     @Override
+    public int getNegOpcode() {
+        return opcodes.getNeg();
+    }
+
+    @Override
     public OperatorOverload getOperatorOverload(Operator operator) {
         if (this == STRING) {
             if (operator == Operator.INDEX) {

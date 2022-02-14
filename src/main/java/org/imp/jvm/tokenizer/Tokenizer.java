@@ -7,9 +7,9 @@ import static org.imp.jvm.tokenizer.TokenType.*;
 
 public class Tokenizer implements Iterator<Token> {
     private final StringBuilder sb = new StringBuilder();
+    private final PushbackReader reader;
     public int line = 1;
     public int col = 1;
-    private PushbackReader reader;
     private Status status = Status.Whole;
 
     public Tokenizer(File file) throws FileNotFoundException {

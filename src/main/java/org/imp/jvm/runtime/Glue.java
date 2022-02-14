@@ -82,9 +82,8 @@ public class Glue {
 
 
     private static FunctionType findFunction(Class<?> module, String methodName, SourceFile source) {
-        String finalMethodName = methodName;
         List<Method> methods = Arrays.stream(module.getMethods())
-                .filter(m -> m.getName().equals(finalMethodName) || m.getName().equals("_" + finalMethodName))
+                .filter(m -> m.getName().equals(methodName) || m.getName().equals("_" + methodName))
                 .collect(Collectors.toList());
 
         System.out.println(methods);

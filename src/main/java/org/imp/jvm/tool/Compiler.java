@@ -73,9 +73,7 @@ public record Compiler() {
 
         String base = FilenameUtils.separatorsToUnix(FilenameUtils.removeExtension(entry.base()));
 
-        String entryPath = base.replace("/", ".");
-
-        return entryPath;
+        return base.replace("/", ".");
     }
 
 

@@ -77,6 +77,8 @@ public class BytecodeGenerator {
 
         var results = source.acceptVisitor(codegenVisitor);
 
+        cw.visitEnd();
+
         return codegenVisitor.cw.toByteArray();
     }
 }

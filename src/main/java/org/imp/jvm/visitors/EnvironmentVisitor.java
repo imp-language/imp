@@ -50,6 +50,10 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitBinaryExpr(Expr.Binary expr) {
+
+        expr.left.accept(this);
+        expr.right.accept(this);
+
         return Optional.empty();
     }
 
@@ -63,6 +67,10 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitCall(Expr.Call expr) {
+
+        for (var arg : expr.arguments) {
+            arg.accept(this);
+        }
         return Optional.empty();
     }
 
@@ -211,7 +219,13 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitLiteralExpr(Expr.Literal expr) {
-        return Optional.empty();
+        var t = BuiltInType.getFromToken(expr.literal.type());
+        if (t == null) {
+            Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
+        } else {
+            expr.realType = t;
+        }
+        return Optional.ofNullable(t);
     }
 
     @Override
@@ -241,6 +255,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitPrefix(Expr.Prefix expr) {
+        expr.right.accept(this);
         return Optional.empty();
     }
 
@@ -374,18 +389,22 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
 
     @Override
     public Optional<Type> visitVariable(Stmt.Variable stmt) {
-        Type t;
-        if (stmt.expr instanceof Expr.Literal literal) {
-            t = BuiltInType.getFromToken(literal.literal.type());
-        } else if (stmt.expr instanceof Expr.EmptyList emptyList) {
+
+        var t = stmt.expr.accept(this);
+
+        Type type;
+        if (t.isPresent()) {
+            type = t.get();
+        } /*else if (stmt.expr instanceof Expr.EmptyList emptyList) {
             Type generic;
             var bt = BuiltInType.getFromString(emptyList.tokenType.source());
             generic = Objects.requireNonNullElseGet(bt, UnknownType::new);
             t = new ListType(generic);
-        } else {
-            t = new UnknownType();
+        }*/ else {
+            type = new UnknownType();
         }
-        currentEnvironment.addVariableOrError(stmt.name.source(), t, file, stmt);
+
+        currentEnvironment.addVariableOrError(stmt.name.source(), type, file, stmt);
         return Optional.empty();
     }
 }

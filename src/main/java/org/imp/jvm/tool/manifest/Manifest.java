@@ -56,9 +56,8 @@ public record Manifest(
         String pwd = System.getProperty("user.dir");
         Path p = Path.of(pwd, manifestPath);
         try {
-            var manifest = mapper.readValue(Files.readString(p), Manifest.class);
 
-            return manifest;
+            return mapper.readValue(Files.readString(p), Manifest.class);
         } catch (IOException e) {
             throw new FileNotFoundException("Manifest not found.");
         }

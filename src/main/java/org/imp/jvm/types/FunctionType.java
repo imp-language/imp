@@ -10,7 +10,6 @@ import org.imp.jvm.types.overloads.OperatorOverload;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FunctionType implements Type {
 
@@ -80,6 +79,11 @@ public class FunctionType implements Type {
     }
 
     @Override
+    public int getNegOpcode() {
+        return 0;
+    }
+
+    @Override
     public OperatorOverload getOperatorOverload(Operator operator) {
         return null;
     }
@@ -128,7 +132,7 @@ public class FunctionType implements Type {
             if (argTypes.get(0).equals(BuiltInType.VOID)) return null;
             return this.signatures.get("[Ljava/lang/Object;");
         }
-        var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
+        var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).toList();
         return getSignature(argTypes);
     }
 

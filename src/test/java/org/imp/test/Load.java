@@ -4,6 +4,8 @@ import org.imp.jvm.tool.Compiler;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Load {
     public static final String verificationPath = "verification/";
@@ -11,11 +13,7 @@ public class Load {
     static Compiler compiler = new Compiler();
 
     public static String run(String testPath, String projectRoot) throws IOException, InterruptedException {
-        System.out.println("projectRoot: " + projectRoot);
-//        String pwd = System.getProperty("user.dir");
-
         String className = compiler.compile(testPath + ".imp", projectRoot);
-        System.out.println("className: " + className);
 
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "java",
@@ -39,5 +37,14 @@ public class Load {
         if (status != 0) System.err.println("Process finished with exit code " + status);
 
         return stdout.replaceAll("\\r\\n?", "\n");
+    }
+
+    public static String gold(String goldPath) {
+        try {
+            return Files.readString(Path.of(goldPath)).replaceAll("\\r\\n?", "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

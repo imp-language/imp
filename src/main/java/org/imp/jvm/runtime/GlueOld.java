@@ -12,7 +12,6 @@ import org.imp.jvm.types.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Expose standard library methods to Imp programs
@@ -65,8 +64,7 @@ public class GlueOld {
     private static FunctionType findFunction(Class<?> module, String methodName, ImpFile owner) {
         String finalMethodName = methodName;
         List<Method> methods = Arrays.stream(module.getMethods())
-                .filter(m -> m.getName().equals(finalMethodName) || m.getName().equals("_" + finalMethodName))
-                .collect(Collectors.toList());
+                .filter(m -> m.getName().equals(finalMethodName) || m.getName().equals("_" + finalMethodName)).toList();
 
         if (methods.size() > 0) {
             // Some methods in the JVM implementation of `batteries` must be prefixed

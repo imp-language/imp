@@ -285,6 +285,8 @@ public abstract class Stmt implements Node {
         public final Expr expr;
         public final Token mutability;
 
+        public int localIndex = -1;
+
         public Variable(Location loc, Token mutability, Token name, Expr expr) {
             super(loc);
             this.mutability = mutability;

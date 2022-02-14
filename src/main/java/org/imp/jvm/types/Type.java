@@ -20,6 +20,8 @@ public interface Type {
 
     String getName();
 
+    int getNegOpcode();
+
     OperatorOverload getOperatorOverload(Operator operator);
 
     int getReturnOpcode();

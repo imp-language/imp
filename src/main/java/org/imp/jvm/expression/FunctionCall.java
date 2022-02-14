@@ -203,7 +203,7 @@ public class FunctionCall extends Expression {
         }
 
         // 5. Call the appropriate invoke method on the First Class Function object
-        List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
+        List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).toList();
 
         Type returnType = this.function.returnType;
         methodDescriptor = DescriptorFactory.getMethodDescriptor(function.parameters, returnType);

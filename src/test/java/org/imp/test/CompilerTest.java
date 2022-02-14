@@ -12,6 +12,14 @@ class CompilerTest {
     static String moduleLocation = Path.of(pwd, "verification").toString();
 
     @Test
+    void Arithmetic() throws IOException, InterruptedException {
+        assertEquals(
+                Load.gold(Path.of(moduleLocation, "simple/Arithmetic.txt").toString()),
+                Load.run("simple/Arithmetic", moduleLocation)
+        );
+    }
+
+    @Test
     void Function() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/Function", moduleLocation), """
                 4.0
@@ -25,4 +33,13 @@ class CompilerTest {
                 Hello, World!
                 """);
     }
+
+    @Test
+    void lowercase() throws IOException, InterruptedException {
+        assertEquals(Load.run("simple/lowercase", moduleLocation), """
+                reeee
+                """);
+    }
+
+
 }
