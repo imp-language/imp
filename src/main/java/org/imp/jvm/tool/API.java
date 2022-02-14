@@ -21,6 +21,7 @@ import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,12 +34,12 @@ public class API {
      *
      * @return SourceFile with exports gathered.
      */
-    public static SourceFile parse(File file) throws FileNotFoundException {
+    public static SourceFile parse(File file, String filename, String projectRoot) throws FileNotFoundException {
         Tokenizer tokenizer = new Tokenizer(file);
         var parser = new org.imp.jvm.parser.Parser(tokenizer);
         var statements = parser.parse();
 
-        var source = new SourceFile(file, statements);
+        var source = new SourceFile(file, statements, filename, projectRoot);
         String basePath = source.basePath();
 
         // Get all qualified imports (but don't load them)
@@ -50,7 +51,7 @@ public class API {
             if (f.exists()) {
                 SourceFile next = null;
                 try {
-                    next = parse(f);
+                    next = parse(f, filePath, projectRoot);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -176,7 +177,7 @@ public class API {
             if (file.exists()) {
                 SourceFile next = null;
                 try {
-                    next = parse(file);
+                    next = parse(file, filePath, null);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -225,7 +226,7 @@ public class API {
     }
 
 
-    public static void buildProgram(Map<String, SourceFile> compilationSet) {
+    public static void buildProgram(Map<String, SourceFile> compilationSet, String moduleLocation) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         // Todo: bytecode generation visitor!
         for (var key : compilationSet.keySet()) {
@@ -233,7 +234,11 @@ public class API {
             var byteUnit = bytecodeGenerator.generate(source);
 
             String qualifiedName = source.name();
-            String fileName = ".compile/" + qualifiedName + "/Class_" + qualifiedName + ".class";
+            String base = FilenameUtils.removeExtension(source.base());
+            String fileName = moduleLocation + "/.compile/" + base + "/Class_" + qualifiedName + ".class";
+
+            fileName = Path.of(source.projectRoot, ".compile", base + ".class").toString();
+            System.out.println("out: " + fileName + ", module: " + moduleLocation);
 
             File tmp = new File(fileName);
             //noinspection ResultOfMethodCallIgnored

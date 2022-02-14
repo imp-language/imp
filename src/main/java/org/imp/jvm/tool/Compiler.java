@@ -12,6 +12,7 @@ import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,13 +20,21 @@ import java.util.Map;
 public record Compiler() {
 
 
-    public String compile(String filename) throws FileNotFoundException {
-        filename = FilenameUtils.separatorsToUnix(filename);
+    /**
+     * @param filename
+     * @param projectRoot
+     * @return java class name ('.' separated) relative to the project root
+     * @throws FileNotFoundException
+     */
+    public String compile(String filename, String projectRoot) throws FileNotFoundException {
+        String fullPath = Path.of(projectRoot, filename).toString();
+        fullPath = FilenameUtils.separatorsToUnix(fullPath);
+//        filename = FilenameUtils.separatorsToUnix(filename);
 //        Timer.LOG = false;
         String pwd = System.getProperty("user.dir");
 
-        File file = new File(filename);
-        var entry = API.parse(file);
+        File file = new File(fullPath);
+        var entry = API.parse(file, filename, projectRoot);
         Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(entry);
         Comptime.killIfErrors("Correct dependency errors before continuing.");
 
@@ -56,13 +65,15 @@ public record Compiler() {
             }
         }
 
-        API.buildProgram(compilationSet);
+        API.buildProgram(compilationSet, projectRoot);
         Timer.log("generate bytecode");
 
         Timer.LOG = true;
         Timer.logTotalTime();
 
-        String entryPath = entry.path() + ".Class_" + entry.path();
+        String base = FilenameUtils.separatorsToUnix(FilenameUtils.removeExtension(entry.base()));
+
+        String entryPath = base.replace("/", ".");
 
         return entryPath;
     }

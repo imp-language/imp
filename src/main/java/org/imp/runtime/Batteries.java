@@ -4,7 +4,7 @@ public class Batteries {
 
 
     public static void log(Object arg) {
-        System.out.println(arg + "ree");
+        System.out.println(arg);
     }
 
 

@@ -46,7 +46,7 @@ class NewCommand implements Runnable {
             makeManifest(Path.of(p.toString(), "imp.toml"));
 
             // Add the sample file content
-            Files.writeString(Path.of(p.toString(), "main.imp"), makeSampleFile());
+            Files.writeString(Path.of(p.toString(), "Main.imp"), makeSampleFile());
 
             // Create the `.compile` directory
             Files.createDirectories(Path.of(pwd, projectName, ".compile"));
@@ -91,7 +91,7 @@ class NewCommand implements Runnable {
     }
 
     private void makeManifest(Path p) throws IOException {
-        Manifest manifest = Manifest.create(projectName, "0.0.1", "main.imp");
+        Manifest manifest = Manifest.create(projectName, "0.0.1", "Main.imp");
         TomlMapper mapper = new TomlMapper();
         mapper.writeValue(p.toFile(), manifest);
     }

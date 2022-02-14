@@ -18,13 +18,17 @@ public class SourceFile {
     public final List<Stmt> stmts;
     public final LinkedMap<String, Type> exports = new LinkedMap<>();
     public final Environment rootEnvironment = new Environment();
+    public final String projectRoot;
     // filename -> SourceFile
     private final LinkedMap<String, SourceFile> imports = new LinkedMap<>();
+    String base;
 
-    public SourceFile(File file, List<Stmt> stmts) {
+    public SourceFile(File file, List<Stmt> stmts, String base, String projectRoot) {
 
         this.file = file;
         this.stmts = stmts;
+        this.base = base;
+        this.projectRoot = FilenameUtils.separatorsToUnix(projectRoot);
     }
 
     public <R> List<R> acceptVisitor(IVisitor<R> visitor) {
@@ -40,6 +44,10 @@ public class SourceFile {
         String s = FilenameUtils.separatorsToUnix(file.getPath());
         s = FilenameUtils.removeExtension(s);
         imports.put(s, sourceFile);
+    }
+
+    public String base() {
+        return base;
     }
 
     public String basePath() {

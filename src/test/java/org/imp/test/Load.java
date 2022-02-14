@@ -1,8 +1,8 @@
 package org.imp.test;
 
-import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.tool.Compiler;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Load {
@@ -10,27 +10,34 @@ public class Load {
 
     static Compiler compiler = new Compiler();
 
-    public static String run(String testPath) throws IOException, InterruptedException {
-        String sourcePath = FilenameUtils.concat(verificationPath, testPath + ".imp");
-        System.out.println(sourcePath);
+    public static String run(String testPath, String projectRoot) throws IOException, InterruptedException {
+        System.out.println("projectRoot: " + projectRoot);
+//        String pwd = System.getProperty("user.dir");
 
-        String className = compiler.compile(sourcePath);
+        String className = compiler.compile(testPath + ".imp", projectRoot);
+        System.out.println("className: " + className);
 
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "java",
-//                "-verbose:class",
-                "--enable-preview",
                 "-cp",
                 ".compile" + System.getProperty("path.separator") + "../target/classes",
                 className
         );
 
-        processBuilder.inheritIO();
+        // cd into the verification project folder
+        processBuilder.directory(new File(projectRoot));
+
+//        processBuilder.inheritIO();
         Process process = processBuilder.start();
+
+        String stdout = new String(process.getInputStream().readAllBytes());
+        System.out.println(stdout);
+        String stderr = new String(process.getErrorStream().readAllBytes());
+        System.err.println(stderr);
 
         int status = process.waitFor();
         if (status != 0) System.err.println("Process finished with exit code " + status);
 
-        return "";
+        return stdout.replaceAll("\\r\\n?", "\n");
     }
 }

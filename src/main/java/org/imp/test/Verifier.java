@@ -67,7 +67,7 @@ public class Verifier {
 
         // 1. Compile imp source file
         var imp = new Compiler();
-        String classFilePath = imp.compile(sourcePath);
+        String classFilePath = imp.compile(sourcePath, null);
 
         // 2. Execute compiled imp file
         Process proc = Runner.spawn(classFilePath);

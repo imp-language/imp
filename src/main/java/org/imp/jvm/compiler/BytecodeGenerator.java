@@ -1,5 +1,6 @@
 package org.imp.jvm.compiler;
 
+import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.types.FunctionType;
@@ -66,7 +67,8 @@ public class BytecodeGenerator {
 
         var cw = new ClassWriter(flags);
 
-        String qualifiedName = source.path() + "/Class_" + source.name();
+//        String qualifiedName = source.path() + "/Class_" + source.name();
+        String qualifiedName = FilenameUtils.removeExtension(source.base());
         cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
         // Generate bytecode for each Type defined in the Imp file

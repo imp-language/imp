@@ -1,5 +1,6 @@
 package org.imp.jvm.visitors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Expr;
@@ -168,7 +169,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 // Call the invoke method
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(callType.parameters, callType.returnType);
                 String name = "Function_" + callType.name;
-                String owner = file.path() + "/Class_" + file.name();
+                String owner = FilenameUtils.removeExtension(file.base());
 
                 funcType.mv.visitVarInsn(Opcodes.ALOAD, 0);
                 funcType.mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);

@@ -83,11 +83,13 @@ public class CLI implements Runnable {
         // Connect to db
         ExportTable.connectDB(Path.of(pwd, ".compile", "imp.db"));
 
+        String moduleLocation = Path.of(pwd).toString();
+
         var imp = new Compiler();
         Timer.LOG = true;
         String classPath = null;
         try {
-            classPath = imp.compile(manifest.entry());
+            classPath = imp.compile(manifest.entry(), moduleLocation);
         } catch (FileNotFoundException e) {
             System.err.println("Manifest.entry points to a file that does not exist.");
             System.exit(UnixErrors.ENOENT);
