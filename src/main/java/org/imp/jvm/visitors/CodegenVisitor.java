@@ -143,6 +143,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                  * 3. The call is to any other function, just generate the arguments.
                  */
                 String name = callType.name;
+                if (callType.isPrefixed) name = "_" + name;
+
                 List<Identifier> params = callType.parameters.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
                 Type returnType = callType.returnType;
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
@@ -166,7 +168,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 String name = "Function_" + callType.name;
                 String owner = FilenameUtils.removeExtension(file.base());
 
-                funcType.mv.visitVarInsn(Opcodes.ALOAD, 0);
                 funcType.mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             }
 

@@ -87,8 +87,10 @@ public class Tokenizer implements Iterator<Token> {
                 case '/':
                     if (peekNext() == '/') {
                         // A comment goes until the end of the line.
-                        var b = 0;
-                        while (peek() != '\n'/* && !isAtEnd()*/) advance();
+                        char cc = ' ';
+                        while (peek() != '\n' && cc != '\0') {
+                            cc = advance();
+                        }
                     } else if (peekNext() == '*') {
                         advance();
                         advance();

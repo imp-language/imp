@@ -36,7 +36,18 @@ public class Glue {
                     var id = new Identifier("_", new ExternalType(p));
                     parameters.add(id);
                 }
+                boolean isPrefixed = false;
+                if (name.startsWith("_")) {
+                    name = name.substring(1);
+                    isPrefixed = true;
+                }
                 var funcType = new FuncType(name, Modifier.NONE, parameters);
+                funcType.isPrefixed = isPrefixed;
+                funcType.returnType = new ExternalType(method.getReturnType());
+
+                var bt = BuiltInType.getFromString(method.getReturnType().getName());
+                if (bt != null) funcType.returnType = bt;
+
                 funcType.glue = true;
                 result.add(funcType);
 

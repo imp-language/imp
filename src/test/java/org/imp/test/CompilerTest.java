@@ -28,6 +28,18 @@ class CompilerTest {
     }
 
     @Test
+    void empty() throws IOException, InterruptedException {
+        assertEquals(Load.run("simple/empty", moduleLocation), """
+                """);
+    }
+
+    @Test
+    void emptyWithComment() throws IOException, InterruptedException {
+        assertEquals(Load.run("simple/emptyWithComment", moduleLocation), """
+                """);
+    }
+
+    @Test
     void helloWorld() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/HelloWorld", moduleLocation), """
                 Hello, World!
@@ -35,9 +47,12 @@ class CompilerTest {
     }
 
     @Test
-    void lowercase() throws IOException, InterruptedException {
-        assertEquals(Load.run("simple/lowercase", moduleLocation), """
-                reeee
+    void rosettaTemperatureConversion() throws IOException, InterruptedException {
+        assertEquals(Load.run("simple/rosettaTemperatureConversion", moduleLocation), """
+                K: 21.0
+                C: -252.15
+                F: -421.87003
+                R: 37.8
                 """);
     }
 

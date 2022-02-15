@@ -314,6 +314,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<Type>> {
     public Optional<Type> visitReturnStmt(Stmt.Return stmt) {
         // Set the return type of the function to the type of the
         // expression you are returning.
+        stmt.expr.accept(this);
         var e = stmt.expr;
         if (e instanceof Expr.Identifier identifier) {
             var name = identifier.identifier.source();
