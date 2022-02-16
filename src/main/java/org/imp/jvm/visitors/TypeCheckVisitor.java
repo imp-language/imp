@@ -59,16 +59,13 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         var totalType = t1.get();
 
-        var zero = 0;
-        var comp = zero == 0.0;
-
         switch (expr.operator.type()) {
             case ADD, SUB, MUL, DIV, MOD -> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     totalType = BuiltInType.widen(bt1, bt2);
                 }
             }
-            case AND, OR, EQUAL, NOTEQUAL, LT, GT, LE, GE -> {
+            case EQUAL, NOTEQUAL, LT, GT, LE, GE -> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     // check if two values can be compared
                     if (expr.operator.type() != TokenType.EQUAL && expr.operator.type() != TokenType.NOTEQUAL) {
@@ -82,6 +79,16 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     totalType = BuiltInType.BOOLEAN;
                 }
             }
+            case AND, OR -> {
+                if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
+                    // check if two values can be compared
+                    if (bt1 != BuiltInType.BOOLEAN || bt2 != BuiltInType.BOOLEAN) {
+                        Comptime.CannotApplyOperator.submit(file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
+                    }
+                    totalType = BuiltInType.BOOLEAN;
+                }
+            }
+
             default -> {
             }
         }
@@ -209,11 +216,10 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitIf(Stmt.If stmt) {
-        var childEnvironment = stmt.trueBlock.environment;
-        childEnvironment.setParent(currentEnvironment);
-        currentEnvironment = childEnvironment;
+        currentEnvironment = stmt.trueBlock.environment;
+        stmt.condition.accept(this);
         stmt.trueBlock.accept(this);
-        stmt.falseStmt.accept(this);
+        if (stmt.falseStmt != null) stmt.falseStmt.accept(this);
 
         currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
@@ -291,9 +297,9 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     }
 
 
-                } else if (t instanceof BuiltInType builtInType) {
+                }/* else if (t instanceof BuiltInType builtInType) {
                     System.out.println(builtInType);
-                }
+                }*/
             }
             return Optional.of(t);
         } else {

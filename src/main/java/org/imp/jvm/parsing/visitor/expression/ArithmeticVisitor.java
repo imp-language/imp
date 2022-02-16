@@ -27,7 +27,6 @@ public class ArithmeticVisitor extends ImpParserBaseVisitor<Arithmetic> {
         } else if (ctx.MOD() != null) {
             return new Arithmetic(left, right, Operator.MODULUS);
         } else {
-            System.out.println("not implemented");
             return null;
         }
     }

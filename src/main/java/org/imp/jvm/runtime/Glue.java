@@ -97,8 +97,6 @@ public class Glue {
                 .filter(m -> m.getName().equals(methodName) || m.getName().equals("_" + methodName))
                 .collect(Collectors.toList());
 
-        System.out.println(methods);
-
 //        if (methods.size() > 0) {
 //            // Some methods in the JVM implementation of `batteries` must be prefixed
 //            // (we use a "_") to avoid using Java reserved words like `float` or `int`.

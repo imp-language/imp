@@ -181,7 +181,6 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             System.exit(123);
         }
 
-        System.out.println("ahhh oh no error bad loop syntax");
         return null;
 
     }

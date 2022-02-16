@@ -29,8 +29,6 @@ public class TokenizerMain {
         List<Token> tokens = new ArrayList<>();
         do {
             tok = lexer.next();
-//                tokens.add(tok);
-            System.out.println(tok);
         } while (tok.type() != TokenType.EOF);
 
         Timer.log("Source file tokenized.");

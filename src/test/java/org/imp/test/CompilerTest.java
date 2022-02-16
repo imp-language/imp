@@ -47,6 +47,21 @@ class CompilerTest {
     }
 
     @Test
+    void ifElseLogical() throws IOException, InterruptedException {
+        assertEquals("""
+                here
+                here
+                here
+                here
+                here
+                here
+                here
+                here
+                here
+                """, Load.run("simple/ifElseLogical", moduleLocation));
+    }
+
+    @Test
     void relational() throws IOException, InterruptedException {
         assertEquals(
                 Load.gold(Path.of(moduleLocation, "simple/relational.txt").toString()),

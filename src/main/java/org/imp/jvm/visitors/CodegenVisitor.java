@@ -56,121 +56,18 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var left = expr.left;
         var right = expr.right;
         if (expr.realType.equals(BuiltInType.STRING)) {
-            ga.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
-            ga.visitInsn(Opcodes.DUP);
-            ga.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
-
-            expr.left.accept(this);
-
-            String leftExprDescriptor = expr.left.realType.getDescriptor();
-            String descriptor = "(" + leftExprDescriptor + ")Ljava/lang/StringBuilder;";
-            ga.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
-
-            expr.right.accept(this);
-
-            String rightExprDescriptor = expr.right.realType.getDescriptor();
-            descriptor = "(" + rightExprDescriptor + ")Ljava/lang/StringBuilder;";
-            ga.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
-            ga.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+            BinaryExprVisitor.concatenateStrings(ga, expr, this);
         } else if (expr.realType == BuiltInType.BOOLEAN) {
-            System.out.println("compile binary comp");
-            // Currently, only primitive comparisons are implemented
-
-            // Cast to the "bigger" type
-            int lWide = BuiltInType.widenings.getOrDefault((BuiltInType) left.realType, -1);
-            int rWide = BuiltInType.widenings.getOrDefault((BuiltInType) right.realType, -1);
-            var lType = Type.getType(left.realType.getDescriptor());
-            var rType = Type.getType(right.realType.getDescriptor());
-
-            var cmpType = lType;
-
-            if (lWide != -1 && rWide != -1) {
-
-                if (lWide > rWide) {
-                    left.accept(this);
-                    right.accept(this);
-                    ga.cast(rType, lType);
-                } else if (lWide < rWide) {
-                    left.accept(this);
-                    ga.cast(lType, rType);
-                    right.accept(this);
-                    cmpType = rType;
-                } else {
-                    // no cast needed
-                    left.accept(this);
-                    right.accept(this);
-                }
+            if (expr.operator.type() == TokenType.AND) {
+                BinaryExprVisitor.logicalAnd(ga, expr, this);
+            } else if (expr.operator.type() == TokenType.OR) {
+                BinaryExprVisitor.logicalOr(ga, expr, this);
             } else {
-                // Todo: better define the operator rules with overloads etc
-                // here be booleans
-
-                left.accept(this);
-                right.accept(this);
+                BinaryExprVisitor.relational(ga, expr, this);
             }
-
-            Label endLabel = new Label();
-            Label falseLabel = new Label();
-
-            int opcode = switch (expr.operator.type()) {
-                case EQUAL -> GeneratorAdapter.NE;
-                case NOTEQUAL -> GeneratorAdapter.EQ;
-                case LT -> GeneratorAdapter.GT;
-                case GT -> GeneratorAdapter.LT;
-                case LE -> GeneratorAdapter.GE;
-                case GE -> GeneratorAdapter.LE;
-                default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
-            };
-//
-            // if false, jump to falseLabel
-            ga.ifCmp(cmpType, opcode, falseLabel);
-            // else set true and jump to endLabel
-            ga.push(true);
-            ga.goTo(endLabel);
-
-            ga.mark(falseLabel);
-            ga.push(false);
-            ga.mark(endLabel);
         } else {
-            ImpType goalType = expr.realType;
-            if (left.realType.equals(right.realType)) {
-                expr.left.accept(this);
-                expr.right.accept(this);
-            } else {
-                // the types don't match
-                if (left.realType == BuiltInType.INT && right.realType == BuiltInType.FLOAT) {
-                    expr.left.accept(this);
-                    ga.visitInsn(Opcodes.I2F);
-                    expr.right.accept(this);
-                    goalType = BuiltInType.FLOAT;
-                } else if (left.realType == BuiltInType.FLOAT && right.realType == BuiltInType.INT) {
-                    expr.left.accept(this);
-                    expr.right.accept(this);
-                    ga.visitInsn(Opcodes.I2F);
-                    goalType = BuiltInType.FLOAT;
-                } else if (left.realType == BuiltInType.INT && right.realType == BuiltInType.DOUBLE) {
-                    expr.left.accept(this);
-                    ga.visitInsn(Opcodes.I2D);
-                    expr.right.accept(this);
-                    goalType = BuiltInType.DOUBLE;
-                } else if (left.realType == BuiltInType.DOUBLE && right.realType == BuiltInType.INT) {
-                    expr.left.accept(this);
-                    expr.right.accept(this);
-                    ga.visitInsn(Opcodes.I2D);
-                    goalType = BuiltInType.DOUBLE;
-                }
+            BinaryExprVisitor.arithmetic(ga, expr, this);
 
-            }
-            int op = switch (expr.operator.type()) {
-                case ADD -> goalType.getAddOpcode();
-                case SUB -> goalType.getSubtractOpcode();
-                case MUL -> goalType.getMultiplyOpcode();
-                case DIV -> goalType.getDivideOpcode();
-                // Todo: Modulus
-                case MOD -> 0;
-                case LT, GT, LE, GE -> 0;
-                default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
-            };
-            ga.visitInsn(op);
         }
         return Optional.empty();
     }
@@ -349,7 +246,27 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitIf(Stmt.If stmt) {
-        throw new NotImplementedException("method not implemented");
+        var funcType = functionStack.peek();
+        var ga = funcType.ga;
+
+        // Generate condition (returns true or false)
+        stmt.condition.accept(this);
+
+        currentEnvironment = stmt.trueBlock.environment;
+
+        Label endLabel = new Label();
+        Label falseLabel = new Label();
+        // if condition is true (cond == 0) do trueLabel then jump to end
+        ga.ifZCmp(GeneratorAdapter.EQ, falseLabel);
+        stmt.trueBlock.accept(this);
+        ga.goTo(endLabel);
+        ga.mark(falseLabel);
+        if (stmt.falseStmt != null) stmt.falseStmt.accept(this);
+        ga.mark(endLabel);
+
+        currentEnvironment = currentEnvironment.getParent();
+
+        return Optional.empty();
     }
 
     @Override
@@ -495,7 +412,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
 //        stmt.localIndex = funcType.ga.newLocal(Type.getType(stmt.expr.realType.getDescriptor()));
         stmt.localIndex = funcType.ga.newLocal(Type.INT_TYPE);
-        System.out.println("store: " + stmt.identifier() + "@" + stmt.localIndex);
 
         funcType.localMap.put(stmt.identifier(), stmt.localIndex);
 

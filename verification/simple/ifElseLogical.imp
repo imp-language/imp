@@ -1,0 +1,69 @@
+// Tests if/else and logical and/or
+import "batteries"
+
+val zero = 0
+val one = 1
+val two = 2
+val three = 3
+
+/*
+*/
+if zero == 0 and one == 1 {
+    log("here")
+} else {
+    log("not here")
+}
+
+if zero == 0 and one == two {
+    log("not here")
+} else {
+    log("here")
+}
+
+if zero == 0 or one == two {
+    log("here")
+} else {
+    log("not here")
+}
+if zero == 0 and one == 1 and two == 2 {
+    log("here")
+} else {
+    log("not here")
+}
+
+if zero == three or two == one or three == two {
+   log("not here")
+} else {
+   log("here")
+}
+
+// Some combined examples
+
+if (zero == 0 and one == 1) or two == 42 {
+    log("here")
+} else {
+    log("not here")
+}
+
+if zero == 0 and one == 1 or two == 42 {
+    log("here")
+} else {
+    log("not here")
+}
+
+if 4 == 5 or false {
+    log("not here")
+} else if 5 > -9 {
+    log("here")
+} else {
+    log("not here")
+}
+
+
+if false {
+    log("not here")
+}
+
+if true {
+    log("here")
+}

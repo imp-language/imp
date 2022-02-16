@@ -1,5 +1,6 @@
 package org.imp.jvm.parser;
 
+import org.imp.jvm.Util;
 import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.tool.Timer;
 
@@ -24,7 +25,7 @@ public class ParserMain {
         Timer.log("Source file parsed.");
         Timer.LOG = true;
         Timer.logTotalTime();
-        System.out.println(statements.size() + " statements parsed.");
+        Util.println(statements.size() + " statements parsed.");
 
     }
 

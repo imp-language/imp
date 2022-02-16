@@ -8,8 +8,8 @@ import org.imp.jvm.expression.reference.ClosureReference;
 import org.imp.jvm.expression.reference.LocalReference;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.Mutability;
 import org.imp.jvm.types.ImpType;
+import org.imp.jvm.types.Mutability;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -21,25 +21,6 @@ public class Assignment extends Expression {
         this.recipient = recipient;
         this.provider = provider;
     }
-
-    @Override
-    public void validate(Scope scope) {
-        recipient.validate(scope);
-        // Check mutability
-        if (recipient instanceof VariableReference variableReference) {
-            if (variableReference.reference instanceof LocalReference localReference) {
-                if (localReference.localVariable.mutability == Mutability.Val) {
-                    Logger.syntaxError(Errors.MutabilityError, recipient, recipient.getCtx().getText());
-                }
-            }
-        }
-        provider.validate(scope);
-        // Check type compatibility
-        if (!recipient.type.equals(provider.type)) {
-            Logger.syntaxError(Errors.IncompatibleAssignment, recipient, recipient.getCtx().getText(), recipient.type, provider.type);
-        }
-    }
-
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
@@ -57,7 +38,6 @@ public class Assignment extends Expression {
                 String varName = reference.getName();
                 int index = 0;
 //                int index = scope.closures.indexOf(varName);
-                System.out.println("index: " + index);
 //                int index = scope.getLocalVariableIndex(varName);
                 mv.visitVarInsn(Opcodes.ALOAD, index);
 
@@ -85,6 +65,23 @@ public class Assignment extends Expression {
         }
     }
 
+    @Override
+    public void validate(Scope scope) {
+        recipient.validate(scope);
+        // Check mutability
+        if (recipient instanceof VariableReference variableReference) {
+            if (variableReference.reference instanceof LocalReference localReference) {
+                if (localReference.localVariable.mutability == Mutability.Val) {
+                    Logger.syntaxError(Errors.MutabilityError, recipient, recipient.getCtx().getText());
+                }
+            }
+        }
+        provider.validate(scope);
+        // Check type compatibility
+        if (!recipient.type.equals(provider.type)) {
+            Logger.syntaxError(Errors.IncompatibleAssignment, recipient, recipient.getCtx().getText(), recipient.type, provider.type);
+        }
+    }
 
     private void castIfNecessary(ImpType expressionType, ImpType variableType, MethodVisitor mv) {
         // Todo: this does not work

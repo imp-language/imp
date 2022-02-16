@@ -159,8 +159,9 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         var childEnvironment = stmt.trueBlock.environment;
         childEnvironment.setParent(currentEnvironment);
         currentEnvironment = childEnvironment;
+        stmt.condition.accept(this);
         stmt.trueBlock.accept(this);
-        stmt.falseStmt.accept(this);
+        if (stmt.falseStmt != null) stmt.falseStmt.accept(this);
 
         // Todo: accept conditions and etc
 
@@ -285,8 +286,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                     var f = c.getDeclaredField(id);
                     var fieldType = f.getType();
 
-                    System.out.println(fieldType);
-
                     var expr2 = exprs.get(2);
                     if (expr2 instanceof Expr.Call call) {
                         var funcName = ((Expr.Identifier) call.item).identifier.source();
@@ -299,7 +298,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                     e.printStackTrace();
                 }
 
-                System.out.println("resolving external method");
             }
         }
         return Optional.empty();

@@ -57,13 +57,11 @@ public class TypeAlias extends Statement {
         localVariable = new LocalVariable(name, type);
         scope.addLocalVariable(localVariable);
 
-
         // Add all methods on the class to the scope
         var methods = foundClass.getMethods();
         for (var method : methods) {
             int modifiers = method.getModifiers();
             boolean isStatic = Modifier.isStatic(modifiers);
-//            System.out.println(method);
 
             String methodName = method.getName();
 
