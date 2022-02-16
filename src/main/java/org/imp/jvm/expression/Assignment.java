@@ -9,7 +9,7 @@ import org.imp.jvm.expression.reference.LocalReference;
 import org.imp.jvm.expression.reference.VariableReference;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Mutability;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -43,9 +43,8 @@ public class Assignment extends Expression {
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
-        Type providerType = provider.type;
-        Type recipientType = recipient.type;
-
+        ImpType providerType = provider.type;
+        ImpType recipientType = recipient.type;
 
         if (recipient instanceof VariableReference variableReference) {
             if (variableReference.reference instanceof LocalReference reference) {
@@ -87,7 +86,7 @@ public class Assignment extends Expression {
     }
 
 
-    private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {
+    private void castIfNecessary(ImpType expressionType, ImpType variableType, MethodVisitor mv) {
         // Todo: this does not work
         if (!expressionType.equals(variableType)) {
             mv.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());

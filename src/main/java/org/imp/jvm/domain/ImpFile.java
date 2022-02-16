@@ -9,7 +9,7 @@ import org.imp.jvm.statement.Export;
 import org.imp.jvm.statement.Import;
 import org.imp.jvm.types.EnumType;
 import org.imp.jvm.types.StructType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.imp.jvm.types.TypeResolver;
 
 import java.util.ArrayList;
@@ -78,7 +78,7 @@ public class ImpFile {
         // 1. Ensure all struct fields have valid types
         for (var s : structTypes) {
             for (var f : s.fields) {
-                Type t = TypeResolver.getFromName(f.type.getName(), s.scope);
+                ImpType t = TypeResolver.getFromName(f.type.getName(), s.scope);
                 if (t == null) {
                     Logger.syntaxError(Errors.TypeNotFound, f, f.getCtx().getStop().getText());
 

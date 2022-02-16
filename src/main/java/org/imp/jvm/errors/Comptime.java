@@ -32,6 +32,8 @@ public enum Comptime {
     ExternNotFound(8, "External object `{0}` not found.", "Ensure the external type you are referencing actually exists."),
     MethodNotFound(9, "Method `{0}` not found.", null);
 
+    // Todo: variable not found
+
     //
 
 

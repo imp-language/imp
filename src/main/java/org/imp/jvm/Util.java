@@ -1,7 +1,7 @@
 package org.imp.jvm;
 
 import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -55,7 +55,7 @@ public class Util {
         return parameters.stream().map(p -> p.name + " " + p.type).collect(Collectors.joining(", "));
     }
 
-    public static String parameterString(String[] names, Type[] types) {
+    public static String parameterString(String[] names, ImpType[] types) {
         return zipMap(Arrays.asList(names), Arrays.asList(types), (name, type) -> name + " " + type).collect(Collectors.joining(", "));
     }
 

@@ -2,7 +2,7 @@ package org.imp.jvm.expression;
 
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.imp.jvm.types.TypeResolver;
 import org.objectweb.asm.MethodVisitor;
 
@@ -11,7 +11,7 @@ public class Literal extends Expression {
     public final String value;
     private Object transformed;
 
-    public Literal(Type type, String value) {
+    public Literal(ImpType type, String value) {
         super();
         this.type = type;
         this.value = value;

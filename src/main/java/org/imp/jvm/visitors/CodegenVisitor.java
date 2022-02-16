@@ -8,13 +8,12 @@ import org.imp.jvm.Stmt;
 import org.imp.jvm.compiler.DescriptorFactory;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
+import org.objectweb.asm.commons.GeneratorAdapter;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,42 +52,51 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitBinaryExpr(Expr.Binary expr) {
         var funcType = functionStack.peek();
-        var mv = funcType.mv;
+        var ga = funcType.ga;
         var left = expr.left;
         var right = expr.right;
         if (expr.realType.equals(BuiltInType.STRING)) {
-            mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
-            mv.visitInsn(Opcodes.DUP);
-            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+            ga.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+            ga.visitInsn(Opcodes.DUP);
+            ga.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
 
             expr.left.accept(this);
 
             String leftExprDescriptor = expr.left.realType.getDescriptor();
             String descriptor = "(" + leftExprDescriptor + ")Ljava/lang/StringBuilder;";
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
+            ga.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
 
             expr.right.accept(this);
 
             String rightExprDescriptor = expr.right.realType.getDescriptor();
             descriptor = "(" + rightExprDescriptor + ")Ljava/lang/StringBuilder;";
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+            ga.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
+            ga.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
         } else if (expr.realType == BuiltInType.BOOLEAN) {
             System.out.println("compile binary comp");
             // Currently, only primitive comparisons are implemented
             expr.left.accept(this);
             expr.right.accept(this);
-            Label endLabel = new Label();
-            Label trueLabel = new Label();
+            // Cast right to left's type
+            var lType = Type.getType(expr.left.realType.getDescriptor());
+            if (expr.left.realType != expr.right.realType) {
+                ga.cast(Type.getType(expr.right.realType.getDescriptor()), lType);
+            }
 
-            mv.visitJumpInsn(compareSign.getOpcode(), trueLabel);
-            mv.visitInsn(Opcodes.ICONST_0);
-            mv.visitJumpInsn(Opcodes.GOTO, endLabel);
-            mv.visitLabel(trueLabel);
-            mv.visitInsn(Opcodes.ICONST_1);
-            mv.visitLabel(endLabel);
+            Label endLabel = new Label();
+            Label falseLabel = new Label();
+//
+            // if false, jump to falseLabel
+            ga.ifCmp(lType, GeneratorAdapter.NE, falseLabel);
+            // else set true and jump to endLabel
+            ga.push(true);
+            ga.goTo(endLabel);
+
+            ga.mark(falseLabel);
+            ga.push(false);
+            ga.mark(endLabel);
         } else {
-            Type goalType = expr.realType;
+            ImpType goalType = expr.realType;
             if (left.realType.equals(right.realType)) {
                 expr.left.accept(this);
                 expr.right.accept(this);
@@ -96,23 +104,23 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 // the types don't match
                 if (left.realType == BuiltInType.INT && right.realType == BuiltInType.FLOAT) {
                     expr.left.accept(this);
-                    mv.visitInsn(Opcodes.I2F);
+                    ga.visitInsn(Opcodes.I2F);
                     expr.right.accept(this);
                     goalType = BuiltInType.FLOAT;
                 } else if (left.realType == BuiltInType.FLOAT && right.realType == BuiltInType.INT) {
                     expr.left.accept(this);
                     expr.right.accept(this);
-                    mv.visitInsn(Opcodes.I2F);
+                    ga.visitInsn(Opcodes.I2F);
                     goalType = BuiltInType.FLOAT;
                 } else if (left.realType == BuiltInType.INT && right.realType == BuiltInType.DOUBLE) {
                     expr.left.accept(this);
-                    mv.visitInsn(Opcodes.I2D);
+                    ga.visitInsn(Opcodes.I2D);
                     expr.right.accept(this);
                     goalType = BuiltInType.DOUBLE;
                 } else if (left.realType == BuiltInType.DOUBLE && right.realType == BuiltInType.INT) {
                     expr.left.accept(this);
                     expr.right.accept(this);
-                    mv.visitInsn(Opcodes.I2D);
+                    ga.visitInsn(Opcodes.I2D);
                     goalType = BuiltInType.DOUBLE;
                 }
 
@@ -127,7 +135,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 case LT, GT, LE, GE -> 0;
                 default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
             };
-            mv.visitInsn(op);
+            ga.visitInsn(op);
         }
         return Optional.empty();
     }
@@ -161,17 +169,17 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 if (callType.isPrefixed) name = "_" + name;
 
                 List<Identifier> params = callType.parameters.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
-                Type returnType = callType.returnType;
+                ImpType returnType = callType.returnType;
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
                 // Generate arguments
                 for (var arg : expr.arguments) {
                     arg.accept(this);
                     if (arg.realType != null && arg.realType instanceof BuiltInType bt) {
-                        bt.doBoxing(funcType.mv);
+                        bt.doBoxing(funcType.ga);
                     }
                 }
 
-                funcType.mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
+                funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             } else {
                 // Generate arguments
                 for (var arg : expr.arguments) {
@@ -183,7 +191,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 String name = "Function_" + callType.name;
                 String owner = FilenameUtils.removeExtension(file.base());
 
-                funcType.mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
+                funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             }
 
 
@@ -234,7 +242,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         // Generate class
         String name = "Function_" + funcType.name;
-        var opcodes = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
+        var access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
         // Generate invoker method
         String descriptor = DescriptorFactory.getMethodDescriptor(funcType.parameters, funcType.returnType);
 
@@ -243,8 +251,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             descriptor = "([Ljava/lang/String;)V";
         }
 
-        funcType.mv = cw.visitMethod(opcodes, name, descriptor, null, null);
-        funcType.mv.visitCode();
+        var mv = cw.visitMethod(access, name, descriptor, null, null);
+        funcType.ga = new GeneratorAdapter(mv, access, name, descriptor);
+
+        for (int i = 0; i < funcType.parameters.size(); i++) {
+            var param = funcType.parameters.get(i);
+            funcType.localMap.put(param.name, i);
+        }
 
         // Generate function body
         currentEnvironment = childEnvironment;
@@ -252,14 +265,14 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         // Finish generating invoker function
 
-        funcType.mv.visitMaxs(-1, -1);
-        funcType.mv.visitEnd();
+//        funcType.ga.visitMaxs(-1, -1);
+        funcType.ga.endMethod();
 
 //        code.put(qualifiedName, cw.toByteArray());
 
         // All methods must return something, even voids
         if (funcType.name.equals("main")) {
-            funcType.mv.visitInsn(Opcodes.RETURN);
+            funcType.ga.visitInsn(Opcodes.RETURN);
         }
 
         currentEnvironment = currentEnvironment.getParent();
@@ -284,8 +297,9 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         } else {
             // Todo: TERRIBLE hack that sparsely does locals on even indices only
             // See https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.6.1
-            var index = (funcType.locals.indexOf(expr.identifier.source()) * 2) + funcType.localOffset;
-            funcType.mv.visitVarInsn(type.getLoadVariableOpcode(), index);
+            var index = funcType.localMap.get(expr.identifier.source());
+//            funcType.ga.visitVarInsn(type.getLoadVariableOpcode(), index);
+            funcType.ga.loadLocal(index, Type.getType(type.getDescriptor()));
         }
         return Optional.empty();
     }
@@ -308,9 +322,19 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitLiteralExpr(Expr.Literal expr) {
-        var funcType = functionStack.peek();
-        var transformed = TypeResolver.getValueFromString(expr.literal.source(), BuiltInType.getFromToken(expr.literal.type()));
-        funcType.mv.visitLdcInsn(transformed);
+        if (expr.realType instanceof BuiltInType bt) {
+            var transformed = TypeResolver.getValueFromString(expr.literal.source(), BuiltInType.getFromToken(expr.literal.type()));
+            var ga = functionStack.peek().ga;
+            switch (bt) {
+                case INT -> ga.push((int) transformed);
+                case FLOAT -> ga.push((float) transformed);
+                case DOUBLE -> ga.push((double) transformed);
+                case BOOLEAN -> ga.push((boolean) transformed);
+                case STRING -> ga.push((String) transformed);
+            }
+        } else {
+            Comptime.Implementation.submit(file.file, expr, "This should never happen. All literals should be builtin, for now.");
+        }
         return Optional.empty();
     }
 
@@ -343,13 +367,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitPrefix(Expr.Prefix expr) {
-        var mv = functionStack.peek().mv;
+        var ga = functionStack.peek().ga;
 
         expr.right.accept(this);
 
         var t = expr.right.realType;
         if (expr.operator.type() == TokenType.SUB) {
-            mv.visitInsn(t.getNegOpcode());
+            ga.visitInsn(t.getNegOpcode());
             expr.realType = t;
         }
         return Optional.empty();
@@ -372,7 +396,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitReturnStmt(Stmt.Return stmt) {
         var funcType = functionStack.peek();
         stmt.expr.accept(this);
-        funcType.mv.visitInsn(stmt.expr.realType.getReturnOpcode());
+        funcType.ga.visitInsn(stmt.expr.realType.getReturnOpcode());
         return Optional.empty();
     }
 
@@ -388,7 +412,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 //        addConstructor(structType.parent, classWriter, structType.fields, structType);
 
         for (int i = 0; i < structType.fieldNames.length; i++) {
-            Type type = structType.fieldTypes[i];
+            ImpType type = structType.fieldTypes[i];
             String descriptor = type.getDescriptor();
             String n = structType.fieldNames[i];
 
@@ -425,12 +449,17 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         stmt.expr.accept(this);
 
         // Add another local to the function
-        stmt.localIndex = (funcType.locals.size() * 2) + funcType.localOffset;
-        funcType.locals.add(stmt.identifier());
+
+//        stmt.localIndex = funcType.ga.newLocal(Type.getType(stmt.expr.realType.getDescriptor()));
+        stmt.localIndex = funcType.ga.newLocal(Type.INT_TYPE);
+        System.out.println("store: " + stmt.identifier() + "@" + stmt.localIndex);
+
+        funcType.localMap.put(stmt.identifier(), stmt.localIndex);
 
         var type = currentEnvironment.getVariable(stmt.identifier());
         // Todo: indexes need to be better
-        funcType.mv.visitVarInsn(type.getStoreVariableOpcode(), stmt.localIndex);
+//        funcType.ga.visitVarInsn(type.getStoreVariableOpcode(), stmt.localIndex);
+        funcType.ga.storeLocal(stmt.localIndex, Type.getType(type.getDescriptor()));
 
         return Optional.empty();
     }

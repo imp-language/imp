@@ -14,7 +14,7 @@ import org.imp.jvm.statement.Statement;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.Modifier;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class Function extends Expression {
     public final Block block;
     public final List<Identifier> parameters;
-    public Type returnType;
+    public ImpType returnType;
 
     public FunctionType functionType;
 
@@ -46,7 +46,7 @@ public class Function extends Expression {
     public Function(
             FunctionType functionType,
             List<Identifier> parameters,
-            Type returnType,
+            ImpType returnType,
             Block block,
             Modifier modifier
     ) {
@@ -61,7 +61,7 @@ public class Function extends Expression {
     public Function(
             Modifier modifier, String name,
             List<Identifier> parameters,
-            Type returnType,
+            ImpType returnType,
             Block block,
             ImpFile parent
     ) {
@@ -80,7 +80,7 @@ public class Function extends Expression {
     public Function(
             FunctionType functionType,
             List<Identifier> parameters,
-            Type returnType,
+            ImpType returnType,
             FunctionKind kind
     ) {
         super();
@@ -129,7 +129,6 @@ public class Function extends Expression {
     public void validate(Scope scope) {
         assert block != null;
 
-
         functionType = scope.findFunctionType(name, false);
         // If no FunctionTypes of name exist on the current scope,
         if (functionType == null) {
@@ -168,7 +167,6 @@ public class Function extends Expression {
         }
         String description = DescriptorFactory.getMethodDescriptor(this);
 
-
         if (this.kind == FunctionKind.Internal) {
 
             MethodVisitor mv = cw.visitMethod(access, name, description, null, null);
@@ -188,5 +186,5 @@ public class Function extends Expression {
         r.generate(mv, scope);
     }
 
-    
+
 }

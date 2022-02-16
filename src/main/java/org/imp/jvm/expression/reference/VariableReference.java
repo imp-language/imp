@@ -7,7 +7,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.runtime.GlueOld;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 
 public class VariableReference extends Expression {
@@ -50,7 +50,7 @@ public class VariableReference extends Expression {
         }
         // Check for type aliases
         else if (scope.getType(name) != null) {
-            Type t = scope.getType(name);
+            ImpType t = scope.getType(name);
             this.reference = new StaticReference(name, t);
         }
         // If that fails, look for function names,

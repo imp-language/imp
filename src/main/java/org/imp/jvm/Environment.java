@@ -2,7 +2,7 @@ package org.imp.jvm;
 
 import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.errors.Comptime;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 
 import java.io.File;
 
@@ -10,9 +10,9 @@ public class Environment {
 
 
     // Type aliases, functions, structs, and enums (Don't use, Todo: deprecate)
-    private final LinkedMap<String, Type> types = new LinkedMap<>();
+    private final LinkedMap<String, ImpType> types = new LinkedMap<>();
     // Variables referencing values of the above
-    private final LinkedMap<String, Type> variables = new LinkedMap<>();
+    private final LinkedMap<String, ImpType> variables = new LinkedMap<>();
     private Environment parent;
 
     public Environment() {
@@ -20,15 +20,15 @@ public class Environment {
     }
 
     @Deprecated
-    public void addType(String name, Type type) {
+    public void addType(String name, ImpType type) {
         variables.put(name, type);
     }
 
-    public void addVariable(String name, Type type) {
+    public void addVariable(String name, ImpType type) {
         variables.put(name, type);
     }
 
-    public void addVariableOrError(String name, Type type, File file, Node node) {
+    public void addVariableOrError(String name, ImpType type, File file, Node node) {
         if (getVariable(name) != null) {
             Comptime.Redeclaration.submit(file, node, name);
         } else {
@@ -56,7 +56,7 @@ public class Environment {
         this.parent = parent;
     }
 
-    public Type getVariable(String name) {
+    public ImpType getVariable(String name) {
         if (variables.get(name) != null) {
             return variables.get(name);
         }
@@ -76,7 +76,7 @@ public class Environment {
         return null;
     }
 
-    public void setVariableType(String name, Type type) {
+    public void setVariableType(String name, ImpType type) {
         if (variables.get(name) != null) {
             variables.put(name, type);
         }  //            System.err.println("reee");

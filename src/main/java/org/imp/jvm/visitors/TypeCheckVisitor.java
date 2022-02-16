@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Stack;
 
-public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
+public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     public final Environment rootEnvironment;
     public final File file;
@@ -27,22 +27,22 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
 
     @Override
-    public Optional<Type> visit(Stmt stmt) {
+    public Optional<ImpType> visit(Stmt stmt) {
         return stmt.accept(this);
     }
 
     @Override
-    public Optional<Type> visitAssignExpr(Expr.Assign expr) {
+    public Optional<ImpType> visitAssignExpr(Expr.Assign expr) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitBad(Expr.Bad expr) {
+    public Optional<ImpType> visitBad(Expr.Bad expr) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitBinaryExpr(Expr.Binary expr) {
+    public Optional<ImpType> visitBinaryExpr(Expr.Binary expr) {
         var t1 = expr.left.accept(this);
         var t2 = expr.right.accept(this);
 
@@ -86,7 +86,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitBlockStmt(Stmt.Block block) {
+    public Optional<ImpType> visitBlockStmt(Stmt.Block block) {
         for (var stmt : block.statements) {
             stmt.accept(this);
         }
@@ -94,7 +94,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitCall(Expr.Call expr) {
+    public Optional<ImpType> visitCall(Expr.Call expr) {
 
         var e = expr.item.accept(this);
         if (e.isPresent()) {
@@ -104,6 +104,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
             for (var arg : expr.arguments) {
                 arg.accept(this);
             }
+            expr.realType = returnType;
             return Optional.of(returnType);
         } else {
             // Todo: pass missing method name
@@ -114,28 +115,28 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitEmptyList(Expr.EmptyList emptyList) {
+    public Optional<ImpType> visitEmptyList(Expr.EmptyList emptyList) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitEnum(Stmt.Enum stmt) {
+    public Optional<ImpType> visitEnum(Stmt.Enum stmt) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitExport(Stmt.Export stmt) {
+    public Optional<ImpType> visitExport(Stmt.Export stmt) {
         stmt.stmt.accept(this);
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
+    public Optional<ImpType> visitExpressionStmt(Stmt.ExpressionStmt stmt) {
         return stmt.expr.accept(this);
     }
 
     @Override
-    public Optional<Type> visitFor(Stmt.For stmt) {
+    public Optional<ImpType> visitFor(Stmt.For stmt) {
 
         currentEnvironment = stmt.block.environment;
         stmt.condition.accept(this);
@@ -146,12 +147,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitForInCondition(Stmt.ForInCondition stmt) {
+    public Optional<ImpType> visitForInCondition(Stmt.ForInCondition stmt) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitFunctionStmt(Stmt.Function stmt) {
+    public Optional<ImpType> visitFunctionStmt(Stmt.Function stmt) {
 
         // Find the FunctionType associated with this statement
         var funcType = currentEnvironment.getVariableTyped(stmt.name.source(), FuncType.class);
@@ -184,12 +185,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitGroupingExpr(Expr.Grouping expr) {
+    public Optional<ImpType> visitGroupingExpr(Expr.Grouping expr) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitIdentifierExpr(Expr.Identifier expr) {
+    public Optional<ImpType> visitIdentifierExpr(Expr.Identifier expr) {
         var t = currentEnvironment.getVariable(expr.identifier.source());
         if (t != null) {
             expr.realType = t;
@@ -198,7 +199,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitIf(Stmt.If stmt) {
+    public Optional<ImpType> visitIf(Stmt.If stmt) {
         var childEnvironment = stmt.trueBlock.environment;
         childEnvironment.setParent(currentEnvironment);
         currentEnvironment = childEnvironment;
@@ -210,17 +211,17 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitImport(Stmt.Import stmt) {
+    public Optional<ImpType> visitImport(Stmt.Import stmt) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitIndexAccess(Expr.IndexAccess expr) {
+    public Optional<ImpType> visitIndexAccess(Expr.IndexAccess expr) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitLiteralExpr(Expr.Literal expr) {
+    public Optional<ImpType> visitLiteralExpr(Expr.Literal expr) {
         var t = expr.realType;
         if (t == null) {
             Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
@@ -229,43 +230,43 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitLiteralList(Expr.LiteralList expr) {
+    public Optional<ImpType> visitLiteralList(Expr.LiteralList expr) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitLogicalExpr(Expr.Logical expr) {
+    public Optional<ImpType> visitLogicalExpr(Expr.Logical expr) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitNew(Expr.New expr) {
+    public Optional<ImpType> visitNew(Expr.New expr) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitParameterStmt(Stmt.Parameter stmt) {
+    public Optional<ImpType> visitParameterStmt(Stmt.Parameter stmt) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitPostfixExpr(Expr.Postfix expr) {
+    public Optional<ImpType> visitPostfixExpr(Expr.Postfix expr) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitPrefix(Expr.Prefix expr) {
+    public Optional<ImpType> visitPrefix(Expr.Prefix expr) {
         return expr.right.accept(this);
     }
 
     @Override
-    public Optional<Type> visitPropertyAccess(Expr.PropertyAccess expr) {
+    public Optional<ImpType> visitPropertyAccess(Expr.PropertyAccess expr) {
         // For now, assume all expr chains are identifiers
         var exprs = expr.exprs;
 
         var start = exprs.get(0);
         var startType = start.accept(this);
-        Type t;
+        ImpType t;
         if (startType.isPresent()) {
             t = startType.get();
             for (int i = 1; i < exprs.size(); i++) {
@@ -341,12 +342,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitRange(Expr.Range range) {
+    public Optional<ImpType> visitRange(Expr.Range range) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitReturnStmt(Stmt.Return stmt) {
+    public Optional<ImpType> visitReturnStmt(Stmt.Return stmt) {
         // Set the return type of the function to the type of the
         // expression you are returning.
         var t = stmt.expr.accept(this);
@@ -366,7 +367,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitStruct(Stmt.Struct struct) {
+    public Optional<ImpType> visitStruct(Stmt.Struct struct) {
         var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
         if (structType != null) {
             Util.zip(struct.fields, structType.fields, (a, b) -> {
@@ -386,19 +387,19 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
     }
 
     @Override
-    public Optional<Type> visitType(Stmt.Type stmt) {
+    public Optional<ImpType> visitType(Stmt.Type stmt) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitTypeAlias(Stmt.TypeAlias stmt) {
+    public Optional<ImpType> visitTypeAlias(Stmt.TypeAlias stmt) {
         var externalType = currentEnvironment.getVariableTyped(stmt.identifier(), ExternalType.class);
 
         return Optional.empty();
     }
 
     @Override
-    public Optional<Type> visitVariable(Stmt.Variable stmt) {
+    public Optional<ImpType> visitVariable(Stmt.Variable stmt) {
 
         var expr = stmt.expr;
         var t = expr.accept(this);

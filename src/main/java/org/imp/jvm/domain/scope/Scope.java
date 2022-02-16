@@ -3,7 +3,7 @@ package org.imp.jvm.domain.scope;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.expression.reference.ClosureReference;
 import org.imp.jvm.types.FunctionType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class Scope {
     private final String name;
     // Todo: migrate all "types" to this field
     // Types include functions, structs, external Java classes, type aliases, etc
-    private final LinkedMap<String, Type> types;
+    private final LinkedMap<String, ImpType> types;
     public FunctionType functionType = null;
 
     // Root scopes
@@ -63,7 +63,7 @@ public class Scope {
         localVariables.put(variable.getName(), variable);
     }
 
-    public void addType(String name, Type type) {
+    public void addType(String name, ImpType type) {
         this.types.put(name, type);
     }
 
@@ -109,7 +109,7 @@ public class Scope {
      * @param alias name of the type
      * @return a StructType, FunctionType, or ExternalType
      */
-    public Type getType(String alias) {
+    public ImpType getType(String alias) {
         return types.get(alias);
     }
 

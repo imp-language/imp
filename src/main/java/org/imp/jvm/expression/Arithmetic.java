@@ -3,7 +3,7 @@ package org.imp.jvm.expression;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -19,7 +19,7 @@ public class Arithmetic extends Expression {
         this.right = right;
     }
 
-    private static Type getCommonType(Expression left, Expression right) {
+    private static ImpType getCommonType(Expression left, Expression right) {
         if (right.type == BuiltInType.STRING) return BuiltInType.STRING;
         return left.type;
     }
@@ -43,7 +43,7 @@ public class Arithmetic extends Expression {
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
         } else {
-            Type goalType = this.type;
+            ImpType goalType = this.type;
             if (left.type.equals(right.type)) {
                 left.generate(mv, scope);
                 right.generate(mv, scope);

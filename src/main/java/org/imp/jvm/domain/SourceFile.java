@@ -4,7 +4,7 @@ import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.Environment;
 import org.imp.jvm.Stmt;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.IVisitor;
 
 import java.io.File;
@@ -16,7 +16,7 @@ import java.util.function.Function;
 public class SourceFile {
     public final File file;
     public final List<Stmt> stmts;
-    public final LinkedMap<String, Type> exports = new LinkedMap<>();
+    public final LinkedMap<String, ImpType> exports = new LinkedMap<>();
     public final Environment rootEnvironment = new Environment();
     public final String projectRoot;
     // filename -> SourceFile

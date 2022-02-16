@@ -3,7 +3,7 @@ package org.imp.jvm.domain.scope;
 import org.imp.jvm.compiler.FieldGenerator;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class Identifier extends Expression implements Serializable {
     public String name;
 
-    public Identifier(String name, Type type) {
+    public Identifier(String name, ImpType type) {
         this.name = name;
         this.type = type;
     }

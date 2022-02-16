@@ -85,7 +85,7 @@ public class ClassGenerator {
         closure.generate(classWriter);
 
         for (var field : closureParams) {
-            Type type = field.type;
+            ImpType type = field.type;
             String descriptor = type.getDescriptor();
             if (type instanceof BuiltInType builtInType) {
                 descriptor = Box.class.descriptorString();
@@ -129,7 +129,7 @@ public class ClassGenerator {
         addConstructor(structType.parent, classWriter, structType.fields, structType);
 
         for (var field : structType.fields) {
-            Type type = field.type;
+            ImpType type = field.type;
             String descriptor = type.getDescriptor();
             Object defaultValue = null; // currently not supported
 

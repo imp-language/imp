@@ -11,7 +11,7 @@ import org.imp.jvm.types.overloads.OperatorOverload;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FunctionType implements Type {
+public class FunctionType implements ImpType {
 
     public final String name;
     public final ImpFile parent;
@@ -101,7 +101,7 @@ public class FunctionType implements Type {
         return signatures.get(descriptor);
     }
 
-    public Function getSignature(List<Type> argumentTypes) {
+    public Function getSignature(List<ImpType> argumentTypes) {
         for (var function : signatures.values()) {
 //            boolean returnTypesMatch = (function.returnType != returnType);
             boolean argTypesMatch = true;
@@ -126,7 +126,7 @@ public class FunctionType implements Type {
         return signatures.getValue(pos);
     }
 
-    public Function getSignatureByTypes(List<Type> argTypes) {
+    public Function getSignatureByTypes(List<ImpType> argTypes) {
         if (this.name.equals("log")) {
             if (argTypes.size() == 0) return this.signatures.get("");
             if (argTypes.get(0).equals(BuiltInType.VOID)) return null;

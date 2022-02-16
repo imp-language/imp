@@ -7,7 +7,7 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ListType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -82,7 +82,7 @@ public class ForInLoop extends Loop {
         // Todo: unique names so we can have multiple for-in loops in a scope.
         block.scope.addLocalVariable(new LocalVariable("iterator", BuiltInType.OBJECT));
         // Set the type of the iterator variable
-        Type iteratorType = BuiltInType.OBJECT;
+        ImpType iteratorType = BuiltInType.OBJECT;
         if (expression.type instanceof ListType listType) {
             iteratorType = listType.contentType;
         }

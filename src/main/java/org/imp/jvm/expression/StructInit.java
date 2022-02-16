@@ -8,7 +8,7 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ExternalType;
 import org.imp.jvm.types.StructType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 public class StructInit extends Expression {
     public final StructType structType;
     public final List<Expression> arguments;
-    public final Type owner;
+    public final ImpType owner;
     private final String structName;
 
 
-    public StructInit(String structName, List<Expression> arguments, Type owner) {
+    public StructInit(String structName, List<Expression> arguments, ImpType owner) {
         this.structType = null;
         this.structName = structName;
         this.arguments = arguments;

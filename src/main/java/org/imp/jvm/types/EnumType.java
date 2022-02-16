@@ -7,7 +7,7 @@ import org.imp.jvm.types.overloads.OperatorOverload;
 import java.util.Map;
 import java.util.Optional;
 
-public class EnumType implements Type {
+public class EnumType implements ImpType {
     public final String name;
     public final Map<String, Optional<Expression>> elements;
 

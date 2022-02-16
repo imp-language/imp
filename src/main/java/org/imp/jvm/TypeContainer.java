@@ -1,6 +1,6 @@
 package org.imp.jvm;
 
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 
 public class TypeContainer {
 
@@ -10,5 +10,5 @@ public class TypeContainer {
 //    public String toString() {
 //        return type.toString();
 //    }
-    public Type type = null;
+    public ImpType type = null;
 }

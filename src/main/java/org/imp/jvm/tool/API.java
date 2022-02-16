@@ -12,7 +12,7 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.parsing.Parser;
 import org.imp.jvm.runtime.GlueOld;
 import org.imp.jvm.tokenizer.Tokenizer;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.EnvironmentVisitor;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -70,7 +70,7 @@ public class API {
         source.filter(Stmt.Export.class, (exportStmt) -> {
             if (exportStmt.stmt instanceof Stmt.Exportable exportable) {
                 String identifier = exportable.identifier();
-                Type type = source.rootEnvironment.getVariable(identifier);
+                ImpType type = source.rootEnvironment.getVariable(identifier);
                 if (type != null) {
                     source.exports.put(identifier, type);
                     ExportTable.add(source, identifier, type);

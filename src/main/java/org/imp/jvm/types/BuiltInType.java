@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum BuiltInType implements Type, Serializable {
+public enum BuiltInType implements ImpType, Serializable {
     BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT, false, false),
     INT("int", int.class, "I", TypeSpecificOpcodes.INT, 0, true),
     FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT, 0.0f, true),

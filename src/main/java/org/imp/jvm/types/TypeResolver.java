@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class TypeResolver {
 
-    public static Type getFromTypeContext(ImpParser.TypeContext typeContext, Scope scope) {
+    public static ImpType getFromTypeContext(ImpParser.TypeContext typeContext, Scope scope) {
         if (typeContext instanceof ImpParser.TypePrimitiveContext) {
             Optional<BuiltInType> builtInType = getBuiltInType(typeContext.getText());
             if (builtInType.isPresent()) {
@@ -27,7 +27,7 @@ public class TypeResolver {
         return null;
     }
 
-    public static Type getFromName(String name, Scope scope) {
+    public static ImpType getFromName(String name, Scope scope) {
         Optional<BuiltInType> builtInType = getBuiltInType(name);
         if (builtInType.isPresent()) return builtInType.get();
 
@@ -35,7 +35,7 @@ public class TypeResolver {
 
     }
 
-    public static Type getTemporaryType(ImpParser.TypeContext typeContext) {
+    public static ImpType getTemporaryType(ImpParser.TypeContext typeContext) {
         if (typeContext == null) return null;
         String text = typeContext.getText();
         if (typeContext instanceof ImpParser.TypePrimitiveContext) {
@@ -89,19 +89,19 @@ public class TypeResolver {
     }
 
     public static final class TypeChecker {
-        public static boolean isInt(Type type) {
+        public static boolean isInt(ImpType type) {
             return type == BuiltInType.INT;
         }
 
-        public static boolean isBool(Type type) {
+        public static boolean isBool(ImpType type) {
             return type == BuiltInType.BOOLEAN;
         }
 
-        public static boolean isFloat(Type type) {
+        public static boolean isFloat(ImpType type) {
             return type == BuiltInType.FLOAT;
         }
 
-        public static boolean isDouble(Type type) {
+        public static boolean isDouble(ImpType type) {
             return type == BuiltInType.DOUBLE;
         }
     }

@@ -5,23 +5,28 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.GeneratorAdapter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class FuncType implements Type, Serializable {
+public class FuncType implements ImpType, Serializable {
     public final Modifier modifier;
     public final List<Identifier> parameters;
     public final int localOffset = 0;
     //    public final String[] fieldNames;
 //    public final Type[] fieldTypes;
     public String name;
-    public Type returnType = BuiltInType.VOID;
+    public ImpType returnType = BuiltInType.VOID;
     public MethodVisitor mv = null; // careful!
+    public GeneratorAdapter ga = null;
     // Todo: refactor this to have a subclass with a generate method using in CodegenVisitor
     public boolean glue = false;
-    public List<String> locals = new ArrayList<>();
+
+    public Map<String, Integer> localMap = new HashMap<>();
+
     public boolean isPrefixed = false;
 
     // Todo: refactor to use the String[] pattern from StructType instead of List<Identifier>
@@ -29,15 +34,16 @@ public class FuncType implements Type, Serializable {
         this.name = name;
         this.modifier = modifier;
         this.parameters = parameters;
-        if (name.equals("main")) locals.add("args");
-        else {
-            for (var param : parameters) {
-                locals.add(param.name);
-            }
-        }
+//        if (name.equals("main")) locals.add("args");
+//        else {
+//            for (var param : parameters) {
+//                locals.add(param.name);
+//
+//            }
+//        }
     }
 
-    public int addLocal(String name, Type type) {
+    public int addLocal(String name, ImpType type) {
         return 0;
     }
 

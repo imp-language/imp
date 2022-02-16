@@ -217,7 +217,7 @@ public class StatementVisitor extends ImpParserBaseVisitor<Statement> {
             if (typeContext == null || typeContext.getText().length() < 1) {
                 Logger.syntaxError(Errors.MissingFieldType, new Empty(identifierContext, parent.name), ctx.getText(), Errors.getLocation(ctx.getStart()));
             }
-            Type t = TypeResolver.getTemporaryType(typeContext);
+            ImpType t = TypeResolver.getTemporaryType(typeContext);
 
             String n = identifierContext.getText();
             var field = new Identifier(n, t);

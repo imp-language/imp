@@ -1,12 +1,12 @@
 package org.imp.jvm.expression;
 
 import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 
 public class EmptyExpression extends Expression {
 
-    public EmptyExpression(Type type) {
+    public EmptyExpression(ImpType type) {
         this.type = type;
     }
 

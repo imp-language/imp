@@ -7,7 +7,7 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ListType;
 import org.imp.jvm.types.overloads.OperatorOverload;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 
 public class MemberIndex extends Expression {
@@ -26,7 +26,7 @@ public class MemberIndex extends Expression {
     public void validate(Scope scope) {
         // Get type of the index
         index.validate(scope);
-        Type indexType = index.type;
+        ImpType indexType = index.type;
 
         // Index has to be of int type, if not we error
         if (indexType != BuiltInType.INT) {
@@ -34,10 +34,9 @@ public class MemberIndex extends Expression {
             return;
         }
 
-
         // Get type of the expression
         expression.validate(scope);
-        Type expressionType = expression.type;
+        ImpType expressionType = expression.type;
 
         // Find the operator overload for member index for the given type
         this.overload = expressionType.getOperatorOverload(Operator.INDEX);
@@ -47,7 +46,6 @@ public class MemberIndex extends Expression {
         if (this.overload.type instanceof ListType listType) {
             this.overload.setType(listType.contentType);
         }
-
 
         // Or error if indexing is not supported for the type
         if (this.overload == null) {

@@ -1,27 +1,27 @@
 package org.imp.jvm.domain.scope;
 
 import org.imp.jvm.types.Mutability;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 
 public class LocalVariable {
     public final String name;
-    public Type type;
+    public ImpType type;
     public boolean closure = false;
     public final Mutability mutability;
 
-    public LocalVariable(String name, Type type) {
+    public LocalVariable(String name, ImpType type) {
         this.type = type;
         this.name = name;
         this.mutability = Mutability.Val;
     }
 
-    public LocalVariable(String name, Type type, Mutability mutability) {
+    public LocalVariable(String name, ImpType type, Mutability mutability) {
         this.type = type;
         this.name = name;
         this.mutability = mutability;
     }
 
-    public Type getType() {
+    public ImpType getType() {
         return type;
     }
 

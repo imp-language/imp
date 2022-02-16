@@ -1,13 +1,13 @@
 package org.imp.jvm;
 
 import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 
 import java.util.List;
 
 public abstract class Expr implements Node {
     public final Location location;
-    public Type realType;
+    public ImpType realType;
 
     protected Expr(Location location) {
         this.location = location;

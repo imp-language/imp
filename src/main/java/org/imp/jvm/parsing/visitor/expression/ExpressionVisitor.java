@@ -129,7 +129,7 @@ public class ExpressionVisitor extends ImpParserBaseVisitor<Expression> {
 
         // Return type (or void)
         var typeContext = ctx.type();
-        Type returnType = BuiltInType.VOID;
+        ImpType returnType = BuiltInType.VOID;
         if (typeContext.size() > 0) {
             returnType = TypeResolver.getFromTypeContext(typeContext.get(0), scope);
         }

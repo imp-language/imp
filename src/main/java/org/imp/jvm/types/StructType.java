@@ -16,18 +16,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class StructType implements Type, Serializable {
+public class StructType implements ImpType, Serializable {
     public final Scope scope;
     // Todo: replace with Map<String,Type>
     public final List<Identifier> fields;
     public final String[] fieldNames;
-    public final Type[] fieldTypes;
+    public final ImpType[] fieldTypes;
     public final ImpFile parent;
     public String name;
 
     public String qualifiedName;
 
-    public StructType(String name, String[] fieldNames, Type[] fieldTypes) {
+    public StructType(String name, String[] fieldNames, ImpType[] fieldTypes) {
         this.name = name;
         this.fields = Collections.emptyList();
         this.fieldNames = fieldNames;
@@ -40,7 +40,7 @@ public class StructType implements Type, Serializable {
         this.name = name;
         this.fields = identifiers;
         this.fieldNames = new String[0];
-        this.fieldTypes = new Type[0];
+        this.fieldTypes = new ImpType[0];
         this.parent = null;
         this.scope = null;
 
@@ -93,7 +93,7 @@ public class StructType implements Type, Serializable {
         return validatedPath;
     }
 
-    public Optional<Type> findType(String name) {
+    public Optional<ImpType> findType(String name) {
         for (int i = 0; i < fieldNames.length; i++) {
             if (fieldNames[i].equals(name)) {
                 return Optional.of(fieldTypes[i]);

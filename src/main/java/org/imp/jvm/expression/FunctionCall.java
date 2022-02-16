@@ -13,7 +13,7 @@ import org.imp.jvm.runtime.GlueOld;
 import org.imp.jvm.runtime.stdlib.Batteries;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -27,7 +27,7 @@ public class FunctionCall extends Expression {
     public final String name;
     public Function function;
     public List<Expression> arguments;
-    public List<Type> argTypes;
+    public List<ImpType> argTypes;
     private boolean hasBeenInitialized = false;
 
     private Class<?> moduleClass = null;
@@ -144,7 +144,7 @@ public class FunctionCall extends Expression {
             arg.generate(mv, scope);
         }
 
-        Type ownerType = owner.type;
+        ImpType ownerType = owner.type;
 
         String descriptor = DescriptorFactory.getMethodDescriptor(otherArgs.stream().map(a -> new Identifier("_", a.type)).collect(Collectors.toList()), function.returnType);
 
@@ -205,7 +205,7 @@ public class FunctionCall extends Expression {
         // 5. Call the appropriate invoke method on the First Class Function object
         List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).toList();
 
-        Type returnType = this.function.returnType;
+        ImpType returnType = this.function.returnType;
         methodDescriptor = DescriptorFactory.getMethodDescriptor(function.parameters, returnType);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
 
@@ -237,7 +237,7 @@ public class FunctionCall extends Expression {
         }
 
         List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
-        Type returnType = this.function.returnType;
+        ImpType returnType = this.function.returnType;
         String name = this.function.functionType.name;
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
 

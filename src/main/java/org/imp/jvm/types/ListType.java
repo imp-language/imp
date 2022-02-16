@@ -7,11 +7,11 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Objects;
 
-public class ListType implements Type {
+public class ListType implements ImpType {
 
-    public final Type contentType;
+    public final ImpType contentType;
 
-    public ListType(Type contentType) {
+    public ListType(ImpType contentType) {
         this.contentType = contentType;
     }
 

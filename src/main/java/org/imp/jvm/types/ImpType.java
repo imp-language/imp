@@ -3,7 +3,7 @@ package org.imp.jvm.types;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.types.overloads.OperatorOverload;
 
-public interface Type {
+public interface ImpType {
     int getAddOpcode();
 
     Object getDefaultValue();
