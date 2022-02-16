@@ -44,7 +44,9 @@ public class Tokenizer implements Iterator<Token> {
             tok = consumeNumber();
         } else if (c == '"') {
             String stringLiteral = consumeString();
-            tok = new Token(STRING, startLine, startCol, stringLiteral);
+
+            var stringLiteralWithEscapes = stringLiteral.translateEscapes();
+            tok = new Token(STRING, startLine, startCol, stringLiteralWithEscapes);
         } else {
             var shortToken = TokenType.find(String.valueOf(c));
 //            if (shortToken == null) {
@@ -161,6 +163,16 @@ public class Tokenizer implements Iterator<Token> {
             while (isDigit(peek())) {
                 sb.append(advance());
             }
+            // optional float suffix
+            if (peek() == 'f') {
+                sb.append(advance());
+            }
+        }
+
+        // float suffix
+        if (peek() == 'f') {
+            type = FLOAT;
+            sb.append(advance());
         }
 
         // exponent part

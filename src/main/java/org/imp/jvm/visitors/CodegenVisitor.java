@@ -75,19 +75,54 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         } else if (expr.realType == BuiltInType.BOOLEAN) {
             System.out.println("compile binary comp");
             // Currently, only primitive comparisons are implemented
-            expr.left.accept(this);
-            expr.right.accept(this);
-            // Cast right to left's type
-            var lType = Type.getType(expr.left.realType.getDescriptor());
-            if (expr.left.realType != expr.right.realType) {
-                ga.cast(Type.getType(expr.right.realType.getDescriptor()), lType);
+
+            // Cast to the "bigger" type
+            int lWide = BuiltInType.widenings.getOrDefault((BuiltInType) left.realType, -1);
+            int rWide = BuiltInType.widenings.getOrDefault((BuiltInType) right.realType, -1);
+            var lType = Type.getType(left.realType.getDescriptor());
+            var rType = Type.getType(right.realType.getDescriptor());
+
+            var cmpType = lType;
+
+            if (lWide != -1 && rWide != -1) {
+
+                if (lWide > rWide) {
+                    left.accept(this);
+                    right.accept(this);
+                    ga.cast(rType, lType);
+                } else if (lWide < rWide) {
+                    left.accept(this);
+                    ga.cast(lType, rType);
+                    right.accept(this);
+                    cmpType = rType;
+                } else {
+                    // no cast needed
+                    left.accept(this);
+                    right.accept(this);
+                }
+            } else {
+                // Todo: better define the operator rules with overloads etc
+                // here be booleans
+
+                left.accept(this);
+                right.accept(this);
             }
 
             Label endLabel = new Label();
             Label falseLabel = new Label();
+
+            int opcode = switch (expr.operator.type()) {
+                case EQUAL -> GeneratorAdapter.NE;
+                case NOTEQUAL -> GeneratorAdapter.EQ;
+                case LT -> GeneratorAdapter.GT;
+                case GT -> GeneratorAdapter.LT;
+                case LE -> GeneratorAdapter.GE;
+                case GE -> GeneratorAdapter.LE;
+                default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
+            };
 //
             // if false, jump to falseLabel
-            ga.ifCmp(lType, GeneratorAdapter.NE, falseLabel);
+            ga.ifCmp(cmpType, opcode, falseLabel);
             // else set true and jump to endLabel
             ga.push(true);
             ga.goTo(endLabel);
@@ -256,7 +291,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         for (int i = 0; i < funcType.parameters.size(); i++) {
             var param = funcType.parameters.get(i);
-            funcType.localMap.put(param.name, i);
+            funcType.argMap.put(param.name, i);
         }
 
         // Generate function body
@@ -297,9 +332,17 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         } else {
             // Todo: TERRIBLE hack that sparsely does locals on even indices only
             // See https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.6.1
-            var index = funcType.localMap.get(expr.identifier.source());
+
+            String source = expr.identifier.source();
+            int index;
+            if (funcType.localMap.containsKey(source)) {
+                index = funcType.localMap.get(source);
+                funcType.ga.loadLocal(index, Type.getType(type.getDescriptor()));
+            } else {
+                index = funcType.argMap.get(source);
+                funcType.ga.loadArg(index);
+            }
 //            funcType.ga.visitVarInsn(type.getLoadVariableOpcode(), index);
-            funcType.ga.loadLocal(index, Type.getType(type.getDescriptor()));
         }
         return Optional.empty();
     }

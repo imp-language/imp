@@ -39,7 +39,7 @@ public enum BuiltInType implements ImpType, Serializable {
     //
     ;
 
-    private final static Map<BuiltInType, Integer> widenings = new HashMap<>();
+    public final static Map<BuiltInType, Integer> widenings = new HashMap<>();
 
     static {
         widenings.put(INT, 0);

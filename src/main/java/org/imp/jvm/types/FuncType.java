@@ -26,6 +26,7 @@ public class FuncType implements ImpType, Serializable {
     public boolean glue = false;
 
     public Map<String, Integer> localMap = new HashMap<>();
+    public Map<String, Integer> argMap = new HashMap<>();
 
     public boolean isPrefixed = false;
 

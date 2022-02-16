@@ -47,6 +47,14 @@ class CompilerTest {
     }
 
     @Test
+    void relational() throws IOException, InterruptedException {
+        assertEquals(
+                Load.gold(Path.of(moduleLocation, "simple/relational.txt").toString()),
+                Load.run("simple/relational", moduleLocation)
+        );
+    }
+
+    @Test
     void rosettaTemperatureConversion() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/rosettaTemperatureConversion", moduleLocation), """
                 K: 21.0

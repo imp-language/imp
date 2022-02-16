@@ -5,6 +5,7 @@ import org.imp.jvm.Expr;
 import org.imp.jvm.Stmt;
 import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
+import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 
 import java.io.File;
@@ -67,9 +68,17 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     totalType = BuiltInType.widen(bt1, bt2);
                 }
             }
-            case AND, OR, EQUAL, NOTEQUAL -> {
+            case AND, OR, EQUAL, NOTEQUAL, LT, GT, LE, GE -> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     // check if two values can be compared
+                    if (expr.operator.type() != TokenType.EQUAL && expr.operator.type() != TokenType.NOTEQUAL) {
+                        if (bt1 == BuiltInType.STRING || bt2 == BuiltInType.STRING) {
+                            Comptime.CannotApplyOperator.submit(file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
+                        } else if (bt1 == BuiltInType.BOOLEAN || bt2 == BuiltInType.BOOLEAN) {
+                            Comptime.CannotApplyOperator.submit(file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
+
+                        }
+                    }
                     totalType = BuiltInType.BOOLEAN;
                 }
             }

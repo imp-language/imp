@@ -1,0 +1,31 @@
+// Tests relational expressions
+
+import "batteries"
+
+log("\nint")
+log(4 > 3)
+log(4 < 3)
+log(4 >= 3)
+log(4 <= 3)
+log(4 != 3)
+log(4 == 3)
+
+log("\nfloat")
+log(43. > 3)
+log(9.0 < -4.5)
+log(-4.5 >= -16f)
+log(9999999.1214124 <= 9999999.)
+log(3.14159265 != 3.14)
+log(1.41421 == 1.4142135623)
+
+log("\ndouble")
+log(43d > 3d)
+log(9.0d < -4.5d)
+log(-4.5d >= -16d)
+log(9999999.1214124d <= 9999999.d)
+log(3.14159265d != 3.14d)
+log(1.41421d == 1.4142135623d)
+
+log("\nbool")
+log(true != false)
+log(true == false)

@@ -51,6 +51,7 @@ public class Parser extends ParserBase {
 
         // Comparisons
         infixLeft(EQUAL, Precedence.COMPARISON);
+        infixLeft(NOTEQUAL, Precedence.COMPARISON);
         infixLeft(LT, Precedence.COMPARISON);
         infixLeft(GT, Precedence.COMPARISON);
         infixLeft(LE, Precedence.COMPARISON);
