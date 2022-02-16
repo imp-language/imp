@@ -13,6 +13,7 @@ import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;
@@ -72,6 +73,20 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             descriptor = "(" + rightExprDescriptor + ")Ljava/lang/StringBuilder;";
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+        } else if (expr.realType == BuiltInType.BOOLEAN) {
+            System.out.println("compile binary comp");
+            // Currently, only primitive comparisons are implemented
+            expr.left.accept(this);
+            expr.right.accept(this);
+            Label endLabel = new Label();
+            Label trueLabel = new Label();
+
+            mv.visitJumpInsn(compareSign.getOpcode(), trueLabel);
+            mv.visitInsn(Opcodes.ICONST_0);
+            mv.visitJumpInsn(Opcodes.GOTO, endLabel);
+            mv.visitLabel(trueLabel);
+            mv.visitInsn(Opcodes.ICONST_1);
+            mv.visitLabel(endLabel);
         } else {
             Type goalType = expr.realType;
             if (left.realType.equals(right.realType)) {

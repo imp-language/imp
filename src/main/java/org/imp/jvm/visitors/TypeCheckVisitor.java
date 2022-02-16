@@ -58,10 +58,19 @@ public class TypeCheckVisitor implements IVisitor<Optional<Type>> {
 
         var totalType = t1.get();
 
+        var zero = 0;
+        var comp = zero == 0.0;
+
         switch (expr.operator.type()) {
             case ADD, SUB, MUL, DIV, MOD -> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     totalType = BuiltInType.widen(bt1, bt2);
+                }
+            }
+            case AND, OR, EQUAL, NOTEQUAL -> {
+                if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
+                    // check if two values can be compared
+                    totalType = BuiltInType.BOOLEAN;
                 }
             }
             default -> {
