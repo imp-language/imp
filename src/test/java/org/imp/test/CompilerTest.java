@@ -28,6 +28,13 @@ class CompilerTest {
     }
 
     @Test
+    void assignment() throws IOException, InterruptedException {
+        assertEquals("""
+                53
+                """, Load.run("simple/assignment", moduleLocation));
+    }
+
+    @Test
     void empty() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/empty", moduleLocation), """
                 """);

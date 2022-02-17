@@ -4,6 +4,8 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.types.overloads.OperatorOverload;
 
 public interface ImpType {
+    
+
     int getAddOpcode();
 
     Object getDefaultValue();

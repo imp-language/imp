@@ -34,6 +34,17 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitAssignExpr(Expr.Assign expr) {
+        expr.left.accept(this);
+        expr.right.accept(this);
+
+        if (expr.left.realType != expr.right.realType) {
+            if (expr.left instanceof Expr.Identifier id) {
+                Comptime.BadAssignment.submit(file, expr, id.identifier.source(), expr.left.realType.getName(), expr.right.realType.getName());
+            } else {
+                Comptime.Implementation.submit(file, expr, "Assignment not implemented for any recipient but identifier yet");
+            }
+        }
+
         return Optional.empty();
     }
 

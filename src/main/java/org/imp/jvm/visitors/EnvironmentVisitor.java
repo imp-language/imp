@@ -8,6 +8,7 @@ import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.runtime.Glue;
+import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.types.*;
 
@@ -40,6 +41,19 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitAssignExpr(Expr.Assign expr) {
+        expr.left.accept(this);
+        expr.right.accept(this);
+
+        if (expr.left instanceof Expr.Identifier identifier) {
+            var mut = currentEnvironment.getVariableMutability(identifier.identifier.source());
+            if (mut == Mutability.Val) {
+                Comptime.MutabilityError.submit(file, identifier, identifier.identifier.source());
+            }
+
+        } else {
+            Comptime.Implementation.submit(file, expr, "Assignment not implemented for any recipient but identifier yet");
+        }
+
         return Optional.empty();
     }
 
@@ -394,16 +408,17 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         ImpType type;
         if (t.isPresent()) {
             type = t.get();
-        } /*else if (stmt.expr instanceof Expr.EmptyList emptyList) {
-            Type generic;
-            var bt = BuiltInType.getFromString(emptyList.tokenType.source());
-            generic = Objects.requireNonNullElseGet(bt, UnknownType::new);
-            t = new ListType(generic);
-        }*/ else {
+        } else {
             type = new UnknownType();
         }
 
+        var mut = Mutability.Val;
+        if (stmt.mutability.type() == TokenType.MUT) {
+            mut = Mutability.Mut;
+        }
+
         currentEnvironment.addVariableOrError(stmt.name.source(), type, file, stmt);
+        currentEnvironment.setVariableMutability(stmt.name.source(), mut);
         return Optional.empty();
     }
 }

@@ -30,7 +30,12 @@ public enum Comptime {
     PropertyNotFound(6, "Type `{0}` contains no field `{1}`.", null),
     CannotApplyOperator(7, "Operator `{0}` cannot be applied to types `{1}` and `{2}`", null),
     ExternNotFound(8, "External object `{0}` not found.", "Ensure the external type you are referencing actually exists."),
-    MethodNotFound(9, "Method `{0}` not found.", null);
+    MethodNotFound(9, "Method `{0}` not found.", null),
+
+    MutabilityError(10, "Variable `{0}` is immutable and cannot receive assignment.",
+            "Declare a variable with the `mut` keyword to allow mutability."),
+    BadAssignment(11, "Variable `{0}` of type `{1}` cannot accept assignment of type `{2}`.",
+            "Check that both sides of the assignment have the same type.");
 
     // Todo: variable not found
 

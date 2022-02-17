@@ -3,29 +3,29 @@ package org.imp.jvm;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.types.ImpType;
+import org.imp.jvm.types.Mutability;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Environment {
 
 
-    // Type aliases, functions, structs, and enums (Don't use, Todo: deprecate)
-    private final LinkedMap<String, ImpType> types = new LinkedMap<>();
     // Variables referencing values of the above
     private final LinkedMap<String, ImpType> variables = new LinkedMap<>();
+
+    private final Map<String, Mutability> mutability = new HashMap<>();
     private Environment parent;
 
     public Environment() {
         this.parent = null;
     }
 
-    @Deprecated
-    public void addType(String name, ImpType type) {
-        variables.put(name, type);
-    }
 
     public void addVariable(String name, ImpType type) {
         variables.put(name, type);
+        mutability.put(name, Mutability.Val);
     }
 
     public void addVariableOrError(String name, ImpType type, File file, Node node) {
@@ -36,17 +36,6 @@ public class Environment {
         }
     }
 
-    /**
-     * @param varName name to search for
-     * @return index of local variable in frame
-     */
-    public int getLocalVariableIndex(String varName) {
-        // `this` and `super` usually occupy position 0 so we start at position 1?
-        if (getVariable(varName) == null) {
-            throw new Error("variable lost somewhere during compilation.");
-        }
-        return variables.indexOf(varName) + 1;
-    }
 
     public Environment getParent() {
         return parent;
@@ -66,7 +55,16 @@ public class Environment {
         return null;
     }
 
-    // Todo: This is (better but still) bad and errors ofter.
+    public Mutability getVariableMutability(String name) {
+        if (mutability.get(name) != null) {
+            return mutability.get(name);
+        }
+        if (parent != null) {
+            return parent.getVariableMutability(name);
+        }
+        return null;
+    }
+
     public <T> T getVariableTyped(String name, Class<T> clazz) {
         var v = getVariable(name);
         if (clazz.isInstance(v)) {
@@ -76,11 +74,17 @@ public class Environment {
         return null;
     }
 
+    public void setVariableMutability(String name, Mutability m) {
+        if (mutability.get(name) != null) {
+            mutability.put(name, m);
+        }
+
+    }
+
     public void setVariableType(String name, ImpType type) {
         if (variables.get(name) != null) {
             variables.put(name, type);
-        }  //            System.err.println("reee");
-
+        }
     }
 
 }

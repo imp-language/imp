@@ -15,6 +15,7 @@ import org.imp.runtime.Batteries;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
@@ -22,16 +23,18 @@ import java.util.stream.Collectors;
 
 public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public final Environment rootEnvironment;
-    public final SourceFile file;
+    public final SourceFile source;
+    public final File file;
     public final ClassWriter cw;
     private final Stack<FuncType> functionStack = new Stack<>();
     public Environment currentEnvironment;
 
-    public CodegenVisitor(Environment rootEnvironment, SourceFile file, ClassWriter cw) {
+    public CodegenVisitor(Environment rootEnvironment, SourceFile source, ClassWriter cw) {
         this.rootEnvironment = rootEnvironment;
-        this.file = file;
+        this.source = source;
         this.currentEnvironment = this.rootEnvironment;
         this.cw = cw;
+        this.file = source.file;
     }
 
     @Override
@@ -41,7 +44,20 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitAssignExpr(Expr.Assign expr) {
-        throw new NotImplementedException("method not implemented");
+        // Mutability has already been checked at this point
+        var funcType = functionStack.peek();
+        expr.right.accept(this);
+
+        if (expr.left instanceof Expr.Identifier id) {
+            var index = funcType.localMap.get(id.identifier.source());
+            funcType.ga.storeLocal(index);
+
+        } else {
+            Comptime.Implementation.submit(file, expr, "Assignment not implemented for any recipient but identifier yet");
+
+        }
+
+        return Optional.empty();
     }
 
     @Override
@@ -121,7 +137,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 // Call the invoke method
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(callType.parameters, callType.returnType);
                 String name = "Function_" + callType.name;
-                String owner = FilenameUtils.removeExtension(file.base());
+                String owner = FilenameUtils.removeExtension(source.base());
 
                 funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             }
@@ -293,7 +309,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 case STRING -> ga.push((String) transformed);
             }
         } else {
-            Comptime.Implementation.submit(file.file, expr, "This should never happen. All literals should be builtin, for now.");
+            Comptime.Implementation.submit(source.file, expr, "This should never happen. All literals should be builtin, for now.");
         }
         return Optional.empty();
     }
@@ -366,7 +382,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
 
         String name = structType.name;
-        String qualifiedName = file.path() + "/" + name;
+        String qualifiedName = source.path() + "/" + name;
 //        cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
 //        addConstructor(structType.parent, classWriter, structType.fields, structType);
@@ -405,19 +421,12 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // means it's possible to do compiler optimizations like moving all declarations
         // to one initialization at the beginning of the block or function.
         var funcType = functionStack.peek();
-
         stmt.expr.accept(this);
 
         // Add another local to the function
-
-//        stmt.localIndex = funcType.ga.newLocal(Type.getType(stmt.expr.realType.getDescriptor()));
-        stmt.localIndex = funcType.ga.newLocal(Type.INT_TYPE);
-
-        funcType.localMap.put(stmt.identifier(), stmt.localIndex);
-
         var type = currentEnvironment.getVariable(stmt.identifier());
-        // Todo: indexes need to be better
-//        funcType.ga.visitVarInsn(type.getStoreVariableOpcode(), stmt.localIndex);
+        stmt.localIndex = funcType.ga.newLocal(Type.getType(type.getDescriptor()));
+        funcType.localMap.put(stmt.identifier(), stmt.localIndex);
         funcType.ga.storeLocal(stmt.localIndex, Type.getType(type.getDescriptor()));
 
         return Optional.empty();
