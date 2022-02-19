@@ -4,7 +4,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.StructType;
 import org.imp.jvm.visitors.CodegenVisitor;
+import org.javatuples.Pair;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
@@ -58,18 +60,14 @@ public class BytecodeGenerator {
         return code;
     }
 
-    public byte[] generate(SourceFile source) {
+    public Pair<ClassWriter, Map<StructType, ClassWriter>> generate(SourceFile source) {
         // Byte array for each section of the Imp source file
-        var code = new HashMap<String, byte[]>();
-        String cleanedPath = source.path();
-        int flags = ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS;
-        int CLASS_VERSION = 61;
 
-        var cw = new ClassWriter(flags);
+        var cw = new ClassWriter(CodegenVisitor.flags);
 
 //        String qualifiedName = source.path() + "/Class_" + source.name();
-        String qualifiedName = FilenameUtils.removeExtension(source.base());
-        cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
+        String qualifiedName = FilenameUtils.removeExtension(source.getFullRelativePath());
+        cw.visit(CodegenVisitor.CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
         // Generate bytecode for each Type defined in the Imp file
         var codegenVisitor = new CodegenVisitor(source.rootEnvironment, source, cw);
@@ -79,6 +77,6 @@ public class BytecodeGenerator {
 
         cw.visitEnd();
 
-        return codegenVisitor.cw.toByteArray();
+        return new Pair<>(cw, codegenVisitor.structWriters);
     }
 }

@@ -142,7 +142,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitGroupingExpr(Expr.Grouping expr) {
-        return s("(", print(expr), ")");
+        return s("(", print(expr.expr), ")");
     }
 
     @Override

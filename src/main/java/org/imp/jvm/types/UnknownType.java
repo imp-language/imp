@@ -4,7 +4,9 @@ import org.imp.jvm.domain.Operator;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
-public class UnknownType implements ImpType {
+import java.io.Serializable;
+
+public class UnknownType implements ImpType, Serializable {
     static int counter = 1;
     final int id;
     public String typeName;

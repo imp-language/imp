@@ -60,7 +60,6 @@ public interface PrefixParselet {
             var loc = parser.lok();
             Expr expr = parser.expression();
 
-
             return new Expr.New(loc, expr);
         }
     }
@@ -68,9 +67,10 @@ public interface PrefixParselet {
 
     record Grouping() implements PrefixParselet {
         public Expr parse(Parser parser, Token token) {
+            var loc = parser.lok();
             Expr expression = parser.expression();
             parser.consume(TokenType.RPAREN, "Expected opening parentheses.");
-            return expression;
+            return new Expr.Grouping(loc, expression);
         }
     }
 }

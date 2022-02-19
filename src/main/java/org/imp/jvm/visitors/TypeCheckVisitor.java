@@ -213,7 +213,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitGroupingExpr(Expr.Grouping expr) {
-        return Optional.empty();
+        return expr.expr.accept(this);
     }
 
     @Override

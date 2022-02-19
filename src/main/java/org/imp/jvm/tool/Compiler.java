@@ -10,9 +10,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,17 +24,15 @@ public record Compiler() {
      * @return java class name ('.' separated) relative to the project root
      * @throws FileNotFoundException
      */
-    public String compile(String filename, String projectRoot) throws FileNotFoundException {
-        String fullPath = Path.of(projectRoot, filename).toString();
-        fullPath = FilenameUtils.separatorsToUnix(fullPath);
-//        filename = FilenameUtils.separatorsToUnix(filename);
-//        Timer.LOG = false;
-        String pwd = System.getProperty("user.dir");
+    public String compile(String projectRoot, String filename) throws FileNotFoundException {
 
-        File file = new File(fullPath);
-        var entry = API.parse(file, filename, projectRoot);
-        Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(entry);
-        Comptime.killIfErrors("Correct dependency errors before continuing.");
+        String relativePath = FilenameUtils.getPath(filename);
+        String name = FilenameUtils.getName(filename);
+
+        var entry = API.parse(projectRoot, relativePath, name);
+        Map<String, SourceFile> compilationSet = new HashMap<>();
+//        Graph<SourceFile, DefaultEdge> dependencyGraph = API.dependencyGraph(entry);
+        Comptime.killIfErrors("Correct parser errors before continuing.");
 
         Timer.log("build dependency graph");
 
@@ -44,7 +40,7 @@ public record Compiler() {
         // a) Determine function return type based on type of expression returned.
         // b) Settle types of fields on structs
         // c) Error if multiple return statements in a function return different types.
-        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(entry.rootEnvironment, file);
+        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(entry.rootEnvironment, entry.file);
         entry.acceptVisitor(typeCheckVisitor);
         Timer.log("Type checking done");
 
@@ -56,12 +52,17 @@ public record Compiler() {
 //        var astPrint = new ASTPrinterVisitor();
 //        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);
 
-        Iterator<SourceFile> iterator = new DepthFirstIterator<>(dependencyGraph, entry);
-        Map<String, SourceFile> compilationSet = new HashMap<>();
-        while (iterator.hasNext()) {
-            SourceFile impFile = iterator.next();
-            if (!compilationSet.containsKey(impFile.path())) {
-                compilationSet.put(impFile.path(), impFile);
+//        Iterator<SourceFile> iterator = new DepthFirstIterator<>(dependencyGraph, entry);
+//        while (iterator.hasNext()) {
+//            SourceFile impFile = iterator.next();
+//            if (!compilationSet.containsKey(impFile.getFullRelativePath())) {
+//                compilationSet.put(impFile.getFullRelativePath(), impFile);
+//            }
+//        }
+
+        for (var s : API.compilationSet) {
+            if (!compilationSet.containsKey(s.getFullRelativePath())) {
+                compilationSet.put(s.getFullRelativePath(), s);
             }
         }
 
@@ -71,7 +72,7 @@ public record Compiler() {
         Timer.LOG = true;
         Timer.logTotalTime();
 
-        String base = FilenameUtils.separatorsToUnix(FilenameUtils.removeExtension(entry.base()));
+        String base = entry.getFullRelativePath();
 
         return base.replace("/", ".");
     }

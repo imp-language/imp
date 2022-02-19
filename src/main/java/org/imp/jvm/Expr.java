@@ -134,7 +134,7 @@ public abstract class Expr implements Node {
 
         public final Expr expr;
 
-        Grouping(Location loc, Expr expr) {
+        public Grouping(Location loc, Expr expr) {
             super(loc);
             this.expr = expr;
         }

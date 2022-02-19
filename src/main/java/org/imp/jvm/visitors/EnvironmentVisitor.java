@@ -159,6 +159,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitGroupingExpr(Expr.Grouping expr) {
+        expr.expr.accept(this);
         return Optional.empty();
     }
 
@@ -186,9 +187,8 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitImport(Stmt.Import stmt) {
         // Add all exports from the imported module into the current environment
-        String basePath = source.basePath();
-        String importName = stmt.stringLiteral.source();
-        Path importPath = Path.of(basePath, importName);
+        String requestedImport = stmt.stringLiteral.source();
+        Path importPath = Path.of(source.projectRoot, source.relativePath, requestedImport + ".imp");
 
         if (stmt.identifier.isPresent()) {
             var results = ExportTable.getExportsFromSource(importPath);
@@ -200,7 +200,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                     case "struct" -> {
                         var st = (StructType) result.o();
                         st.name = typeName;
-                        st.qualifiedName = result.qualifiedName();
+//                        st.qualifiedName = result.qualifiedName(); // Todo(CURRENT): this is defined to be the whole path, we want just the relative part
                         this.currentEnvironment.addVariableOrError(typeName, st, file, stmt);
                     }
                     case "function" -> {
@@ -214,14 +214,37 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                     }
                 }
             }
-        } else if (Glue.coreModules.containsKey(importName)) {
+        } else if (Glue.coreModules.containsKey(requestedImport)) {
             // Look in Glue
-            var ree = Glue.getExports(importName);
+            var ree = Glue.getExports(requestedImport);
             for (var ft : ree) {
                 var typeName = ft.name;
                 this.currentEnvironment.addVariableOrError(typeName, ft, file, stmt);
             }
 
+        } else {
+            var results = ExportTable.getExportsFromSource(importPath);
+
+            for (var result : results) {
+                var typeName = result.name();
+                switch (result.kind()) {
+                    case "struct" -> {
+                        var st = (StructType) result.o();
+                        st.name = typeName;
+//                        st.qualifiedName = result.qualifiedName();
+                        this.currentEnvironment.addVariableOrError(typeName, st, file, stmt);
+                    }
+                    case "function" -> {
+                        var funcType = (FuncType) result.o();
+                        funcType.name = typeName;
+                        this.currentEnvironment.addVariableOrError(typeName, funcType, file, stmt);
+                    }
+                    default -> {
+                        System.err.println("Bad deserialization.");
+                        System.exit(62);
+                    }
+                }
+            }
         }
 
         return Optional.empty();
@@ -338,6 +361,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitStruct(Stmt.Struct stmt) {
+
         var fieldNames = new String[stmt.fields.size()];
         var fieldTypes = new ImpType[stmt.fields.size()];
 
@@ -351,6 +375,8 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
         // Create struct type object
         StructType structType = new StructType(name, fieldNames, fieldTypes);
+        String innerName = source.getFullRelativePath() + "$" + name;
+        structType.qualifiedName = innerName;
         currentEnvironment.addVariableOrError(name, structType, file, stmt);
 
         return Optional.of(structType);

@@ -22,36 +22,38 @@ import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class API {
+
+    static List<SourceFile> compilationSet = new ArrayList<>();
 
     /**
      * Tokenize, parse, and build environments for a file.
      *
      * @return SourceFile with exports gathered.
      */
-    public static SourceFile parse(File file, String filename, String projectRoot) throws FileNotFoundException {
-        Tokenizer tokenizer = new Tokenizer(file);
-        var parser = new org.imp.jvm.parser.Parser(tokenizer);
-        var statements = parser.parse();
+    public static SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException {
 
-        var source = new SourceFile(file, statements, filename, projectRoot);
-        String basePath = source.basePath();
+        var source = new SourceFile(projectRoot, relativePath, name);
+        compilationSet.add(source);
 
         // Get all qualified imports (but don't load them)
         source.filter(Stmt.Import.class, (importStmt) -> {
-            String relativePath = importStmt.stringLiteral.source();
-            String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
+            String requestedImport = importStmt.stringLiteral.source();
+
+            String relative = FilenameUtils.getPath(requestedImport);
+            String n = FilenameUtils.getName(requestedImport);
+
+            String filePath = Path.of(source.projectRoot, source.relativePath, relative, n + ".imp").toString();
             filePath = FilenameUtils.separatorsToUnix(filePath);
+
             var f = new File(filePath);
             if (f.exists()) {
                 SourceFile next = null;
                 try {
-                    next = parse(f, filePath, projectRoot);
+                    next = parse(projectRoot, Path.of(source.relativePath, relative).toString(), n);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -74,7 +76,7 @@ public class API {
                 if (type != null) {
                     source.exports.put(identifier, type);
                     ExportTable.add(source, identifier, type);
-                    ExportTable.addSQL(source.path(), identifier, type);
+                    ExportTable.addSQL(source.file, identifier, type);
                     // Todo: figure out what data to store in the table.
                     // Is it as simple as a list of fields and their types?
                 }
@@ -170,21 +172,24 @@ public class API {
         Map<String, SourceFile> fileMap = new HashMap<>();
 
         current.filter(Stmt.Import.class, (importStmt) -> {
-            String relativePath = importStmt.stringLiteral.source();
-            String filePath = FilenameUtils.concat(basePath, relativePath + ".imp");
+            String relative = importStmt.stringLiteral.source();
+            String filePath = Path.of(current.projectRoot, current.relativePath, relative + ".imp").toString();
+
             filePath = FilenameUtils.separatorsToUnix(filePath);
-            var file = new File(filePath);
-            if (file.exists()) {
+            String n = FilenameUtils.getName(filePath);
+            var f = new File(filePath);
+            if (f.exists()) {
                 SourceFile next = null;
                 try {
-                    next = parse(file, filePath, null);
+                    next = parse(current.projectRoot, relative, n);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
                 fileMap.put(filePath, next);
 //                System.out.println(filePath);
-                current.addImport(file, next);
+                current.addImport(f, next);
             }
+
             return null;
         });
 
@@ -231,18 +236,15 @@ public class API {
         // Todo: bytecode generation visitor!
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);
-            var byteUnit = bytecodeGenerator.generate(source);
+            var allByteUnits = bytecodeGenerator.generate(source);
 
-            String qualifiedName = source.name();
-            String base = FilenameUtils.removeExtension(source.base());
-            String fileName = moduleLocation + "/.compile/" + base + "/Class_" + qualifiedName + ".class";
-
-            fileName = Path.of(source.projectRoot, ".compile", base + ".class").toString();
-
+            // Generate outer class
+            var byteUnit = allByteUnits.getValue0().toByteArray();
+            String base = FilenameUtils.removeExtension(source.getFullRelativePath());
+            String fileName = Path.of(source.projectRoot, ".compile", base + ".class").toString();
             File tmp = new File(fileName);
             //noinspection ResultOfMethodCallIgnored
             tmp.getParentFile().mkdirs();
-
             OutputStream output;
             try {
                 output = new FileOutputStream(fileName);
@@ -251,6 +253,28 @@ public class API {
             } catch (IOException e) {
                 System.err.println("The above call to mkdirs() should have worked.");
                 System.exit(9);
+            }
+
+            // Generate inner classes
+            for (var p : allByteUnits.getValue1().entrySet()) {
+
+                var st = p.getKey();
+                var innerCw = p.getValue();
+
+                String innerName = source.getFullRelativePath() + "$" + st.name;
+
+                fileName = Path.of(source.projectRoot, ".compile", innerName + ".class").toString();
+                tmp = new File(fileName);
+                //noinspection ResultOfMethodCallIgnored
+                tmp.getParentFile().mkdirs();
+                try {
+                    output = new FileOutputStream(fileName);
+                    output.write(innerCw.toByteArray());
+                    output.close();
+                } catch (IOException e) {
+                    System.err.println("The above call to mkdirs() should have worked.");
+                    System.exit(9);
+                }
             }
 
         }

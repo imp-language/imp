@@ -16,17 +16,18 @@ import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
 import java.io.File;
-import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
+    public final static int flags = ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS;
+    public final static int CLASS_VERSION = 61;
     public final Environment rootEnvironment;
     public final SourceFile source;
     public final File file;
     public final ClassWriter cw;
     private final Stack<FuncType> functionStack = new Stack<>();
+    public Map<StructType, ClassWriter> structWriters = new HashMap<>();
     public Environment currentEnvironment;
 
     public CodegenVisitor(Environment rootEnvironment, SourceFile source, ClassWriter cw) {
@@ -137,7 +138,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 // Call the invoke method
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(callType.parameters, callType.returnType);
                 String name = "Function_" + callType.name;
-                String owner = FilenameUtils.removeExtension(source.base());
+                String owner = FilenameUtils.removeExtension(source.getFullRelativePath());
 
                 funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             }
@@ -231,7 +232,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitGroupingExpr(Expr.Grouping expr) {
-        throw new NotImplementedException("method not implemented");
+        expr.expr.accept(this);
+        return Optional.empty();
     }
 
     @Override
@@ -376,32 +378,64 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         return Optional.empty();
     }
 
+
     @Override
     public Optional<ClassWriter> visitStruct(Stmt.Struct struct) {
-        // Codegen a new JVM class representing an Imp struct
+        // Todo(CURRENT) constructors for nested classes
+
+        var innerCw = new ClassWriter(CodegenVisitor.flags);
         var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
 
         String name = structType.name;
-        String qualifiedName = source.path() + "/" + name;
-//        cw.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
+        String innerName = source.getFullRelativePath() + "$" + name;
 
-//        addConstructor(structType.parent, classWriter, structType.fields, structType);
+        // Create the inner class
+        innerCw.visit(CodegenVisitor.CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, innerName, null, "java/lang/Object", null);
+        // Link inner class to outer class
+        cw.visitInnerClass(innerName, source.getFullRelativePath(), name, Opcodes.ACC_PUBLIC);
+        // Link outer class to inner class
+        innerCw.visitOuterClass(source.getFullRelativePath(), name, "()V");
 
+        // Add fields
         for (int i = 0; i < structType.fieldNames.length; i++) {
             ImpType type = structType.fieldTypes[i];
             String descriptor = type.getDescriptor();
             String n = structType.fieldNames[i];
 
-            FieldVisitor fieldVisitor = cw.visitField(Opcodes.ACC_PUBLIC, n, descriptor, null, null);
+            FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_PUBLIC, n, descriptor, null, null);
             fieldVisitor.visitEnd();
         }
 
-        cw.visitEnd();
+        // Add field reference to outer class
+        String descriptor = "L" + source.getFullRelativePath() + ";";
+        FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_FINAL, "this$0", descriptor, null, null);
+        fieldVisitor.visitEnd();
+
+        // Generate inner class Struct constructor
+        descriptor = "()V";
+        MethodVisitor mv = innerCw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", descriptor, null, null);
+        mv.visitCode();
+
+        // Load outer class
+        descriptor = "L" + source.getFullRelativePath() + ";";
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        String ownerInternalName = source.getFullRelativePath() + "$" + name;
+        mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, "this$0", descriptor);
+
+        // Call super()
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        String ownerDescriptor = "java/lang/Object";
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V", false);
+        // Todo: set fields
+        // Append return
+        mv.visitInsn(structType.getReturnOpcode());
 
         // Todo: generate internal classes
 //        code.put(qualifiedName, cw.toByteArray());
+        structWriters.put(structType, innerCw);
 
-        return Optional.of(cw);
+        return Optional.of(innerCw);
     }
 
     @Override

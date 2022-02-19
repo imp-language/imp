@@ -89,7 +89,7 @@ public class CLI implements Runnable {
         Timer.LOG = true;
         String classPath = null;
         try {
-            classPath = imp.compile(manifest.entry(), moduleLocation);
+            classPath = imp.compile(moduleLocation, manifest.entry());
         } catch (FileNotFoundException e) {
             System.err.println("Manifest.entry points to a file that does not exist.");
             System.exit(UnixErrors.ENOENT);

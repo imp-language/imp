@@ -13,7 +13,7 @@ public class Load {
     static Compiler compiler = new Compiler();
 
     public static String run(String testPath, String projectRoot) throws IOException, InterruptedException {
-        String className = compiler.compile(testPath + ".imp", projectRoot);
+        String className = compiler.compile(projectRoot, testPath + ".imp");
 
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "java",

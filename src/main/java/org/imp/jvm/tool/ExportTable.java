@@ -77,16 +77,17 @@ public class ExportTable {
     /**
      * Add a new record to the ExportTable.
      *
-     * @param source unix-separated path
-     * @param name   type name
+     * @param file absolute path to file the type is defined in
+     * @param name type name
      */
-    public static void addSQL(String source, String name, ImpType type) {
+    public static void addSQL(File file, String name, ImpType type) {
         try {
-            String qualifiedName = source + ":" + name;
+            String filepath = FilenameUtils.separatorsToUnix(file.getPath());
+            String qualifiedName = filepath + ":" + name;
 
             psAddExport.setString(1, qualifiedName);
             psAddExport.setString(2, name);
-            psAddExport.setString(3, source);
+            psAddExport.setString(3, filepath);
             psAddExport.setString(4, type.kind());
 
             psAddExport.setString(5, type.getClass().getName());
