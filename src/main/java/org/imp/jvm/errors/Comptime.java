@@ -82,11 +82,17 @@ public enum Comptime {
             int padding = (int) Math.ceil(Math.log10(endLine + 1)) + 1;
             var result = IntStream.range(0, limit)
                     .mapToObj(i -> {
-                        var s = StringUtils.leftPad((i + startLine + 1) + "|", padding) + " " + selection.get(i);
-                        if (i + startLine + 1 == loc.line()) {
-                            s += "\n" + "^".repeat(loc.col() + padding);
+                        System.out.println("Getting " + i + " / " + selection.size());
+                        if (i < selection.size()) {
+
+                            var s = StringUtils.leftPad((i + startLine + 1) + "|", padding) + " " + selection.get(i);
+                            if (i + startLine + 1 == loc.line()) {
+                                s += "\n" + "^".repeat(loc.col() + padding);
+                            }
+                            return s;
+                        } else {
+                            return (i + startLine + 1) + "|";
                         }
-                        return s;
                     })
                     .collect(Collectors.joining("\n"));
 

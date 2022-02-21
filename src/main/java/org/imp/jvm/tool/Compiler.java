@@ -1,6 +1,7 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
+import org.imp.jvm.Util;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
@@ -47,7 +48,7 @@ public record Compiler() {
         Comptime.killIfErrors("Correct type errors before compilation can continue.");
 
         var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
-//        Util.println(pretty.print(entry.stmts));
+        Util.println(pretty.print(entry.stmts));
 
 //        var astPrint = new ASTPrinterVisitor();
 //        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);
