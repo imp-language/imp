@@ -381,8 +381,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitStruct(Stmt.Struct struct) {
-        // Todo(CURRENT) constructors for nested classes
-
         var innerCw = new ClassWriter(CodegenVisitor.flags);
         var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
 

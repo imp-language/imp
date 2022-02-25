@@ -200,7 +200,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                     case "struct" -> {
                         var st = (StructType) result.o();
                         st.name = typeName;
-//                        st.qualifiedName = result.qualifiedName(); // Todo(CURRENT): this is defined to be the whole path, we want just the relative part
                         this.currentEnvironment.addVariableOrError(typeName, st, file, stmt);
                     }
                     case "function" -> {
@@ -231,7 +230,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                     case "struct" -> {
                         var st = (StructType) result.o();
                         st.name = typeName;
-//                        st.qualifiedName = result.qualifiedName();
                         this.currentEnvironment.addVariableOrError(typeName, st, file, stmt);
                     }
                     case "function" -> {
@@ -366,10 +364,12 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         var fieldTypes = new ImpType[stmt.fields.size()];
 
         // At this point we do not know of any custom types that exist.
+        List<Identifier> parameters = new ArrayList<>();
         for (int i = 0; i < fieldNames.length; i++) {
             var field = stmt.fields.get(i);
             fieldNames[i] = field.name.source();
             fieldTypes[i] = field.type.accept(this).get();
+            parameters.add(new Identifier(fieldNames[i], fieldTypes[i]));
         }
         String name = stmt.name.source();
 
@@ -378,6 +378,13 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         String innerName = source.getFullRelativePath() + "$" + name;
         structType.qualifiedName = innerName;
         currentEnvironment.addVariableOrError(name, structType, file, stmt);
+
+        // Add "constructor" function
+        FuncType constructorType = new FuncType(name, Modifier.NONE, parameters);
+        currentEnvironment.addVariableOrError(name, constructorType, file, stmt);
+        // Todo(current): why have both functype and structype
+        // likely is necessary but we'll need some refactoring to make sure type
+        // retrievals from environments are solid and type safe
 
         return Optional.of(structType);
     }
