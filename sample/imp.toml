@@ -1,0 +1,12 @@
+name = 'sample'
+version = '0.0.1'
+entry = 'main.imp'
+description = ''
+authors = []
+homepage = ''
+docs = ''
+repo = ''
+license = ''
+keywords = []
+publish = false
+imp = '../runtime/target/runtime-1.0-SNAPSHOT.jar'
