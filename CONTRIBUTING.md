@@ -71,6 +71,6 @@ When you've completed your changes, open a PR with the `main` branch on GitHub. 
 out the PR template and provide as much detail as possible. If you've written tests
 for your code, it's way more likely it'll get merged.
 
-
+One PR per feature.
 
 
