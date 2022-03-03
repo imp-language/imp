@@ -17,4 +17,10 @@ public class EasterEggs {
             System.out.println("MICROSFT!");
         }
     }
+    
+    public static void poke59458(int operand){
+        if (operand == 62){
+            System.out.println("Congrats! You just ruined a perfectly good commodore PET");
+        }
+    }
 }
