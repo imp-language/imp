@@ -84,4 +84,19 @@ public class Math {
     public static boolean similar(float a, float b) {
         return similar(a, b, 0.0001f);
     }
+    
+    public static double sin(double angle){
+        double a = Math.toRandians(angle);
+        return Math.sin(a);
+    }
+    
+    public static double cos(double angle){
+        double a = Math.toRandians(angle);
+        return Math.cos(a);
+    }
+    
+    public static double tan(double angle){
+        double a = Math.toRandians(angle);
+        return Math.tan(a);
+    }
 }
