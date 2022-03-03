@@ -86,17 +86,17 @@ public class Math {
     }
     
     public static double sin(double angle){
-        double a = Math.toRandians(angle);
+        double a = Math.toRadians(angle);
         return Math.sin(a);
     }
     
     public static double cos(double angle){
-        double a = Math.toRandians(angle);
+        double a = Math.toRadians(angle);
         return Math.cos(a);
     }
     
     public static double tan(double angle){
-        double a = Math.toRandians(angle);
+        double a = Math.toRadians(angle);
         return Math.tan(a);
     }
 }
