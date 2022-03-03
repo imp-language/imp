@@ -50,3 +50,27 @@ Java projects are often large, sprawling codebases, so here's an attempt to brea
   - `CompilerTest.java` current automated tests.
 
 
+### Running Tests
+
+The `src/test/java/org/imp/test/CompilerTest.java` should be run through Junit to run 
+all tests. If you're using IntelliJ (recommended), you can load the run configuration
+for this class from `.idea/runConfigurations/CompilerTest.xml`.
+
+
+### Building the Compiler
+
+More to come in this section.
+
+### Testing the Tooling
+
+Same here, need more content here.
+
+### Pull Requests
+
+When you've completed your changes, open a PR with the `main` branch on GitHub. Fill
+out the PR template and provide as much detail as possible. If you've written tests
+for your code, it's way more likely it'll get merged.
+
+
+
+
