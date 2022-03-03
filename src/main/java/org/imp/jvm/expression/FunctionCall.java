@@ -9,9 +9,11 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.reference.ModuleReference;
 import org.imp.jvm.expression.reference.VariableReference;
-import org.imp.jvm.runtime.Glue;
+import org.imp.jvm.runtime.GlueOld;
 import org.imp.jvm.runtime.stdlib.Batteries;
-import org.imp.jvm.types.*;
+import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -21,13 +23,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FunctionCall extends Expression {
+    public final ImpFile owner;
+    public final String name;
     public Function function;
     public List<Expression> arguments;
-    public final ImpFile owner;
-
-    public List<Type> argTypes;
-    public final String name;
-
+    public List<ImpType> argTypes;
     private boolean hasBeenInitialized = false;
 
     private Class<?> moduleClass = null;
@@ -41,9 +41,24 @@ public class FunctionCall extends Expression {
         this.owner = owner;
     }
 
+    public void generate(MethodVisitor mv, Scope scope) {
+        // generate arguments
+
+        // Todo: split isStandard into an enum with Standard, Internal, and External cases.
+        // External doesn't need the closure init that Internal does.
+        if (function.kind == Function.FunctionKind.Standard) {
+            generateStandardCall(mv, scope);
+        } else if (function.kind == Function.FunctionKind.External) {
+            generateExternalCall(mv, scope);
+        } else {
+            generateInternalCall(mv, scope);
+
+
+        }
+    }
+
     @Override
     public void validate(Scope scope) {
-
 
         // Find the types of each of the arguments
         for (var arg : arguments) {
@@ -70,7 +85,6 @@ public class FunctionCall extends Expression {
          */
         FunctionType functionType = this.searchByName(scope);
 
-
         // If not found at all, error
         if (functionType == null) {
             Logger.syntaxError(Errors.FunctionNotFound, this, getCtx().getStart().getText());
@@ -82,7 +96,7 @@ public class FunctionCall extends Expression {
             var moduleReference = (ModuleReference) variableReference.reference;
             this.argTypes = this.argTypes.subList(1, this.argTypes.size());
             this.arguments = this.arguments.subList(1, this.arguments.size());
-            this.moduleClass = Glue.coreModules.get(moduleReference.name);
+            this.moduleClass = GlueOld.coreModules.get(moduleReference.name);
         }
 
         if (functionType.isStatic) {
@@ -99,47 +113,21 @@ public class FunctionCall extends Expression {
         }
         this.type = function.returnType;
 
-
         // Store as new local variable
         if (!functionType.isStatic) {
             scope.addLocalVariable(new LocalVariable(function.functionType.name, function.functionType));
         }
-        
+
         Logger.killIfErrors("Missing variables.");
     }
 
-    public void generate(MethodVisitor mv, Scope scope) {
-        // generate arguments
-
-        // Todo: split isStandard into an enum with Standard, Internal, and External cases.
-        // External doesn't need the closure init that Internal does.
-        if (function.kind == Function.FunctionKind.Standard) {
-            generateStandardCall(mv, scope);
-        } else if (function.kind == Function.FunctionKind.External) {
-            generateExternalCall(mv, scope);
-        } else {
-            generateInternalCall(mv, scope);
-
-
+    private void castLogArgument(MethodVisitor mv, Scope scope) {
+        var arg = arguments.get(0);
+        arg.generate(mv, scope);
+        if (arg.type instanceof BuiltInType bt) {
+            bt.doBoxing(mv);
         }
     }
-
-    /**
-     * @param name a
-     * @return a
-     * @deprecated
-     */
-    private FunctionType getFunctionType(String name) {
-        for (var imported : this.owner.qualifiedImports) {
-            for (var func : imported.functions) {
-                if (func.functionType.name.equals(name)) {
-                    return func.functionType;
-                }
-            }
-        }
-        return null;
-    }
-
 
     private void generateExternalCall(MethodVisitor mv, Scope scope) {
         int opcode = Opcodes.INVOKESTATIC;
@@ -156,75 +144,11 @@ public class FunctionCall extends Expression {
             arg.generate(mv, scope);
         }
 
-        Type ownerType = owner.type;
+        ImpType ownerType = owner.type;
 
         String descriptor = DescriptorFactory.getMethodDescriptor(otherArgs.stream().map(a -> new Identifier("_", a.type)).collect(Collectors.toList()), function.returnType);
 
         mv.visitMethodInsn(opcode, ownerType.getInternalName(), this.name, descriptor, false);
-    }
-
-
-    private void generateStandardCall(MethodVisitor mv, Scope scope) {
-        String owner = Batteries.class.getName().replace('.', '/');
-        /*
-         * Before calling the function, we must consider 3 cases:
-         *
-         * 1. The call is to `log(...args)`, we must generate the code to pass varargs to the function
-         * 2. The call is to `log(arg)`, we just have to cast the value to Object.
-         * 3. The call is to any other function, just generate the arguments.
-         */
-
-        if (this.name.equals("log") && arguments.size() > 1) {
-            wrapLogArguments(mv, scope);
-        } else if (this.name.equals("log") && arguments.size() == 1) {
-            castLogArgument(mv, scope);
-        } else {
-            var argList = this.arguments;
-            if (this.moduleClass != null) {
-                owner = this.moduleClass.getName().replace(".", "/");
-            }
-            for (var arg : argList) {
-                arg.generate(mv, scope);
-            }
-
-        }
-
-        List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
-        Type returnType = this.function.returnType;
-        String name = this.function.functionType.name;
-        String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
-
-        // Todo: this won't need to happen once the type system has settled
-        // For now `log` must accept all values.
-        if (this.name.equals("log")) {
-            if (arguments.size() > 1) methodDescriptor = "([Ljava/lang/Object;)V";
-            else if (arguments.size() == 1) methodDescriptor = "(Ljava/lang/Object;)V";
-        }
-        mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
-    }
-
-    private void wrapLogArguments(MethodVisitor mv, Scope scope) {
-        mv.visitLdcInsn(arguments.size());
-        mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
-
-        for (int i = 0; i < arguments.size(); i++) {
-            mv.visitInsn(Opcodes.DUP);
-            mv.visitLdcInsn(i);
-            var arg = arguments.get(i);
-            arg.generate(mv, scope);
-            if (arg.type instanceof BuiltInType bt) {
-                bt.doBoxing(mv);
-            }
-            mv.visitInsn(Opcodes.AASTORE);
-        }
-    }
-
-    private void castLogArgument(MethodVisitor mv, Scope scope) {
-        var arg = arguments.get(0);
-        arg.generate(mv, scope);
-        if (arg.type instanceof BuiltInType bt) {
-            bt.doBoxing(mv);
-        }
     }
 
     private void generateInternalCall(MethodVisitor mv, Scope scope) {
@@ -279,21 +203,74 @@ public class FunctionCall extends Expression {
         }
 
         // 5. Call the appropriate invoke method on the First Class Function object
-        List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
+        List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).toList();
 
-
-        Type returnType = this.function.returnType;
+        ImpType returnType = this.function.returnType;
         methodDescriptor = DescriptorFactory.getMethodDescriptor(function.parameters, returnType);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, "invoke", methodDescriptor, false);
 
     }
 
+    private void generateStandardCall(MethodVisitor mv, Scope scope) {
+        String owner = Batteries.class.getName().replace('.', '/');
+        /*
+         * Before calling the function, we must consider 3 cases:
+         *
+         * 1. The call is to `log(...args)`, we must generate the code to pass varargs to the function
+         * 2. The call is to `log(arg)`, we just have to cast the value to Object.
+         * 3. The call is to any other function, just generate the arguments.
+         */
+
+        if (this.name.equals("log") && arguments.size() > 1) {
+            wrapLogArguments(mv, scope);
+        } else if (this.name.equals("log") && arguments.size() == 1) {
+            castLogArgument(mv, scope);
+        } else {
+            var argList = this.arguments;
+            if (this.moduleClass != null) {
+                owner = this.moduleClass.getName().replace(".", "/");
+            }
+            for (var arg : argList) {
+                arg.generate(mv, scope);
+            }
+
+        }
+
+        List<Identifier> params = arguments.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
+        ImpType returnType = this.function.returnType;
+        String name = this.function.functionType.name;
+        String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
+
+        // Todo: this won't need to happen once the type system has settled
+        // For now `log` must accept all values.
+        if (this.name.equals("log")) {
+            if (arguments.size() > 1) methodDescriptor = "([Ljava/lang/Object;)V";
+            else if (arguments.size() == 1) methodDescriptor = "(Ljava/lang/Object;)V";
+        }
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
+    }
+
+    /**
+     * @param name a
+     * @return a
+     * @deprecated
+     */
+    private FunctionType getFunctionType(String name) {
+        for (var imported : this.owner.qualifiedImports) {
+            for (var func : imported.functions) {
+                if (func.functionType.name.equals(name)) {
+                    return func.functionType;
+                }
+            }
+        }
+        return null;
+    }
 
     private FunctionType searchByName(Scope scope) {
-        FunctionType functionType = null;
+        FunctionType functionType;
 
         // 1. Functions in the always-imported "batteries" module
-        functionType = Glue.findStandardLibraryFunction("batteries", this.name, this.owner);
+        functionType = GlueOld.findStandardLibraryFunction("batteries", this.name, this.owner);
         if (functionType != null) return functionType;
 
         // 2. Functions defined in the current scope.
@@ -311,7 +288,7 @@ public class FunctionCall extends Expression {
                     String moduleName = moduleReference.name;
                     if (this.owner.stdlibImports.contains(moduleName)) {
                         // 3. Functions from any imported standard library modules.
-                        functionType = Glue.findStandardLibraryFunction(moduleName, this.name, this.owner);
+                        functionType = GlueOld.findStandardLibraryFunction(moduleName, this.name, this.owner);
                     } else {
                         // 4. Functions from user defined modules.
                         var importedFile = this.owner.qualifiedImports.stream().filter(impFile -> impFile.getBaseName().equals(moduleName)).findFirst();
@@ -329,5 +306,21 @@ public class FunctionCall extends Expression {
             }
         }
         return functionType;
+    }
+
+    private void wrapLogArguments(MethodVisitor mv, Scope scope) {
+        mv.visitLdcInsn(arguments.size());
+        mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
+
+        for (int i = 0; i < arguments.size(); i++) {
+            mv.visitInsn(Opcodes.DUP);
+            mv.visitLdcInsn(i);
+            var arg = arguments.get(i);
+            arg.generate(mv, scope);
+            if (arg.type instanceof BuiltInType bt) {
+                bt.doBoxing(mv);
+            }
+            mv.visitInsn(Opcodes.AASTORE);
+        }
     }
 }

@@ -6,15 +6,15 @@ import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
-import org.imp.jvm.runtime.Glue;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.runtime.GlueOld;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 
 public class VariableReference extends Expression {
 
-    public Reference reference;
     public final String name;
     public final ImpFile owner;
+    public Reference reference;
 
     public VariableReference(String name, ImpFile owner) {
         this.name = name;
@@ -33,7 +33,7 @@ public class VariableReference extends Expression {
         // Now we actually resolve the name to a variable.
 
         // Check for module names- can't override imports
-        if (Glue.coreModules.containsKey(name)) {
+        if (GlueOld.coreModules.containsKey(name)) {
             this.reference = new ModuleReference(name);
         } else if (this.owner.qualifiedImports.size() > 0) {
             var a = this.owner.qualifiedImports.stream().filter(impFile -> impFile.getBaseName().equals(name)).findFirst();
@@ -44,14 +44,13 @@ public class VariableReference extends Expression {
 
         // Todo: look for Enums
 
-
         // First check the scope for local variables,
         if (scope.variableExists(name) /*&& !scope.getLocalVariable(name).closure*/) {
             this.reference = new LocalReference(scope.getLocalVariable(name));
         }
         // Check for type aliases
         else if (scope.getType(name) != null) {
-            Type t = scope.getType(name);
+            ImpType t = scope.getType(name);
             this.reference = new StaticReference(name, t);
         }
         // If that fails, look for function names,

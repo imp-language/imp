@@ -11,6 +11,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="17">
       <module name="imp" target="17" />
+      <module name="runtime" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

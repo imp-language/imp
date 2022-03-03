@@ -1,36 +1,23 @@
 package org.imp.jvm.tokenizer;
 
-import org.apache.commons.text.StringEscapeUtils;
-
-import java.io.IOException;
-import java.io.PushbackReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.Iterator;
 
 import static org.imp.jvm.tokenizer.TokenType.*;
 
 public class Tokenizer implements Iterator<Token> {
+    private final StringBuilder sb = new StringBuilder();
     private final PushbackReader reader;
-    private int line = 1;
-    private int col = 1;
+    public int line = 1;
+    public int col = 1;
+    private Status status = Status.Whole;
+
+    public Tokenizer(File file) throws FileNotFoundException {
+        this.reader = new PushbackReader(new FileReader(file), 5);
+    }
 
     public Status getStatus() {
         return status;
-    }
-
-    private Status status = Status.Whole;
-
-    enum Status {
-        Whole, // do codegen, all input is correct
-        Partial, // attempt to parse, some errors
-        Fatal // bad, exit
-    }
-
-
-    private final StringBuilder sb = new StringBuilder();
-
-    public Tokenizer(Reader reader) {
-        this.reader = new PushbackReader(reader, 5);
     }
 
     @Override
@@ -54,18 +41,18 @@ public class Tokenizer implements Iterator<Token> {
             if (keyword != null) tokenType = keyword;
             tok = new Token(tokenType, startLine, startCol, identifier);
         } else if (isDigit(c)) {
-            String number = consumeNumber();
-            tok = new Token(NUMBER, startLine, startCol, number);
+            tok = consumeNumber();
         } else if (c == '"') {
             String stringLiteral = consumeString();
-            tok = new Token(STRING, startLine, startCol, stringLiteral);
+
+            var stringLiteralWithEscapes = stringLiteral.translateEscapes();
+            tok = new Token(STRING, startLine, startCol, stringLiteralWithEscapes);
         } else {
             var shortToken = TokenType.find(String.valueOf(c));
 //            if (shortToken == null) {
             char next = peekNext();
             String content = String.valueOf(new char[]{c, next});
             var longToken = TokenType.find(content);
-
 
             if (longToken == null && shortToken == null) {
                 advance();
@@ -86,64 +73,45 @@ public class Tokenizer implements Iterator<Token> {
 
     }
 
-    private String consumeString() {
-        advance();
-        char p = peek();
-        while (p != '"' && p != '\0') {
-            sb.append(advance());
-            p = peek();
-        }
-        // consume the closing quotation marks
-        advance();
-        return clearStringBuilder();
-    }
-
-    private String clearStringBuilder() {
-        String result = sb.toString();
-        sb.setLength(0);
-        return result;
-    }
-
-    private String consumeIdentifier() {
-        while (isAlphaNumeric(peek())) {
-            sb.append(advance());
-        }
-
-        return clearStringBuilder();
-    }
-
-    private String consumeNumber() {
-        // whole number part
-        while (isDigit(peek())) {
-            sb.append(advance());
-        }
-        // decimal point
-        if (peek() == '.') {
-            sb.append(advance());
-            // decimal part
-            while (isDigit(peek())) {
-                sb.append(advance());
+    /**
+     * Call advance() on all tokens considered whitespace or comments
+     */
+    void skipWhitespace() {
+        while (true) {
+            char c = peek();
+            switch (c) {
+                case ' ':
+                case '\r':
+                case '\t':
+                case '\n':
+                    advance();
+                    break;
+                case '/':
+                    if (peekNext() == '/') {
+                        // A comment goes until the end of the line.
+                        char cc = ' ';
+                        while (peek() != '\n' && cc != '\0') {
+                            cc = advance();
+                        }
+                    } else if (peekNext() == '*') {
+                        advance();
+                        advance();
+                        String nextTwo;
+                        do {
+                            advance();
+                            nextTwo = String.valueOf(peek()) + peekNext();
+                        } while (!nextTwo.equals("*/"));
+                        advance();
+                        advance();
+                    } else {
+                        return;
+                    }
+                    break;
+                default:
+                    return;
             }
         }
-
-        // exponent part
-        char p = peek();
-        if (p == 'e' || p == 'E') {
-            sb.append(advance());
-            p = peek();
-            if (p == '-' || p == '+') sb.append(advance());
-            // whole number exponent
-            while (isDigit(peek())) {
-                sb.append(advance());
-            }
-        }
-
-        // double suffix
-        if (peek() == 'd') sb.append(advance());
-
-        return clearStringBuilder();
     }
-
 
     /**
      * Advance along the input stream.
@@ -165,6 +133,92 @@ public class Tokenizer implements Iterator<Token> {
             e.printStackTrace();
         }
         return '\0';
+    }
+
+    private String clearStringBuilder() {
+        String result = sb.toString();
+        sb.setLength(0);
+        return result;
+    }
+
+    private String consumeIdentifier() {
+        while (isAlphaNumeric(peek())) {
+            sb.append(advance());
+        }
+
+        return clearStringBuilder();
+    }
+
+    private Token consumeNumber() {
+        TokenType type = INT;
+        // whole number part
+        while (isDigit(peek())) {
+            sb.append(advance());
+        }
+        // decimal point
+        if (peek() == '.') {
+            type = FLOAT;
+            sb.append(advance());
+            // decimal part
+            while (isDigit(peek())) {
+                sb.append(advance());
+            }
+            // optional float suffix
+            if (peek() == 'f') {
+                sb.append(advance());
+            }
+        }
+
+        // float suffix
+        if (peek() == 'f') {
+            type = FLOAT;
+            sb.append(advance());
+        }
+
+        // exponent part
+        char p = peek();
+        if (p == 'e' || p == 'E') {
+            sb.append(advance());
+            p = peek();
+            if (p == '-' || p == '+') sb.append(advance());
+            // whole number exponent
+            while (isDigit(peek())) {
+                sb.append(advance());
+            }
+        }
+
+        // double suffix
+        if (peek() == 'd') {
+            type = DOUBLE;
+            sb.append(advance());
+        }
+
+        String value = clearStringBuilder();
+        return new Token(type, line, col, value);
+    }
+
+    private String consumeString() {
+        advance();
+        char p = peek();
+        while (p != '"' && p != '\0') {
+            sb.append(advance());
+            p = peek();
+        }
+        // consume the closing quotation marks
+        advance();
+        return clearStringBuilder();
+    }
+
+    private boolean isAlpha(char c) {
+        return Character.isLetter(c) || c == '_';
+    }
+
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     /**
@@ -203,53 +257,9 @@ public class Tokenizer implements Iterator<Token> {
         return '\0';
     }
 
-    private boolean isAlpha(char c) {
-        return Character.isLetter(c) || c == '_';
-    }
-
-    private boolean isAlphaNumeric(char c) {
-        return isAlpha(c) || isDigit(c);
-    }
-
-    private boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
-    }
-
-    /**
-     * Call advance() on all tokens considered whitespace or comments
-     */
-    void skipWhitespace() {
-        while (true) {
-            char c = peek();
-            switch (c) {
-                case ' ':
-                case '\r':
-                case '\t':
-                case '\n':
-                    advance();
-                    break;
-                case '/':
-                    if (peekNext() == '/') {
-                        // A comment goes until the end of the line.
-                        var b = 0;
-                        while (peek() != '\n'/* && !isAtEnd()*/) advance();
-                    } else if (peekNext() == '*') {
-                        advance();
-                        advance();
-                        String nextTwo = "";
-                        do {
-                            advance();
-                            nextTwo = String.valueOf(peek()) + peekNext();
-                        } while (!nextTwo.equals("*/"));
-                        advance();
-                        advance();
-                    } else {
-                        return;
-                    }
-                    break;
-                default:
-                    return;
-            }
-        }
+    enum Status {
+        Whole, // do codegen, all input is correct
+        Partial, // attempt to parse, some errors
+        Fatal // bad, exit
     }
 }

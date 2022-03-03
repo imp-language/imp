@@ -4,7 +4,6 @@ import org.imp.jvm.Expr;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,16 +23,26 @@ public interface InfixParselet {
             // lower precedence when parsing the right-hand side. This will let a
             // parselet with the same precedence appear on the right, which will then
             // take *this* parselet's result as its left-hand argument.
+            var loc = parser.lok();
             Expr right = parser.expression(
                     precedence - (isRight ? 1 : 0));
-            return new Expr.Binary(left, token, right);
+            return new Expr.Binary(loc, left, token, right);
         }
     }
 
     record PropertyAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
-            Expr right = parser.expression(precedence() - 1);
-            return new Expr.PropertyAccess(left, right);
+            var loc = parser.lok();
+            List<Expr> exprs = new ArrayList<>();
+            exprs.add(left);
+            Expr right = parser.expression(precedence());
+            exprs.add(right);
+            while (parser.peek().type() == TokenType.DOT) {
+                parser.consume();
+                right = parser.expression(precedence());
+                exprs.add(right);
+            }
+            return new Expr.PropertyAccess(loc, exprs);
         }
 
 
@@ -45,29 +54,33 @@ public interface InfixParselet {
 
     record IndexAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
-            Expr right = parser.expression(precedence() - 1);
+            var loc = parser.lok();
+            Expr right = parser.expression(precedence());
             parser.consume(TokenType.RBRACK, "Expected ']' after index access.");
-            return new Expr.IndexAccess(left, right);
+            return new Expr.IndexAccess(loc, left, right);
+
         }
 
 
         @Override
         public int precedence() {
-            return Precedence.PREFIX;
+            return Precedence.POSTFIX;
         }
     }
 
     record PostfixOperator(int precedence) implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
-            return new Expr.Postfix(left, token);
+            var loc = parser.lok();
+            return new Expr.Postfix(loc, left, token);
         }
     }
 
     record AssignOperator() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
+            var loc = parser.lok();
             Expr right = parser.expression(precedence() - 1);
 
-            return new Expr.Assign(left, right);
+            return new Expr.Assign(loc, left, right);
         }
 
         @Override
@@ -78,6 +91,7 @@ public interface InfixParselet {
 
     record Call() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
+            var loc = parser.lok();
             List<Expr> args = new ArrayList<>();
 
             // There may be no arguments at all.
@@ -89,8 +103,7 @@ public interface InfixParselet {
                 parser.consume(TokenType.RPAREN, "Expected closing ')' after function call.");
             }
 
-
-            return new Expr.Call(left, args);
+            return new Expr.Call(loc, left, args);
         }
 
         @Override

@@ -1,5 +1,7 @@
 # Imp
 
+![Lines of Code](https://img.shields.io/tokei/lines/github/mh15/imp)
+
 Imp is a statically typed and compiled scripting language with the goal of increasing programmer confidence.
 
 Note that this project is under development and functionality can be expected to change rapidly. I'm blogging my
@@ -93,3 +95,5 @@ To run the packaged Imp compiler JAR:
 ```bash
 java --enable-preview -jar target/imp-0.1.jar examples/scratch.imp
 ```
+
+To see a CLOC visualization, https://codeflower.la/?name=imp&owner=mh15&branch=main.

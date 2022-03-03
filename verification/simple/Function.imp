@@ -1,0 +1,10 @@
+import "batteries"
+
+func aye() {
+    val d = 4.0
+    log(d)
+    return d
+}
+
+val res = aye()
+log("res: " + res)

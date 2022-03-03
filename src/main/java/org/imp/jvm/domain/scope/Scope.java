@@ -3,7 +3,7 @@ package org.imp.jvm.domain.scope;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.expression.reference.ClosureReference;
 import org.imp.jvm.types.FunctionType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,22 +17,15 @@ import java.util.Optional;
  * outside the current block are accessible inside this block, for example.
  */
 public class Scope {
-    private final LinkedMap<String, LocalVariable> localVariables;
-
     public final LinkedMap<String, ClosureReference> closures;
-
-    public FunctionType functionType = null;
-
     public final List<FunctionType> functionTypes;
-
-
-    private final String name;
-
     public final Scope parentScope;
-
+    private final LinkedMap<String, LocalVariable> localVariables;
+    private final String name;
     // Todo: migrate all "types" to this field
     // Types include functions, structs, external Java classes, type aliases, etc
-    private final LinkedMap<String, Type> types;
+    private final LinkedMap<String, ImpType> types;
+    public FunctionType functionType = null;
 
     // Root scopes
     public Scope() {
@@ -55,39 +48,8 @@ public class Scope {
         this.types = scope.types;
     }
 
-    public void addType(String name, Type type) {
-        this.types.put(name, type);
-    }
-
-    /**
-     * Retrieves a type if it has been aliased to
-     * a name in the current scope.
-     *
-     * @param alias name of the type
-     * @return a StructType, FunctionType, or ExternalType
-     */
-    public Type getType(String alias) {
-        return types.get(alias);
-    }
-
-
     public void addClosure(ClosureReference closureReference) {
         closures.put(closureReference.getName(), closureReference);
-    }
-
-    public ClosureReference getClosure(String name) {
-        return Optional.ofNullable(closures.get(name))
-                .orElse(null);
-    }
-
-    /**
-     * @param f        string name to search for
-     * @param isStatic
-     * @return FunctionType if any functions of name `f` exist in the current scope
-     */
-    public FunctionType findFunctionType(String f, boolean isStatic) {
-        return functionTypes.stream().filter(fType -> fType.name.equals(f) && fType.isStatic == isStatic).findFirst().orElse(null);
-
     }
 
     public void addFunctionType(FunctionType functionType) {
@@ -101,6 +63,23 @@ public class Scope {
         localVariables.put(variable.getName(), variable);
     }
 
+    public void addType(String name, ImpType type) {
+        this.types.put(name, type);
+    }
+
+    /**
+     * @param f string name to search for
+     * @return FunctionType if any functions of name `f` exist in the current scope
+     */
+    public FunctionType findFunctionType(String f, boolean isStatic) {
+        return functionTypes.stream().filter(fType -> fType.name.equals(f) && fType.isStatic == isStatic).findFirst().orElse(null);
+
+    }
+
+    public ClosureReference getClosure(String name) {
+        return Optional.ofNullable(closures.get(name))
+                .orElse(null);
+    }
 
     /**
      * @param varName name to search for
@@ -121,6 +100,17 @@ public class Scope {
             throw new Error("variable lost somewhere during compilation.");
         }
         return localVariables.indexOf(varName) + 1;
+    }
+
+    /**
+     * Retrieves a type if it has been aliased to
+     * a name in the current scope.
+     *
+     * @param alias name of the type
+     * @return a StructType, FunctionType, or ExternalType
+     */
+    public ImpType getType(String alias) {
+        return types.get(alias);
     }
 
     /**

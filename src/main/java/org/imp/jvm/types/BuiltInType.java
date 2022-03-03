@@ -1,12 +1,17 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.domain.Operator;
+import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.imp.jvm.types.overloads.StringOverloads;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public enum BuiltInType implements Type {
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public enum BuiltInType implements ImpType, Serializable {
     BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT, false, false),
     INT("int", int.class, "I", TypeSpecificOpcodes.INT, 0, true),
     FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT, 0.0f, true),
@@ -34,6 +39,15 @@ public enum BuiltInType implements Type {
     //
     ;
 
+    public final static Map<BuiltInType, Integer> widenings = new HashMap<>();
+
+    static {
+        widenings.put(INT, 0);
+        widenings.put(FLOAT, 1);
+        widenings.put(DOUBLE, 2);
+        widenings.put(STRING, 10);
+    }
+
     private final String name;
     private final Class<?> typeClass;
     private final String descriptor;
@@ -50,90 +64,44 @@ public enum BuiltInType implements Type {
         this.isNumeric = isNumeric;
     }
 
-
-
-    @Override
-    public String toString() {
-        return getName();
+    public static BuiltInType getFromToken(TokenType tokenType) {
+        return switch (tokenType) {
+            case LPAREN, IDENTIFIER, NUMBER, ERROR, EOF, IN, EXTERN,
+                    NEW, AS, IMPORT, EXPORT, MUT, VAL, TYPE, FUNC,
+                    ENUM, STRUCT, RETURN, ELSE, IF, FOR, DEC, INC,
+                    NOT, POW, MOD, DIV, SUB, MUL, ADD, OR, AND, NOTEQUAL,
+                    EQUAL, LT, GT, LE, GE, ASSIGN, DOT, RANGE, VARARGS,
+                    COMMA, RBRACK, LBRACK, RBRACE, LBRACE, RPAREN -> null;
+            case TRUE, FALSE -> BuiltInType.BOOLEAN;
+            case STRING -> BuiltInType.STRING;
+            case INT -> BuiltInType.INT;
+            case FLOAT -> BuiltInType.FLOAT;
+            case DOUBLE -> BuiltInType.DOUBLE;
+        };
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public static BuiltInType getFromString(String value) {
+        return switch (value) {
+            case "int" -> BuiltInType.INT;
+            case "float" -> BuiltInType.FLOAT;
+            case "double" -> BuiltInType.DOUBLE;
+            case "bool" -> BuiltInType.BOOLEAN;
+            case "string" -> BuiltInType.STRING;
+            case "any" -> BuiltInType.ANY;
+            default -> null;
+        };
     }
 
-    @Override
-    public Class<?> getTypeClass() {
-        return typeClass;
-    }
-
-    @Override
-    public String getDescriptor() {
-        return descriptor;
-    }
-
-    @Override
-    public String getInternalName() {
-        return getDescriptor();
-    }
-
-    @Override
-    public int getLoadVariableOpcode() {
-        return opcodes.getLoad();
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return opcodes.getStore();
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return opcodes.getReturn();
-    }
-
-    @Override
-    public int getAddOpcode() {
-        return opcodes.getAdd();
-    }
-
-    @Override
-    public int getSubtractOpcode() {
-        return opcodes.getSubstract();
-    }
-
-    @Override
-    public int getMultiplyOpcode() {
-        return opcodes.getMultiply();
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        return opcodes.getDivide();
-    }
-
-    @Override
-    public Object getDefaultValue() {
-        return this.defaultValue;
-    }
-
-    @Override
-    public boolean isNumeric() {
-        return isNumeric;
-    }
-
-    @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        if (this == STRING) {
-            if (operator == Operator.INDEX) {
-                return new StringOverloads();
-            }
+    public static BuiltInType widen(BuiltInType a, BuiltInType b) {
+        if (widenings.get(a) > widenings.get(b)) {
+            return a;
         }
-
-
-        return null;
+        return b;
     }
 
+    public boolean canBeWidenedTo(BuiltInType bigger) {
+        return widenings.get(this) < widenings.get(bigger);
+    }
 
     public void doBoxing(MethodVisitor mv) {
         switch (this) {
@@ -188,5 +156,96 @@ public enum BuiltInType implements Type {
                 System.exit(29);
             }
         }
+    }
+
+    @Override
+    public int getAddOpcode() {
+        return opcodes.getAdd();
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return this.defaultValue;
+    }
+
+    @Override
+    public String getDescriptor() {
+        return descriptor;
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        return opcodes.getDivide();
+    }
+
+    @Override
+    public String getInternalName() {
+        return getDescriptor();
+    }
+
+    @Override
+    public int getLoadVariableOpcode() {
+        return opcodes.getLoad();
+    }
+
+    @Override
+    public int getMultiplyOpcode() {
+        return opcodes.getMultiply();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getNegOpcode() {
+        return opcodes.getNeg();
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        if (this == STRING) {
+            if (operator == Operator.INDEX) {
+                return new StringOverloads();
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public int getReturnOpcode() {
+        return opcodes.getReturn();
+    }
+
+    @Override
+    public int getStoreVariableOpcode() {
+        return opcodes.getStore();
+    }
+
+    @Override
+    public int getSubtractOpcode() {
+        return opcodes.getSubtract();
+    }
+
+    @Override
+    public Class<?> getTypeClass() {
+        return typeClass;
+    }
+
+    @Override
+    public boolean isNumeric() {
+        return isNumeric;
+    }
+
+    @Override
+    public String kind() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

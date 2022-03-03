@@ -1,0 +1,17 @@
+
+// import "lib/person"
+import "lib/date"
+import "batteries"
+
+/*
+func a(p Person) {
+    log("reee")
+    return 4
+}
+*/
+
+// log("main" + 5)
+
+// val b = 4 + 5
+// val p = Person("a", "b", Date(1,2,3))
+val d = Date(1,2,3)

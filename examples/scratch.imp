@@ -1,47 +1,64 @@
-// Declares variables of primitive types and changes
-// their types with addition or reassignment.
+import "person" as p
 
-log("declarations")
 
-mut i = 0
-log(i)
 
-mut f = 0.0
-log(f)
 
-mut b = false
-log(b)
+func hello(person p.Person) {
+    // Todo: struct access on these guys
+    val day = person.dob
 
-mut s = "string"
-log(s)
 
-log("")
-log("operations")
 
-i = i + 1
-log(i)
 
-f = f + 1.0
-log(f)
+    log(day)
+}
 
-b = true
-log(b)
+export func pub() {
+}
 
-s = s + " variable" + " a"
-log(s)
 
-log("\nnegatives")
-mut neg_i = -1
-log(neg_i)
-neg_i = neg_i + -23
-log(neg_i)
+/*
 
-mut neg_f = -1.0
-log(neg_f)
-neg_f++
-log(neg_f)
 
-mut neg_d = -1.0d
-log(neg_d)
-neg_d = neg_d + 346.0d
-log(neg_d)
+
+
+func hello(p person.Person) {
+    val b = 4
+    if 10 > 5 {
+        return 9
+
+    } else {
+        return 18
+    }
+}
+
+*/
+
+
+/*
+func printDate(d Date) {
+    val day = "12"
+    return day
+}
+
+func range(from int, to int) {
+    func lambda(i int) {
+        val twice = 2*i
+        return twice
+    }
+    val numbers = int[]
+    for i in to..from {
+        val b = 42
+        numbers[i - from] = lambda(i)
+    }
+    return numbers
+}
+
+
+
+lambda = (int) -> int
+range = (int,int) -> List<int>
+      | (int,int,int) -> float
+
+
+*/

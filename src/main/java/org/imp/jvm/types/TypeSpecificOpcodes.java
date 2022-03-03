@@ -4,12 +4,12 @@ import static org.objectweb.asm.Opcodes.*;
 
 public enum TypeSpecificOpcodes {
 
-    INT(ILOAD, ISTORE, IRETURN, IADD, ISUB, IMUL, IDIV), //values (-127,127) - one byte.
-    LONG(LLOAD, LSTORE, LRETURN, LADD, LSUB, LMUL, LDIV),
-    FLOAT(FLOAD, FSTORE, FRETURN, FADD, FSUB, FMUL, FDIV),
-    DOUBLE(DLOAD, DSTORE, DRETURN, DADD, DSUB, DMUL, DDIV),
-    VOID(ALOAD, ASTORE, RETURN, 0, 0, 0, 0),
-    OBJECT(ALOAD, ASTORE, ARETURN, 0, 0, 0, 0);
+    INT(ILOAD, ISTORE, IRETURN, IADD, ISUB, IMUL, IDIV, INEG), //values (-127,127) - one byte.
+    LONG(LLOAD, LSTORE, LRETURN, LADD, LSUB, LMUL, LDIV, LNEG),
+    FLOAT(FLOAD, FSTORE, FRETURN, FADD, FSUB, FMUL, FDIV, FNEG),
+    DOUBLE(DLOAD, DSTORE, DRETURN, DADD, DSUB, DMUL, DDIV, DNEG),
+    VOID(ALOAD, ASTORE, RETURN, 0, 0, 0, 0, 0),
+    OBJECT(ALOAD, ASTORE, ARETURN, 0, 0, 0, 0, 0);
 
     private final int load;
     private final int store;
@@ -18,8 +18,9 @@ public enum TypeSpecificOpcodes {
     private final int sub;
     private final int mul;
     private final int div;
+    private final int neg;
 
-    TypeSpecificOpcodes(int load, int store, int ret, int add, int sub, int mul, int div) {
+    TypeSpecificOpcodes(int load, int store, int ret, int add, int sub, int mul, int div, int neg) {
 
         this.load = load;
         this.store = store;
@@ -28,33 +29,39 @@ public enum TypeSpecificOpcodes {
         this.sub = sub;
         this.mul = mul;
         this.div = div;
-    }
-
-    public int getLoad() {
-        return load;
-    }
-
-    public int getStore() {
-        return store;
-    }
-
-    public int getReturn() {
-        return ret;
+        this.neg = neg;
     }
 
     public int getAdd() {
         return add;
     }
 
-    public int getSubstract() {
-        return sub;
+    public int getDivide() {
+        return div;
+    }
+
+    public int getLoad() {
+        return load;
     }
 
     public int getMultiply() {
         return mul;
     }
 
-    public int getDivide() {
-        return div;
+    public int getNeg() {
+        return neg;
     }
+
+    public int getReturn() {
+        return ret;
+    }
+
+    public int getStore() {
+        return store;
+    }
+
+    public int getSubtract() {
+        return sub;
+    }
+
 }

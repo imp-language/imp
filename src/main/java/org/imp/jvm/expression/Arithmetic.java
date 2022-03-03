@@ -3,7 +3,7 @@ package org.imp.jvm.expression;
 import org.imp.jvm.domain.Operator;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -17,6 +17,11 @@ public class Arithmetic extends Expression {
         this.type = getCommonType(left, right);
         this.left = left;
         this.right = right;
+    }
+
+    private static ImpType getCommonType(Expression left, Expression right) {
+        if (right.type == BuiltInType.STRING) return BuiltInType.STRING;
+        return left.type;
     }
 
     public void generate(MethodVisitor mv, Scope scope) {
@@ -38,7 +43,7 @@ public class Arithmetic extends Expression {
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
         } else {
-            Type goalType = this.type;
+            ImpType goalType = this.type;
             if (left.type.equals(right.type)) {
                 left.generate(mv, scope);
                 right.generate(mv, scope);
@@ -76,11 +81,7 @@ public class Arithmetic extends Expression {
                 case DIVIDE -> goalType.getDivideOpcode();
                 // Todo: Modulus
                 case MODULUS -> 0;
-                case LESS -> 0;
-                case GREATER -> 0;
-                case LESS_OR_EQUAL -> 0;
-                case GRATER_OR_EQAL -> 0;
-                case INDEX -> 0;
+                case LESS, GREATER, LESS_OR_EQUAL, GREATER_OR_EQUAL, INDEX -> 0;
             };
             mv.visitInsn(op);
         }
@@ -91,11 +92,6 @@ public class Arithmetic extends Expression {
         left.validate(scope);
         right.validate(scope);
         this.type = getCommonType(left, right);
-    }
-
-    private static Type getCommonType(Expression left, Expression right) {
-        if (right.type == BuiltInType.STRING) return BuiltInType.STRING;
-        return left.type;
     }
 
 

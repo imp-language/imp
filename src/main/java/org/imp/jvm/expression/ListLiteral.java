@@ -5,7 +5,7 @@ import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ListType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -15,7 +15,7 @@ public class ListLiteral extends Literal {
 
     public final List<Expression> elements;
 
-    public Type listType = null;
+    public ImpType listType = null;
 
     public ListLiteral(List<Expression> elements) {
         super(BuiltInType.OBJECT, "");

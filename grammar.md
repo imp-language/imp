@@ -7,7 +7,7 @@ In EBNF:
 The top level of any Imp program is the `program` rule.
 
 ```ebnf
-program        → statement* EOF ;
+program        → import* statement* EOF ;
 ```
 
 A program is a series of statements.
@@ -27,8 +27,12 @@ statement      → expression
                
                ;
                
+import         → "import" stringLiteral
+               | "import" stringLiteral "as" identifier
+               | "from" stringLiteral "import" identifierList // todo
+               ;
 
-export         → "export" statement ;
+export         → "export" (struct | typeAlias | variable | enum | function) ;
 typeAlias      → "type" identifier "=" "extern" STRING ;
 struct         → "struct" identifier "{" (parameter ","?)* ;
 enum           → "enum" identifier "{" (IDENTIFIER ","?)* "}" ;
@@ -54,6 +58,7 @@ expression     → assignment
                | new
                | propertyAccess
                | indexAccess
+               | emptyList
                ;
                
                
@@ -64,6 +69,8 @@ call           → identifier "(" arguments ")" ;
 grouping       → "(" expression ")" 
 new            → "new" call ;
 propertyAccess → expression "." expression ;
+indexAccess    → expression "[" expression "]" ;
+emptyList      → type "[" "]" ;
 
 
 ```
@@ -80,6 +87,8 @@ loopCondition  → identifier "in" expression
                
                ;
                
-type           → identifier ("[" "]")? ; // Todo: better type expressions
+type           → identifier ("[" "]")? 
+               | identifier "." type
+               ;
 
 ```

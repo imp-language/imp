@@ -1,8 +1,14 @@
 package org.imp.jvm.compiler;
 
+import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.domain.ImpFile;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.StructType;
+import org.imp.jvm.visitors.CodegenVisitor;
+import org.javatuples.Pair;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 
 import java.io.File;
 import java.util.HashMap;
@@ -25,7 +31,7 @@ public class BytecodeGenerator {
 
         // Generate bytecode for each Struct defined in the Imp file
         for (var struct : impFile.structTypes) {
-            code.put(impFile.packageName + "/" + struct.identifier.name, classGenerator.generate(struct).toByteArray());
+            code.put(impFile.packageName + "/" + struct.name, classGenerator.generate(struct).toByteArray());
         }
 
         // Generate bytecode for each Enum defined in the Imp file
@@ -52,5 +58,25 @@ public class BytecodeGenerator {
         }
 
         return code;
+    }
+
+    public Pair<ClassWriter, Map<StructType, ClassWriter>> generate(SourceFile source) {
+        // Byte array for each section of the Imp source file
+
+        var cw = new ClassWriter(CodegenVisitor.flags);
+
+//        String qualifiedName = source.path() + "/Class_" + source.name();
+        String qualifiedName = FilenameUtils.removeExtension(source.getFullRelativePath());
+        cw.visit(CodegenVisitor.CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
+
+        // Generate bytecode for each Type defined in the Imp file
+        var codegenVisitor = new CodegenVisitor(source.rootEnvironment, source, cw);
+        // Todo: refactor CodegenVisitor to use most of the logic from the last pass at codegen
+
+        var results = source.acceptVisitor(codegenVisitor);
+
+        cw.visitEnd();
+
+        return new Pair<>(cw, codegenVisitor.structWriters);
     }
 }

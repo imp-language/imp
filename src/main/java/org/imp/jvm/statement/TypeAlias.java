@@ -6,7 +6,10 @@ import org.imp.jvm.domain.scope.LocalVariable;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Function;
-import org.imp.jvm.types.*;
+import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.ExternalType;
+import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.TypeResolver;
 import org.objectweb.asm.MethodVisitor;
 
 import java.lang.reflect.Modifier;
@@ -54,21 +57,19 @@ public class TypeAlias extends Statement {
         localVariable = new LocalVariable(name, type);
         scope.addLocalVariable(localVariable);
 
-
         // Add all methods on the class to the scope
         var methods = foundClass.getMethods();
         for (var method : methods) {
             int modifiers = method.getModifiers();
             boolean isStatic = Modifier.isStatic(modifiers);
-//            System.out.println(method);
 
             String methodName = method.getName();
 
-            /**
-             * java.lang.Math.sqrt() and stdlib.math.sqrt() are conflicting.
-             * The java version is static, the imp version is not.
-             * We're currently tracking if a function is static in the function
-             * type. Instead, we must keep this in the signature.
+            /*
+              java.lang.Math.sqrt() and stdlib.math.sqrt() are conflicting.
+              The java version is static, the imp version is not.
+              We're currently tracking if a function is static in the function
+              type. Instead, we must keep this in the signature.
              */
 
             FunctionType functionType = scope.findFunctionType(methodName, isStatic);

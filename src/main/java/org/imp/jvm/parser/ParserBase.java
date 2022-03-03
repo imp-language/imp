@@ -1,5 +1,6 @@
 package org.imp.jvm.parser;
 
+import org.imp.jvm.Location;
 import org.imp.jvm.tokenizer.Token;
 import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.tokenizer.Tokenizer;
@@ -12,30 +13,35 @@ import java.util.Map;
 import static org.imp.jvm.tokenizer.TokenType.EOF;
 
 public class ParserBase {
-    private final Tokenizer tokens;
-    private final List<Token> mRead = new ArrayList<>();
+
 
     final Map<TokenType, PrefixParselet> prefixParselets = new HashMap<>();
     final Map<TokenType, InfixParselet> infixParselets = new HashMap<>();
+    private final Tokenizer tokens;
+    private final List<Token> mRead = new ArrayList<>();
 
     public ParserBase(Tokenizer tokens) {
         this.tokens = tokens;
     }
 
-    /**
-     * Registers a postfix unary operator parselet for the given token and
-     * precedence.
-     */
-    public void postfix(TokenType token, int precedence) {
-        register(token, new InfixParselet.PostfixOperator(precedence));
+    private static void report(int line, String where,
+                               String message) {
+        System.err.println(
+                "[line " + line + "] Error" + where + ": " + message);
     }
 
-    /**
-     * Registers a prefix unary operator parselet for the given token and
-     * precedence.
-     */
-    public void prefix(TokenType token, int precedence) {
-        register(token, new PrefixParselet.PrefixOperator(precedence));
+    public Token consume() {
+        // Make sure we've read the token.
+        lookAhead(0);
+
+        return mRead.remove(0);
+    }
+
+    public Token consume(TokenType type, String message) {
+        if (check(type)) return consume();
+
+        error(peek(), message);
+        return null;
     }
 
     /**
@@ -54,35 +60,8 @@ public class ParserBase {
         register(token, new InfixParselet.BinaryOperator(precedence, true));
     }
 
-    int getPrecedence() {
-        InfixParselet parser = infixParselets.get(lookAhead(0).type());
-        if (parser != null) return parser.precedence();
-
-        return 0;
-    }
-
-    void register(TokenType token, PrefixParselet parselet) {
-        prefixParselets.put(token, parselet);
-    }
-
-    void register(TokenType token, InfixParselet parselet) {
-        infixParselets.put(token, parselet);
-    }
-
-
-    private boolean match(TokenType... types) {
-        for (TokenType type : types) {
-            if (check(type)) {
-                consume();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    boolean check(TokenType type) {
-        return peek().type() == type;
+    public Location lok() {
+        return new Location(tokens.line, tokens.col);
     }
 
     public boolean match(TokenType expected) {
@@ -95,28 +74,26 @@ public class ParserBase {
         return true;
     }
 
-    public Token consume() {
-        // Make sure we've read the token.
-        lookAhead(0);
-
-        return mRead.remove(0);
+    /**
+     * Registers a postfix unary operator parselet for the given token and
+     * precedence.
+     */
+    public void postfix(TokenType token, int precedence) {
+        register(token, new InfixParselet.PostfixOperator(precedence));
     }
 
-    public Token consume(TokenType type, String message) {
-        if (check(type)) return consume();
-
-        error(peek(), message);
-        return null;
+    /**
+     * Registers a prefix unary operator parselet for the given token and
+     * precedence.
+     */
+    public void prefix(TokenType token, int precedence) {
+        register(token, new PrefixParselet.PrefixOperator(precedence));
     }
 
-    private static void report(int line, String where,
-                               String message) {
-        System.err.println(
-                "[line " + line + "] Error" + where + ": " + message);
+    boolean check(TokenType type) {
+        return peek().type() == type;
     }
 
-    //< lox-error
-//> Parsing Expressions token-error
     void error(Token token, String message) {
         if (token.type() == EOF) {
             report(token.line(), " at end", message);
@@ -125,8 +102,11 @@ public class ParserBase {
         }
     }
 
-    Token peek() {
-        return lookAhead(0);
+    int getPrecedence() {
+        InfixParselet parser = infixParselets.get(lookAhead(0).type());
+        if (parser != null) return parser.precedence();
+
+        return 0;
     }
 
     Token lookAhead(int distance) {
@@ -139,8 +119,8 @@ public class ParserBase {
         return mRead.get(distance);
     }
 
-    boolean isAtEnd() {
-        return peek().type() == EOF;
+    boolean notAtEnd() {
+        return peek().type() != EOF;
     }
 
     /**
@@ -151,5 +131,28 @@ public class ParserBase {
      */
     void optional(TokenType type) {
         if (check(type)) consume();
+    }
+
+    Token peek() {
+        return lookAhead(0);
+    }
+
+    void register(TokenType token, InfixParselet parselet) {
+        infixParselets.put(token, parselet);
+    }
+
+    void register(TokenType token, PrefixParselet parselet) {
+        prefixParselets.put(token, parselet);
+    }
+
+    private boolean match(TokenType... types) {
+        for (TokenType type : types) {
+            if (check(type)) {
+                consume();
+                return true;
+            }
+        }
+
+        return false;
     }
 }

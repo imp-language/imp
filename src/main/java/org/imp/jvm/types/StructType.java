@@ -1,5 +1,6 @@
 package org.imp.jvm.types;
 
+import org.imp.jvm.Util;
 import org.imp.jvm.compiler.Logger;
 import org.imp.jvm.domain.ImpFile;
 import org.imp.jvm.domain.Operator;
@@ -9,35 +10,40 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class StructType implements Type {
-
-
-    public final Identifier identifier;
+public class StructType implements ImpType, Serializable {
     public final Scope scope;
-
+    // Todo: replace with Map<String,Type>
     public final List<Identifier> fields;
+    public final String[] fieldNames;
+    public final ImpType[] fieldTypes;
     public final ImpFile parent;
+    public String name;
 
-    private boolean unknown = false;
+    public String qualifiedName;
 
-
-    public StructType(Identifier identifier, List<Identifier> fields, ImpFile parent, Scope scope) {
-        this.identifier = identifier;
-        this.fields = fields;
-        this.parent = parent;
-        this.scope = scope;
+    public StructType(String name, String[] fieldNames, ImpType[] fieldTypes) {
+        this.name = name;
+        this.fields = Collections.emptyList();
+        this.fieldNames = fieldNames;
+        this.fieldTypes = fieldTypes;
+        this.parent = null;
+        this.scope = null;
     }
 
-    public StructType(String temporaryName) {
-        this.unknown = true;
-        this.scope = null;
-        this.identifier = new Identifier(temporaryName, this);
-        this.fields = null;
+    public StructType(String name, List<Identifier> identifiers) {
+        this.name = name;
+        this.fields = identifiers;
+        this.fieldNames = new String[0];
+        this.fieldTypes = new ImpType[0];
         this.parent = null;
+        this.scope = null;
+
     }
 
     /**
@@ -48,8 +54,18 @@ public class StructType implements Type {
         return st.fields.stream().filter(id -> id.name.equals(fieldName)).findFirst();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj instanceof StructType o) {
+            return this.name.equals(o.name);
+        } else {
+            return false;
+        }
+    }
+
     /**
-     * Recursively attempt to find the type of a method access expression.
+     * Recursively attempt to find the type of the method access expression.
      *
      * @param parent    starting point, already known
      * @param fieldPath list of identifiers
@@ -77,37 +93,34 @@ public class StructType implements Type {
         return validatedPath;
     }
 
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj instanceof StructType o) {
-            return this.identifier.name.equals(o.identifier.name);
-        } else {
-            return false;
+    public Optional<ImpType> findType(String name) {
+        for (int i = 0; i < fieldNames.length; i++) {
+            if (fieldNames[i].equals(name)) {
+                return Optional.of(fieldTypes[i]);
+            }
         }
+        return Optional.empty();
     }
 
     @Override
-    public String toString() {
-        return getName();
+    public int getAddOpcode() {
+        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
-    public String getName() {
-//        if (struct == null) return this.name;
-        if (unknown) return this.identifier.name;
-        return this.parent.name + "/" + identifier.name;
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
+    public Object getDefaultValue() {
         return null;
     }
 
     @Override
     public String getDescriptor() {
-        return "L" + getInternalName() + ";";
+        String n = qualifiedName.replace(":", "/");
+        return "L" + n + ";";
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
@@ -121,8 +134,23 @@ public class StructType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
+    public int getMultiplyOpcode() {
+        throw new RuntimeException("Multiplication operation not (yet ;) ) supported for custom objects");
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getNegOpcode() {
+        return 0;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
     }
 
     @Override
@@ -131,27 +159,17 @@ public class StructType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
+    public int getStoreVariableOpcode() {
+        return Opcodes.ASTORE;
     }
 
     @Override
     public int getSubtractOpcode() {
-        throw new RuntimeException("Substraction operation not (yet ;) ) supported for custom objects");
+        throw new RuntimeException("Subtraction operation not (yet ;) ) supported for custom objects");
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public Object getDefaultValue() {
+    public Class<?> getTypeClass() {
         return null;
     }
 
@@ -161,7 +179,12 @@ public class StructType implements Type {
     }
 
     @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
+    public String kind() {
+        return "struct";
+    }
+
+    @Override
+    public String toString() {
+        return "struct " + getName() + " {" + Util.parameterString(fieldNames, fieldTypes) + "}";
     }
 }

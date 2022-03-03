@@ -7,7 +7,7 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ListType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -22,45 +22,6 @@ public class ForInLoop extends Loop {
         this.iteratorName = iteratorName;
         this.expression = expression;
         this.block = block;
-    }
-
-    @Override
-    public void validate(Scope scope) {
-        expression.validate(scope);
-
-
-        // Check that the expression can be iterated upon
-        // Until the Imp type hierarchy develops, we will
-        // allow for each on types that implement the Java
-        // Iterable interface, and on strings.
-        Class<?> expressionClass = expression.type.getTypeClass();
-        if (Iterable.class.isAssignableFrom(expressionClass)) {
-            // Ee know the expression is a List or some other
-            // type implementing Iterable.
-
-        } else if (expression.type == BuiltInType.STRING) {
-            System.err.println("String for-in loops Todo.");
-            // Todo
-        } else {
-            Logger.syntaxError(Errors.CannotIterate, this, this.expression.getCtx().getText());
-            return;
-        }
-
-        block.scope = new Scope(scope);
-
-        // Todo: unique names so we can have multiple for-in loops in a scope.
-        block.scope.addLocalVariable(new LocalVariable("iterator", BuiltInType.OBJECT));
-        // Set the type of the iterator variable
-        Type iteratorType = BuiltInType.OBJECT;
-        if (expression.type instanceof ListType listType) {
-            iteratorType = listType.contentType;
-        }
-
-        block.scope.addLocalVariable(new LocalVariable(iteratorName, iteratorType));
-
-        block.validate(block.scope);
-
-
     }
 
     @Override
@@ -85,8 +46,6 @@ public class ForInLoop extends Loop {
         LocalVariable i = block.scope.getLocalVariable(iteratorName);
         if (i.type instanceof BuiltInType bt) {
             bt.doUnboxing(mv);
-        } else {
-//            mv.visitTypeInsn(Opcodes.CHECKCAST, i.type.getInternalName());
         }
 
         mv.visitVarInsn(i.type.getStoreVariableOpcode(), nextIndex);
@@ -95,5 +54,43 @@ public class ForInLoop extends Loop {
 
         mv.visitJumpInsn(Opcodes.GOTO, loop);
         mv.visitLabel(end);
+    }
+
+    @Override
+    public void validate(Scope scope) {
+        expression.validate(scope);
+
+        // Check that the expression can be iterated upon
+        // Until the Imp type hierarchy develops, we will
+        // allow for each on types that implement the Java
+        // Iterable interface, and on strings.
+        Class<?> expressionClass = expression.type.getTypeClass();
+        if (Iterable.class.isAssignableFrom(expressionClass)) {
+            // Ee know the expression is a List or some other
+            // type implementing Iterable.
+
+        } else if (expression.type == BuiltInType.STRING) {
+            System.err.println("String for-in loops Todo.");
+            // Todo
+        } else {
+            Logger.syntaxError(Errors.CannotIterate, this, this.expression.getCtx().getText());
+            return;
+        }
+
+        block.scope = new Scope(scope);
+
+        // Todo: unique names so we can have multiple for-in loops in a scope.
+        block.scope.addLocalVariable(new LocalVariable("iterator", BuiltInType.OBJECT));
+        // Set the type of the iterator variable
+        ImpType iteratorType = BuiltInType.OBJECT;
+        if (expression.type instanceof ListType listType) {
+            iteratorType = listType.contentType;
+        }
+
+        block.scope.addLocalVariable(new LocalVariable(iteratorName, iteratorType));
+
+        block.validate(block.scope);
+
+
     }
 }

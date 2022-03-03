@@ -63,14 +63,15 @@ public enum TokenType {
     FALSE("false"),
     STRING,
     IDENTIFIER,
+    INT,
+    FLOAT,
+    DOUBLE,
     NUMBER,
 
     ERROR,
     EOF;
 
 
-    public final String representation;
-    public final String alternate;
     private static final HashMap<String, TokenType> matcher = new HashMap<>();
 
     static {
@@ -79,6 +80,9 @@ public enum TokenType {
             if (tokenType.alternate != null) matcher.put(tokenType.alternate, tokenType);
         }
     }
+
+    public final String representation;
+    public final String alternate;
 
     TokenType() {
         this.representation = null;
@@ -98,4 +102,6 @@ public enum TokenType {
     public static TokenType find(String representation) {
         return matcher.get(representation);
     }
+
+
 }

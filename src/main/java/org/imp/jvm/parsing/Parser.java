@@ -1,6 +1,8 @@
 package org.imp.jvm.parsing;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.ImpLexer;
@@ -10,7 +12,8 @@ import org.imp.jvm.exception.ThrowingErrorListener;
 import org.imp.jvm.parsing.visitor.ImpFileVisitor;
 import org.imp.jvm.tool.Timer;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 
 public class Parser {
@@ -22,7 +25,6 @@ public class Parser {
      * @return ImpFile
      */
     public static ImpFile getAbstractSyntaxTree(File file) {
-
 
         CharStream charStream = null;
         try {
@@ -42,10 +44,9 @@ public class Parser {
         parser.removeErrorListeners();
         parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 
-
 //        parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
         String name = FilenameUtils.separatorsToUnix(FilenameUtils.removeExtension(file.getPath()));
-        ParseTree parseTree = null;
+        ParseTree parseTree;
         parseTree = parser.program();
         Timer.log("ANTLR parsing complete");
 //        Timer.LOG = true;
@@ -53,7 +54,6 @@ public class Parser {
 
 //        System.exit(98);
         return parseTree.accept(new ImpFileVisitor(FilenameUtils.removeExtension(name)));
-
 
 //        try {
 //            parser.getInterpreter().setPredictionMode(PredictionMode.LL);
@@ -69,7 +69,6 @@ public class Parser {
 //        }
 
 //        ParseTree parseTree = parser.program();
-
 
     }
 

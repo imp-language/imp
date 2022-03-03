@@ -4,13 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
 import org.imp.jvm.domain.scope.Scope;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class TypeResolver {
 
-    public static Type getFromTypeContext(ImpParser.TypeContext typeContext, Scope scope) {
+    public static ImpType getFromTypeContext(ImpParser.TypeContext typeContext, Scope scope) {
         if (typeContext instanceof ImpParser.TypePrimitiveContext) {
             Optional<BuiltInType> builtInType = getBuiltInType(typeContext.getText());
             if (builtInType.isPresent()) {
@@ -20,17 +20,14 @@ public class TypeResolver {
             return scope.getType(tsc.identifier().getText());
         } else if (typeContext instanceof ImpParser.TypeListContext typeListContext) {
             Optional<BuiltInType> builtInType = getBuiltInType(typeListContext.t.getText());
-            if (builtInType.isPresent()) {
-                return new ListType(builtInType.get());
-            }
-            return null;
+            return builtInType.map(ListType::new).orElse(null);
         } else {
             System.err.println("reea");
         }
         return null;
     }
 
-    public static Type getFromName(String name, Scope scope) {
+    public static ImpType getFromName(String name, Scope scope) {
         Optional<BuiltInType> builtInType = getBuiltInType(name);
         if (builtInType.isPresent()) return builtInType.get();
 
@@ -38,7 +35,7 @@ public class TypeResolver {
 
     }
 
-    public static Type getTemporaryType(ImpParser.TypeContext typeContext) {
+    public static ImpType getTemporaryType(ImpParser.TypeContext typeContext) {
         if (typeContext == null) return null;
         String text = typeContext.getText();
         if (typeContext instanceof ImpParser.TypePrimitiveContext) {
@@ -47,7 +44,7 @@ public class TypeResolver {
                 return builtInType.get();
             }
         } else if (text.length() > 0) {
-            return new StructType(text);
+            return new StructType(text, new ArrayList<>());
         }
         return null;
     }
@@ -71,6 +68,7 @@ public class TypeResolver {
         return result;
     }
 
+
     public static Optional<BuiltInType> getBuiltInType(String typeName) {
         // Todo: bad way of doing this
         if (typeName.equals("boolean")) {
@@ -83,6 +81,7 @@ public class TypeResolver {
                 .findFirst();
     }
 
+
     public static Optional<BuiltInType> getBuiltInTypeByClass(Class<?> c) {
         return Arrays.stream(BuiltInType.values())
                 .filter(type -> c.equals(type.getTypeClass()))
@@ -90,19 +89,19 @@ public class TypeResolver {
     }
 
     public static final class TypeChecker {
-        public static boolean isInt(Type type) {
+        public static boolean isInt(ImpType type) {
             return type == BuiltInType.INT;
         }
 
-        public static boolean isBool(Type type) {
+        public static boolean isBool(ImpType type) {
             return type == BuiltInType.BOOLEAN;
         }
 
-        public static boolean isFloat(Type type) {
+        public static boolean isFloat(ImpType type) {
             return type == BuiltInType.FLOAT;
         }
 
-        public static boolean isDouble(Type type) {
+        public static boolean isDouble(ImpType type) {
             return type == BuiltInType.DOUBLE;
         }
     }

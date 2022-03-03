@@ -3,14 +3,16 @@ package org.imp.jvm.domain.scope;
 import org.imp.jvm.compiler.FieldGenerator;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 
+import java.io.Serializable;
 
-public class Identifier extends Expression {
+
+public class Identifier extends Expression implements Serializable {
     public String name;
 
-    public Identifier(String name, Type type) {
+    public Identifier(String name, ImpType type) {
         this.name = name;
         this.type = type;
     }
@@ -25,13 +27,13 @@ public class Identifier extends Expression {
     }
 
     @Override
-    public String toString() {
-        return name + " " + type.getName();
+    public void generate(MethodVisitor mv, Scope scope) {
+
     }
 
     @Override
-    public void generate(MethodVisitor mv, Scope scope) {
-
+    public String toString() {
+        return name + " " + type.getName();
     }
 
     @Override

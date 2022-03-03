@@ -2,7 +2,7 @@ package org.imp.jvm.compiler;
 
 import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.expression.Function;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -13,14 +13,22 @@ public final class DescriptorFactory {
 
     public static String getMethodDescriptor(Function signature) {
         Collection<Identifier> parameters = signature.parameters;
-        Type returnType = signature.returnType;
+        ImpType returnType = signature.returnType;
         return getMethodDescriptor(parameters, returnType);
     }
 
     //
-    public static String getMethodDescriptor(Collection<Identifier> parameters, Type returnType) {
+    public static String getMethodDescriptor(Collection<Identifier> parameters, ImpType returnType) {
         String parametersDescriptor = parameters.stream()
                 .map(parameter -> parameter.type.getDescriptor())
+                .collect(Collectors.joining("", "(", ")"));
+        String returnDescriptor = returnType.getDescriptor();
+        return parametersDescriptor + returnDescriptor;
+    }
+
+    public static String getDescriptor(Collection<ImpType> types, ImpType returnType) {
+        String parametersDescriptor = types.stream()
+                .map(ImpType::getDescriptor)
                 .collect(Collectors.joining("", "(", ")"));
         String returnDescriptor = returnType.getDescriptor();
         return parametersDescriptor + returnDescriptor;

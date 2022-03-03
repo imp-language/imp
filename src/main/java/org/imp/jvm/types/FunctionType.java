@@ -10,18 +10,15 @@ import org.imp.jvm.types.overloads.OperatorOverload;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class FunctionType implements Type {
+public class FunctionType implements ImpType {
 
     public final String name;
+    public final ImpFile parent;
+    public final List<VariableReference> closures = new ArrayList<>();
+    public final boolean isStatic;
     //    public final List<Function> signatures;
     private final LinkedMap<String, Function> signatures;
-    public final ImpFile parent;
-
-    public final List<VariableReference> closures = new ArrayList<>();
-
-    public final boolean isStatic;
 
     public FunctionType(String name, ImpFile parent, boolean isStatic) {
         this.name = name;
@@ -30,15 +27,70 @@ public class FunctionType implements Type {
         this.parent = parent;
     }
 
+    /**
+     * Add a Function to the Function type
+     *
+     * @param descriptor (Ljava/lang/Object;)I would take an object and return an int, for example.
+     * @param signature  the function to add
+     */
+    public void addSignature(String descriptor, Function signature) {
+        signatures.put(descriptor, signature);
+        signature.functionType = this;
+    }
 
-    public Function getSignatureByTypes(List<Type> argTypes) {
-        if (this.name.equals("log")) {
-            if (argTypes.size() == 0) return this.signatures.get("");
-            if (argTypes.get(0).equals(BuiltInType.VOID)) return null;
-            return this.signatures.get("[Ljava/lang/Object;");
-        }
-        var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).collect(Collectors.toList());
-        return getSignature(argTypes);
+    @Override
+    public int getAddOpcode() {
+        return 0;
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return null;
+    }
+
+    @Override
+    public String getDescriptor() {
+        return null;
+    }
+
+    @Override
+    public int getDivideOpcode() {
+        return 0;
+    }
+
+    @Override
+    public String getInternalName() {
+        return getName().replace(".", "/");
+    }
+
+    @Override
+    public int getLoadVariableOpcode() {
+        return 0;
+    }
+
+    @Override
+    public int getMultiplyOpcode() {
+        return 0;
+    }
+
+    @Override
+    public String getName() {
+        return this.parent.name + "/Function_" + name;
+    }
+
+    @Override
+    public int getNegOpcode() {
+        return 0;
+    }
+
+    @Override
+    public OperatorOverload getOperatorOverload(Operator operator) {
+        return null;
+    }
+
+    @Override
+    public int getReturnOpcode() {
+        return 0;
     }
 
     /**
@@ -49,7 +101,7 @@ public class FunctionType implements Type {
         return signatures.get(descriptor);
     }
 
-    public Function getSignature(List<Type> argumentTypes) {
+    public Function getSignature(List<ImpType> argumentTypes) {
         for (var function : signatures.values()) {
 //            boolean returnTypesMatch = (function.returnType != returnType);
             boolean argTypesMatch = true;
@@ -70,22 +122,47 @@ public class FunctionType implements Type {
         return null;
     }
 
-    /**
-     * Add a Function to the Function type
-     *
-     * @param descriptor (Ljava/lang/Object;)I would take an object and return an int, for example.
-     * @param signature  the function to add
-     */
-    public void addSignature(String descriptor, Function signature) {
-        signatures.put(descriptor, signature);
-    }
-
     public Function getSignature(int pos) {
         return signatures.getValue(pos);
     }
 
+    public Function getSignatureByTypes(List<ImpType> argTypes) {
+        if (this.name.equals("log")) {
+            if (argTypes.size() == 0) return this.signatures.get("");
+            if (argTypes.get(0).equals(BuiltInType.VOID)) return null;
+            return this.signatures.get("[Ljava/lang/Object;");
+        }
+        var identifiers = argTypes.stream().map(e -> new Identifier("_", e)).toList();
+        return getSignature(argTypes);
+    }
+
     public LinkedMap<String, Function> getSignatures() {
         return signatures;
+    }
+
+    @Override
+    public int getStoreVariableOpcode() {
+        return 0;
+    }
+
+    @Override
+    public int getSubtractOpcode() {
+        return 0;
+    }
+
+    @Override
+    public Class<?> getTypeClass() {
+        return null;
+    }
+
+    @Override
+    public boolean isNumeric() {
+        return false;
+    }
+
+    @Override
+    public String kind() {
+        return "function";
     }
 
     @Override
@@ -97,75 +174,5 @@ public class FunctionType implements Type {
             s += ", static";
         }
         return s;
-    }
-
-    @Override
-    public String getName() {
-        return this.parent.name + "/Function_" + name;
-    }
-
-    @Override
-    public Class<?> getTypeClass() {
-        return null;
-    }
-
-    @Override
-    public String getDescriptor() {
-        return null;
-    }
-
-    @Override
-    public String getInternalName() {
-        return getName().replace(".", "/");
-    }
-
-    @Override
-    public int getLoadVariableOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getAddOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getSubtractOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getDivideOpcode() {
-        return 0;
-    }
-
-    @Override
-    public Object getDefaultValue() {
-        return null;
-    }
-
-    @Override
-    public boolean isNumeric() {
-        return false;
-    }
-
-    @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
     }
 }

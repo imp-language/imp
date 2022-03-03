@@ -21,24 +21,20 @@ public class Struct extends Statement {
     }
 
     @Override
-    public void validate(Scope scope) {
-        // Struct validation happens before this is called, so types are
-        // accessible by the validation pass on all other statements.
-    }
-
-
-    @Override
     public String toString() {
         var s = "struct ";
-        s += structType.identifier.name;
+        s += structType.name;
         s += " { ";
         s += structType.fields.stream().map(field -> field.name + " " + field.type).collect(Collectors.joining(", "));
         s += " }";
         return s;
     }
 
-
-
+    @Override
+    public void validate(Scope scope) {
+        // Struct validation happens before this is called, so types are
+        // accessible by the validation pass on all other statements.
+    }
 
 
 }

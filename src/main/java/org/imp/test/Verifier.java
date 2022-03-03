@@ -62,17 +62,15 @@ public class Verifier {
         String sourcePath = FilenameUtils.concat(verificationPath, name);
         String solutionPath = FilenameUtils.concat(verificationPath, FilenameUtils.getBaseName(name) + ".txt");
 
-
         // 0. Load result file line-by-line
         List<String> solutionLines = FileUtils.readLines(new File(solutionPath), StandardCharsets.UTF_8);
 
         // 1. Compile imp source file
-        var imp = new Compiler(sourcePath);
-        String classFilePath = imp.compile();
+        var imp = new Compiler();
+        String classFilePath = imp.compile(sourcePath, null);
 
         // 2. Execute compiled imp file
         Process proc = Runner.spawn(classFilePath);
-
 
         // 3. Watch standard out
         BufferedReader stdInput = new BufferedReader(new
@@ -82,7 +80,7 @@ public class Verifier {
                 InputStreamReader(proc.getErrorStream()));
 
         List<String> stdOutLines = new ArrayList<>();
-        String s = null;
+        String s;
         while ((s = stdInput.readLine()) != null) {
             stdOutLines.add(s);
         }

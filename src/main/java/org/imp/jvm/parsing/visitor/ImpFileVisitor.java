@@ -7,8 +7,8 @@ import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.domain.scope.Scope;
 import org.imp.jvm.expression.Function;
 import org.imp.jvm.parsing.visitor.statement.StatementVisitor;
-import org.imp.jvm.statement.*;
 import org.imp.jvm.statement.Enum;
+import org.imp.jvm.statement.*;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
 import org.imp.jvm.types.Modifier;
@@ -26,10 +26,8 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
     }
 
 
-
     @Override
     public ImpFile visitProgram(ImpParser.ProgramContext ctx) {
-
 
         // get all top level statements in the file
         List<ImpParser.StatementContext> statementContexts = ctx.statement();
@@ -39,7 +37,6 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
 
         // create an ImpFile node with appropriate children
         var impFile = new ImpFile(filename);
-
 
         var mainFunctionType = new FunctionType("main", impFile, false);
 
@@ -58,11 +55,9 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
                 impFile
         );
 
-
         main.block.scope = staticScope;
 
         impFile.functions.add(main);
-
 
         // handle each statement appropriately
         StatementVisitor statementVisitor = new StatementVisitor(staticScope, impFile);
@@ -74,15 +69,12 @@ public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
             impFile.imports.add(i);
         }
 
-
         for (var statement : statementContexts) {
             Statement s = statement.accept(statementVisitor);
-//            System.out.println(s);
 
             if (s == null) {
                 throw new Error("Can't find input.");
             }
-
 
             // Split classes out to their own files
             if (s instanceof Struct struct) {

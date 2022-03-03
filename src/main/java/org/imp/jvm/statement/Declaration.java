@@ -7,7 +7,7 @@ import org.imp.jvm.exception.Errors;
 import org.imp.jvm.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.Mutability;
-import org.imp.jvm.types.Type;
+import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -45,7 +45,7 @@ public class Declaration extends Statement {
         scope.addLocalVariable(localVariable);
 
     }
-    
+
 
     @Override
     public void generate(MethodVisitor mv, Scope scope) {
@@ -70,21 +70,20 @@ public class Declaration extends Statement {
             mv.visitVarInsn(Opcodes.ASTORE, index);
         } else {
             expression.generate(mv, scope);
-            Type type = expression.type;
+            ImpType type = expression.type;
             int index = scope.getLocalVariableIndex(name);
             localVariable.type = expression.type;
             //Type localVariableType = localVariable.getType();
             // Todo: for now no casting is supported
-            Type localVariableType = expression.type;
+            ImpType localVariableType = expression.type;
             castIfNecessary(type, localVariableType, mv);
-
 
             mv.visitVarInsn(type.getStoreVariableOpcode(), index);
         }
     }
 
 
-    private void castIfNecessary(Type expressionType, Type variableType, MethodVisitor mv) {
+    private void castIfNecessary(ImpType expressionType, ImpType variableType, MethodVisitor mv) {
         if (!expressionType.equals(variableType)) {
             mv.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());
         }

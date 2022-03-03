@@ -1,0 +1,12 @@
+import "date" as date
+
+import "batteries"
+
+export struct Person {
+    fname string
+    lname string
+    dob date.Date // here we need to store that date was imported from "lib/date"
+}
+
+
+log("person main")
