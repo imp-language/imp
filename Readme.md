@@ -1,6 +1,6 @@
-# Imp
+# Imp (README TODO)
 
-![Lines of Code](https://img.shields.io/tokei/lines/github/mh15/imp)
+
 
 Imp is a statically typed and compiled scripting language with the goal of increasing programmer confidence.
 
