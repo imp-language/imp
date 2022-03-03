@@ -8,6 +8,11 @@ export func rand() float {
     return rand.nextFloat()
 }
 
+export func rand(seed int) float {
+    val rand = new Random(int(seed))
+    return rand.nextFloat()
+}
+
 export func rand(start int, end int) int {
     val rand = new Random()
     return rand.nextInt(start, end)
