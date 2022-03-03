@@ -48,7 +48,7 @@ class CompilerTest {
 
     @Test
     void helloWorld() throws IOException, InterruptedException {
-        assertEquals(Load.run("simple/HelloWorld", moduleLocation), """
+        assertEquals(Load.run("simple/helloWorld", moduleLocation), """
                 Hello, World!
                 """);
     }
