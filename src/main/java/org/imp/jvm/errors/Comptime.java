@@ -82,7 +82,6 @@ public enum Comptime {
             int padding = (int) Math.ceil(Math.log10(endLine + 1)) + 1;
             var result = IntStream.range(0, limit)
                     .mapToObj(i -> {
-                        System.out.println("Getting " + i + " / " + selection.size());
                         if (i < selection.size()) {
 
                             var s = StringUtils.leftPad((i + startLine + 1) + "|", padding) + " " + selection.get(i);

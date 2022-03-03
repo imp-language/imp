@@ -380,8 +380,8 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         currentEnvironment.addVariableOrError(name, structType, file, stmt);
 
         // Add "constructor" function
-        FuncType constructorType = new FuncType(name, Modifier.NONE, parameters);
-        currentEnvironment.addVariableOrError(name, constructorType, file, stmt);
+//        FuncType constructorType = new FuncType(name, Modifier.NONE, parameters);
+//        currentEnvironment.addVariableOrError(name, constructorType, file, stmt);
         // Todo(current): why have both functype and structype
         // likely is necessary but we'll need some refactoring to make sure type
         // retrievals from environments are solid and type safe

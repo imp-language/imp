@@ -125,14 +125,24 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         var e = expr.item.accept(this);
         if (e.isPresent()) {
-            var ft = (FuncType) e.get();
-            var returnType = ((FuncType) e.get()).returnType;
+            var t = e.get();
+            if (t instanceof FuncType ft) {
 
-            for (var arg : expr.arguments) {
-                arg.accept(this);
+                var returnType = ft.returnType;
+
+                for (var arg : expr.arguments) {
+                    arg.accept(this);
+                }
+                expr.realType = returnType;
+                return Optional.of(returnType);
+            } else if (t instanceof StructType st) {
+                // constructor function
+                for (var arg : expr.arguments) {
+                    arg.accept(this);
+                }
+                expr.realType = st;
+                return Optional.of(st);
             }
-            expr.realType = returnType;
-            return Optional.of(returnType);
         } else {
             // Todo: pass missing method name
             Comptime.MethodNotFound.submit(file, expr.item, "name");

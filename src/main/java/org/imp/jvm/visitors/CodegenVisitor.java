@@ -143,6 +143,27 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             }
 
+        } else if (expr.item.realType instanceof StructType st) {
+            // initialize instance of struct class and push to stack
+            System.out.println("Generating instance of struct " + st.name);
+            String ownerDescriptor = st.getInternalName();
+            var ga = funcType.ga;
+
+            ga.visitTypeInsn(Opcodes.NEW, "lib/date$Date"); //NEW instruction takes object descriptor as an input
+            ga.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our new object
+
+
+//            // Generate arguments
+//            for (var arg : expr.arguments) {
+//                arg.accept(this);
+//            }
+            funcType.ga.visitMethodInsn(
+                    Opcodes.INVOKESPECIAL,
+                    "lib/date$Date",
+                    "<init>",
+                    "()V",
+                    false
+            );
 
         } else {
             System.err.println("Bad!");
@@ -243,6 +264,9 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var type = currentEnvironment.getVariable(expr.identifier.source());
         expr.realType = type;
         if (type instanceof FuncType ft) {
+
+        } else if (type instanceof StructType st) {
+
 
         } else {
             // Todo: TERRIBLE hack that sparsely does locals on even indices only
@@ -406,6 +430,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         // Add field reference to outer class
         String descriptor = "L" + source.getFullRelativePath() + ";";
+        System.out.println(descriptor);
         FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_FINAL, "this$0", descriptor, null, null);
         fieldVisitor.visitEnd();
 
