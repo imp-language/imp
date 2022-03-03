@@ -1,7 +1,0 @@
-function hello(name string) void {
-    log("hello, " + name)
-}
-
-hello("Matt")
-hello("Kyle")
-hello("Payton")v

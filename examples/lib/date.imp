@@ -1,5 +1,0 @@
-export struct Date {
-    day int
-    month int
-    year int
-}
