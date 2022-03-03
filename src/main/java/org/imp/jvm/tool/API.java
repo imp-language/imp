@@ -1,15 +1,14 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.Stmt;
-import org.imp.jvm.compiler.BytecodeGenerator;
-import org.imp.jvm.compiler.Logger;
-import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.Program;
-import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.SourceFile;
+import org.imp.jvm.codegen.BytecodeGenerator;
+import org.imp.jvm.codegen.Logger;
 import org.imp.jvm.errors.Comptime;
-import org.imp.jvm.exception.Errors;
-import org.imp.jvm.parsing.Parser;
+import org.imp.jvm.legacy.ImpFile;
+import org.imp.jvm.legacy.exception.Errors;
+import org.imp.jvm.legacy.parsing.Parser;
+import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.runtime.GlueOld;
 import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.types.ImpType;
@@ -282,7 +281,7 @@ public class API {
 
     }
 
-    public static Program createProgram(Map<String, ImpFile> files) {
+    public static void createProgram(Map<String, ImpFile> files) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         Logger.killIfErrors("Errored during bytecode generation.");
 
@@ -318,7 +317,6 @@ public class API {
 
         Logger.killIfErrors("Errored during bytecode generation.");
 
-        return null;
     }
 
 

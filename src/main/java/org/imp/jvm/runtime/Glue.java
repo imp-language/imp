@@ -1,8 +1,8 @@
 package org.imp.jvm.runtime;
 
-import org.imp.jvm.domain.SourceFile;
-import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.expression.Function;
+import org.imp.jvm.SourceFile;
+import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.legacy.expression.Function;
 import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
 

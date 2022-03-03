@@ -1,12 +1,12 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.Util;
-import org.imp.jvm.compiler.Logger;
-import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.Operator;
-import org.imp.jvm.domain.scope.Identifier;
-import org.imp.jvm.domain.scope.Scope;
-import org.imp.jvm.exception.Errors;
+import org.imp.jvm.codegen.Logger;
+import org.imp.jvm.legacy.ImpFile;
+import org.imp.jvm.legacy.domain.Operator;
+import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.legacy.domain.scope.Scope;
+import org.imp.jvm.legacy.exception.Errors;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 

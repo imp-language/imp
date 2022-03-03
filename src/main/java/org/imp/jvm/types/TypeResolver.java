@@ -2,7 +2,7 @@ package org.imp.jvm.types;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.ImpParser;
-import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.legacy.domain.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.Arrays;

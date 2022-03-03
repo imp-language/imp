@@ -1,6 +1,6 @@
 package org.imp.jvm.visitors;
 
-import org.imp.jvm.Expr;
+import org.imp.jvm.parser.Expr;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ImpType;
 import org.objectweb.asm.Label;

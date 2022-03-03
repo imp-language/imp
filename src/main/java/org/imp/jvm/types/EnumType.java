@@ -1,7 +1,7 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.domain.Operator;
-import org.imp.jvm.expression.Expression;
+import org.imp.jvm.legacy.domain.Operator;
+import org.imp.jvm.legacy.expression.Expression;
 import org.imp.jvm.types.overloads.OperatorOverload;
 
 import java.util.Map;

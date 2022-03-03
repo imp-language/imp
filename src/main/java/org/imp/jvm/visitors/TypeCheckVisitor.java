@@ -1,10 +1,10 @@
 package org.imp.jvm.visitors;
 
 import org.imp.jvm.Environment;
-import org.imp.jvm.Expr;
-import org.imp.jvm.Stmt;
 import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
+import org.imp.jvm.parser.Expr;
+import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 

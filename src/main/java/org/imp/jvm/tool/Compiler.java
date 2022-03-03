@@ -1,10 +1,10 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
+import org.imp.jvm.SourceFile;
 import org.imp.jvm.Util;
-import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
+import org.imp.jvm.legacy.ImpFile;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
 import org.jgrapht.Graph;
@@ -100,7 +100,7 @@ public record Compiler() {
 
         Timer.log("create compilation set");
 
-        var program = API.createProgram(compilationSet);
+        API.createProgram(compilationSet);
         Timer.log("generate bytecode");
         Timer.logTotalTime();
 

@@ -1,8 +1,8 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.Util;
-import org.imp.jvm.domain.Operator;
-import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.legacy.domain.Operator;
+import org.imp.jvm.legacy.domain.scope.Identifier;
 import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.GeneratorAdapter;

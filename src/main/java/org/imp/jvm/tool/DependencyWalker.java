@@ -1,7 +1,7 @@
 package org.imp.jvm.tool;
 
-import org.imp.jvm.domain.ImpFile;
-import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.SourceFile;
+import org.imp.jvm.legacy.ImpFile;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;

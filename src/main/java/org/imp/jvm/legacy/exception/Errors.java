@@ -1,0 +1,103 @@
+package org.imp.jvm.legacy.exception;
+
+
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+import org.imp.jvm.legacy.statement.Statement;
+
+import java.text.MessageFormat;
+
+
+public enum Errors {
+    ImplementationError(-1, "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers.",
+            "This error message should never occur. "),
+    MissingFieldType(0, "Each struct field must have a type. Consider adding `string` or another primitive type after the field name.",
+            "Missing type declaration on struct field `{0}` near {1}."
+    ),
+    TypeNotFound(1, "Make sure all types are defined or builtin.",
+            "Type `{0}` does not exist in the current scope."),
+    PrimitiveTypePropertyAccess(2, "Property access cannot be used on variables with primitive types like int, float, or bool.",
+            "Variable `{0}` does not support property access as it has a primitive type."),
+    StructFieldNotFound(3, "Check the type definition of custom types to find the correct field name, or to add a field of this name.",
+            "Identifier `{0}` does not exist as a field on the parent struct."),
+    IncrementInvalidType(4, "Increment and decrement operations can only be called on numeric types",
+            "Expression `{0}` cannot be incremented or decremented."),
+    LogicalOperationInvalidType(5, "Logical operations such as `and` and `or` can only be applied on expressions that evaluate to booleans.",
+            "Expression `{0}` does not evaluate to a boolean value."),
+    StructConstructorMismatch(6, "Check the struct definition to make sure you are providing a value for all fields in the struct.",
+            "Constructor call for struct `{0}` does not provide values for all fields in the struct."),
+    FunctionNotFound(7, "Make sure to define or import all functions being called.",
+            "No functions named `{0}` exist in the current scope."),
+    FunctionSignatureMismatch(8, "Check the parameter positions and types of the called function.",
+            "No function overloads exist on `{0}` that match the parameters `{1}`."),
+    LocalVariableNotFound(9, "Make sure all variables referenced in this file are defined or imported.",
+            "No variable named `{0}` exists in the current scope."),
+    DuplicateFunctionOverloads(10, "Two functions with the same name cannot have the same parameters.",
+            "Function `{0}` has two or more overloads with the same signature."),
+    ModuleNotImported(11, "Make sure to import all modules referenced in the file.",
+            "Module `{0}` has not been imported."),
+    ModuleNotFound(12, "Is the module misspelled?",
+            "Module `{0}` is not found."),
+    InvalidIndexType(13, "Make sure to index with integers only.",
+            "Expression `{0}` cannot be indexed by type `{1}`."),
+
+    UnsupportedOperator(14, "Is the operator supported by the type?",
+            "The operator `{0}` is not supported on `{1}` which has type `{2}`."),
+
+    ListTypeError(15, "Lists may contain elements of only one type.",
+            "Variable of type `{0}` cannot be added to a list with type `{1}`."),
+    CannotIterate(16, "For-in loops only work on iterables like Lists and Strings.",
+            "Expression `{0}` is not iterable."),
+    MutabilityError(17, "Declare a variable with the `mut` keyword to allow mutability.",
+            "Variable `{0}` is immutable and cannot receive assignment."),
+    IncompatibleAssignment(18, "Check that both sides of the assignment have the same type.",
+            "Variable `{0}` of type `{1}` cannot accept assignment of type `{2}`."),
+    VoidAssignment(19, "You cannot store the result of a void expression.",
+            "Variable `{0}` cannot accept assignment of type `{1}`."),
+    ExternNotFound(20, "Ensure the external type you are referencing actually exists.",
+            "External object `{0}` not found."),
+    Redeclaration(21, "You cannot redeclare variables.",
+            "Redeclaration of variable `{0}`.")
+
+    //
+    ;
+
+    public final String suggestion;
+    public final int code;
+    public final String templateString;
+
+
+    Errors(int code, String suggestion, String templateString) {
+
+        this.suggestion = suggestion;
+        this.code = code;
+        this.templateString = templateString;
+    }
+
+
+    public static String getLocation(Token token) {
+        int line = token.getLine();
+        int col = token.getCharPositionInLine() + 1;
+        return line + ":" + col;
+    }
+
+    public String template(Statement statement, Object... varargs) {
+        ParserRuleContext ctx = statement.getCtx();
+        String filename = statement.getFilename();
+        filename += ".imp";
+        if (ctx != null) {
+            Token token = ctx.getStart();
+            String s = filename + "@" + getLocation(token);
+            s += " Error[" + code + ", " + this.name() + "]: ";
+//            s += colorize(" Error[" + code + ", " + this.name() + "]: ", TEXT_COLOR(1));
+
+            String text = MessageFormat.format(templateString, varargs);
+            s += text;
+            s += "\n\t" + suggestion;
+            return s;
+        }
+        return filename + "@[null] SyntaxError[" + code + "]: [null]";
+    }
+
+
+}

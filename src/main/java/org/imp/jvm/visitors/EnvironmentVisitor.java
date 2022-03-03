@@ -1,12 +1,12 @@
 package org.imp.jvm.visitors;
 
 import org.imp.jvm.Environment;
-import org.imp.jvm.Expr;
-import org.imp.jvm.Stmt;
+import org.imp.jvm.SourceFile;
 import org.imp.jvm.Util;
-import org.imp.jvm.domain.SourceFile;
-import org.imp.jvm.domain.scope.Identifier;
 import org.imp.jvm.errors.Comptime;
+import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.parser.Expr;
+import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.runtime.Glue;
 import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.tool.ExportTable;

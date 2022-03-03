@@ -3,12 +3,12 @@ package org.imp.jvm.visitors;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.Environment;
-import org.imp.jvm.Expr;
-import org.imp.jvm.Stmt;
-import org.imp.jvm.compiler.DescriptorFactory;
-import org.imp.jvm.domain.SourceFile;
-import org.imp.jvm.domain.scope.Identifier;
+import org.imp.jvm.SourceFile;
+import org.imp.jvm.codegen.DescriptorFactory;
 import org.imp.jvm.errors.Comptime;
+import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.parser.Expr;
+import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
@@ -152,7 +152,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             ga.visitTypeInsn(Opcodes.NEW, "lib/date$Date"); //NEW instruction takes object descriptor as an input
             ga.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our new object
 
-
 //            // Generate arguments
 //            for (var arg : expr.arguments) {
 //                arg.accept(this);
@@ -266,7 +265,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         if (type instanceof FuncType ft) {
 
         } else if (type instanceof StructType st) {
-
 
         } else {
             // Todo: TERRIBLE hack that sparsely does locals on even indices only

@@ -3,7 +3,7 @@ package org.imp.jvm.tool;
 import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.SourceFile;
 import org.imp.jvm.types.ImpType;
 
 import javax.sql.rowset.serial.SerialBlob;

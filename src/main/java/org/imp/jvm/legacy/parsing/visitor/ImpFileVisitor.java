@@ -1,0 +1,109 @@
+package org.imp.jvm.legacy.parsing.visitor;
+
+import org.imp.jvm.ImpParser;
+import org.imp.jvm.ImpParserBaseVisitor;
+import org.imp.jvm.legacy.ImpFile;
+import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.legacy.domain.scope.Scope;
+import org.imp.jvm.legacy.expression.Function;
+import org.imp.jvm.legacy.parsing.visitor.statement.StatementVisitor;
+import org.imp.jvm.legacy.statement.Enum;
+import org.imp.jvm.legacy.statement.*;
+import org.imp.jvm.types.BuiltInType;
+import org.imp.jvm.types.FunctionType;
+import org.imp.jvm.types.Modifier;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class ImpFileVisitor extends ImpParserBaseVisitor<ImpFile> {
+    private final String filename;
+
+
+    public ImpFileVisitor(String filename) {
+        this.filename = filename;
+    }
+
+
+    @Override
+    public ImpFile visitProgram(ImpParser.ProgramContext ctx) {
+
+        // get all top level statements in the file
+        List<ImpParser.StatementContext> statementContexts = ctx.statement();
+
+        // Root Scope for Static Unit
+        Scope staticScope = new Scope();
+
+        // create an ImpFile node with appropriate children
+        var impFile = new ImpFile(filename);
+
+        var mainFunctionType = new FunctionType("main", impFile, false);
+
+        Identifier varArgs = new Identifier();
+        varArgs.type = BuiltInType.STRING_ARR;
+        varArgs.name = "args";
+        var parameters = new ArrayList<Identifier>();
+        parameters.add(varArgs);
+
+        var main = new Function(
+                Modifier.NONE,
+                "main",
+                parameters,
+                BuiltInType.VOID,
+                new Block(),
+                impFile
+        );
+
+        main.block.scope = staticScope;
+
+        impFile.functions.add(main);
+
+        // handle each statement appropriately
+        StatementVisitor statementVisitor = new StatementVisitor(staticScope, impFile);
+
+        // Parse all imports
+        List<ImpParser.ImportStatementContext> importStatementContexts = ctx.importStatement();
+        for (var importStatement : importStatementContexts) {
+            Import i = (Import) importStatement.accept(statementVisitor);
+            impFile.imports.add(i);
+        }
+
+        for (var statement : statementContexts) {
+            Statement s = statement.accept(statementVisitor);
+
+            if (s == null) {
+                throw new Error("Can't find input.");
+            }
+
+            // Split classes out to their own files
+            if (s instanceof Struct struct) {
+                impFile.structTypes.add(struct.structType);
+            } else if (s instanceof Enum enumStatement) {
+                impFile.enumTypes.add(enumStatement.enumType);
+            } else if (s instanceof Function f) {
+
+                // add function to static class methods
+                impFile.functions.add(f);
+
+                if (f.modifier == Modifier.EXPORT) {
+                    impFile.exports.add(new Export(f, staticScope));
+                }
+
+            } else {
+                // All other root level nodes go in the main method
+                main.block.statements.add(s);
+            }
+
+
+        }
+
+        var constructorType = new FunctionType("<init>", impFile, false);
+        var constructor = new Constructor(null, constructorType, Collections.emptyList(), new Block());
+        constructor.name = "<init>";
+        impFile.functions.add(constructor);
+
+        return impFile;
+    }
+
+}

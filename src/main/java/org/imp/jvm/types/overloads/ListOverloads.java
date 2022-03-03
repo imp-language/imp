@@ -1,6 +1,6 @@
 package org.imp.jvm.types.overloads;
 
-import org.imp.jvm.domain.scope.Scope;
+import org.imp.jvm.legacy.domain.scope.Scope;
 import org.imp.jvm.types.BuiltInType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -13,7 +13,6 @@ public class ListOverloads extends OperatorOverload {
         String returnTypeDescriptor = "Ljava/lang/Object;";
 
         String descriptor = "(I)" + returnTypeDescriptor;
-
 
         mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List", "get", descriptor, true);
 

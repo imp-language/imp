@@ -1,10 +1,10 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.domain.Operator;
+import org.imp.jvm.legacy.domain.Operator;
 import org.imp.jvm.types.overloads.OperatorOverload;
 
 public interface ImpType {
-    
+
 
     int getAddOpcode();
 
