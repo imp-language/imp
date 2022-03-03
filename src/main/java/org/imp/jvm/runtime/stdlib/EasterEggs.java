@@ -18,7 +18,7 @@ public class EasterEggs {
         }
     }
     
-    public static void poke59458(int operand){
+    public static void poke59458(int operand){  //this is a reference to the "killer poke", a command you could do on the commodore PET that would throw the crt controller out of whack
         if (operand == 62){
             System.out.println("Congrats! You just ruined a perfectly good commodore PET");
         }
