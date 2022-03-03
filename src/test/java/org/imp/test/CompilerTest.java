@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class CompilerTest {
+public class CompilerTest {
     static String pwd = System.getProperty("user.dir");
     static String moduleLocation = Path.of(pwd, "verification").toString();
 
