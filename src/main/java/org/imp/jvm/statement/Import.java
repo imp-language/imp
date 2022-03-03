@@ -39,6 +39,9 @@ public class Import extends Statement {
 
     @Override
     public String toString() {
+        String quotes = "\"";                                    //this should (maybe) remove the need to put quotes in the actual import statement within the code, which would
+        moduleName.value = moduleName.concat(quotes);            //make it look a bit better in my opinion. reject this if you want, its kinda a preference thing
+        moduleName.value = quotes.concat(moduleName.value);
         return "import " + moduleName.value + "";
     }
 }
