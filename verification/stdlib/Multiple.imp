@@ -1,0 +1,6 @@
+import "batteries"
+import "math"
+
+log("modulus")
+string a = intToString(10)
+log(a)
