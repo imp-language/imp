@@ -1,6 +1,5 @@
 import "batteries"
 import "math"
 
-log("modulus")
-log(5%2)
-log(6%2)
+log("math stdlib")
+log(rand())
