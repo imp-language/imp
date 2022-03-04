@@ -19,6 +19,7 @@ public class Glue {
 
     static {
         coreModules.put("batteries", Batteries.class);
+        coreModules.put("math", Math.class);
     }
 
     public static List<FuncType> getExports(String module) {
