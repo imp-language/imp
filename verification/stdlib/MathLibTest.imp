@@ -1,6 +1,6 @@
 import "batteries"
 import "math"
 
-log("modulus")
-string a = intToString(10)
+log("MathLibTest")
+val a = ret(5)
 log(a)
