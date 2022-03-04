@@ -1,4 +1,5 @@
 import "batteries"
+import "math"
 
 log("modulus")
 log(5%2)
