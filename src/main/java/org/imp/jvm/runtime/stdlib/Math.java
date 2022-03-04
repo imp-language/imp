@@ -84,4 +84,16 @@ public class Math {
     public static boolean similar(float a, float b) {
         return similar(a, b, 0.0001f);
     }
+    
+    public static boolean multiple(int a, int b){
+        return a % b == 0;
+    }
+    
+    public static boolean even(int a){
+        return a % 2 == 0;
+    }
+    
+    public static boolean odd(int a){
+        return a % 2 != 0;
+    }
 }
