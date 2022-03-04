@@ -30,7 +30,6 @@ public class CompilerTest {
     @Test
     void StdMath() throws IOException, InterruptedException {
         assertEquals(Load.run("stdlib/MathLibTest", moduleLocation), """
-                MathLibTest
                 5
                 """);
     }
