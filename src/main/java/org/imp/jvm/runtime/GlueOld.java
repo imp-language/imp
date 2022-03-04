@@ -5,6 +5,7 @@ import org.imp.jvm.legacy.domain.scope.Identifier;
 import org.imp.jvm.legacy.expression.Function;
 import org.imp.jvm.runtime.stdlib.Batteries;
 import org.imp.jvm.runtime.stdlib.Math;
+import org.imp.runtime.MathLib;
 import org.imp.jvm.runtime.stdlib.Process;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
