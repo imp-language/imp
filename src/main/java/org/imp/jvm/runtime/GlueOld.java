@@ -22,7 +22,7 @@ public class GlueOld {
 
     static {
         coreModules.put("batteries", Batteries.class);
-        coreModules.put("math", Math.class);
+        coreModules.put("math", MathLib.class);
         coreModules.put("process", Process.class);
     }
 
