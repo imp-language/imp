@@ -50,7 +50,7 @@ public class CompilerTest {
     void StringTest() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/Strings", moduleLocation), """
                 Test of String Functions!
-                23
+                24
                 """);
     }
 
