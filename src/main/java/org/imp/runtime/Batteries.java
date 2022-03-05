@@ -7,7 +7,7 @@ package org.imp.runtime;
 public class Batteries {
 
 
-    public static void logg(Object arg) {
+    public static void logOut(Object arg) {
         System.out.println(arg);
     }
 
