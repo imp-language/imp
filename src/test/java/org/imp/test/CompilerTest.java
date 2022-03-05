@@ -18,6 +18,17 @@ public class CompilerTest {
                 Load.run("simple/Arithmetic", moduleLocation)
         );
     }
+    
+    @Test
+    void Secret() throws IOException, InterruptedException {
+        assertEquals(Load.run("simple/Secret", moduleLocation), """
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                """);
+    }
 
     @Test
     void Function() throws IOException, InterruptedException {
