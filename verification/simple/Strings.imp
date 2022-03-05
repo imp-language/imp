@@ -1,0 +1,4 @@
+import "batteries"
+
+log("Test of String Functions")
+log(length("Test of String Functions"))
