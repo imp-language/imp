@@ -26,4 +26,11 @@ public class Batteries {
     public static int length(String s) {
         return s.length();
     }
+    
+    public static boolean endIs(String input, String ending){
+        return input.endsWith(ending);
+    }
+    public static boolean startIs(String input, String start){
+        return input.startsWith(start);
+    }
 }
