@@ -49,7 +49,7 @@ public class CompilerTest {
     @Test
     void StringTest() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/Strings", moduleLocation), """
-                Test of String Functions!
+                Test of String Functions
                 24
                 """);
     }
