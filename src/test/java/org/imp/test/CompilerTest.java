@@ -47,7 +47,7 @@ public class CompilerTest {
     }
                      
     @Test
-    void helloWorld() throws IOException, InterruptedException {
+    void StringTest() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/Strings", moduleLocation), """
                 Test of String Functions!
                 23
