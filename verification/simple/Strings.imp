@@ -2,3 +2,7 @@ import "batteries"
 
 log("Test of String Functions")
 log(length("Hello, world!"))
+log(endIs("Ending","ing"))
+log(endIs("Ending","End"))
+log(startIs("Ending","End"))
+log(startIs("Ending","ing"))
