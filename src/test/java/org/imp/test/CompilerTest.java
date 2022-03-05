@@ -20,7 +20,7 @@ public class CompilerTest {
     }
     
     @Test
-    void Secret() throws IOException, InterruptedException {
+    void SecretTest() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/Secret", moduleLocation), """
                 MICROSOFT!
                 MICROSOFT!
