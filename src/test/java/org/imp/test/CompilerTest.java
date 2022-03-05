@@ -45,6 +45,14 @@ public class CompilerTest {
         assertEquals(Load.run("simple/emptyWithComment", moduleLocation), """
                 """);
     }
+                     
+    @Test
+    void helloWorld() throws IOException, InterruptedException {
+        assertEquals(Load.run("simple/Strings", moduleLocation), """
+                Test of String Functions!
+                23
+                """);
+    }
 
     @Test
     void helloWorld() throws IOException, InterruptedException {
