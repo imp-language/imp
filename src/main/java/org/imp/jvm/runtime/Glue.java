@@ -5,7 +5,7 @@ import org.imp.jvm.legacy.domain.scope.Identifier;
 import org.imp.jvm.legacy.expression.Function;
 import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
-import org.imp.runtime.EasterEggs
+import org.imp.runtime.EasterEggs;
 
 import java.lang.reflect.Method;
 import java.util.*;
