@@ -31,14 +31,14 @@ public class Batteries {
         if (input.endsWith(end)){
             return 1;
         } else {
-            return 0
+            return 0;
         }
     }
     public static int startIs(String input, String start){
         if (input.startsWith(start)){
             return 1;
         } else {
-            return 0
+            return 0;
         }
     }
 }
