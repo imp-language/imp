@@ -1,3 +1,4 @@
 import "batteries"
 
 log("Test of String Functions")
+log(length("Hello, World!"))
