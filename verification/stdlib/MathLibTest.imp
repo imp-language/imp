@@ -1,5 +1,6 @@
 import "batteries"
 import "math"
 
+log("MathLibTest")
 val a = ret(5)
 log(a)
