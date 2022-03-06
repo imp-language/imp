@@ -12,15 +12,17 @@ package org.imp.runtime;
 @SuppressWarnings("unused")
 public class EasterEggs {
   
-    public static void wait6502(int amount) {   //this is a reference to the easter egg mentioned in this article: https://www.pagetable.com/?p=43
+    public static String wait6502(int amount) {   //this is a reference to the easter egg mentioned in this article: https://www.pagetable.com/?p=43
+      String out = "";
         for (int i = 0 ; i < amount ; i++){
-            System.out.println("MICROSFT!");
+            out = out.concat("MICROSFT!\n")
         }
+      return out
     }
     
-    public static void poke59458(int operand){  //this is a reference to the "killer poke", a command you could do on the commodore PET that would throw the crt controller out of whack
+    public static String poke59458(int operand){  //this is a reference to the "killer poke", a command you could do on the commodore PET that would throw the crt controller out of whack
         if (operand == 62){
-            System.out.println("Congrats! You just ruined a perfectly good commodore PET");
+            return "Congrats! You just ruined a perfectly good commodore PET";
         }
     }
 }
