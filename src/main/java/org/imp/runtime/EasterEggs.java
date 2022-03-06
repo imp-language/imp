@@ -24,5 +24,6 @@ public class EasterEggs {
         if (operand == 62){
             return "Congrats! You just ruined a perfectly good commodore PET";
         }
+        return "I wonder what this does?";
     }
 }
