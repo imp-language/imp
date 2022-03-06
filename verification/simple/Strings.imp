@@ -1,3 +1,8 @@
 import "batteries"
 
+log("Test of String Functions")
+log(length("Hello, World!"))
 log(endIs("Ending","ing"))
+log(endIs("Ending","End"))
+log(startIs("Starting","Start"))
+log(startIs("Starting","ing"))
