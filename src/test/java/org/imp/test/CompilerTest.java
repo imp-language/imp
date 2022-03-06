@@ -27,6 +27,7 @@ public class CompilerTest {
                 MICROSOFT!
                 MICROSOFT!
                 MICROSOFT!
+                Congrats! You just ruined a perfectly good commodore PET
                 """);
     }
 
