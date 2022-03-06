@@ -51,10 +51,10 @@ public class CompilerTest {
         assertEquals(Load.run("simple/Strings", moduleLocation), """
                 Test of String Functions
                 13
-                1
-                0
-                1
-                0
+                true
+                false
+                true
+                false
                 """);
     }
 
