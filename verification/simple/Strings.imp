@@ -1,5 +1,3 @@
 import "batteries"
 
-log("Test of String Functions")
-log(length("Hello, World!"))
 log(endIs("Ending","ing"))
