@@ -27,10 +27,18 @@ public class Batteries {
         return s.length();
     }
     
-    public static boolean endIs(String input, String ending){
-        return input.endsWith(ending);
+    public static int endIs(String input, String end){
+        if (input.endsWith(end)){
+            return 1;
+        } else {
+            return 0
+        }
     }
-    public static boolean startIs(String input, String start){
-        return input.startsWith(start);
+    public static int startIs(String input, String start){
+        if (input.startsWith(start)){
+            return 1;
+        } else {
+            return 0
+        }
     }
 }
