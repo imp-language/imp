@@ -15,9 +15,9 @@ public class EasterEggs {
     public static String wait6502(int amount) {   //this is a reference to the easter egg mentioned in this article: https://www.pagetable.com/?p=43
       String out = "";
         for (int i = 0 ; i < amount ; i++){
-            out = out.concat("MICROSFT!\n")
+            out = out.concat("MICROSFT!\n");
         }
-      return out
+      return out;
     }
     
     public static String poke59458(int operand){  //this is a reference to the "killer poke", a command you could do on the commodore PET that would throw the crt controller out of whack
