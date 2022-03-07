@@ -41,9 +41,10 @@ public class Batteries {
             return 0;
         }
     }
-    public String atSpot(String input, int loc){
+    public static String atSpot(String input, int loc){
         if (loc < input.length()){
-            return Character.toString(input.charAt(loc));
+            String a = Character.toString(input,charAt(loc));
+            return a;
         }
         return "Null";
     }  
