@@ -41,11 +41,4 @@ public class Batteries {
             return 0;
         }
     }
-    
-    public static String atSpot(String input, int position){
-        if (position < input.length()){
-            return Character.toString(input.charAt(position));
-        }
-        return "null";
-    }
 }
