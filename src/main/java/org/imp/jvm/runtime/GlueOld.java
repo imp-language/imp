@@ -4,7 +4,7 @@ import org.imp.jvm.legacy.ImpFile;
 import org.imp.jvm.legacy.domain.scope.Identifier;
 import org.imp.jvm.legacy.expression.Function;
 import org.imp.jvm.runtime.stdlib.Batteries;
-import org.imp.jvm.runtime.stdlib.Math;
+import org.imp.runtime.MathLib;
 import org.imp.jvm.runtime.stdlib.Process;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.FunctionType;
@@ -22,7 +22,7 @@ public class GlueOld {
 
     static {
         coreModules.put("batteries", Batteries.class);
-        coreModules.put("math", Math.class);
+        coreModules.put("math", MathLib.class);
         coreModules.put("process", Process.class);
     }
 

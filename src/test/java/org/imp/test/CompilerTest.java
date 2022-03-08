@@ -26,6 +26,14 @@ public class CompilerTest {
                 res: 4.0
                 """);
     }
+                     
+    @Test
+    void StdMath() throws IOException, InterruptedException {
+        assertEquals(Load.run("stdlib/MathLibTest", moduleLocation), """
+                MathLibTest
+                5
+                """);
+    }
 
     @Test
     void assignment() throws IOException, InterruptedException {

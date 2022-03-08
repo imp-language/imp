@@ -5,6 +5,7 @@ import org.imp.jvm.legacy.domain.scope.Identifier;
 import org.imp.jvm.legacy.expression.Function;
 import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
+import org.imp.runtime.MathLib;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -19,6 +20,7 @@ public class Glue {
 
     static {
         coreModules.put("batteries", Batteries.class);
+        coreModules.put("math", MathLib.class);
     }
 
     public static List<FuncType> getExports(String module) {
@@ -49,6 +51,7 @@ public class Glue {
                 if (bt != null) funcType.returnType = bt;
 
                 funcType.glue = true;
+                funcType.owner = c.getName().replace('.', '/');
                 result.add(funcType);
 
             }
