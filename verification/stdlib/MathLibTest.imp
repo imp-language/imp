@@ -3,3 +3,5 @@ import "math"
 
 log("MathLibTest")
 log(ret(5))
+log(multiple(6,2))
+log(multiple(5,2))
