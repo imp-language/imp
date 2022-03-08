@@ -6,4 +6,8 @@ public class MathLib {
     public static int ret(int a){
         return a;
     }
+    
+    public static boolean multiple(int a, int b){
+        return a % b == 0;
+    }
 }
