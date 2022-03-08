@@ -26,6 +26,7 @@ public class StructType implements ImpType, Serializable {
     public String name;
 
     public String qualifiedName;
+    public String parentName;
 
     public StructType(String name, String[] fieldNames, ImpType[] fieldTypes) {
         this.name = name;
@@ -186,5 +187,14 @@ public class StructType implements ImpType, Serializable {
     @Override
     public String toString() {
         return "struct " + getName() + " {" + Util.parameterString(fieldNames, fieldTypes) + "}";
+    }
+
+    public class Date {
+        public int day;
+        public int month;
+        public int year;
+
+        public Date() {
+        }
     }
 }

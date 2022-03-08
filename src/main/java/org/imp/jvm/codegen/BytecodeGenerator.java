@@ -69,6 +69,40 @@ public class BytecodeGenerator {
         String qualifiedName = FilenameUtils.removeExtension(source.getFullRelativePath());
         cw.visit(CodegenVisitor.CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, qualifiedName, null, "java/lang/Object", null);
 
+        // Add constructor
+        var initMv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
+        initMv.visitCode();
+        initMv.visitVarInsn(Opcodes.ALOAD, 0);
+        initMv.visitMethodInsn(
+                Opcodes.INVOKESPECIAL,
+                "java/lang/Object",
+                "<init>",
+                "()V",
+                false
+        );
+        initMv.visitInsn(Opcodes.RETURN);
+        initMv.visitEnd();
+        initMv.visitMaxs(-1, -1);
+
+        // Add instance field
+        cw.visitField(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "instance", "L" + qualifiedName + ";", null, null);
+
+        var mvStatic = cw.visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
+        mvStatic.visitCode();
+        mvStatic.visitTypeInsn(Opcodes.NEW, qualifiedName);
+        mvStatic.visitInsn(Opcodes.DUP);
+        mvStatic.visitMethodInsn(
+                Opcodes.INVOKESPECIAL,
+                qualifiedName,
+                "<init>",
+                "()V",
+                false
+        );
+        mvStatic.visitFieldInsn(Opcodes.PUTSTATIC, qualifiedName, "instance", "L" + qualifiedName + ";");
+        mvStatic.visitInsn(Opcodes.RETURN);
+        mvStatic.visitEnd();
+        mvStatic.visitMaxs(-1, -1);
+
         // Generate bytecode for each Type defined in the Imp file
         var codegenVisitor = new CodegenVisitor(source.rootEnvironment, source, cw);
         // Todo: refactor CodegenVisitor to use most of the logic from the last pass at codegen

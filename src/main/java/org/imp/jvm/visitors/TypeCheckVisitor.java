@@ -136,6 +136,10 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 expr.realType = returnType;
                 return Optional.of(returnType);
             } else if (t instanceof StructType st) {
+                if (st.fieldNames.length != expr.arguments.size()) {
+                    Comptime.FunctionSignatureMismatch.submit(file, expr.item, st.name, "a");
+                    return Optional.empty();
+                }
                 // constructor function
                 for (var arg : expr.arguments) {
                     arg.accept(this);
@@ -231,6 +235,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         var t = currentEnvironment.getVariable(expr.identifier.source());
         if (t != null) {
             expr.realType = t;
+        } else {
+            Comptime.IdentifierNotFound.submit(file, expr, expr.identifier.source());
         }
         return Optional.ofNullable(t);
     }
