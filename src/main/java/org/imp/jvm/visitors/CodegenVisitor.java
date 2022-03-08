@@ -101,7 +101,12 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitCall(Expr.Call expr) {
 
         var funcType = functionStack.peek();
-        expr.item.accept(this);
+//        expr.item.accept(this); (don't do this)
+
+        if (expr.item instanceof Expr.Identifier identifier) {
+            var type = currentEnvironment.getVariable(identifier.identifier.source());
+            expr.item.realType = type;
+        }
 
         if (expr.item.realType instanceof FuncType callType) {
             if (callType.glue) {
@@ -153,20 +158,36 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             String ownerDescriptor = st.getInternalName();
             var ga = funcType.ga;
 
-            ga.visitTypeInsn(Opcodes.NEW, "lib/date$Date"); //NEW instruction takes object descriptor as an input
+            ga.visitTypeInsn(Opcodes.NEW, st.qualifiedName); //NEW instruction takes object descriptor as an input
             ga.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our new object
 
-//            // Generate arguments
-//            for (var arg : expr.arguments) {
-//                arg.accept(this);
-//            }
+            String descriptor = "L" + st.parentName + ";";
+            ga.visitFieldInsn(Opcodes.GETSTATIC, st.parentName, "instance", descriptor);
+            ga.visitInsn(Opcodes.DUP);
+
+            // Todo(CURRENT): parameters
+
+            ga.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Objects", "requireNonNull", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
+            ga.pop();
+
+            String typeDescriptor = "";
+            // Generate arguments
+            for (var arg : expr.arguments) {
+                arg.accept(this);
+                typeDescriptor += arg.realType.getDescriptor();
+            }
+
             funcType.ga.visitMethodInsn(
                     Opcodes.INVOKESPECIAL,
-                    "lib/date$Date",
+                    st.qualifiedName,
                     "<init>",
-                    "()V",
+                    "(" + descriptor + typeDescriptor + ")V",
                     false
             );
+
+//            funcType.ga.invokeConstructor(Type.getType("lib/date$Date"), new Method("<init>", "()V"));
+
+//            ga.pop();
 
         } else {
             System.err.println("Bad!");
@@ -269,11 +290,16 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         if (type instanceof FuncType ft) {
 
         } else if (type instanceof StructType st) {
-
+            int index;
+            String source = expr.identifier.source();
+            if (funcType.localMap.containsKey(source)) {
+                index = funcType.localMap.get(source);
+                funcType.ga.loadLocal(index, Type.getType(type.getDescriptor()));
+            } else {
+                index = funcType.argMap.get(source);
+                funcType.ga.loadArg(index);
+            }
         } else {
-            // Todo: TERRIBLE hack that sparsely does locals on even indices only
-            // See https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.6.1
-
             String source = expr.identifier.source();
             int index;
             if (funcType.localMap.containsKey(source)) {
@@ -420,24 +446,28 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Link outer class to inner class
         innerCw.visitOuterClass(source.getFullRelativePath(), name, "()V");
 
-        // Add fields
-        for (int i = 0; i < structType.fieldNames.length; i++) {
-            ImpType type = structType.fieldTypes[i];
-            String descriptor = type.getDescriptor();
-            String n = structType.fieldNames[i];
-
-            FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_PUBLIC, n, descriptor, null, null);
-            fieldVisitor.visitEnd();
-        }
-
         // Add field reference to outer class
         String descriptor = "L" + source.getFullRelativePath() + ";";
         System.out.println(descriptor);
-        FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_FINAL, "this$0", descriptor, null, null);
+        FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_FINAL + Opcodes.ACC_SYNTHETIC, "this$0", descriptor, null, null);
         fieldVisitor.visitEnd();
 
+        String constructorDescriptor = "";
+
+        // Add fields
+        for (int i = 0; i < structType.fieldNames.length; i++) {
+            ImpType type = structType.fieldTypes[i];
+            descriptor = type.getDescriptor();
+            String n = structType.fieldNames[i];
+
+            fieldVisitor = innerCw.visitField(Opcodes.ACC_PUBLIC, n, descriptor, null, null);
+            fieldVisitor.visitEnd();
+
+            constructorDescriptor += descriptor;
+        }
+
         // Generate inner class Struct constructor
-        descriptor = "()V";
+        descriptor = "(" + "L" + source.getFullRelativePath() + ";" + constructorDescriptor + ")V";
         MethodVisitor mv = innerCw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", descriptor, null, null);
         mv.visitCode();
 
@@ -453,8 +483,21 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         String ownerDescriptor = "java/lang/Object";
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V", false);
         // Todo: set fields
+
+        // Set fields
+        for (int i = 0; i < structType.fieldNames.length; i++) {
+            ImpType type = structType.fieldTypes[i];
+            descriptor = type.getDescriptor();
+            String n = structType.fieldNames[i];
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            mv.visitVarInsn(type.getLoadVariableOpcode(), i + 2);
+            mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, n, descriptor);
+        }
         // Append return
-        mv.visitInsn(structType.getReturnOpcode());
+        mv.visitInsn(Opcodes.RETURN);
+
+        mv.visitEnd();
+        mv.visitMaxs(-1, -1);
 
         // Todo: generate internal classes
 //        code.put(qualifiedName, cw.toByteArray());

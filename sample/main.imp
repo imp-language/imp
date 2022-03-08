@@ -1,9 +1,5 @@
+
 import "batteries"
 import "math"
 
-//log("MathLibTest")
-//
-//val b = ret(5)
-//log(b)
-//log(ret(5))
-log(5)
+log(ret(5))

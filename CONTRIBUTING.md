@@ -29,7 +29,7 @@ Open the project and make sure Maven has installed all dependencies.
 
 Java projects are often large, sprawling codebases, so here's an attempt to break it down a bit.
 
-- `src/main/java/org/imp/` main package.
+- `src/main/java/org/imp/jvm` main package.
     - `codegen/` codegen package. JVM bytecode generators for classes, methods, fields, etc.
     - `errors/` compiler error logging and template script.
     - `parser/` manually created Pratt-style parser.
@@ -45,6 +45,7 @@ Java projects are often large, sprawling codebases, so here's an attempt to brea
     - `Environment.java` describes the variables in a single scope.
     - `SourceFile.java` maps one-to-one with a single Imp source file at compile time.
     - `Util.java` utilities!
+- `src/main/java/org/imp/runtime` standard library
 - `src/test/java/org/imp/test/` test package.
     - `CompilerTest.java` current automated tests.
 
