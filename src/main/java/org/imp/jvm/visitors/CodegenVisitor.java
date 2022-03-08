@@ -4,6 +4,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.Environment;
 import org.imp.jvm.SourceFile;
+import org.imp.jvm.Util;
 import org.imp.jvm.codegen.DescriptorFactory;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.legacy.domain.scope.Identifier;
@@ -11,7 +12,6 @@ import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.tokenizer.TokenType;
 import org.imp.jvm.types.*;
-import org.imp.runtime.Batteries;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
@@ -106,7 +106,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         if (expr.item.realType instanceof FuncType callType) {
             if (callType.glue) {
                 // Todo: make more flexible for multiple stdlib classes
-                String owner = Batteries.class.getName().replace('.', '/');
+                String owner = callType.owner;
                 /*
                  * Before calling the function, we must consider 3 cases:
                  *
@@ -121,12 +121,16 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 ImpType returnType = callType.returnType;
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
                 // Generate arguments
-                for (var arg : expr.arguments) {
+
+                Util.zip(params, expr.arguments, (param, arg) -> {
                     arg.accept(this);
-                    if (arg.realType != null && arg.realType instanceof BuiltInType bt) {
-                        bt.doBoxing(funcType.ga);
+                    // Only box if the arg type is a Java primitive and the param type is Object
+                    if (arg.realType != null && arg.realType instanceof BuiltInType btArg) {
+                        if (param.type instanceof ExternalType et && et.foundClass().equals(Object.class)) {
+                            btArg.doBoxing(funcType.ga);
+                        }
                     }
-                }
+                });
 
                 funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             } else {

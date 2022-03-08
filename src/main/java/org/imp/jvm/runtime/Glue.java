@@ -51,6 +51,7 @@ public class Glue {
                 if (bt != null) funcType.returnType = bt;
 
                 funcType.glue = true;
+                funcType.owner = c.getName().replace('.', '/');
                 result.add(funcType);
 
             }

@@ -29,6 +29,7 @@ public class FuncType implements ImpType, Serializable {
     public Map<String, Integer> argMap = new HashMap<>();
 
     public boolean isPrefixed = false;
+    public String owner;
 
     // Todo: refactor to use the String[] pattern from StructType instead of List<Identifier>
     public FuncType(String name, Modifier modifier, List<Identifier> parameters) {
