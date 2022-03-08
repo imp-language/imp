@@ -32,6 +32,8 @@ public class CompilerTest {
         assertEquals(Load.run("stdlib/MathLibTest", moduleLocation), """
                 MathLibTest
                 5
+                true
+                false
                 """);
     }
 
