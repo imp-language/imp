@@ -2,6 +2,7 @@ package org.imp.runtime;
 
 public class Constants {
 
+    //these are some language constants
     public static int intMax(){
         return 2147483647;
     }
@@ -9,6 +10,7 @@ public class Constants {
         return -2147483648;
     }
     
+    //these are some mathematical constants
     public static double pi(){
         return 3.14159;
     }
