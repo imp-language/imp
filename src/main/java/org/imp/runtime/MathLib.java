@@ -6,4 +6,8 @@ public class MathLib {
     public static int ret(int a){
         return a;
     }
+
+    public static int mod(int a, int b){
+        return a % b;
+    }
 }
