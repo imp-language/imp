@@ -7,4 +7,12 @@ public class SecretLib {
             System.out.println("MICROSOFT!");
         }
     }
+    
+    public static void poke59458(int argument){
+        if (argument == 62){
+            System.out.println("THE KILLER POKE!");
+        } else {
+            System.out.println("I wonder what this does?");
+        }
+    }
 }
