@@ -2,6 +2,4 @@ import "batteries"
 import "math"
 
 log("MathLibTest")
-log(ret(5))
-log(val a = 10)
-log(val b = 5)
+val a = mod(6,2)
