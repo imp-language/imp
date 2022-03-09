@@ -17,10 +17,10 @@ public class MathConstants {
         return intMin;
     }
     
-    public static double pi(){
+    public static double getPi(){
         return pi;
     }
-    public static double phi(){
+    public static double getPhi(){
         return phi;
     }
     
