@@ -2,4 +2,19 @@ import "batteries"
 import "math"
 
 log("MathLibTest")
-log(ret(5))
+log(mod(6,2))
+log(mod(5,2))
+log(mod(-6,2))
+log(mod(-5,2))
+
+//below is a test of large numbers
+log(mod(10000,2))
+log(mod(10001,2))
+log(mod(-10000,2))
+log(mod(-10001,2))
+
+//below is test of VERY large number
+log(mod(2147483646,2))
+log(mod(2147483645,2))
+log(mod(-2147483646,2))
+log(mod(-2147483647,2))
