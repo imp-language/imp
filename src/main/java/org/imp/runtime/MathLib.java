@@ -7,7 +7,7 @@ public class MathLib {
         return a;
     }
     
-    public static boolean multiple(int a, int b){
-        return a % b == 0;
+    public static int mod(int a, int b){
+        return a % b;
     }
 }
