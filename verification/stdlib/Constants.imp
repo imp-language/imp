@@ -1,0 +1,7 @@
+import "batteries"
+import "constf"
+
+log(intMax)
+log(intMin)
+log(pi)
+log(phi)
