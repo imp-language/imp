@@ -1,6 +1,6 @@
 package org.imp.runtime;
 
-public class MathConstants {
+public class Constants {
 
     public static int intMax(){
         return 2147483647;
