@@ -18,3 +18,9 @@ log(mod(2147483646,2))
 log(mod(2147483645,2))
 log(mod(-2147483646,2))
 log(mod(-2147483647,2))
+
+//below is test of the integer limit
+log(mod(2147483646,2))
+log(mod(2147483647,2))
+log(mod(-2147483648,2))
+log(mod(-2147483647,2))
