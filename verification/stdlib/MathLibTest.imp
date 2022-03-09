@@ -2,7 +2,11 @@ import "batteries"
 import "math"
 
 log("MathLibTest")
-val a = mod(6,2)
-val b = mod(5,2)
-log(a)
-log(b)
+log(mod(6,2))
+log(mod(5,2))
+log(mod(2147483647,2))
+log(mod(2147483647,3))
+log(mod(-6,2))
+log(mod(-5,2))
+log(mod(-2147483648,2))
+log(mod(-2147483648,3))
