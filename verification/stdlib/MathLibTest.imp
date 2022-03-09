@@ -14,10 +14,10 @@ log(mod(-10000,2))
 log(mod(-10001,2))
 
 //below is test of VERY large number
-val maxMinus = intMax - 1
-val maxMinusTwo = intMax - 2
-val minPlus = intMin + 1
-val minPlusTwo = intMin + 2
+val maxMinus = intMax
+val maxMinusTwo = intMax
+val minPlus = intMin
+val minPlusTwo = intMin
 
 log(mod(maxMinus,2))
 log(mod(maxMinusTwo,2))
