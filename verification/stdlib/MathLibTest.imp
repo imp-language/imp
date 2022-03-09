@@ -14,7 +14,7 @@ log(mod(-10000,2))
 log(mod(-10001,2))
 
 //below is test of VERY large number
-log(mod(2147483646,2))
-log(mod(2147483645,2))
-log(mod(-2147483646,2))
-log(mod(-2147483647,2))
+log(mod(intMax-1,2))
+log(mod(intMax-2,2))
+log(mod(intMin+1,2))
+log(mod(intMin+2,2))
