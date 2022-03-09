@@ -1,7 +1,10 @@
 import "batteries"
+import "math"
 import "consts"
 
 log(intMax())
 log(intMin())
+log(mod(intMin(),2))
+log(mod(intMax(),2))
 log(pi())
 log(phi())
