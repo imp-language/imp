@@ -31,7 +31,18 @@ public class CompilerTest {
     void StdMath() throws IOException, InterruptedException {
         assertEquals(Load.run("stdlib/MathLibTest", moduleLocation), """
                 MathLibTest
-                5
+                0
+                1
+                0
+                -1
+                0
+                1
+                0
+                -1
+                0
+                1
+                0
+                -1
                 """);
     }
 
