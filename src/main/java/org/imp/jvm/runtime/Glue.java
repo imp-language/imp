@@ -7,6 +7,7 @@ import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
 import org.imp.runtime.MathLib;
 import org.imp.runtime.Constants;
+import org.imp.runtime.SecretLib;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -23,6 +24,7 @@ public class Glue {
         coreModules.put("batteries", Batteries.class);
         coreModules.put("math", MathLib.class);
         coreModules.put("consts",Constants.class);
+        coreModules.put("normalStuff",SecretLib.class);
     }
 
     public static List<FuncType> getExports(String module) {
