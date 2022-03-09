@@ -7,7 +7,7 @@ public class MathConstants {
     public final int intMin = -2147483648;
   
     //mathematical constants
-    public final float pi = 3.14159;
-    public final float phi = 1.61803;
+    public final double pi = 3.14159;
+    public final double phi = 1.61803;
     
 }
