@@ -33,6 +33,12 @@ public class CompilerTest {
                 MathLibTest
                 0
                 1
+                0
+                1
+                0
+                1
+                0
+                1
                 """);
     }
 
