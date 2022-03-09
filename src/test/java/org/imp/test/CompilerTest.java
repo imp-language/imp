@@ -28,6 +28,17 @@ public class CompilerTest {
     }
                      
     @Test
+    void SecretTest() throws IOException, InterruptedException {
+        assertEquals(Load.run("stdlib/SecretStuff", moduleLocation), """
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                """);
+    }
+                     
+    @Test
     void StdMath() throws IOException, InterruptedException {
         assertEquals(Load.run("stdlib/MathLibTest", moduleLocation), """
                 MathLibTest
