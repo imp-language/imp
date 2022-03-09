@@ -35,6 +35,8 @@ public class CompilerTest {
                 MICROSOFT!
                 MICROSOFT!
                 MICROSOFT!
+                THE KILLER POKE!
+                I wonder what this does?
                 """);
     }
                      
