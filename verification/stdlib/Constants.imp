@@ -1,7 +1,7 @@
 import "batteries"
 import "constf"
 
-log(getMax())
-log(getMin())
-log(getPi())
-log(getPhi())
+log(intMax())
+log(intMin())
+log(pi())
+log(phi())
