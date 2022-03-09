@@ -6,6 +6,7 @@ import org.imp.jvm.legacy.expression.Function;
 import org.imp.jvm.types.*;
 import org.imp.runtime.Batteries;
 import org.imp.runtime.MathLib;
+import org.imp.runtime.MathConstants;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -21,6 +22,7 @@ public class Glue {
     static {
         coreModules.put("batteries", Batteries.class);
         coreModules.put("math", MathLib.class);
+        coreModules.put("constf",MathConstants.class);
     }
 
     public static List<FuncType> getExports(String module) {
