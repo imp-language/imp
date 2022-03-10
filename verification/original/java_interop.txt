@@ -1,7 +1,0 @@
-true
-true
-true
-true
-79
-19
-12.0

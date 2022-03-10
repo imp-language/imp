@@ -10,3 +10,5 @@ import "lib/date"
 //val ms = MyStruct(4)
 
 val d = Date(1,2,3)
+
+log("reeee" + 4)
