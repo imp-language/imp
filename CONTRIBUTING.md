@@ -3,7 +3,7 @@
 ### Join the Community
 
 This is a project in the early stages of development with little value in production software, but we're always looking
-for feedback and contributions! Currently discussions are held in the http://proglangdesign.net/ Discord community.
+for feedback and contributions! Currently, discussions are held in the http://proglangdesign.net/ Discord community.
 
 ### Start a Project Using Imp
 
@@ -21,7 +21,7 @@ To contribute to the Imp programming language you'll need to install the followi
 
 - Git
 - Java/JDK 17
-- An IDE, preferrably IntelliJ
+- An IDE, preferably [IntelliJ](https://www.jetbrains.com/idea/)
 
 Open the project and make sure Maven has installed all dependencies.
 
@@ -29,11 +29,14 @@ Open the project and make sure Maven has installed all dependencies.
 
 Java projects are often large, sprawling codebases, so here's an attempt to break it down a bit.
 
-- `src/main/java/org/imp/jvm` main package.
+#### Compiler
+
+- `src/java/org/imp/jvm` main package.
     - `codegen/` codegen package. JVM bytecode generators for classes, methods, fields, etc.
+    - `domain/` useful representations of constructs common to the compiler, e.g. identifiers and mutability.
     - `errors/` compiler error logging and template script.
     - `parser/` manually created Pratt-style parser.
-    - `tokenizer/` tokenizer package.
+        - `tokenizer/` tokenizer package.
     - `tool/` tooling package.
         - `cli/` the imp cli.
         - `manifest/` maifest parsing.
@@ -41,11 +44,16 @@ Java projects are often large, sprawling codebases, so here's an attempt to brea
         - `Compile.java` compiler method.
     - `types/` classes representing types at compile time.
     - `visitors/` walk the tree, each visitor implements a single pass on the AST.
-    - `legacy/` imp is undergoing a rewrite, don't write code that depends on stuff in this package.
     - `Environment.java` describes the variables in a single scope.
     - `SourceFile.java` maps one-to-one with a single Imp source file at compile time.
     - `Util.java` utilities!
-- `src/main/java/org/imp/runtime` standard library
+
+#### Runtime Dependencies
+
+- `src/main/java/org/imp/runtime` standard library.
+
+#### Test Suite
+
 - `src/test/java/org/imp/test/` test package.
     - `CompilerTest.java` current automated tests.
 
