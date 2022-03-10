@@ -1,7 +1,5 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.legacy.domain.Operator;
-import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
 public record ExternalType(Class<?> foundClass) implements ImpType {
@@ -51,10 +49,6 @@ public record ExternalType(Class<?> foundClass) implements ImpType {
         return 0;
     }
 
-    @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
-    }
 
     @Override
     public int getReturnOpcode() {

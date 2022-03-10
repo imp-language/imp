@@ -3,7 +3,7 @@ package org.imp.jvm;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.parser.Stmt;
-import org.imp.jvm.tokenizer.Tokenizer;
+import org.imp.jvm.parser.tokenizer.Tokenizer;
 import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.IVisitor;
 

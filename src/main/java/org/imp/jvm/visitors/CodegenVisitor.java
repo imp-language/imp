@@ -10,7 +10,7 @@ import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.legacy.domain.scope.Identifier;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
-import org.imp.jvm.tokenizer.TokenType;
+import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;

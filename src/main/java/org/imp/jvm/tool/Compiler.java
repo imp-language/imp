@@ -4,16 +4,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.SourceFile;
 import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
-import org.imp.jvm.legacy.ImpFile;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public record Compiler() {
@@ -76,36 +71,6 @@ public record Compiler() {
         String base = entry.getFullRelativePath();
 
         return base.replace("/", ".");
-    }
-
-
-    public String compileOld() throws FileNotFoundException {
-        // Walk the dependency tree
-        var entry = API.createSourceFile("filename");
-        Graph<ImpFile, DefaultEdge> dependencyGraph;
-        dependencyGraph = API.dependencyGraph(entry);
-        Timer.log("build dependency graph");
-        entry.validate();
-        Timer.log("validate entry file");
-
-        // Reduce graph dependencies to unique set of compilation units
-        Iterator<ImpFile> iterator = new DepthFirstIterator<>(dependencyGraph, entry);
-        Map<String, ImpFile> compilationSet = new HashMap<>();
-        while (iterator.hasNext()) {
-            ImpFile impFile = iterator.next();
-            if (!compilationSet.containsKey(impFile.packageName)) {
-                compilationSet.put(impFile.packageName, impFile);
-            }
-        }
-
-        Timer.log("create compilation set");
-
-        API.createProgram(compilationSet);
-        Timer.log("generate bytecode");
-        Timer.logTotalTime();
-
-        return entry.getClassName() + "/" + "Entry";
-
     }
 
 

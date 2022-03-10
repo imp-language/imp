@@ -1,7 +1,5 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.legacy.domain.Operator;
-import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
 import java.io.Serializable;
@@ -68,10 +66,6 @@ public class UnknownType implements ImpType, Serializable {
         return 0;
     }
 
-    @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
-    }
 
     @Override
     public int getReturnOpcode() {

@@ -9,7 +9,7 @@ import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.ReservedWords;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.runtime.Glue;
-import org.imp.jvm.tokenizer.TokenType;
+import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.types.*;
 

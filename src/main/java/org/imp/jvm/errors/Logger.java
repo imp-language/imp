@@ -1,8 +1,6 @@
-package org.imp.jvm.codegen;
+package org.imp.jvm.errors;
 
 import org.imp.jvm.Util;
-import org.imp.jvm.legacy.exception.Errors;
-import org.imp.jvm.legacy.statement.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +9,6 @@ public class Logger {
 
     private static final List<String> syntaxErrors = new ArrayList<>();
 
-    public static void syntaxError(Errors error, Statement statement, Object... varargs) {
-        String result = error.template(statement, varargs);
-        syntaxErrors.add(result);
-    }
 
     public static List<String> getSyntaxErrors() {
         return syntaxErrors;

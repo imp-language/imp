@@ -3,14 +3,9 @@ package org.imp.jvm.tool;
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.SourceFile;
 import org.imp.jvm.codegen.BytecodeGenerator;
-import org.imp.jvm.codegen.Logger;
 import org.imp.jvm.errors.Comptime;
-import org.imp.jvm.legacy.ImpFile;
-import org.imp.jvm.legacy.exception.Errors;
-import org.imp.jvm.legacy.parsing.Parser;
+import org.imp.jvm.errors.Logger;
 import org.imp.jvm.parser.Stmt;
-import org.imp.jvm.runtime.GlueOld;
-import org.imp.jvm.tokenizer.Tokenizer;
 import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.EnvironmentVisitor;
 import org.jgrapht.Graph;
@@ -88,35 +83,6 @@ public class API {
         return source;
     }
 
-    public static ImpFile createSourceFile(String filename) throws FileNotFoundException {
-        File file = new File(filename);
-
-        Timer.log("Buffer opened");
-        var tokenizer = new Tokenizer(file);
-        Timer.log("Lexer created");
-
-        var parser = new org.imp.jvm.parser.Parser(tokenizer);
-        var statements = parser.parse();
-
-        ImpFile ast = null;
-        if (file.exists()) {
-            Timer.log("entry file found");
-//            ast = Parser.getAbstractSyntaxTree(file);
-            //                ast = TypeCheckerMain.getAbstractSyntaxTree2(file);
-            Timer.log("ANTLR visitor complete");
-        }
-        return null;
-    }
-
-    /**
-     * Parse text content, from a REPL likely.
-     *
-     * @param content text
-     * @return ImpFile
-     */
-    public static ImpFile createReplFile(String content) {
-        return Parser.getAbstractSyntaxTree(content);
-    }
 
     public static Graph<SourceFile, DefaultEdge> dependencyGraph(SourceFile entry) throws FileNotFoundException {
         DependencyWalker walker = new DependencyWalker();
@@ -143,30 +109,6 @@ public class API {
         return dependencies;
     }
 
-    public static Graph<ImpFile, DefaultEdge> dependencyGraph(ImpFile entry) throws FileNotFoundException {
-        DependencyWalker walker = new DependencyWalker();
-        var dependencies = walker.walkDependencies(entry);
-
-        DOTExporter<ImpFile, DefaultEdge> exporter =
-                new DOTExporter<>(v ->
-                        v.name
-                                .replace('.', '_')
-                                .replace('/', '_')
-                                .replace('\\', '_')
-                                .replace('-', '_')
-                                .replace(':', '_')
-
-                );
-        exporter.setVertexAttributeProvider((v) -> {
-            Map<String, Attribute> map = new LinkedHashMap<>();
-            map.put("label", DefaultAttribute.createAttribute(v.toString()));
-            return map;
-        });
-        Writer writer = new StringWriter();
-        exporter.exportGraph(dependencies, writer);
-
-        return dependencies;
-    }
 
     public static Map<String, SourceFile> gatherImports(SourceFile current) {
         String basePath = FilenameUtils.getPath(current.file.getPath());
@@ -196,41 +138,6 @@ public class API {
 
         return fileMap;
     }
-
-    public static Map<String, ImpFile> gatherImports(ImpFile entry) {
-        String basePath = FilenameUtils.getPath(entry.name);
-
-        Map<String, ImpFile> impFileMap = new HashMap<>();
-        for (var i : entry.imports) {
-            String relativeFileName = i.getValue();
-            String filePath = FilenameUtils.concat(basePath, relativeFileName + ".imp");
-            filePath = FilenameUtils.separatorsToUnix(filePath);
-
-            if (GlueOld.coreModules.containsKey(relativeFileName)) {
-                entry.stdlibImports.add(relativeFileName);
-            } else {
-                ImpFile ast = null;
-                try {
-                    ast = createSourceFile(filePath);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                if (ast == null) {
-                    Logger.syntaxError(Errors.ModuleNotFound, i, filePath);
-                    Logger.killIfErrors("Correct parse errors before type checking and compilation can continue.");
-                }
-                assert ast != null;
-                ast.validate();
-                Logger.killIfErrors("Correct semantic errors before compilation can continue.");
-                impFileMap.put(filePath, ast);
-                entry.qualifiedImports.add(ast);
-            }
-
-        }
-
-        return impFileMap;
-    }
-
 
     public static void buildProgram(Map<String, SourceFile> compilationSet, String moduleLocation) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
@@ -279,44 +186,6 @@ public class API {
             }
 
         }
-        Logger.killIfErrors("Errored during bytecode generation.");
-
-    }
-
-    public static void createProgram(Map<String, ImpFile> files) {
-        BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
-        Logger.killIfErrors("Errored during bytecode generation.");
-
-        for (var key : files.keySet()) {
-            ImpFile value = files.get(key);
-            var byteUnits = bytecodeGenerator.generate(value);
-            String className = value.getClassName();
-            for (var byteUnit : byteUnits.entrySet()) {
-                String qualifiedName = className;
-                if (!byteUnit.getKey().equals("main")) {
-                    qualifiedName = byteUnit.getKey();
-                }
-                String fileName = ".compile/" + qualifiedName + ".class";
-
-//                System.out.println("Writing: " + fileName);
-
-                File tmp = new File(fileName);
-                //noinspection ResultOfMethodCallIgnored
-                tmp.getParentFile().mkdirs();
-
-                OutputStream output;
-                try {
-                    output = new FileOutputStream(fileName);
-                    output.write(byteUnit.getValue());
-                    output.close();
-                } catch (IOException e) {
-                    System.err.println("The above call to mkdirs() should have worked.");
-                    System.exit(9);
-                }
-
-            }
-        }
-
         Logger.killIfErrors("Errored during bytecode generation.");
 
     }

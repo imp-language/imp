@@ -1,8 +1,5 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.legacy.domain.Operator;
-import org.imp.jvm.types.overloads.OperatorOverload;
-
 public interface ImpType {
 
 
@@ -24,7 +21,6 @@ public interface ImpType {
 
     int getNegOpcode();
 
-    OperatorOverload getOperatorOverload(Operator operator);
 
     int getReturnOpcode();
 

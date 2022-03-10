@@ -1,8 +1,5 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.legacy.domain.Operator;
-import org.imp.jvm.types.overloads.ListOverloads;
-import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Objects;
@@ -68,10 +65,6 @@ public class ListType implements ImpType {
         return 0;
     }
 
-    @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return new ListOverloads();
-    }
 
     @Override
     public int getReturnOpcode() {

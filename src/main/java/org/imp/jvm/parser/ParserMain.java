@@ -1,7 +1,7 @@
 package org.imp.jvm.parser;
 
 import org.imp.jvm.Util;
-import org.imp.jvm.tokenizer.Tokenizer;
+import org.imp.jvm.parser.tokenizer.Tokenizer;
 import org.imp.jvm.tool.Timer;
 
 import java.io.File;

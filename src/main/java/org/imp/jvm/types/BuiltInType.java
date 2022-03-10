@@ -1,9 +1,6 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.legacy.domain.Operator;
-import org.imp.jvm.tokenizer.TokenType;
-import org.imp.jvm.types.overloads.OperatorOverload;
-import org.imp.jvm.types.overloads.StringOverloads;
+import org.imp.jvm.parser.tokenizer.TokenType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -203,16 +200,6 @@ public enum BuiltInType implements ImpType, Serializable {
         return opcodes.getNeg();
     }
 
-    @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        if (this == STRING) {
-            if (operator == Operator.INDEX) {
-                return new StringOverloads();
-            }
-        }
-
-        return null;
-    }
 
     @Override
     public int getReturnOpcode() {

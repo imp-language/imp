@@ -1,16 +1,16 @@
 package org.imp.jvm.parser;
 
-import org.imp.jvm.tokenizer.Location;
-import org.imp.jvm.tokenizer.Token;
-import org.imp.jvm.tokenizer.TokenType;
-import org.imp.jvm.tokenizer.Tokenizer;
+import org.imp.jvm.parser.tokenizer.Location;
+import org.imp.jvm.parser.tokenizer.Token;
+import org.imp.jvm.parser.tokenizer.TokenType;
+import org.imp.jvm.parser.tokenizer.Tokenizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.imp.jvm.tokenizer.TokenType.EOF;
+import static org.imp.jvm.parser.tokenizer.TokenType.EOF;
 
 public class ParserBase {
 

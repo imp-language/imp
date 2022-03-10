@@ -4,7 +4,6 @@ import org.imp.jvm.codegen.FieldGenerator;
 import org.imp.jvm.legacy.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ImpType;
-import org.objectweb.asm.MethodVisitor;
 
 import java.io.Serializable;
 
@@ -26,18 +25,11 @@ public class Identifier extends Expression implements Serializable {
         generator.generate(this);
     }
 
-    @Override
-    public void generate(MethodVisitor mv, Scope scope) {
-
-    }
 
     @Override
     public String toString() {
         return name + " " + type.getName();
     }
 
-    @Override
-    public void validate(Scope scope) {
 
-    }
 }

@@ -1,4 +1,4 @@
-package org.imp.jvm.tokenizer;
+package org.imp.jvm.parser.tokenizer;
 
 import org.apache.commons.text.StringEscapeUtils;
 

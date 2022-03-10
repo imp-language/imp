@@ -1,9 +1,7 @@
-package org.imp.jvm.tokenizer;
+package org.imp.jvm.parser.tokenizer;
 
 import java.io.*;
 import java.util.Iterator;
-
-import static org.imp.jvm.tokenizer.TokenType.*;
 
 public class Tokenizer implements Iterator<Token> {
     private final StringBuilder sb = new StringBuilder();
@@ -33,10 +31,10 @@ public class Tokenizer implements Iterator<Token> {
         char c = peek();
         Token tok;
         if (c == '\0') {
-            tok = new Token(EOF, startLine, startCol, null);
+            tok = new Token(TokenType.EOF, startLine, startCol, null);
         } else if (isAlpha(c)) {
             String identifier = consumeIdentifier();
-            var tokenType = IDENTIFIER;
+            var tokenType = TokenType.IDENTIFIER;
             var keyword = TokenType.find(identifier);
             if (keyword != null) tokenType = keyword;
             tok = new Token(tokenType, startLine, startCol, identifier);
@@ -46,7 +44,7 @@ public class Tokenizer implements Iterator<Token> {
             String stringLiteral = consumeString();
 
             var stringLiteralWithEscapes = stringLiteral.translateEscapes();
-            tok = new Token(STRING, startLine, startCol, stringLiteralWithEscapes);
+            tok = new Token(TokenType.STRING, startLine, startCol, stringLiteralWithEscapes);
         } else {
             var shortToken = TokenType.find(String.valueOf(c));
 //            if (shortToken == null) {
@@ -58,7 +56,7 @@ public class Tokenizer implements Iterator<Token> {
                 advance();
                 advance();
                 status = Status.Partial;
-                return new Token(ERROR, startLine, startCol, content);
+                return new Token(TokenType.ERROR, startLine, startCol, content);
             } else if (longToken != null) {
                 advance();
                 advance();
@@ -150,14 +148,14 @@ public class Tokenizer implements Iterator<Token> {
     }
 
     private Token consumeNumber() {
-        TokenType type = INT;
+        TokenType type = TokenType.INT;
         // whole number part
         while (isDigit(peek())) {
             sb.append(advance());
         }
         // decimal point
         if (peek() == '.') {
-            type = FLOAT;
+            type = TokenType.FLOAT;
             sb.append(advance());
             // decimal part
             while (isDigit(peek())) {
@@ -171,7 +169,7 @@ public class Tokenizer implements Iterator<Token> {
 
         // float suffix
         if (peek() == 'f') {
-            type = FLOAT;
+            type = TokenType.FLOAT;
             sb.append(advance());
         }
 
@@ -189,7 +187,7 @@ public class Tokenizer implements Iterator<Token> {
 
         // double suffix
         if (peek() == 'd') {
-            type = DOUBLE;
+            type = TokenType.DOUBLE;
             sb.append(advance());
         }
 

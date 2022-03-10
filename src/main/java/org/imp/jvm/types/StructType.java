@@ -1,28 +1,19 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.Util;
-import org.imp.jvm.codegen.Logger;
-import org.imp.jvm.legacy.ImpFile;
-import org.imp.jvm.legacy.domain.Operator;
 import org.imp.jvm.legacy.domain.scope.Identifier;
-import org.imp.jvm.legacy.domain.scope.Scope;
-import org.imp.jvm.legacy.exception.Errors;
-import org.imp.jvm.types.overloads.OperatorOverload;
 import org.objectweb.asm.Opcodes;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class StructType implements ImpType, Serializable {
-    public final Scope scope;
     // Todo: replace with Map<String,Type>
     public final List<Identifier> fields;
     public final String[] fieldNames;
     public final ImpType[] fieldTypes;
-    public final ImpFile parent;
     public String name;
 
     public String qualifiedName;
@@ -33,8 +24,6 @@ public class StructType implements ImpType, Serializable {
         this.fields = Collections.emptyList();
         this.fieldNames = fieldNames;
         this.fieldTypes = fieldTypes;
-        this.parent = null;
-        this.scope = null;
     }
 
     public StructType(String name, List<Identifier> identifiers) {
@@ -42,8 +31,6 @@ public class StructType implements ImpType, Serializable {
         this.fields = identifiers;
         this.fieldNames = new String[0];
         this.fieldTypes = new ImpType[0];
-        this.parent = null;
-        this.scope = null;
 
     }
 
@@ -65,34 +52,6 @@ public class StructType implements ImpType, Serializable {
         }
     }
 
-    /**
-     * Recursively attempt to find the type of the method access expression.
-     *
-     * @param parent    starting point, already known
-     * @param fieldPath list of identifiers
-     * @return type of struct field if fieldPath is valid
-     */
-    public List<Identifier> findStructField(StructType parent, List<Identifier> fieldPath) {
-        List<Identifier> validatedPath = new ArrayList<>();
-        Identifier first = fieldPath.remove(0);
-        var attempt = StructType.findStructField(parent, first.name);
-        if (attempt.isPresent()) {
-            var found = attempt.get();
-            validatedPath.add(found);
-
-            // recurse if the found field is another struct
-            if (found.type instanceof StructType foundStructType && fieldPath.size() > 0) {
-                var rescursedPath = findStructField(foundStructType, fieldPath);
-                validatedPath.addAll(rescursedPath);
-            } else if (fieldPath.size() > 0) {
-                Logger.syntaxError(Errors.StructFieldNotFound, fieldPath.get(0), fieldPath.get(0).getCtx().getText());
-            }
-        } else {
-            Logger.syntaxError(Errors.StructFieldNotFound, first, first.getCtx().getText());
-        }
-
-        return validatedPath;
-    }
 
     public Optional<ImpType> findType(String name) {
         for (int i = 0; i < fieldNames.length; i++) {
@@ -147,11 +106,6 @@ public class StructType implements ImpType, Serializable {
     @Override
     public int getNegOpcode() {
         return 0;
-    }
-
-    @Override
-    public OperatorOverload getOperatorOverload(Operator operator) {
-        return null;
     }
 
     @Override
