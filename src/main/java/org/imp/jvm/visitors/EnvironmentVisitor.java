@@ -6,6 +6,7 @@ import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.legacy.domain.scope.Identifier;
 import org.imp.jvm.parser.Expr;
+import org.imp.jvm.parser.ReservedWords;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.runtime.Glue;
 import org.imp.jvm.tokenizer.TokenType;
@@ -353,6 +354,9 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         for (int i = 0; i < fieldNames.length; i++) {
             var field = stmt.fields.get(i);
             fieldNames[i] = field.name.source();
+            if (ReservedWords.isReserved(fieldNames[i])) {
+                Comptime.ReservedWord.submit(file, stmt.fields.get(i), fieldNames[i]);
+            }
             fieldTypes[i] = field.type.accept(this).get();
             parameters.add(new Identifier(fieldNames[i], fieldTypes[i]));
         }

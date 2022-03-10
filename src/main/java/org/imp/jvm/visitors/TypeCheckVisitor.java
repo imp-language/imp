@@ -410,6 +410,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitStruct(Stmt.Struct struct) {
+        System.out.println("reeee");
         var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
         if (structType != null) {
             Util.zip(struct.fields, structType.fields, (a, b) -> {

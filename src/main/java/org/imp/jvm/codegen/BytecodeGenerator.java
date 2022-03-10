@@ -98,6 +98,7 @@ public class BytecodeGenerator {
                 "()V",
                 false
         );
+
         mvStatic.visitFieldInsn(Opcodes.PUTSTATIC, qualifiedName, "instance", "L" + qualifiedName + ";");
         mvStatic.visitInsn(Opcodes.RETURN);
         mvStatic.visitEnd();

@@ -1,5 +1,12 @@
 
 import "batteries"
-import "math"
+import "lib/date"
+//import "lib/person"
 
-log(ret(5))
+//struct MyStruct {
+//    a int
+//}
+
+//val ms = MyStruct(4)
+
+val d = Date(1,2,3)

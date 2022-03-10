@@ -37,7 +37,8 @@ public enum Comptime {
     BadAssignment(11, "Variable `{0}` of type `{1}` cannot accept assignment of type `{2}`.",
             "Check that both sides of the assignment have the same type."),
     FunctionSignatureMismatch(12, "No function overloads exist on `{0}` that match the parameters `{1}`.", "Check the parameter positions and types of the called function."),
-    IdentifierNotFound(13, "Identifier `{0}` not found.", null);
+    IdentifierNotFound(13, "Identifier `{0}` not found.", null),
+    ReservedWord(14, "Identifier `{0}` is a resered word.", null);
 
     // Todo: variable not found
 
