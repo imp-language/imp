@@ -1,7 +1,8 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.Util;
-import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.domain.Identifier;
+import org.imp.jvm.domain.Modifier;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.GeneratorAdapter;
 

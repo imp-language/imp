@@ -1,6 +1,6 @@
 package org.imp.jvm;
 
-import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.domain.Identifier;
 import org.imp.jvm.types.ImpType;
 
 import java.util.*;

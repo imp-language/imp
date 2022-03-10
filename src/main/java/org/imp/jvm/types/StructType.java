@@ -1,7 +1,7 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.Util;
-import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.domain.Identifier;
 import org.objectweb.asm.Opcodes;
 
 import java.io.Serializable;

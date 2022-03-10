@@ -1,15 +1,15 @@
-package org.imp.jvm.legacy.domain.scope;
+package org.imp.jvm.domain;
 
 import org.imp.jvm.codegen.FieldGenerator;
-import org.imp.jvm.legacy.expression.Expression;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ImpType;
 
 import java.io.Serializable;
 
 
-public class Identifier extends Expression implements Serializable {
+public class Identifier implements Serializable {
     public String name;
+    public ImpType type;
 
     public Identifier(String name, ImpType type) {
         this.name = name;

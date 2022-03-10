@@ -1,10 +1,10 @@
 package org.imp.jvm.runtime;
 
-import org.imp.jvm.legacy.domain.scope.Identifier;
+import org.imp.jvm.domain.Identifier;
+import org.imp.jvm.domain.Modifier;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ExternalType;
 import org.imp.jvm.types.FuncType;
-import org.imp.jvm.types.Modifier;
 import org.imp.runtime.Batteries;
 import org.imp.runtime.MathLib;
 

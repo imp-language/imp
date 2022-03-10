@@ -1,4 +1,4 @@
-package org.imp.jvm.types;
+package org.imp.jvm.domain;
 
 public enum Mutability {
     Val,

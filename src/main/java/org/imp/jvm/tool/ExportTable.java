@@ -26,7 +26,7 @@ public class ExportTable {
     public static void initDB(Path path) {
         try {
             new File(path.toString()).getParentFile().mkdirs();
-            connection = DriverManager.getConnection("jdbc:sqlite:" + path.toString());
+            connection = DriverManager.getConnection("jdbc:sqlite:" + path);
             Statement statement = ExportTable.connection.createStatement();
             statement.executeUpdate("drop table if exists ExportTable");
             statement.executeUpdate("""

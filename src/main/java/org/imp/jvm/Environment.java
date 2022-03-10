@@ -1,10 +1,10 @@
 package org.imp.jvm;
 
 import org.apache.commons.collections4.map.LinkedMap;
+import org.imp.jvm.domain.Mutability;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Node;
 import org.imp.jvm.types.ImpType;
-import org.imp.jvm.types.Mutability;
 
 import java.io.File;
 import java.util.HashMap;
