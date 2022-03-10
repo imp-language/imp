@@ -1,7 +1,7 @@
 name = 'sample'
 version = '0.0.1'
 entry = 'main.imp'
-description = ''
+description = 'imp language test suite'
 authors = []
 homepage = ''
 docs = ''

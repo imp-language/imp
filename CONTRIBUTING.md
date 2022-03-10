@@ -57,6 +57,11 @@ Java projects are often large, sprawling codebases, so here's an attempt to brea
 - `src/test/java/org/imp/test/` test package.
     - `CompilerTest.java` current automated tests.
 
+### Running the `sample` project
+
+The `.idea/runConfigurations/CompilerTest.xml` run configuration should run the Imp project located in the `sample/`
+directory. It's beneficial to start here. Eventually this will be moved to an external location as we gain contributors.
+
 ### Running Tests
 
 The `src/test/java/org/imp/test/CompilerTest.java` should be run through Junit to run all tests. If you're using
