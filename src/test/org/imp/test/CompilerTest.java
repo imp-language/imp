@@ -45,6 +45,18 @@ public class CompilerTest {
                 -1        
                 """);
     }
+                     
+    @Test
+    void ConstfTest() throws IOException, InterruptedException {
+        assertEquals(Load.run("stdlib/Constants", moduleLocation), """
+                2147483647
+                -2147483648
+                0
+                1
+                3.14159
+                1.61803
+                """);
+    }
 
     @Test
     void assignment() throws IOException, InterruptedException {
