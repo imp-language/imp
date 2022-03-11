@@ -28,10 +28,46 @@ public class CompilerTest {
     }
                      
     @Test
+    void SecretTest() throws IOException, InterruptedException {
+        assertEquals(Load.run("stdlib/SecretStuff", moduleLocation), """
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                THE KILLER POKE!
+                I wonder what this does?
+                """);
+    }
+                     
+    @Test
     void StdMath() throws IOException, InterruptedException {
         assertEquals(Load.run("stdlib/MathLibTest", moduleLocation), """
                 MathLibTest
-                5
+                0
+                1
+                0
+                -1
+                0
+                1
+                0
+                -1
+                0
+                1
+                0
+                -1        
+                """);
+    }
+                     
+    @Test
+    void ConstfTest() throws IOException, InterruptedException {
+        assertEquals(Load.run("stdlib/Constants", moduleLocation), """
+                2147483647
+                -2147483648
+                0
+                1
+                3.14159
+                1.61803
                 """);
     }
 
