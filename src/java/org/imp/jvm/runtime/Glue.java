@@ -7,6 +7,7 @@ import org.imp.jvm.types.ExternalType;
 import org.imp.jvm.types.FuncType;
 import org.imp.runtime.Batteries;
 import org.imp.runtime.MathLib;
+import org.imp.runtime.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class Glue {
     static {
         coreModules.put("batteries", Batteries.class);
         coreModules.put("math", MathLib.class);
+        coreModules.put("consts",Constants.class);
     }
 
     public static List<FuncType> getExports(String module) {
