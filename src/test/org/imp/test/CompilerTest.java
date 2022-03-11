@@ -28,6 +28,19 @@ public class CompilerTest {
     }
                      
     @Test
+    void SecretTest() throws IOException, InterruptedException {
+        assertEquals(Load.run("stdlib/SecretStuff", moduleLocation), """
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                MICROSOFT!
+                THE KILLER POKE!
+                I wonder what this does?
+                """);
+    }
+                     
+    @Test
     void StdMath() throws IOException, InterruptedException {
         assertEquals(Load.run("stdlib/MathLibTest", moduleLocation), """
                 MathLibTest
