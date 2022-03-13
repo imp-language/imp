@@ -1,14 +1,4 @@
 
 import "batteries"
-import "lib/date"
-//import "lib/person"
 
-//struct MyStruct {
-//    a int
-//}
-
-//val ms = MyStruct(4)
-
-val d = Date(1,2,3)
-
-log("reeee" + 4)
+log(val b = 4)

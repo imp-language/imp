@@ -28,6 +28,7 @@ public class ParserBase {
                                String message) {
         System.err.println(
                 "[line " + line + "] Error" + where + ": " + message);
+        System.exit(1);
     }
 
     public Token consume() {
