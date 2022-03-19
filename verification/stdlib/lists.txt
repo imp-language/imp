@@ -1,0 +1,7 @@
+Test empty list constructors
+[]
+[]
+[]
+[]
+Push values to lists
+[4]

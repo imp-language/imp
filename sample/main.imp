@@ -1,4 +1,22 @@
 
 import "batteries"
 
-log(val b = 4)
+val intList = int[]
+
+log(intList)
+
+push(intList, 4)
+push(intList, 44)
+
+log(intList)
+
+
+log("started")
+val iRange = range(0,1000)
+
+log(iRange)
+//useIterator(iRange)
+
+for i in iRange {
+    log(i)
+}

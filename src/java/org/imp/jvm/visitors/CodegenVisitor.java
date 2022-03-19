@@ -14,6 +14,7 @@ import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
+import org.objectweb.asm.commons.Method;
 
 import java.io.File;
 import java.util.*;
@@ -165,8 +166,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             ga.visitFieldInsn(Opcodes.GETSTATIC, st.parentName, "instance", descriptor);
             ga.visitInsn(Opcodes.DUP);
 
-            // Todo(CURRENT): parameters
-
             ga.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Objects", "requireNonNull", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
             ga.pop();
 
@@ -199,7 +198,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitEmptyList(Expr.EmptyList emptyList) {
-        throw new NotImplementedException("method not implemented");
+        var ga = functionStack.peek().ga;
+
+        ga.newInstance(Type.getType("Ljava/util/ArrayList;"));
+        ga.dup();
+
+        ga.invokeConstructor(Type.getType("Ljava/util/ArrayList;"), new Method("<init>", "()V"));
+        return Optional.empty();
     }
 
     @Override
@@ -223,10 +228,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         throw new NotImplementedException("method not implemented");
     }
 
-    @Override
-    public Optional<ClassWriter> visitForInCondition(Stmt.ForInCondition stmt) {
-        throw new NotImplementedException("method not implemented");
-    }
 
     @Override
     public Optional<ClassWriter> visitFunctionStmt(Stmt.Function stmt) {

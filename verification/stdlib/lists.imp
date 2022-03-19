@@ -1,0 +1,19 @@
+import "batteries"
+
+log("Test empty list constructors")
+
+val intList = int[]
+log(intList)
+
+val floatList = float[]
+log(floatList)
+
+val boolList = bool[]
+log(boolList)
+
+val stringList = string[]
+log(stringList)
+
+log("Push values to lists")
+push(intList, 4)
+log(intList)

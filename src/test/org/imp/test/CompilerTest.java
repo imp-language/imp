@@ -26,7 +26,7 @@ public class CompilerTest {
                 res: 4.0
                 """);
     }
-                     
+
     @Test
     void StdMath() throws IOException, InterruptedException {
         assertEquals(Load.run("stdlib/MathLibTest", moduleLocation), """
@@ -74,6 +74,14 @@ public class CompilerTest {
                 here
                 here
                 """, Load.run("simple/ifElseLogical", moduleLocation));
+    }
+
+    @Test
+    void lists() throws IOException, InterruptedException {
+        assertEquals(
+                Load.gold(Path.of(moduleLocation, "stdlib/lists.txt").toString()),
+                Load.run("stdlib/lists", moduleLocation)
+        );
     }
 
     @Test

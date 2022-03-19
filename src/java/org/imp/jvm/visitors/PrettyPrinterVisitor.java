@@ -101,25 +101,25 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitFor(Stmt.For stmt) {
         currentEnvironment = stmt.block.environment;
-        String str = s("for", print(stmt.condition), print(stmt.block));
+        String str = s("for", stmt.name.source(), "in", print(stmt.expr), print(stmt.block));
         currentEnvironment = currentEnvironment.getParent();
         return str;
     }
 
-    @Override
-    public String visitForInCondition(Stmt.ForInCondition stmt) {
-        var name = stmt.name.source();
-        var t = currentEnvironment.getVariable(stmt.name.source());
-        if (displayAnnotations) {
-            if (t != null) {
-                name += " : " + t;
-
-            } else {
-                name += " : $reee";
-            }
-        }
-        return s(name, "in", print(stmt.expr));
-    }
+//    @Override
+//    public String visitForInCondition(Stmt.ForInCondition stmt) {
+//        var name = stmt.name.source();
+//        var t = currentEnvironment.getVariable(stmt.name.source());
+//        if (displayAnnotations) {
+//            if (t != null) {
+//                name += " : " + t;
+//
+//            } else {
+//                name += " : $reee";
+//            }
+//        }
+//        return s(name, "in", print(stmt.expr));
+//    }
 
     @Override
     public String visitFunctionStmt(Stmt.Function stmt) {

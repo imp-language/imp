@@ -232,7 +232,7 @@ public class Parser extends ParserBase {
         Expr condition = expression();
         Stmt.Block block = block();
 
-        return new Stmt.For(loc, new Stmt.ForInCondition(loc, name, condition), block);
+        return new Stmt.For(loc, name, condition, block);
     }
 
     private Stmt.If parseIf() {

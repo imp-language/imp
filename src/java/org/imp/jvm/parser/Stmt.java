@@ -35,7 +35,6 @@ public abstract class Stmt implements Node {
 
         R visitFor(For stmt);
 
-        R visitForInCondition(ForInCondition stmt);
 
         R visitFunctionStmt(Function stmt);
 
@@ -308,35 +307,20 @@ public abstract class Stmt implements Node {
     }
 
     public static final class For extends Stmt {
-        public final Stmt condition;
         public final Block block;
-
-        public For(Location loc, Stmt condition, Block block) {
-            super(loc);
-            this.condition = condition;
-            this.block = block;
-        }
-
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitFor(this);
-        }
-
-    }
-
-    public static final class ForInCondition extends Stmt {
         public final Token name;
         public final Expr expr;
 
-        public ForInCondition(Location loc, Token name, Expr expr) {
+        public For(Location loc, Token name, Expr expr, Block block) {
             super(loc);
+            this.block = block;
             this.name = name;
             this.expr = expr;
         }
 
         public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitForInCondition(this);
+            return visitor.visitFor(this);
         }
-
 
     }
 
