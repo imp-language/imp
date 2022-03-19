@@ -184,17 +184,21 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitFor(Stmt.For stmt) {
 
         currentEnvironment = stmt.block.environment;
-        stmt.condition.accept(this);
+
+        // visit expression (could be an iterator or a list)
+        stmt.expr.accept(this);
+
+        // visit block
         stmt.block.accept(this);
+        //Todo(CURRENT) for loop type checking
+
+        // reset environment pointer
         currentEnvironment = currentEnvironment.getParent();
 
         return Optional.empty();
+
     }
 
-    @Override
-    public Optional<ImpType> visitForInCondition(Stmt.ForInCondition stmt) {
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ImpType> visitFunctionStmt(Stmt.Function stmt) {

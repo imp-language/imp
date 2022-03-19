@@ -166,8 +166,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             ga.visitFieldInsn(Opcodes.GETSTATIC, st.parentName, "instance", descriptor);
             ga.visitInsn(Opcodes.DUP);
 
-            // Todo(CURRENT): parameters
-
             ga.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Objects", "requireNonNull", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
             ga.pop();
 
@@ -230,10 +228,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         throw new NotImplementedException("method not implemented");
     }
 
-    @Override
-    public Optional<ClassWriter> visitForInCondition(Stmt.ForInCondition stmt) {
-        throw new NotImplementedException("method not implemented");
-    }
 
     @Override
     public Optional<ClassWriter> visitFunctionStmt(Stmt.Function stmt) {

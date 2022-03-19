@@ -1,5 +1,4 @@
 import "batteries"
-import "list"
 
 log("Test empty list constructors")
 

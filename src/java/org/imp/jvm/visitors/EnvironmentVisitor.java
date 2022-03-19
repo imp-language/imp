@@ -96,8 +96,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         System.out.println("reeee");
         var bt = BuiltInType.getFromString(emptyList.tokenType.source());
 
-        // Todo(CURRENT): generate lists
-
         var lt = new ListType(bt);
         emptyList.realType = lt;
         return Optional.of(lt);
@@ -125,18 +123,25 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         childEnvironment.setParent(currentEnvironment);
 
         currentEnvironment = childEnvironment;
-        stmt.condition.accept(this);
+
+        // visit expression (could be an iterator or a list)
+        var b = stmt.expr.accept(this);
+        if (true /*for now assume it's an iterator every time*/) {
+            System.out.println(b);
+        }
+
+        // add variable for iterator in child block scope
+        currentEnvironment.addVariable(stmt.name.source(), new UnknownType());
+
+        // visit block
         stmt.block.accept(this);
+
+        // reset environment pointer
         currentEnvironment = currentEnvironment.getParent();
 
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ImpType> visitForInCondition(Stmt.ForInCondition stmt) {
-        currentEnvironment.addVariable(stmt.name.source(), new UnknownType());
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ImpType> visitFunctionStmt(Stmt.Function stmt) {
