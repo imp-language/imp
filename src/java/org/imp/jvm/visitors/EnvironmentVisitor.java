@@ -11,7 +11,7 @@ import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.ReservedWords;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.TokenType;
-import org.imp.jvm.runtime.Glue;
+import org.imp.jvm.runtimeHelp.Glue;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.types.*;
 
@@ -93,6 +93,8 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitEmptyList(Expr.EmptyList emptyList) {
+        System.out.println("reeee");
+        // Todo(CURRENT): generate lists
         return Optional.empty();
     }
 

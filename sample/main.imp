@@ -1,4 +1,7 @@
 
 import "batteries"
+import "list"
 
-log(val b = 4)
+val intList = int[]
+
+//log(intList)

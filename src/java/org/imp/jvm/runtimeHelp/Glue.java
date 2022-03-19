@@ -1,4 +1,4 @@
-package org.imp.jvm.runtime;
+package org.imp.jvm.runtimeHelp;
 
 import org.imp.jvm.domain.Identifier;
 import org.imp.jvm.domain.Modifier;
@@ -6,6 +6,7 @@ import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ExternalType;
 import org.imp.jvm.types.FuncType;
 import org.imp.runtime.Batteries;
+import org.imp.runtime.ListLib;
 import org.imp.runtime.MathLib;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Glue {
     static {
         coreModules.put("batteries", Batteries.class);
         coreModules.put("math", MathLib.class);
+        coreModules.put("list", ListLib.class);
     }
 
     public static List<FuncType> getExports(String module) {
