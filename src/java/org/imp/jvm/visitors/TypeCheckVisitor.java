@@ -127,7 +127,10 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         if (e.isPresent()) {
             var t = e.get();
             if (t instanceof FuncType ft) {
-
+                if (ft.parameters.size() != expr.arguments.size()) {
+                    Comptime.FunctionSignatureMismatch.submit(file, expr.item, ft.name, "a");
+                    return Optional.empty();
+                }
                 var returnType = ft.returnType;
 
                 for (var arg : expr.arguments) {
@@ -157,7 +160,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitEmptyList(Expr.EmptyList emptyList) {
-        return Optional.empty();
+        var t = emptyList.realType;
+        return Optional.of(t);
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
+import org.objectweb.asm.commons.Method;
 
 import java.io.File;
 import java.util.*;
@@ -199,7 +200,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitEmptyList(Expr.EmptyList emptyList) {
-        throw new NotImplementedException("method not implemented");
+        var ga = functionStack.peek().ga;
+
+        ga.newInstance(Type.getType("Ljava/util/ArrayList;"));
+        ga.dup();
+
+        ga.invokeConstructor(Type.getType("Ljava/util/ArrayList;"), new Method("<init>", "()V"));
+        return Optional.empty();
     }
 
     @Override

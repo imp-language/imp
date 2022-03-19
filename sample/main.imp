@@ -4,4 +4,14 @@ import "list"
 
 val intList = int[]
 
-//log(intList)
+log(intList)
+
+push(intList, 4)
+push(intList, 44)
+
+log(intList)
+
+
+log("started")
+val iRange = range(0,1000)
+log("done")

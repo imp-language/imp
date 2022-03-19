@@ -94,8 +94,13 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitEmptyList(Expr.EmptyList emptyList) {
         System.out.println("reeee");
+        var bt = BuiltInType.getFromString(emptyList.tokenType.source());
+
         // Todo(CURRENT): generate lists
-        return Optional.empty();
+
+        var lt = new ListType(bt);
+        emptyList.realType = lt;
+        return Optional.of(lt);
     }
 
     @Override
