@@ -186,7 +186,16 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         currentEnvironment = stmt.block.environment;
 
         // visit expression (could be an iterator or a list)
-        stmt.expr.accept(this);
+        var b = stmt.expr.accept(this);
+        if (b.isPresent()) {
+
+            if (b.get() instanceof ExternalType et /*for now assume it's an iterator every time*/) {
+                if (et.foundClass().getName().equals("java.util.Iterator")) {
+                    currentEnvironment.setVariableType(stmt.name.source(), BuiltInType.INT);
+
+                }
+            }
+        }
 
         // visit block
         stmt.block.accept(this);
@@ -418,7 +427,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitStruct(Stmt.Struct struct) {
-        System.out.println("reeee");
         var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
         if (structType != null) {
             Util.zip(struct.fields, structType.fields, (a, b) -> {

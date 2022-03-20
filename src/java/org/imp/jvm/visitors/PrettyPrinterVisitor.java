@@ -101,7 +101,19 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitFor(Stmt.For stmt) {
         currentEnvironment = stmt.block.environment;
-        String str = s("for", stmt.name.source(), "in", print(stmt.expr), print(stmt.block));
+        String source = stmt.name.source();
+
+        if (displayAnnotations) {
+            var t = currentEnvironment.getVariable(source);
+            if (t != null) {
+                source += " : " + t;
+
+            } else {
+                source += " : $reee";
+            }
+        }
+
+        String str = s("for", source, "in", print(stmt.expr), print(stmt.block));
         currentEnvironment = currentEnvironment.getParent();
         return str;
     }

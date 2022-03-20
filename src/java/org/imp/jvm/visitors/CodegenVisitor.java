@@ -225,7 +225,54 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitFor(Stmt.For stmt) {
-        throw new NotImplementedException("method not implemented");
+        // for loops either have a stmt.expr of type Identifier or type Call
+        // Eventually we might have type LiteralList but for now this suffices.
+        // Loading and storing of stmt.expr is handled below.
+        var funcType = functionStack.peek();
+        var ga = functionStack.peek().ga;
+        currentEnvironment = stmt.block.environment;
+        var startLabel = new Label();
+        var endLabel = new Label();
+
+        // ALOAD the iterator
+        if (stmt.expr instanceof Expr.Identifier id) {
+            ga.mark(startLabel);
+            stmt.expr.accept(this);
+
+        } else {
+            stmt.expr.accept(this);
+            stmt.localExprIndex = ga.newLocal(Type.getType(Iterator.class));
+            funcType.localMap.put("______", stmt.localExprIndex);
+            ga.storeLocal(stmt.localExprIndex, Type.getType(Iterator.class));
+            ga.mark(startLabel);
+            ga.loadLocal(stmt.localExprIndex);
+        }
+
+        // Check if iterator has next
+        ga.invokeInterface(Type.getType(Iterator.class), new Method("hasNext", "()Z"));
+        ga.visitJumpInsn(Opcodes.IFEQ, endLabel);
+
+        // ALOAD the iterator for body
+        if (stmt.expr instanceof Expr.Identifier id) {
+            stmt.expr.accept(this);
+        } else {
+            ga.loadLocal(stmt.localExprIndex);
+        }
+        ga.invokeInterface(Type.getType(Iterator.class), new Method("next", "()Ljava/lang/Object;"));
+        BuiltInType.INT.doUnboxing(ga);
+        stmt.localNameIndex = ga.newLocal(Type.getType(BuiltInType.INT.getDescriptor()));
+        funcType.localMap.put(stmt.name.source(), stmt.localNameIndex);
+        funcType.ga.storeLocal(stmt.localNameIndex, Type.getType(BuiltInType.INT.getDescriptor()));
+
+        // Visit body
+        stmt.block.accept(this);
+
+        // Jump back to beginning and mark end label
+        ga.goTo(startLabel);
+        ga.mark(endLabel);
+        // Reset scope
+        currentEnvironment = currentEnvironment.getParent();
+        return Optional.empty();
     }
 
 

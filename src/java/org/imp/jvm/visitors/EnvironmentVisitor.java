@@ -93,7 +93,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitEmptyList(Expr.EmptyList emptyList) {
-        System.out.println("reeee");
         var bt = BuiltInType.getFromString(emptyList.tokenType.source());
 
         var lt = new ListType(bt);
@@ -124,11 +123,12 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
         currentEnvironment = childEnvironment;
 
+        stmt.expr.accept(this);
         // visit expression (could be an iterator or a list)
-        var b = stmt.expr.accept(this);
-        if (true /*for now assume it's an iterator every time*/) {
-            System.out.println(b);
-        }
+//        var b = stmt.expr.accept(this);
+//        if (true /*for now assume it's an iterator every time*/) {
+//            System.out.println(b);
+//        }
 
         // add variable for iterator in child block scope
         currentEnvironment.addVariable(stmt.name.source(), new UnknownType());

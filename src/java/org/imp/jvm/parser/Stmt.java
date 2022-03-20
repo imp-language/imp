@@ -310,6 +310,9 @@ public abstract class Stmt implements Node {
         public final Block block;
         public final Token name;
         public final Expr expr;
+        public int localNameIndex = -1;
+        public int localExprIndex = -1;
+
 
         public For(Location loc, Token name, Expr expr, Block block) {
             super(loc);
