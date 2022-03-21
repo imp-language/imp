@@ -111,7 +111,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         if (expr.item.realType instanceof FuncType callType) {
             if (callType.glue) {
-                // Todo: make more flexible for multiple stdlib classes
                 String owner = callType.owner;
                 /*
                  * Before calling the function, we must consider 3 cases:
@@ -197,6 +196,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     }
 
     @Override
+    public Optional<ClassWriter> visitEmpty(Expr.Empty empty) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<ClassWriter> visitEmptyList(Expr.EmptyList emptyList) {
         var ga = functionStack.peek().ga;
 
@@ -274,7 +278,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
     }
-
 
     @Override
     public Optional<ClassWriter> visitFunctionStmt(Stmt.Function stmt) {
@@ -418,7 +421,28 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitLiteralList(Expr.LiteralList expr) {
-        throw new NotImplementedException("method not implemented");
+        var ga = functionStack.peek().ga;
+
+        ga.newInstance(Type.getType("Ljava/util/ArrayList;"));
+        ga.dup();
+
+        ga.invokeConstructor(Type.getType("Ljava/util/ArrayList;"), new Method("<init>", "()V"));
+
+        for (var entry : expr.entries) {
+            // We never want to store the initialized list in this visitor location
+            // Instead we dup the reference every time. Inefficient but who's going
+            // to write big lists by hand.
+            ga.dup();
+
+            entry.accept(this);
+            var rt = entry.realType;
+            if (rt instanceof BuiltInType bt) {
+                bt.doBoxing(ga);
+            }
+            ga.invokeVirtual(Type.getType(ArrayList.class), new Method("add", "(Ljava/lang/Object;)Z"));
+            ga.pop();
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -473,8 +497,12 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitReturnStmt(Stmt.Return stmt) {
         var funcType = functionStack.peek();
-        stmt.expr.accept(this);
-        funcType.ga.visitInsn(stmt.expr.realType.getReturnOpcode());
+        if (!(stmt.expr instanceof Expr.Empty)) {
+            stmt.expr.accept(this);
+            funcType.ga.visitInsn(stmt.expr.realType.getReturnOpcode());
+        } else {
+            funcType.ga.visitInsn(Opcodes.RETURN);
+        }
         return Optional.empty();
     }
 
@@ -547,8 +575,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         mv.visitEnd();
         mv.visitMaxs(-1, -1);
 
-        // Todo: generate internal classes
-//        code.put(qualifiedName, cw.toByteArray());
         structWriters.put(structType, innerCw);
 
         return Optional.of(innerCw);

@@ -214,11 +214,13 @@ public abstract class Stmt implements Node {
     public static final class Parameter extends Stmt {
         public final Token name;
         public final Type type;
+        public final boolean listType;
 
-        public Parameter(Location loc, Token name, Type type) {
+        public Parameter(Location loc, Token name, Type type, boolean listType) {
             super(loc);
             this.name = name;
             this.type = type;
+            this.listType = listType;
         }
 
         public <R> R accept(Visitor<R> visitor) {
@@ -231,7 +233,7 @@ public abstract class Stmt implements Node {
     public static final class Type extends Stmt {
         public final Token identifier;
         public final Optional<Type> next;
-        private final boolean listType;
+        public final boolean listType;
 
         public Type(Location loc, Token identifier, Optional<Type> next, boolean listType) {
             super(loc);

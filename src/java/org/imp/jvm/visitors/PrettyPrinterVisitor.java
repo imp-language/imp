@@ -77,6 +77,11 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     }
 
     @Override
+    public String visitEmpty(Expr.Empty empty) {
+        return "";
+    }
+
+    @Override
     public String visitEmptyList(Expr.EmptyList emptyList) {
         return emptyList.tokenType.source() + "[]";
     }
@@ -295,7 +300,11 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     public String visitType(Stmt.Type stmt) {
         // if no type.next exists, treat as normal type
         if (stmt.next.isEmpty()) {
-            return stmt.identifier.source();
+            String s = stmt.identifier.source();
+            if (stmt.listType) {
+                s += "[]";
+            }
+            return s;
         }
         // if type.next exists, make an unknown type and pass to TypeCheckVisitor
         else {

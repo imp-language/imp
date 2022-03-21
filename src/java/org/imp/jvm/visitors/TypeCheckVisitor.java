@@ -159,6 +159,11 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     }
 
     @Override
+    public Optional<ImpType> visitEmpty(Expr.Empty empty) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<ImpType> visitEmptyList(Expr.EmptyList emptyList) {
         var t = emptyList.realType;
         return Optional.of(t);
@@ -194,12 +199,17 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     currentEnvironment.setVariableType(stmt.name.source(), BuiltInType.INT);
 
                 }
+            } else if (b.get() instanceof ListType lt) {
+                System.err.println("Todo: iterate over lists");
+                System.exit(97);
+                // Todo: iterate over lists
+            } else {
+                Comptime.NotIterable.submit(file, stmt.expr, b.get().getName());
             }
         }
 
         // visit block
         stmt.block.accept(this);
-        //Todo(CURRENT) for loop type checking
 
         // reset environment pointer
         currentEnvironment = currentEnvironment.getParent();
@@ -207,7 +217,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
 
     }
-
 
     @Override
     public Optional<ImpType> visitFunctionStmt(Stmt.Function stmt) {
@@ -290,7 +299,24 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitLiteralList(Expr.LiteralList expr) {
-        return Optional.empty();
+
+        var firstType = expr.entries.get(0).accept(this);
+
+        if (firstType.isPresent()) {
+
+            expr.realType = new ListType(firstType.get());
+        }
+
+        for (int i = 0; i < expr.entries.size(); i++) {
+            var t = expr.entries.get(i).accept(this);
+            if (t.isPresent()) {
+                if (!(t.get().equals(firstType.get()))) {
+                    Comptime.ListTypeError.submit(file, expr.entries.get(i), t.get().getName(), firstType.get().getName());
+                    break;
+                }
+            }
+        }
+        return Optional.of(expr.realType);
     }
 
     @Override

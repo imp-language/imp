@@ -67,7 +67,7 @@ public class Parser extends ParserBase {
         var loc = lok();
 
         var type = new Stmt.Type(loc, new Token(TYPE, 0, 0, "string"), Optional.empty(), false);
-        Stmt.Parameter varArgs = new Stmt.Parameter(loc, new Token(IDENTIFIER, 0, 0, "args"), type);
+        Stmt.Parameter varArgs = new Stmt.Parameter(loc, new Token(IDENTIFIER, 0, 0, "args"), type, false);
 //        varArgs.type = BuiltInType.STRING_ARR;
 //        varArgs.name = "args";
         var args = new ArrayList<Stmt.Parameter>();
@@ -130,7 +130,12 @@ public class Parser extends ParserBase {
 
     Stmt.Return parseReturn() {
         var loc = lok();
-        Expr expr = expression();
+        Expr expr;
+        if (peek().type() != RBRACE) {
+            expr = expression();
+        } else {
+            expr = new Expr.Empty(loc);
+        }
         return new Stmt.Return(loc, expr);
     }
 
@@ -204,8 +209,9 @@ public class Parser extends ParserBase {
         var loc = lok();
         Token name = consume(IDENTIFIER, "Expected field name.");
         var type = type();
+        boolean listType = false;
 
-        return new Stmt.Parameter(loc, name, type);
+        return new Stmt.Parameter(loc, name, type, listType);
     }
 
     private Stmt.Enum parseEnum() {

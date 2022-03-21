@@ -58,7 +58,6 @@ public class BytecodeGenerator {
 
         // Generate bytecode for each Type defined in the Imp file
         var codegenVisitor = new CodegenVisitor(source.rootEnvironment, source, cw);
-        // Todo: refactor CodegenVisitor to use most of the logic from the last pass at codegen
 
         var results = source.acceptVisitor(codegenVisitor);
 

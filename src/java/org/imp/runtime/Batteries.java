@@ -40,22 +40,11 @@ public class Batteries {
         return r.remove(r.size() - 1);
     }
 
-//    public static <T> List<Integer> range(int start, int stop) {
-//        // Todo: this is not performant (generates the entire array ahead of time)
-//        // When possible, a stream/iterator should be used instead.
-//        return IntStream.range(start, stop).boxed().collect(Collectors.toList());
-//    }
 
     public static <T> Iterator<Integer> range(int start, int stop) {
         return IntStream.range(start, stop).boxed().iterator();
     }
 
-    public static void useIterator(Iterator<Integer> it) {
-        while (it.hasNext()) {
-            Object element = it.next();
-            System.out.print(element + " ");
-        }
-    }
 
     public static <T> T at(List<T> r, int pos) {
         return r.get(pos);

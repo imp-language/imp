@@ -22,3 +22,15 @@ range with iterator previously allocated
 18
 for loop sum of range
 45
+for loop access through range
+0
+1
+3
+2
+4
+5
+6
+7
+8
+9
+10

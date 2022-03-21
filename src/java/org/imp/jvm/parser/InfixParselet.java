@@ -56,7 +56,19 @@ public interface InfixParselet {
             var loc = parser.lok();
             Expr right = parser.expression(precedence());
             parser.consume(TokenType.RBRACK, "Expected ']' after index access.");
-            return new Expr.IndexAccess(loc, left, right);
+
+            var arguments = new ArrayList<Expr>();
+            if (left instanceof Expr.Identifier id) {
+                arguments.add(id);
+                arguments.add(right);
+            }
+            return new Expr.Call(
+                    loc,
+                    new Expr.Identifier(loc, new Token(TokenType.IDENTIFIER, loc.line(), loc.col(), "at")),
+                    arguments
+            );
+            // Todo(CURRENT): finish index access expressions- they don't unbox properly
+//            return new Expr.IndexAccess(loc, left, right);
 
         }
 

@@ -30,6 +30,8 @@ public abstract class Expr implements Node {
 
         R visitCall(Call expr);
 
+        R visitEmpty(Empty empty);
+
         R visitEmptyList(EmptyList emptyList);
 
         R visitGroupingExpr(Grouping expr);
@@ -53,6 +55,18 @@ public abstract class Expr implements Node {
         R visitPropertyAccess(PropertyAccess expr);
 
         R visitRange(Range range);
+    }
+
+    public static final class Empty extends Expr {
+
+        public Empty(Location location) {
+            super(location);
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitEmpty(this);
+        }
     }
 
     // error

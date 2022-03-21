@@ -92,6 +92,11 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     }
 
     @Override
+    public Optional<ImpType> visitEmpty(Expr.Empty empty) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<ImpType> visitEmptyList(Expr.EmptyList emptyList) {
         var bt = BuiltInType.getFromString(emptyList.tokenType.source());
 
@@ -193,8 +198,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         stmt.trueBlock.accept(this);
         if (stmt.falseStmt != null) stmt.falseStmt.accept(this);
 
-        // Todo: accept conditions and etc
-
         currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
     }
@@ -266,6 +269,13 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitLiteralList(Expr.LiteralList expr) {
+        if (expr.entries.size() == 0) {
+            Comptime.ListLiteralIncomplete.submit(file, expr);
+        }
+
+        for (var entry : expr.entries) {
+            entry.accept(this);
+        }
         return Optional.empty();
     }
 
@@ -393,6 +403,9 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         if (stmt.next.isEmpty()) {
             var bt = BuiltInType.getFromString(stmt.identifier.source());
             type = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.identifier.source()));
+            if (stmt.listType) {
+                type = new ListType(type);
+            }
         }
         // if type.next exists, make an unknown type and pass to TypeCheckVisitor
         else {

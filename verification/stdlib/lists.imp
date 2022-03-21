@@ -17,3 +17,14 @@ log(stringList)
 log("Push values to lists")
 push(intList, 4)
 log(intList)
+
+log("List function parameter")
+val l = int[]
+func listOp(il int[]) {
+    for i in range(0,10) {
+        push(il, i)
+    }
+    return
+}
+listOp(l)
+log(l)

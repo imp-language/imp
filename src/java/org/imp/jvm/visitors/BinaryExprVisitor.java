@@ -183,7 +183,7 @@ public class BinaryExprVisitor {
             case SUB -> goalType.getSubtractOpcode();
             case MUL -> goalType.getMultiplyOpcode();
             case DIV -> goalType.getDivideOpcode();
-            // Todo: Modulus
+            // Todo: Modulus implementation is more complicated than just a single opcode
             case MOD -> 0;
             case LT, GT, LE, GE -> 0;
             default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());

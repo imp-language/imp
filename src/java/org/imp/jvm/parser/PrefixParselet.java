@@ -25,11 +25,11 @@ public interface PrefixParselet {
     record Identifier() implements PrefixParselet {
         public Expr parse(Parser parser, Token token) {
             var loc = parser.lok();
-            if (parser.peek().type() == TokenType.LBRACK && parser.lookAhead(1).type() == TokenType.RBRACK) {
-                parser.consume();
-                parser.consume();
-                return new Expr.EmptyList(loc, token);
-            }
+//            if (parser.peek().type() == TokenType.LBRACK) {
+//                parser.consume();
+//                parser.consume(TokenType.RBRACK, "Expect ']' to close list constructor.");
+//                return new Expr.EmptyList(loc, token);
+//            }
             return new Expr.Identifier(loc, token);
 
         }

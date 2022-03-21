@@ -38,9 +38,13 @@ public enum Comptime {
             "Check that both sides of the assignment have the same type."),
     FunctionSignatureMismatch(12, "No function overloads exist on `{0}` that match the parameters `{1}`.", "Check the parameter positions and types of the called function."),
     IdentifierNotFound(13, "Identifier `{0}` not found.", null),
-    ReservedWord(14, "Identifier `{0}` is a resered word.", null);
+    ReservedWord(14, "Identifier `{0}` is a reserved word.", null),
+    NotIterable(15, "Expression of type `{0}` is not iterable.", "Check to be sure the type is iterable, like a list or range."),
+    ListLiteralIncomplete(16, "List literals must have one or more elements.", "To create an empty list do `type[]`."),
+    ListTypeError(17, "Expression of type `{0}` cannot be added to list of inferred type `{1}`", "Lists may only contain elements of the same type.")
 
     // Todo: variable not found
+    ;
 
     //
 
