@@ -55,6 +55,14 @@ public class CompilerTest {
     }
 
     @Test
+    void forLoop() throws IOException, InterruptedException {
+        assertEquals(
+                Load.gold(Path.of(moduleLocation, "simple/for.txt").toString()),
+                Load.run("simple/for", moduleLocation)
+        );
+    }
+
+    @Test
     void helloWorld() throws IOException, InterruptedException {
         assertEquals(Load.run("simple/helloWorld", moduleLocation), """
                 Hello, World!
