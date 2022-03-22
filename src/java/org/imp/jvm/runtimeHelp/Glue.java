@@ -5,6 +5,7 @@ import org.imp.jvm.domain.Modifier;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ExternalType;
 import org.imp.jvm.types.FuncType;
+import org.imp.jvm.types.ImpType;
 import org.imp.runtime.Batteries;
 import org.imp.runtime.MathLib;
 
@@ -37,7 +38,15 @@ public class Glue {
                 }
                 var parameters = new ArrayList<Identifier>();
                 for (var p : method.getParameterTypes()) {
-                    var id = new Identifier("_", new ExternalType(p));
+
+                    ImpType t = switch (p.getName()) {
+                        case "int" -> BuiltInType.INT;
+                        case "float" -> BuiltInType.FLOAT;
+                        case "boolean" -> BuiltInType.BOOLEAN;
+                        default -> new ExternalType(p);
+                    };
+
+                    var id = new Identifier("_", t);
                     parameters.add(id);
                 }
                 boolean isPrefixed = false;

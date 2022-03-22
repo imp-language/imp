@@ -190,6 +190,7 @@ public abstract class Stmt implements Node {
         public final Block body;
         public final List<Parameter> parameters;
         public final Token returnType;
+        public boolean hasReturn;
 
         public Function(Location loc, Token name, List<Parameter> parameters, Token returnType,
                         Block body) {

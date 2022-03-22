@@ -41,8 +41,8 @@ public enum Comptime {
     ReservedWord(14, "Identifier `{0}` is a reserved word.", null),
     NotIterable(15, "Expression of type `{0}` is not iterable.", "Check to be sure the type is iterable, like a list or range."),
     ListLiteralIncomplete(16, "List literals must have one or more elements.", "To create an empty list do `type[]`."),
-    ListTypeError(17, "Expression of type `{0}` cannot be added to list of inferred type `{1}`", "Lists may only contain elements of the same type.")
-
+    ListTypeError(17, "Expression of type `{0}` cannot be added to list of inferred type `{1}`", "Lists may only contain elements of the same type."),
+    ParameterTypeMismatch(18, "Argument of type `{0}` cannot supply a parameter of type `{1}`.", null)
     // Todo: variable not found
     ;
 

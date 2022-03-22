@@ -316,9 +316,9 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 //        code.put(qualifiedName, cw.toByteArray());
 
         // All methods must return something, even voids
-        if (funcType.name.equals("main")) {
-            funcType.ga.visitInsn(Opcodes.RETURN);
-        }
+//        if (funcType.name.equals("main")) {
+//            funcType.ga.visitInsn(Opcodes.RETURN);
+//        }
 
         currentEnvironment = currentEnvironment.getParent();
         functionStack.pop();

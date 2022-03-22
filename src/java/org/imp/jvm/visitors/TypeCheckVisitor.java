@@ -1,10 +1,12 @@
 package org.imp.jvm.visitors;
 
 import org.imp.jvm.Environment;
+import org.imp.jvm.SourceFile;
 import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
+import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.types.*;
 
@@ -17,12 +19,14 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     public final Environment rootEnvironment;
     public final File file;
+    public final SourceFile source;
     private final Stack<FuncType> functionStack = new Stack<>();
     public Environment currentEnvironment;
 
-    public TypeCheckVisitor(Environment rootEnvironment, File file) {
+    public TypeCheckVisitor(Environment rootEnvironment, SourceFile source) {
         this.rootEnvironment = rootEnvironment;
-        this.file = file;
+        this.file = source.file;
+        this.source = source;
         this.currentEnvironment = this.rootEnvironment;
     }
 
@@ -133,6 +137,22 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 }
                 var returnType = ft.returnType;
 
+                // Make sure parameter and argument types match.
+                Util.zip(ft.parameters, expr.arguments, (param, arg) -> {
+                    var argType = arg.accept(this);
+                    if (argType.isPresent()) {
+                        var at = argType.get();
+                        if (!at.equals(param.type)) {
+                            if (!(param.type instanceof ExternalType et && et.foundClass().equals(Object.class))) {
+                                // map list to list?
+                                // TODO(CURRENT) gotta figure out how to match types between local generics and stdlib
+                                Comptime.ParameterTypeMismatch.submit(file, arg, at.getName(), param.type.getName());
+                                return;
+                            }
+                        }
+                    }
+                });
+
                 for (var arg : expr.arguments) {
                     arg.accept(this);
                 }
@@ -242,6 +262,15 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
             currentEnvironment = childEnvironment;
             stmt.body.accept(this);
+
+            // Conditionally add a return stmt
+            if (!funcType.hasReturn2) {
+                var returnStmt = new Stmt.Return(
+                        new Location(0, 0),
+                        new Expr.Empty(new Location(0, 0))
+                );
+                stmt.body.statements.add(returnStmt);
+            }
 
             currentEnvironment = currentEnvironment.getParent();
             functionStack.pop();
@@ -448,6 +477,9 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 }
             }
         }
+
+        functionStack.peek().hasReturn2 = true;
+
         return Optional.empty();
     }
 

@@ -24,6 +24,9 @@ public class FuncType implements ImpType, Serializable {
     // Todo: refactor this to have a subclass with a generate method using in CodegenVisitor
     public boolean glue = false;
 
+
+    public boolean hasReturn2 = false;
+
     public Map<String, Integer> localMap = new HashMap<>();
     public Map<String, Integer> argMap = new HashMap<>();
 

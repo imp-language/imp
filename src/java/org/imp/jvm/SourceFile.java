@@ -37,7 +37,6 @@ public class SourceFile {
     // filename -> SourceFile
     private final LinkedMap<String, SourceFile> imports = new LinkedMap<>();
 
-
     public SourceFile(String projectRoot, String relativePath, String name) throws FileNotFoundException {
         /**
          * We need-
@@ -74,6 +73,15 @@ public class SourceFile {
         imports.put(s, sourceFile);
     }
 
+
+    public <T extends Stmt, R> void filter(Class<T> kind, Function<T, R> function) {
+        for (var s : stmts) {
+            if (kind.isInstance(s)) {
+                function.apply(kind.cast(s));
+            }
+        }
+    }
+
 //    @Deprecated
 //    public String base() {
 //        return relativePath;
@@ -84,13 +92,6 @@ public class SourceFile {
 //        return FilenameUtils.separatorsToUnix(file.getPath());
 //    }
 
-    public <T extends Stmt, R> void filter(Class<T> kind, Function<T, R> function) {
-        for (var s : stmts) {
-            if (kind.isInstance(s)) {
-                function.apply(kind.cast(s));
-            }
-        }
-    }
 
     public String getFullRelativePath() {
         return FilenameUtils.separatorsToUnix(Path.of(relativePath, name).toString());

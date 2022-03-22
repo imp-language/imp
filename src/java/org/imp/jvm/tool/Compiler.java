@@ -36,7 +36,7 @@ public record Compiler() {
         // a) Determine function return type based on type of expression returned.
         // b) Settle types of fields on structs
         // c) Error if multiple return statements in a function return different types.
-        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(entry.rootEnvironment, entry.file);
+        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(entry.rootEnvironment, entry);
         entry.acceptVisitor(typeCheckVisitor);
         Timer.log("Type checking done");
 
