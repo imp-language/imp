@@ -21,7 +21,6 @@ public class FuncType implements ImpType, Serializable {
     public ImpType returnType = BuiltInType.VOID;
     public MethodVisitor mv = null; // careful!
     public GeneratorAdapter ga = null;
-    // Todo: refactor this to have a subclass with a generate method using in CodegenVisitor
     public boolean glue = false;
 
 
@@ -33,18 +32,11 @@ public class FuncType implements ImpType, Serializable {
     public boolean isPrefixed = false;
     public String owner;
 
-    // Todo: refactor to use the String[] pattern from StructType instead of List<Identifier>
     public FuncType(String name, Modifier modifier, List<Identifier> parameters) {
         this.name = name;
         this.modifier = modifier;
         this.parameters = parameters;
-//        if (name.equals("main")) locals.add("args");
-//        else {
-//            for (var param : parameters) {
-//                locals.add(param.name);
-//
-//            }
-//        }
+
     }
 
     public int addLocal(String name, ImpType type) {

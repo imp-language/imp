@@ -449,11 +449,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         var t = stmt.expr.accept(this);
 
         ImpType type;
-        if (t.isPresent()) {
-            type = t.get();
-        } else {
-            type = new UnknownType();
-        }
+        type = t.orElseGet(UnknownType::new);
 
         var mut = Mutability.Val;
         if (stmt.mutability.type() == TokenType.MUT) {

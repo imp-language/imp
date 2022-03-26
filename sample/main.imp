@@ -1,20 +1,9 @@
 // tests for loops
 import "batteries"
 
-val i = 0
-i++
-log(i)
-i--
-log(i)
 
-val f = 99.0
-f++
-log(f)
-f--
-log(f)
+func hasNoReturn() {
+    log(4)
+}
 
-val d = -742d
-d++
-log(d)
-d--
-log(d)
+hasNoReturn()

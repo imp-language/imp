@@ -139,9 +139,8 @@ public class API {
         return fileMap;
     }
 
-    public static void buildProgram(Map<String, SourceFile> compilationSet, String moduleLocation) {
+    public static void buildProgram(Map<String, ? extends SourceFile> compilationSet, String moduleLocation) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
-        // Todo: bytecode generation visitor!
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);
             var allByteUnits = bytecodeGenerator.generate(source);

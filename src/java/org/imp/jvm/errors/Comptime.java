@@ -43,7 +43,8 @@ public enum Comptime {
     ListLiteralIncomplete(16, "List literals must have one or more elements.", "To create an empty list do `type[]`."),
     ListTypeError(17, "Expression of type `{0}` cannot be added to list of inferred type `{1}`", "Lists may only contain elements of the same type."),
     ParameterTypeMismatch(18, "Argument of type `{0}` cannot supply a parameter of type `{1}`.", null),
-    CannotPostfix(18, "Operator `{0}` cannot be applied to expression of type `{1}`.", null)
+    CannotPostfix(18, "Operator `{0}` cannot be applied to expression of type `{1}`.", null),
+    VoidUsage(19, "Cannot use the result of a void method in an expression.", "Methods returning `void` don't have any result so there is no return type to use.")
     // Todo: variable not found
     ;
 

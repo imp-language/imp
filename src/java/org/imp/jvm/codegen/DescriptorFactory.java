@@ -11,7 +11,7 @@ public final class DescriptorFactory {
 
 
     //
-    public static String getMethodDescriptor(Collection<Identifier> parameters, ImpType returnType) {
+    public static String getMethodDescriptor(Collection<? extends Identifier> parameters, ImpType returnType) {
         String parametersDescriptor = parameters.stream()
                 .map(parameter -> parameter.type.getDescriptor())
                 .collect(Collectors.joining("", "(", ")"));
@@ -19,7 +19,7 @@ public final class DescriptorFactory {
         return parametersDescriptor + returnDescriptor;
     }
 
-    public static String getDescriptor(Collection<ImpType> types, ImpType returnType) {
+    public static String getDescriptor(Collection<? extends ImpType> types, ImpType returnType) {
         String parametersDescriptor = types.stream()
                 .map(ImpType::getDescriptor)
                 .collect(Collectors.joining("", "(", ")"));

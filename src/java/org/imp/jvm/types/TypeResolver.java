@@ -2,9 +2,6 @@ package org.imp.jvm.types;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 public class TypeResolver {
 
 
@@ -26,25 +23,6 @@ public class TypeResolver {
         return result;
     }
 
-
-    public static Optional<BuiltInType> getBuiltInType(String typeName) {
-        // Todo: bad way of doing this
-        if (typeName.equals("boolean")) {
-            typeName = "bool";
-        }
-        if (typeName.equals("java.lang.String")) typeName = "string";
-        String finalTypeName = typeName;
-        return Arrays.stream(BuiltInType.values())
-                .filter(type -> type.getName().equals(finalTypeName))
-                .findFirst();
-    }
-
-
-    public static Optional<BuiltInType> getBuiltInTypeByClass(Class<?> c) {
-        return Arrays.stream(BuiltInType.values())
-                .filter(type -> c.equals(type.getTypeClass()))
-                .findFirst();
-    }
 
     /**
      * Defines the type hierarchy for the whole language tbh.

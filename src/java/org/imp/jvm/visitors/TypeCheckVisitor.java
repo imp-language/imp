@@ -142,6 +142,9 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     var at = arg.accept(this);
                     if (at.isPresent()) {
                         var argType = at.get();
+                        if (argType == BuiltInType.VOID) {
+                            Comptime.VoidUsage.submit(file, arg);
+                        }
                         if (!TypeResolver.typesMatch(argType, param.type)) {
                             Comptime.ParameterTypeMismatch.submit(file, arg, argType.getName(), param.type.getName());
                         }

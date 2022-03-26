@@ -25,7 +25,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         this.currentEnvironment = this.rootEnvironment;
     }
 
-    public String print(List<Stmt> stmts) {
+    public String print(List<? extends Stmt> stmts) {
         StringBuilder sb = new StringBuilder();
         for (var stmt : stmts) {
             sb.append(stmt.accept(this)).append("\n");

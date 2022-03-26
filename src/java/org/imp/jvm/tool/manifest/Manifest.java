@@ -64,7 +64,6 @@ public record Manifest(
     }
 
     public record Dependency(
-            /*Todo*/
     ) {
 
     }

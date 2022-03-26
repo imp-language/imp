@@ -58,7 +58,7 @@ public class SourceFile {
         this.stmts = parser.parse();
     }
 
-    public <R> List<R> acceptVisitor(IVisitor<R> visitor) {
+    public <R> List<R> acceptVisitor(IVisitor<? extends R> visitor) {
         List<R> results = new ArrayList<>();
         for (var s : this.stmts) {
             var r = s.accept(visitor);
@@ -74,7 +74,7 @@ public class SourceFile {
     }
 
 
-    public <T extends Stmt, R> void filter(Class<T> kind, Function<T, R> function) {
+    public <T extends Stmt, R> void filter(Class<? extends T> kind, Function<? super T, R> function) {
         for (var s : stmts) {
             if (kind.isInstance(s)) {
                 function.apply(kind.cast(s));

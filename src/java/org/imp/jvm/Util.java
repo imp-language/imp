@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Util {
-    public static <A, B, O> Stream<O> zipMap(List<A> a, List<B> b, BiFunction<A, B, O> lambda) throws ArrayIndexOutOfBoundsException {
+    public static <A, B, O> Stream<O> zipMap(List<? extends A> a, List<? extends B> b, BiFunction<A, B, ? extends O> lambda) throws ArrayIndexOutOfBoundsException {
         var l = new ArrayList<O>();
         if (a.size() == b.size()) {
             var c = Stream.of(a, b).map(Objects::toString).collect(Collectors.joining(", "));
@@ -26,7 +26,7 @@ public class Util {
         return l.stream();
     }
 
-    public static <A, B, O> void zip(List<A> a, List<B> b, BiConsumer<A, B> lambda) throws ArrayIndexOutOfBoundsException {
+    public static <A, B, O> void zip(List<? extends A> a, List<? extends B> b, BiConsumer<A, ? super B> lambda) throws ArrayIndexOutOfBoundsException {
         if (a.size() == b.size()) {
             var c = Stream.of(a, b).map(Objects::toString).collect(Collectors.joining(", "));
             var i1 = a.iterator();
@@ -51,7 +51,7 @@ public class Util {
         return false;
     }
 
-    public static String parameterString(List<Identifier> parameters) {
+    public static String parameterString(List<? extends Identifier> parameters) {
         return parameters.stream().map(p -> p.name + " " + p.type).collect(Collectors.joining(", "));
     }
 
