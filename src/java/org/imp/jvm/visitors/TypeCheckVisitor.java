@@ -360,6 +360,11 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitPostfixExpr(Expr.Postfix expr) {
+        expr.realType = expr.expr.accept(this).get();
+
+        if (!(expr.realType instanceof BuiltInType bt && bt.isNumeric())) {
+            Comptime.CannotPostfix.submit(file, expr.expr, expr.operator.source(), expr.realType.getName());
+        }
         return Optional.empty();
     }
 

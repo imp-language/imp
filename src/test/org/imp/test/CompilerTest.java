@@ -93,6 +93,18 @@ public class CompilerTest {
     }
 
     @Test
+    void postfix() throws IOException, InterruptedException {
+        assertEquals("""
+                1
+                0
+                100.0
+                99.0
+                -741.0
+                -742.0
+                """, Load.run("simple/postfix", moduleLocation));
+    }
+
+    @Test
     void relational() throws IOException, InterruptedException {
         assertEquals(
                 Load.gold(Path.of(moduleLocation, "simple/relational.txt").toString()),

@@ -295,6 +295,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitPostfixExpr(Expr.Postfix expr) {
+        expr.expr.accept(this);
         return Optional.empty();
     }
 

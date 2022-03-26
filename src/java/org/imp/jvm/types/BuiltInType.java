@@ -3,6 +3,7 @@ package org.imp.jvm.types;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.GeneratorAdapter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -229,6 +230,16 @@ public enum BuiltInType implements ImpType, Serializable {
     @Override
     public String kind() {
         return null;
+    }
+
+    public void pushOne(GeneratorAdapter ga) {
+        switch (this) {
+            case INT -> ga.push(1);
+            case FLOAT -> ga.push(1.0f);
+            case DOUBLE -> ga.push(1.0);
+            default -> ga.push(0);
+        }
+        ;
     }
 
     @Override

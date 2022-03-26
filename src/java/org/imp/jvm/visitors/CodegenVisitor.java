@@ -464,7 +464,19 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitPostfixExpr(Expr.Postfix expr) {
 
-        throw new NotImplementedException("method not implemented");
+        var ga = functionStack.peek().ga;
+        expr.expr.accept(this);
+        ((BuiltInType) expr.realType).pushOne(ga);
+        int opcode = expr.realType.getAddOpcode();
+        if (expr.operator.type() == TokenType.DEC) opcode = expr.realType.getSubtractOpcode();
+
+        ga.visitInsn(opcode);
+        // Todo: store this
+        if (expr.expr instanceof Expr.Identifier eid) {
+
+            ga.storeLocal(functionStack.peek().localMap.get(eid.identifier.source()));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -604,6 +616,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         stmt.localIndex = funcType.ga.newLocal(Type.getType(type.getDescriptor()));
         funcType.localMap.put(stmt.identifier(), stmt.localIndex);
         funcType.ga.storeLocal(stmt.localIndex, Type.getType(type.getDescriptor()));
+
+        // Postfix stuff
+        if (stmt.expr instanceof Expr.Postfix pe) {
+            pe.localIndex = stmt.localIndex;
+        }
 
         return Optional.empty();
     }

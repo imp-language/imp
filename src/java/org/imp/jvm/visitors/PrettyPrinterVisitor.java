@@ -240,7 +240,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitPostfixExpr(Expr.Postfix expr) {
-        return s(expr.operator.source(), print(expr.expr));
+        return print(expr.expr) + expr.operator.source();
     }
 
     @Override

@@ -240,6 +240,7 @@ public abstract class Expr implements Node {
 
         public final Expr expr;
         public final Token operator;
+        public int localIndex = -1;
 
         public Postfix(Location location, Expr expr, Token operator) {
             super(location);
