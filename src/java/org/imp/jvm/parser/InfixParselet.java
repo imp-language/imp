@@ -54,6 +54,10 @@ public interface InfixParselet {
     record IndexAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             var loc = parser.lok();
+//            if (parser.peek().type() == TokenType.RBRACK) {
+//                parser.consume();
+//                return new Expr.EmptyList(loc, token);
+//            }
             Expr right = parser.expression(precedence());
             parser.consume(TokenType.RBRACK, "Expected ']' after index access.");
 

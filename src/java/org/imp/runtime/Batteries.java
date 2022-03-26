@@ -36,6 +36,7 @@ public class Batteries {
         r.add(a);
     }
 
+    // Todo: only allow items of same type to be pushed to list
     public static <T> T pop(List<T> r) {
         return r.remove(r.size() - 1);
     }

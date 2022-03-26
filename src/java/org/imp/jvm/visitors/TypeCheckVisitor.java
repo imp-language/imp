@@ -139,16 +139,11 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
                 // Make sure parameter and argument types match.
                 Util.zip(ft.parameters, expr.arguments, (param, arg) -> {
-                    var argType = arg.accept(this);
-                    if (argType.isPresent()) {
-                        var at = argType.get();
-                        if (!at.equals(param.type)) {
-                            if (!(param.type instanceof ExternalType et && et.foundClass().equals(Object.class))) {
-                                // map list to list?
-                                // TODO(CURRENT) gotta figure out how to match types between local generics and stdlib
-                                Comptime.ParameterTypeMismatch.submit(file, arg, at.getName(), param.type.getName());
-                                return;
-                            }
+                    var at = arg.accept(this);
+                    if (at.isPresent()) {
+                        var argType = at.get();
+                        if (!TypeResolver.typesMatch(argType, param.type)) {
+                            Comptime.ParameterTypeMismatch.submit(file, arg, argType.getName(), param.type.getName());
                         }
                     }
                 });

@@ -72,7 +72,13 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     @Override
     public String visitCall(Expr.Call expr) {
 
-        return print(expr.item) + "(" + expr.arguments.stream().map(this::print).collect(Collectors.joining(", ")) +
+        return print(expr.item) + "(" + expr.arguments.stream().map(a -> {
+            String repr = print(a);
+            if (displayAnnotations) {
+                repr += " : " + a.realType.getName();
+            }
+            return repr;
+        }).collect(Collectors.joining(", ")) +
                 ")";
     }
 
