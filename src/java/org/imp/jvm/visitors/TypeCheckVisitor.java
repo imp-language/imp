@@ -19,14 +19,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     public final Environment rootEnvironment;
     public final File file;
-    public final SourceFile source;
     private final Stack<FuncType> functionStack = new Stack<>();
     public Environment currentEnvironment;
 
     public TypeCheckVisitor(Environment rootEnvironment, SourceFile source) {
         this.rootEnvironment = rootEnvironment;
         this.file = source.file;
-        this.source = source;
         this.currentEnvironment = this.rootEnvironment;
     }
 
@@ -329,10 +327,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         var firstType = expr.entries.get(0).accept(this);
 
-        if (firstType.isPresent()) {
-
-            expr.realType = new ListType(firstType.get());
-        }
+        firstType.ifPresent(type -> expr.realType = new ListType(type));
 
         for (int i = 0; i < expr.entries.size(); i++) {
             var t = expr.entries.get(i).accept(this);

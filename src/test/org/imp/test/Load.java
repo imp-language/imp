@@ -10,7 +10,7 @@ import java.nio.file.Path;
 public class Load {
     public static final String verificationPath = "verification/";
 
-    static Compiler compiler = new Compiler();
+    static final Compiler compiler = new Compiler();
 
     public static String run(String testPath, String projectRoot) throws IOException, InterruptedException {
         String className = compiler.compile(projectRoot, testPath + ".imp");

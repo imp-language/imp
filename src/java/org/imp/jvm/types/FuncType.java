@@ -15,6 +15,8 @@ public class FuncType implements ImpType, Serializable {
     public final Modifier modifier;
     public final List<Identifier> parameters;
     public final int localOffset = 0;
+    public final Map<String, Integer> localMap = new HashMap<>();
+    public final Map<String, Integer> argMap = new HashMap<>();
     //    public final String[] fieldNames;
 //    public final Type[] fieldTypes;
     public String name;
@@ -22,13 +24,7 @@ public class FuncType implements ImpType, Serializable {
     public MethodVisitor mv = null; // careful!
     public GeneratorAdapter ga = null;
     public boolean glue = false;
-
-
     public boolean hasReturn2 = false;
-
-    public Map<String, Integer> localMap = new HashMap<>();
-    public Map<String, Integer> argMap = new HashMap<>();
-
     public boolean isPrefixed = false;
     public String owner;
 

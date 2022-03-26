@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 
 public class Identifier implements Serializable {
-    public String name;
+    public final String name;
     public ImpType type;
 
     public Identifier(String name, ImpType type) {

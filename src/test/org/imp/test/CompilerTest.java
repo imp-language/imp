@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CompilerTest {
-    static String pwd = System.getProperty("user.dir");
-    static String moduleLocation = Path.of(pwd, "verification").toString();
+    static final String pwd = System.getProperty("user.dir");
+    static final String moduleLocation = Path.of(pwd, "verification").toString();
 
     @Test
     void Arithmetic() throws IOException, InterruptedException {

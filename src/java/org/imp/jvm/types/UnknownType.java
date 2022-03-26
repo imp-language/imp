@@ -6,18 +6,15 @@ import java.io.Serializable;
 
 public class UnknownType implements ImpType, Serializable {
     static int counter = 1;
-    final int id;
-    public String typeName;
+    public final String typeName;
 
     public UnknownType(String typeName) {
         this.typeName = typeName;
-        id = counter;
         counter++;
     }
 
     public UnknownType() {
         this.typeName = "";
-        id = counter;
         counter++;
     }
 

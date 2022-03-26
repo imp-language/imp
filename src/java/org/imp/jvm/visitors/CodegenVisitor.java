@@ -27,8 +27,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public final SourceFile source;
     public final File file;
     public final ClassWriter cw;
+    public final Map<StructType, ClassWriter> structWriters = new HashMap<>();
     private final Stack<FuncType> functionStack = new Stack<>();
-    public Map<StructType, ClassWriter> structWriters = new HashMap<>();
     public Environment currentEnvironment;
 
     public CodegenVisitor(Environment rootEnvironment, SourceFile source, ClassWriter cw) {
@@ -105,8 +105,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 //        expr.item.accept(this); (don't do this)
 
         if (expr.item instanceof Expr.Identifier identifier) {
-            var type = currentEnvironment.getVariable(identifier.identifier.source());
-            expr.item.realType = type;
+            expr.item.realType = currentEnvironment.getVariable(identifier.identifier.source());
         }
 
         if (expr.item.realType instanceof FuncType callType) {
@@ -168,11 +167,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             ga.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Objects", "requireNonNull", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
             ga.pop();
 
-            String typeDescriptor = "";
+            StringBuilder typeDescriptor = new StringBuilder();
             // Generate arguments
             for (var arg : expr.arguments) {
                 arg.accept(this);
-                typeDescriptor += arg.realType.getDescriptor();
+                typeDescriptor.append(arg.realType.getDescriptor());
             }
 
             funcType.ga.visitMethodInsn(
@@ -540,7 +539,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_FINAL + Opcodes.ACC_SYNTHETIC, "this$0", descriptor, null, null);
         fieldVisitor.visitEnd();
 
-        String constructorDescriptor = "";
+        StringBuilder constructorDescriptor = new StringBuilder();
 
         // Add fields
         for (int i = 0; i < structType.fieldNames.length; i++) {
@@ -551,7 +550,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             fieldVisitor = innerCw.visitField(Opcodes.ACC_PUBLIC, n, descriptor, null, null);
             fieldVisitor.visitEnd();
 
-            constructorDescriptor += descriptor;
+            constructorDescriptor.append(descriptor);
         }
 
         // Generate inner class Struct constructor

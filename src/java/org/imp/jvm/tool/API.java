@@ -21,7 +21,7 @@ import java.util.*;
 
 public class API {
 
-    static List<SourceFile> compilationSet = new ArrayList<>();
+    static final List<SourceFile> compilationSet = new ArrayList<>();
 
     /**
      * Tokenize, parse, and build environments for a file.
@@ -84,7 +84,7 @@ public class API {
     }
 
 
-    public static Graph<SourceFile, DefaultEdge> dependencyGraph(SourceFile entry) throws FileNotFoundException {
+    public static Graph<SourceFile, DefaultEdge> dependencyGraph(SourceFile entry) {
         DependencyWalker walker = new DependencyWalker();
         var dependencies = walker.walkDependencies(entry);
         DOTExporter<SourceFile, DefaultEdge> exporter =

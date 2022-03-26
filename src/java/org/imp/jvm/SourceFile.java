@@ -38,7 +38,7 @@ public class SourceFile {
     private final LinkedMap<String, SourceFile> imports = new LinkedMap<>();
 
     public SourceFile(String projectRoot, String relativePath, String name) throws FileNotFoundException {
-        /**
+        /*
          * We need-
          * 1. project root directory
          * 2. file name

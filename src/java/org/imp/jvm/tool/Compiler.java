@@ -15,10 +15,7 @@ public record Compiler() {
 
 
     /**
-     * @param filename
-     * @param projectRoot
      * @return java class name ('.' separated) relative to the project root
-     * @throws FileNotFoundException
      */
     public String compile(String projectRoot, String filename) throws FileNotFoundException {
 

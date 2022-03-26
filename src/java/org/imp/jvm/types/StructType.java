@@ -143,12 +143,4 @@ public class StructType implements ImpType, Serializable {
         return "struct " + getName() + " {" + Util.parameterString(fieldNames, fieldTypes) + "}";
     }
 
-    public class Date {
-        public int day;
-        public int month;
-        public int year;
-
-        public Date() {
-        }
-    }
 }

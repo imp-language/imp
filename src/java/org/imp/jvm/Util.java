@@ -3,7 +3,10 @@ package org.imp.jvm;
 import org.imp.jvm.domain.Identifier;
 import org.imp.jvm.types.ImpType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -13,7 +16,6 @@ public class Util {
     public static <A, B, O> Stream<O> zipMap(List<? extends A> a, List<? extends B> b, BiFunction<A, B, ? extends O> lambda) throws ArrayIndexOutOfBoundsException {
         var l = new ArrayList<O>();
         if (a.size() == b.size()) {
-            var c = Stream.of(a, b).map(Objects::toString).collect(Collectors.joining(", "));
             var i1 = a.iterator();
             var i2 = b.iterator();
             while (i1.hasNext() && i2.hasNext()) {
@@ -28,7 +30,6 @@ public class Util {
 
     public static <A, B, O> void zip(List<? extends A> a, List<? extends B> b, BiConsumer<A, ? super B> lambda) throws ArrayIndexOutOfBoundsException {
         if (a.size() == b.size()) {
-            var c = Stream.of(a, b).map(Objects::toString).collect(Collectors.joining(", "));
             var i1 = a.iterator();
             var i2 = b.iterator();
             while (i1.hasNext() && i2.hasNext()) {

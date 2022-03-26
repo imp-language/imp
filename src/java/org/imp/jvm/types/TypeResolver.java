@@ -32,10 +32,6 @@ public class TypeResolver {
      *      Assume this is a standard library function that accepts Object.</li>
      *     <li>If both types are BuiltInType, they must be equal to match.</li>
      * </ol>
-     *
-     * @param a
-     * @param b
-     * @return
      */
     public static boolean typesMatch(ImpType a, ImpType b) {
         // 1

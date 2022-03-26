@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ReservedWords {
-    static Set<String> reserved = new HashSet<>();
+    static final Set<String> reserved = new HashSet<>();
 
     static {
         reserved.add("int");

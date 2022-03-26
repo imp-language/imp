@@ -388,8 +388,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
         // Create struct type object
         StructType structType = new StructType(name, fieldNames, fieldTypes);
-        String innerName = source.getFullRelativePath() + "$" + name;
-        structType.qualifiedName = innerName;
+        structType.qualifiedName = source.getFullRelativePath() + "$" + name;
         structType.parentName = source.getFullRelativePath();
         currentEnvironment.addVariableOrError(name, structType, file, stmt);
 

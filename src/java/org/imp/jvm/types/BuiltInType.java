@@ -239,7 +239,6 @@ public enum BuiltInType implements ImpType, Serializable {
             case DOUBLE -> ga.push(1.0);
             default -> ga.push(0);
         }
-        ;
     }
 
     @Override
