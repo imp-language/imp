@@ -71,8 +71,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitBinaryExpr(Expr.Binary expr) {
         var funcType = functionStack.peek();
         var ga = funcType.ga;
-        var left = expr.left;
-        var right = expr.right;
         if (expr.realType.equals(BuiltInType.STRING)) {
             BinaryExprVisitor.concatenateStrings(ga, expr, this);
         } else if (expr.realType == BuiltInType.BOOLEAN) {
@@ -154,7 +152,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         } else if (expr.item.realType instanceof StructType st) {
             // initialize instance of struct class and push to stack
             System.out.println("Generating instance of struct " + st.name);
-            String ownerDescriptor = st.getInternalName();
             var ga = funcType.ga;
 
             ga.visitTypeInsn(Opcodes.NEW, st.qualifiedName); //NEW instruction takes object descriptor as an input
@@ -437,10 +434,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ClassWriter> visitLogicalExpr(Expr.Logical expr) {
-        throw new NotImplementedException("method not implemented");
-    }
 
     @Override
     public Optional<ClassWriter> visitNew(Expr.New expr) {

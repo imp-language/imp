@@ -12,7 +12,6 @@ import org.imp.jvm.visitors.EnvironmentVisitor;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,34 +80,6 @@ public class API {
         return source;
     }
 
-
-    public static Map<String, SourceFile> gatherImports(SourceFile current) {
-        Map<String, SourceFile> fileMap = new HashMap<>();
-
-        current.filter(Stmt.Import.class, (importStmt) -> {
-            String relative = importStmt.stringLiteral.source();
-            String filePath = Path.of(current.projectRoot, current.relativePath, relative + ".imp").toString();
-
-            filePath = FilenameUtils.separatorsToUnix(filePath);
-            String n = FilenameUtils.getName(filePath);
-            var f = new File(filePath);
-            if (f.exists()) {
-                SourceFile next = null;
-                try {
-                    next = parse(current.projectRoot, relative, n);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                fileMap.put(filePath, next);
-//                System.out.println(filePath);
-                current.addImport(f, next);
-            }
-
-            return null;
-        });
-
-        return fileMap;
-    }
 
     public static void buildProgram(Map<String, ? extends SourceFile> compilationSet) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();

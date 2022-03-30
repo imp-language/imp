@@ -120,7 +120,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
                 source += " : " + t;
 
             } else {
-                source += " : $reee";
+                source += " : ";
             }
         }
 
@@ -194,10 +194,6 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         return "[" + expr.entries.stream().map(this::print).collect(Collectors.joining(",")) + "]";
     }
 
-    @Override
-    public String visitLogicalExpr(Expr.Logical expr) {
-        return null;
-    }
 
     @Override
     public String visitNew(Expr.New expr) {
@@ -215,7 +211,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
                 }
 
             } else {
-                name += " : $reee";
+                name += " : ";
             }
         }
         //Todo: below
@@ -255,7 +251,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
                     s += " : " + t;
 
                 } else {
-                    s += " : $reee";
+                    s += " : $";
                 }
             }
         }
@@ -315,7 +311,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
                 name += " : " + t;
 
             } else {
-                name += " : $reee";
+                name += " : $";
             }
         }
 

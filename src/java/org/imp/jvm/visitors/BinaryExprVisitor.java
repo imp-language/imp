@@ -111,7 +111,7 @@ public class BinaryExprVisitor {
                 right.accept(visitor);
                 cmpType = rType;
             } else {
-                // no cast needed
+                // now cast needed
                 left.accept(visitor);
                 right.accept(visitor);
             }

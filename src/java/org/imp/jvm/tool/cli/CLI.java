@@ -18,12 +18,13 @@ import java.nio.file.Path;
 )
 public class CLI implements Runnable {
 
+    @SuppressWarnings("unused")
     @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
     boolean usageHelpRequested;
 
 
     public static void main(String[] args) {
-        int result = new CommandLine(new CLI()).execute(args);
+        new CommandLine(new CLI()).execute(args);
     }
 
     /**

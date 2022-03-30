@@ -2,11 +2,9 @@ package org.imp.jvm.tool;
 
 import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.SourceFile;
 import org.imp.jvm.types.ImpType;
 
-import javax.sql.rowset.serial.SerialBlob;
 import java.io.*;
 import java.nio.file.Path;
 import java.sql.*;
@@ -25,7 +23,7 @@ public class ExportTable {
 
     public static void initDB(Path path) {
         try {
-            new File(path.toString()).getParentFile().mkdirs();
+            if (!new File(path.toString()).getParentFile().mkdirs()) System.exit(-1);
             connection = DriverManager.getConnection("jdbc:sqlite:" + path);
             Statement statement = ExportTable.connection.createStatement();
             statement.executeUpdate("drop table if exists ExportTable");
@@ -98,8 +96,6 @@ public class ExportTable {
             oos.writeObject(type);
             byte[] employeeAsBytes = baos.toByteArray();
 
-            var b = new SerialBlob(employeeAsBytes);
-
             psAddExport.setBytes(6, employeeAsBytes);
             psAddExport.executeUpdate();
         } catch (SQLException | IOException e) {
@@ -147,12 +143,6 @@ public class ExportTable {
     public static Optional<ImpType> get(String source, String name) {
         String path = FilenameUtils.separatorsToUnix(source);
         return Optional.ofNullable(table.get(path, name));
-    }
-
-    public static String dump() {
-        StringBuilder s = new StringBuilder();
-        table.forEach((k1, k2) -> s.append(StringUtils.rightPad(k1.toString(), 35)).append("\t").append(k2).append("\n"));
-        return s.toString();
     }
 
     public record ExportResult(String qualifiedName, String name, String source, String kind, String objectName

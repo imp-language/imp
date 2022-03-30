@@ -344,10 +344,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.of(expr.realType);
     }
 
-    @Override
-    public Optional<ImpType> visitLogicalExpr(Expr.Logical expr) {
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ImpType> visitNew(Expr.New expr) {

@@ -21,7 +21,7 @@ public enum Comptime {
             "Make sure all types are defined or builtin."),
     TypeNotResolved(2, "Variable `{0}` cannot be resolved to a type.",
             "Make sure all variables are properly spelled etc."),
-    ModuleNotFound(3, "Module `{0}` is not found.", "Is the module misspelled?"),
+    @SuppressWarnings("unused") ModuleNotFound(3, "Module `{0}` is not found.", "Is the module misspelled?"),
     Redeclaration(4, "Redeclaration of variable `{0}`.",
             "You cannot redeclare variables."),
     ReturnTypeMismatch(5,
@@ -29,7 +29,7 @@ public enum Comptime {
             "Make sure all return statements in your function are returning the same type."),
     PropertyNotFound(6, "Type `{0}` contains no field `{1}`.", null),
     CannotApplyOperator(7, "Operator `{0}` cannot be applied to types `{1}` and `{2}`", null),
-    ExternNotFound(8, "External object `{0}` not found.", "Ensure the external type you are referencing actually exists."),
+    @SuppressWarnings("unused") ExternNotFound(8, "External object `{0}` not found.", "Ensure the external type you are referencing actually exists."),
     MethodNotFound(9, "Method `{0}` not found.", null),
 
     MutabilityError(10, "Variable `{0}` is immutable and cannot receive assignment.",

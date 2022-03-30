@@ -44,7 +44,6 @@ public abstract class Expr implements Node {
 
         R visitLiteralList(LiteralList expr);
 
-        R visitLogicalExpr(Logical expr);
 
         R visitNew(New expr);
 
@@ -161,26 +160,6 @@ public abstract class Expr implements Node {
 
     }
 
-    // expression comparison expression
-    public static final class Logical extends Expr {
-
-        public final Expr left;
-        public final Token comparison;
-        public final Expr right;
-
-        Logical(Location loc, Expr left, Token comparison, Expr right) {
-            super(loc);
-            this.left = left;
-            this.comparison = comparison;
-            this.right = right;
-        }
-
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitLogicalExpr(this);
-        }
-
-
-    }
 
     // literal number, boolean or string
     public static final class Literal extends Expr {

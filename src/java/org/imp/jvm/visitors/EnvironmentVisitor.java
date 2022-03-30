@@ -283,10 +283,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ImpType> visitLogicalExpr(Expr.Logical expr) {
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ImpType> visitNew(Expr.New expr) {
@@ -312,44 +308,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitPropertyAccess(Expr.PropertyAccess expr) {
-        var exprs = expr.exprs;
-        var start = exprs.get(0);
-        var startType = start.accept(this);
-        if (startType.isPresent()) {
-            if (startType.get() instanceof ExternalType externalType) {
-                // Todo: resolve the external static method call
-                /*
-                 * Notes:
-                 * use f = c.getDeclaredField(String) to get a Field like "out" here
-                 * then do fieldType = f.type to get the type of said field
-                 * method = fieldType.getMethod("println", ...)
-                 *
-                 * All in all, we *replace* the PropertyAccess expression somehow
-                 * with a note for the next steps to treat the entire expr as an
-                 * external method call. Our job is to decide what method to call.
-                 */
-                try {
-                    var c = externalType.foundClass();
 
-                    var id = ((Expr.Identifier) exprs.get(1)).identifier.source();
-
-                    var f = c.getDeclaredField(id);
-                    var fieldType = f.getType();
-
-                    var expr2 = exprs.get(2);
-                    if (expr2 instanceof Expr.Call call) {
-                        var funcName = ((Expr.Identifier) call.item).identifier.source();
-
-//                    var m = fieldType.getMethod("println", types);
-                    }
-
-
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
         return Optional.empty();
     }
 
@@ -360,14 +319,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitReturnStmt(Stmt.Return stmt) {
-        // Set the return type of the function to the type of the
-        // expression you are returning.
         stmt.expr.accept(this);
-        var e = stmt.expr;
-        if (e instanceof Expr.Identifier identifier) {
-            var name = identifier.identifier.source();
-            var v = currentEnvironment.getVariable(name);
-        }
 
         return Optional.empty();
     }

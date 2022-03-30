@@ -2,7 +2,6 @@ package org.imp.jvm.types;
 
 import org.imp.jvm.Util;
 import org.imp.jvm.domain.Identifier;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
 import java.io.Serializable;
@@ -12,12 +11,10 @@ import java.util.Map;
 
 public class FuncType implements ImpType, Serializable {
     public final List<Identifier> parameters;
-    public final int localOffset = 0;
     public final Map<String, Integer> localMap = new HashMap<>();
     public final Map<String, Integer> argMap = new HashMap<>();
     public String name;
     public ImpType returnType = BuiltInType.VOID;
-    public MethodVisitor mv = null; // careful!
     public GeneratorAdapter ga = null;
     public boolean glue = false;
     public boolean hasReturn2 = false;
