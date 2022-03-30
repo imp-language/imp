@@ -97,11 +97,7 @@ public class SourceFile {
         return FilenameUtils.separatorsToUnix(Path.of(relativePath, name).toString());
     }
 
-    public SourceFile getImport(String filepath) {
-        return imports.get(filepath);
-    }
-
-//    public String name() {
+    //    public String name() {
 //        return FilenameUtils.removeExtension(file.getName());
 //    }
 
@@ -109,10 +105,6 @@ public class SourceFile {
 //    public String path() {
 //        return FilenameUtils.separatorsToUnix(Path.of(basePath(), name()).toString());
 //    }
-
-    public LinkedMap<String, SourceFile> getImports() {
-        return imports;
-    }
 
     @Override
     public String toString() {

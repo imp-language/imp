@@ -14,10 +14,6 @@ public class Tokenizer implements Iterator<Token> {
         this.reader = new PushbackReader(new FileReader(file), 5);
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
     @Override
     public boolean hasNext() {
         return true;

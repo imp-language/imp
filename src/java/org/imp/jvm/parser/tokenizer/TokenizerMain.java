@@ -5,8 +5,6 @@ import org.openjdk.jmh.annotations.Benchmark;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TokenizerMain {
 
@@ -26,7 +24,6 @@ public class TokenizerMain {
         var lexer = new Tokenizer(file);
         Timer.log("Lexer created");
         Token tok;
-        List<Token> tokens = new ArrayList<>();
         do {
             tok = lexer.next();
         } while (tok.type() != TokenType.EOF);

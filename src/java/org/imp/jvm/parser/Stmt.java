@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public abstract class Stmt implements Node {
     public final Location location;
-    public boolean inMain = false;
 
     protected Stmt(Location location) {
         this.location = location;
@@ -190,7 +189,6 @@ public abstract class Stmt implements Node {
         public final Block body;
         public final List<Parameter> parameters;
         public final Token returnType;
-        public boolean hasReturn;
 
         public Function(Location loc, Token name, List<Parameter> parameters, Token returnType,
                         Block body) {
