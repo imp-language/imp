@@ -7,7 +7,6 @@ import org.objectweb.asm.Opcodes;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class StructType implements ImpType, Serializable {
     // Todo: replace with Map<String,Type>
@@ -34,14 +33,6 @@ public class StructType implements ImpType, Serializable {
 
     }
 
-    /**
-     * @param fieldName String name
-     * @return type of struct field if fieldName exists in this struct
-     */
-    public static Optional<Identifier> findStructField(StructType st, String fieldName) {
-        return st.fields.stream().filter(id -> id.name.equals(fieldName)).findFirst();
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
@@ -52,15 +43,6 @@ public class StructType implements ImpType, Serializable {
         }
     }
 
-
-    public Optional<ImpType> findType(String name) {
-        for (int i = 0; i < fieldNames.length; i++) {
-            if (fieldNames[i].equals(name)) {
-                return Optional.of(fieldTypes[i]);
-            }
-        }
-        return Optional.empty();
-    }
 
     @Override
     public int getAddOpcode() {

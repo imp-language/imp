@@ -82,29 +82,10 @@ public class SourceFile {
         }
     }
 
-//    @Deprecated
-//    public String base() {
-//        return relativePath;
-//    }
-
-//    @Deprecated
-//    public String basePath() {
-//        return FilenameUtils.separatorsToUnix(file.getPath());
-//    }
-
 
     public String getFullRelativePath() {
         return FilenameUtils.separatorsToUnix(Path.of(relativePath, name).toString());
     }
-
-    //    public String name() {
-//        return FilenameUtils.removeExtension(file.getName());
-//    }
-
-//    @Deprecated
-//    public String path() {
-//        return FilenameUtils.separatorsToUnix(Path.of(basePath(), name()).toString());
-//    }
 
     @Override
     public String toString() {

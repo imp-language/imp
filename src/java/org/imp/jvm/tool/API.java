@@ -8,15 +8,13 @@ import org.imp.jvm.errors.Logger;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.EnvironmentVisitor;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.DefaultAttribute;
-import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class API {
@@ -84,34 +82,7 @@ public class API {
     }
 
 
-    public static Graph<SourceFile, DefaultEdge> dependencyGraph(SourceFile entry) {
-        DependencyWalker walker = new DependencyWalker();
-        var dependencies = walker.walkDependencies(entry);
-        DOTExporter<SourceFile, DefaultEdge> exporter =
-                new DOTExporter<>(v ->
-                        v.file.getName()
-                                .replace('.', '_')
-                                .replace('/', '_')
-                                .replace('\\', '_')
-                                .replace('-', '_')
-                                .replace(':', '_')
-
-                );
-        exporter.setVertexAttributeProvider((v) -> {
-            Map<String, Attribute> map = new LinkedHashMap<>();
-            map.put("label", DefaultAttribute.createAttribute(v.toString()));
-            return map;
-        });
-        Writer writer = new StringWriter();
-        exporter.exportGraph(dependencies, writer);
-//        System.out.println(writer);
-
-        return dependencies;
-    }
-
-
     public static Map<String, SourceFile> gatherImports(SourceFile current) {
-        String basePath = FilenameUtils.getPath(current.file.getPath());
         Map<String, SourceFile> fileMap = new HashMap<>();
 
         current.filter(Stmt.Import.class, (importStmt) -> {
@@ -139,7 +110,7 @@ public class API {
         return fileMap;
     }
 
-    public static void buildProgram(Map<String, ? extends SourceFile> compilationSet, String moduleLocation) {
+    public static void buildProgram(Map<String, ? extends SourceFile> compilationSet) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);

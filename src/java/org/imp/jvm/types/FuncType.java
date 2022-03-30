@@ -2,7 +2,6 @@ package org.imp.jvm.types;
 
 import org.imp.jvm.Util;
 import org.imp.jvm.domain.Identifier;
-import org.imp.jvm.domain.Modifier;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
@@ -12,13 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 public class FuncType implements ImpType, Serializable {
-    public final Modifier modifier;
     public final List<Identifier> parameters;
     public final int localOffset = 0;
     public final Map<String, Integer> localMap = new HashMap<>();
     public final Map<String, Integer> argMap = new HashMap<>();
-    //    public final String[] fieldNames;
-//    public final Type[] fieldTypes;
     public String name;
     public ImpType returnType = BuiltInType.VOID;
     public MethodVisitor mv = null; // careful!
@@ -28,15 +24,10 @@ public class FuncType implements ImpType, Serializable {
     public boolean isPrefixed = false;
     public String owner;
 
-    public FuncType(String name, Modifier modifier, List<Identifier> parameters) {
+    public FuncType(String name, List<Identifier> parameters) {
         this.name = name;
-        this.modifier = modifier;
         this.parameters = parameters;
 
-    }
-
-    public int addLocal(String name, ImpType type) {
-        return 0;
     }
 
     @Override

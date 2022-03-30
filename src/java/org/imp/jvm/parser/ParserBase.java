@@ -146,14 +146,4 @@ public class ParserBase {
         prefixParselets.put(token, parselet);
     }
 
-    private boolean match(TokenType... types) {
-        for (TokenType type : types) {
-            if (check(type)) {
-                consume();
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

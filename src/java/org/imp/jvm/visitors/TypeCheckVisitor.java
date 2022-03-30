@@ -327,17 +327,20 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         var firstType = expr.entries.get(0).accept(this);
 
-        firstType.ifPresent(type -> expr.realType = new ListType(type));
+        firstType.ifPresent(type -> {
+            expr.realType = new ListType(type);
 
-        for (int i = 0; i < expr.entries.size(); i++) {
-            var t = expr.entries.get(i).accept(this);
-            if (t.isPresent()) {
-                if (!(t.get().equals(firstType.get()))) {
-                    Comptime.ListTypeError.submit(file, expr.entries.get(i), t.get().getName(), firstType.get().getName());
-                    break;
+            for (int i = 0; i < expr.entries.size(); i++) {
+                var t = expr.entries.get(i).accept(this);
+                if (t.isPresent()) {
+                    if (!(t.get().equals(type))) {
+                        Comptime.ListTypeError.submit(file, expr.entries.get(i), t.get().getName(), type.getName());
+                        break;
+                    }
                 }
             }
-        }
+        });
+
         return Optional.of(expr.realType);
     }
 
@@ -506,12 +509,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ImpType> visitTypeAlias(Stmt.TypeAlias stmt) {
-        var externalType = currentEnvironment.getVariableTyped(stmt.identifier(), ExternalType.class);
-
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ImpType> visitVariable(Stmt.Variable stmt) {

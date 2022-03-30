@@ -5,7 +5,6 @@ import static org.objectweb.asm.Opcodes.*;
 public enum TypeSpecificOpcodes {
 
     INT(ILOAD, ISTORE, IRETURN, IADD, ISUB, IMUL, IDIV, INEG), //values (-127,127) - one byte.
-    LONG(LLOAD, LSTORE, LRETURN, LADD, LSUB, LMUL, LDIV, LNEG),
     FLOAT(FLOAD, FSTORE, FRETURN, FADD, FSUB, FMUL, FDIV, FNEG),
     DOUBLE(DLOAD, DSTORE, DRETURN, DADD, DSUB, DMUL, DDIV, DNEG),
     VOID(ALOAD, ASTORE, RETURN, 0, 0, 0, 0, 0),

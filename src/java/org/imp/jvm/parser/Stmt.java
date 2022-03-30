@@ -49,7 +49,6 @@ public abstract class Stmt implements Node {
 
         R visitType(Type stmt);
 
-        R visitTypeAlias(TypeAlias stmt);
 
         R visitVariable(Variable stmt);
     }
@@ -164,25 +163,6 @@ public abstract class Stmt implements Node {
 
     }
 
-    public static final class TypeAlias extends Stmt implements Exportable {
-        public final Token name;
-        public final Expr.Literal literal;
-
-        public TypeAlias(Location loc, Token name, Expr.Literal literal) {
-            super(loc);
-            this.name = name;
-            this.literal = literal;
-        }
-
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitTypeAlias(this);
-        }
-
-        @Override
-        public String identifier() {
-            return name.source();
-        }
-    }
 
     public static final class Function extends Stmt implements Exportable {
         public final Token name;
@@ -213,13 +193,11 @@ public abstract class Stmt implements Node {
     public static final class Parameter extends Stmt {
         public final Token name;
         public final Type type;
-        public final boolean listType;
 
-        public Parameter(Location loc, Token name, Type type, boolean listType) {
+        public Parameter(Location loc, Token name, Type type) {
             super(loc);
             this.name = name;
             this.type = type;
-            this.listType = listType;
         }
 
         public <R> R accept(Visitor<R> visitor) {

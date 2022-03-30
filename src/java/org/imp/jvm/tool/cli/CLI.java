@@ -18,18 +18,6 @@ import java.nio.file.Path;
 )
 public class CLI implements Runnable {
 
-    //    @CommandLine.Parameters(description = "Source file to run.", arity = "0..1")
-//    private String filename;
-    //
-//    @CommandLine.Option(names = {"-c", "--compile"}, description = "Compile to Java class files.")
-//    private boolean compile;
-//
-//    @CommandLine.Option(names = {"-b", "--bundle"}, description = "Bundle to JAR.")
-//    private boolean bundle;
-//
-//    @CommandLine.Option(names = {"-s", "--silent"}, description = "Don't print any debug messages.")
-//    private boolean silent;
-//
     @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
     boolean usageHelpRequested;
 

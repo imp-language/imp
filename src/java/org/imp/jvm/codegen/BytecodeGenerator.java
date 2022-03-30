@@ -59,7 +59,7 @@ public class BytecodeGenerator {
         // Generate bytecode for each Type defined in the Imp file
         var codegenVisitor = new CodegenVisitor(source.rootEnvironment, source, cw);
 
-        var results = source.acceptVisitor(codegenVisitor);
+        source.acceptVisitor(codegenVisitor);
 
         cw.visitEnd();
 

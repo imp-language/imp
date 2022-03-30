@@ -42,24 +42,13 @@ public record Compiler() {
         var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
         Util.println(pretty.print(entry.stmts));
 
-//        var astPrint = new ASTPrinterVisitor();
-//        CodegenVisitor codegenVisitor = new CodegenVisitor(staticScope);
-
-//        Iterator<SourceFile> iterator = new DepthFirstIterator<>(dependencyGraph, entry);
-//        while (iterator.hasNext()) {
-//            SourceFile impFile = iterator.next();
-//            if (!compilationSet.containsKey(impFile.getFullRelativePath())) {
-//                compilationSet.put(impFile.getFullRelativePath(), impFile);
-//            }
-//        }
-
         for (var s : API.compilationSet) {
             if (!compilationSet.containsKey(s.getFullRelativePath())) {
                 compilationSet.put(s.getFullRelativePath(), s);
             }
         }
 
-        API.buildProgram(compilationSet, projectRoot);
+        API.buildProgram(compilationSet);
         Timer.log("generate bytecode");
 
         Timer.LOG = true;

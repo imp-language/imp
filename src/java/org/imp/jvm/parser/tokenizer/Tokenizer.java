@@ -8,7 +8,6 @@ public class Tokenizer implements Iterator<Token> {
     private final PushbackReader reader;
     public int line = 1;
     public int col = 1;
-    private Status status = Status.Whole;
 
     public Tokenizer(File file) throws FileNotFoundException {
         this.reader = new PushbackReader(new FileReader(file), 5);
@@ -51,7 +50,7 @@ public class Tokenizer implements Iterator<Token> {
             if (longToken == null && shortToken == null) {
                 advance();
                 advance();
-                status = Status.Partial;
+                Status status = Status.Partial;
                 return new Token(TokenType.ERROR, startLine, startCol, content);
             } else if (longToken != null) {
                 advance();

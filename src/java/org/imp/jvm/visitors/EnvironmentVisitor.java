@@ -2,9 +2,7 @@ package org.imp.jvm.visitors;
 
 import org.imp.jvm.Environment;
 import org.imp.jvm.SourceFile;
-import org.imp.jvm.Util;
 import org.imp.jvm.domain.Identifier;
-import org.imp.jvm.domain.Modifier;
 import org.imp.jvm.domain.Mutability;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Expr;
@@ -157,12 +155,19 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         // Annotate parameters in the current scope
         List<Identifier> parameters = new ArrayList<>();
         for (var param : stmt.parameters) {
-            ImpType t = param.type.accept(this).get();
-            childEnvironment.addVariable(param.name.source(), t);
-            parameters.add(new Identifier(param.name.source(), t));
+            var pt = param.type.accept(this);
+            if (pt.isPresent()) {
+
+                ImpType t = param.type.accept(this).get();
+                childEnvironment.addVariable(param.name.source(), t);
+                parameters.add(new Identifier(param.name.source(), t));
+            } else {
+                System.err.println("pt not present");
+                System.exit(783);
+            }
         }
 
-        var funcType = new FuncType(name, Modifier.NONE, parameters);
+        var funcType = new FuncType(name, parameters);
         if (stmt.returnType != null) {
             var bt = BuiltInType.getFromString(stmt.returnType.source());
             funcType.returnType = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.returnType.source()));
@@ -381,8 +386,15 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             if (ReservedWords.isReserved(fieldNames[i])) {
                 Comptime.ReservedWord.submit(file, stmt.fields.get(i), fieldNames[i]);
             }
-            fieldTypes[i] = field.type.accept(this).get();
-            parameters.add(new Identifier(fieldNames[i], fieldTypes[i]));
+            var fieldT = field.type.accept(this);
+            if (fieldT.isPresent()) {
+
+                fieldTypes[i] = fieldT.get();
+                parameters.add(new Identifier(fieldNames[i], fieldTypes[i]));
+            } else {
+                System.err.println("fieldT not present");
+                System.exit(429);
+            }
         }
         String name = stmt.name.source();
 
@@ -423,24 +435,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.of(type);
     }
 
-    @Override
-    public Optional<ImpType> visitTypeAlias(Stmt.TypeAlias stmt) {
-        String identifier = stmt.identifier();
-        String extern = stmt.literal.literal.source();
-
-        var c = Util.getClass(extern);
-        if (c.isEmpty()) {
-            Comptime.ExternNotFound.submit(file, stmt.literal, extern);
-            return Optional.empty();
-        }
-        Class<?> foundClass = c.get();
-
-        // Add a new type to the scope
-        ExternalType type = new ExternalType(foundClass);
-        currentEnvironment.addVariable(identifier, type);
-
-        return Optional.of(type);
-    }
 
     @Override
     public Optional<ImpType> visitVariable(Stmt.Variable stmt) {

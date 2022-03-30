@@ -55,9 +55,7 @@ public class TypeResolver {
             if (a instanceof ListType lta && b instanceof ListType ltb) {
                 if (lta.contentType.equals(ltb.contentType)) return true;
             }
-            if (b instanceof ListType ltb && a.getName().equals("java.util.List")) {
-                return true;
-            }
+            return b instanceof ListType ltb && a.getName().equals("java.util.List");
         }
 
         return false;

@@ -68,9 +68,6 @@ class NewCommand implements Runnable {
             Statement statement = ExportTable.connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
-//            statement.executeUpdate("drop table if exists ExportTable");
-//            statement.executeUpdate(ExportTable.createTable);
-
             ExportTable.initDB(dbPath);
 
             statement.executeUpdate("drop table if exists person");

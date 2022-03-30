@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Load {
-    public static final String verificationPath = "verification/";
 
     static final Compiler compiler = new Compiler();
 

@@ -1,6 +1,5 @@
 package org.imp.jvm.domain;
 
-import org.imp.jvm.codegen.FieldGenerator;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ImpType;
 
@@ -19,10 +18,6 @@ public class Identifier implements Serializable {
     public Identifier() {
         this.name = "_";
         this.type = BuiltInType.VOID;
-    }
-
-    public void accept(FieldGenerator generator) {
-        generator.generate(this);
     }
 
 

@@ -1,7 +1,6 @@
 package org.imp.jvm.runtimeHelp;
 
 import org.imp.jvm.domain.Identifier;
-import org.imp.jvm.domain.Modifier;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ExternalType;
 import org.imp.jvm.types.FuncType;
@@ -54,7 +53,7 @@ public class Glue {
                     name = name.substring(1);
                     isPrefixed = true;
                 }
-                var funcType = new FuncType(name, Modifier.NONE, parameters);
+                var funcType = new FuncType(name, parameters);
                 funcType.isPrefixed = isPrefixed;
                 funcType.returnType = new ExternalType(method.getReturnType());
 

@@ -30,8 +30,4 @@ public class ParserMain {
     }
 
 
-    enum Method {
-        TEST,
-        SKIP
-    }
 }

@@ -16,23 +16,7 @@ public enum BuiltInType implements ImpType, Serializable {
     DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE, 0.0d, true),
     STRING("string", String.class, "Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, "", false),
     VOID("void", void.class, "V", TypeSpecificOpcodes.VOID, null, false),
-    ANY("any", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
-
-    BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT, false, false),
-    INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT, false, false),
-    FLOAT_ARR("float[]", float[].class, "[F", TypeSpecificOpcodes.OBJECT, false, false),
-    DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT, false, false),
-    STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, false, false),
-
-    BOX("box", null, "Lorg/imp/jvm/runtime/Box;", TypeSpecificOpcodes.OBJECT, false, false),
-    STRUCT("struct", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
-    ENUM("enum", null, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
-    LIST("list", Object.class, "Ljava/util/List;", TypeSpecificOpcodes.OBJECT, false, false),
-
-    OBJECT("object", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
-    OBJECT_ARR("object[]", Object[].class, "[Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false),
-
-    MODULE("module", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false)
+    ANY("any", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false)
 
     //
     ;
@@ -95,10 +79,6 @@ public enum BuiltInType implements ImpType, Serializable {
             return a;
         }
         return b;
-    }
-
-    public boolean canBeWidenedTo(BuiltInType bigger) {
-        return widenings.get(this) < widenings.get(bigger);
     }
 
     public void doBoxing(MethodVisitor mv) {

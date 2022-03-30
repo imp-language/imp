@@ -67,9 +67,7 @@ public class Parser extends ParserBase {
         var loc = lok();
 
         var type = new Stmt.Type(loc, new Token(TYPE, 0, 0, "string"), Optional.empty(), false);
-        Stmt.Parameter varArgs = new Stmt.Parameter(loc, new Token(IDENTIFIER, 0, 0, "args"), type, false);
-//        varArgs.type = BuiltInType.STRING_ARR;
-//        varArgs.name = "args";
+        Stmt.Parameter varArgs = new Stmt.Parameter(loc, new Token(IDENTIFIER, 0, 0, "args"), type);
         var args = new ArrayList<Stmt.Parameter>();
         args.add(varArgs);
 
@@ -157,7 +155,6 @@ public class Parser extends ParserBase {
         var stmt = statement();
         if (Util.instanceOfOne(stmt,
                 Stmt.Struct.class,
-                Stmt.TypeAlias.class,
                 Stmt.Variable.class,
                 Stmt.Enum.class,
                 Stmt.Function.class
@@ -211,7 +208,7 @@ public class Parser extends ParserBase {
         var type = type();
         boolean listType = false;
 
-        return new Stmt.Parameter(loc, name, type, listType);
+        return new Stmt.Parameter(loc, name, type);
     }
 
     private Stmt.Enum parseEnum() {
@@ -267,7 +264,6 @@ public class Parser extends ParserBase {
         if (match(IMPORT)) return importStmt();
         if (match(EXPORT)) return export();
 
-        if (match(TYPE)) return typeAlias();
         if (match(STRUCT)) return struct();
         if (match(FUNC)) return function();
         if (match(ENUM)) return parseEnum();
@@ -318,15 +314,6 @@ public class Parser extends ParserBase {
         return new Stmt.Type(loc, identifier, t, listType);
     }
 
-    private Stmt.TypeAlias typeAlias() {
-        var loc = lok();
-        Token name = consume(IDENTIFIER, "Expected type name.");
-        consume(ASSIGN, "Expected assignment.");
-        consume(EXTERN, "Expected 'extern' keyword in type alias");
-        Token literal = consume(STRING, "Expected string literal.");
-
-        return new Stmt.TypeAlias(loc, name, new Expr.Literal(loc, literal));
-    }
 
     private Stmt.Variable variable() {
         var loc = lok();

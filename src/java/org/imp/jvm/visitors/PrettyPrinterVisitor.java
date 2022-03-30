@@ -129,21 +129,6 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         return str;
     }
 
-//    @Override
-//    public String visitForInCondition(Stmt.ForInCondition stmt) {
-//        var name = stmt.name.source();
-//        var t = currentEnvironment.getVariable(stmt.name.source());
-//        if (displayAnnotations) {
-//            if (t != null) {
-//                name += " : " + t;
-//
-//            } else {
-//                name += " : $reee";
-//            }
-//        }
-//        return s(name, "in", print(stmt.expr));
-//    }
-
     @Override
     public String visitFunctionStmt(Stmt.Function stmt) {
         String name = stmt.name.source();
@@ -318,10 +303,6 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         }
     }
 
-    @Override
-    public String visitTypeAlias(Stmt.TypeAlias stmt) {
-        return "type " + stmt.name.source() + " = extern " + print(stmt.literal);
-    }
 
     @Override
     public String visitVariable(Stmt.Variable stmt) {
@@ -353,16 +334,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         return "\n" + "\t".repeat(indent);
     }
 
-    private String s(Expr... exprs) {
-        StringBuilder builder = new StringBuilder();
-
-        List<Expr> exprList = Arrays.asList(exprs);
-
-        return exprList.stream().map(this::print).collect(Collectors.joining(" "));
-    }
-
     private String s(String... strs) {
-        StringBuilder builder = new StringBuilder();
 
         List<String> strList = Arrays.asList(strs);
 

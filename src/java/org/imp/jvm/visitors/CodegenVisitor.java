@@ -182,10 +182,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                     false
             );
 
-//            funcType.ga.invokeConstructor(Type.getType("lib/date$Date"), new Method("<init>", "()V"));
-
-//            ga.pop();
-
         } else {
             System.err.println("Bad!");
             System.exit(43);
@@ -315,9 +311,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 //        code.put(qualifiedName, cw.toByteArray());
 
         // All methods must return something, even voids
-//        if (funcType.name.equals("main")) {
-//            funcType.ga.visitInsn(Opcodes.RETURN);
-//        }
 
         currentEnvironment = currentEnvironment.getParent();
         functionStack.pop();
@@ -338,7 +331,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var type = currentEnvironment.getVariable(expr.identifier.source());
         expr.realType = type;
         if (type instanceof FuncType ft) {
-
+            System.err.println("unused");
         } else if (type instanceof StructType st) {
             int index;
             String source = expr.identifier.source();
@@ -596,11 +589,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         throw new NotImplementedException("method not implemented");
     }
 
-    @Override
-    public Optional<ClassWriter> visitTypeAlias(Stmt.TypeAlias stmt) {
-//        throw new NotImplementedException("method not implemented");
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ClassWriter> visitVariable(Stmt.Variable stmt) {

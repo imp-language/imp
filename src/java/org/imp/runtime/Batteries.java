@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
  * The _ prefix is removed in Imp and only exists to allow
  * this Java class to compile.
  */
+@SuppressWarnings("unused")
 public class Batteries {
 
 
