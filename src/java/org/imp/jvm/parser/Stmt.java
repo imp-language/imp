@@ -49,7 +49,9 @@ public abstract class Stmt implements Node {
 
         R visitStruct(Struct stmt);
 
-        R visitType(Type stmt);
+        R visitType(TypeStmt stmt);
+
+        R visitUnionType(UnionTypeStmt unionTypeStmt);
 
 
         R visitVariable(Variable stmt);
@@ -81,12 +83,12 @@ public abstract class Stmt implements Node {
 
     public static final class Alias extends Stmt implements Exportable, TopLevel {
         public final Token identifier;
-        public final List<Type> types;
+        public final TypeStmt typeStmt;
 
-        public Alias(Location loc, Token identifier, List<Type> types) {
+        public Alias(Location loc, Token identifier, TypeStmt typeStmt) {
             super(loc);
             this.identifier = identifier;
-            this.types = types;
+            this.typeStmt = typeStmt;
         }
 
         @Override
@@ -97,6 +99,50 @@ public abstract class Stmt implements Node {
         @Override
         public String identifier() {
             return identifier.source();
+        }
+    }
+
+    public static class TypeStmt extends Stmt {
+        public final Token identifier;
+        public final Optional<TypeStmt> next;
+        public final boolean listType;
+
+        public TypeStmt(Location loc, Token identifier, Optional<TypeStmt> next, boolean listType) {
+            super(loc);
+            this.identifier = identifier;
+            this.next = next;
+            this.listType = listType;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitType(this);
+        }
+
+    }
+
+    //    public static final class ListTypeStmt extends TypeStmt {
+//        private ListTypeStmt(Location location, Token identifier) {
+//            super(location, identifier, Optional.empty(), true);
+//        }
+//
+//        @Override
+//        public <R> R accept(Visitor<R> visitor) {
+//            return null;
+//        }
+//    }
+//
+    public static final class UnionTypeStmt extends TypeStmt {
+        public final List<TypeStmt> types;
+
+        public UnionTypeStmt(Location location, List<TypeStmt> types) {
+            super(location, null, Optional.empty(), true);
+            this.types = types;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitUnionType(this);
         }
     }
 
@@ -218,9 +264,9 @@ public abstract class Stmt implements Node {
 
     public static final class Parameter extends Stmt {
         public final Token name;
-        public final Type type;
+        public final TypeStmt type;
 
-        public Parameter(Location loc, Token name, Type type) {
+        public Parameter(Location loc, Token name, TypeStmt type) {
             super(loc);
             this.name = name;
             this.type = type;
@@ -233,24 +279,6 @@ public abstract class Stmt implements Node {
 
     }
 
-    public static final class Type extends Stmt {
-        public final Token identifier;
-        public final Optional<Type> next;
-        public final boolean listType;
-
-        public Type(Location loc, Token identifier, Optional<Type> next, boolean listType) {
-            super(loc);
-            this.identifier = identifier;
-            this.next = next;
-            this.listType = listType;
-        }
-
-        @Override
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitType(this);
-        }
-
-    }
 
     public static final class If extends Stmt {
         public final Block trueBlock;

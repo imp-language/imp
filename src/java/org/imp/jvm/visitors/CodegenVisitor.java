@@ -596,8 +596,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     }
 
     @Override
-    public Optional<ClassWriter> visitType(Stmt.Type stmt) {
+    public Optional<ClassWriter> visitType(Stmt.TypeStmt stmt) {
         throw new NotImplementedException("method not implemented");
+    }
+
+    @Override
+    public Optional<ClassWriter> visitUnionType(Stmt.UnionTypeStmt unionTypeStmt) {
+        return Optional.empty();
     }
 
 

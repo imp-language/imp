@@ -40,7 +40,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitAlias(Stmt.Alias stmt) {
-        return s("type", stmt.identifier.source(), "=", stmt.types.stream().map(this::print).collect(Collectors.joining(" | ")));
+        return s("type", stmt.identifier.source(), "=", print(stmt.typeStmt));
 
     }
 
@@ -290,7 +290,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     }
 
     @Override
-    public String visitType(Stmt.Type stmt) {
+    public String visitType(Stmt.TypeStmt stmt) {
         // if no type.next exists, treat as normal type
         if (stmt.next.isEmpty()) {
             String s = stmt.identifier.source();
@@ -303,6 +303,11 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         else {
             return stmt.identifier.source() + "." + stmt.next.get().accept(this);
         }
+    }
+
+    @Override
+    public String visitUnionType(Stmt.UnionTypeStmt unionTypeStmt) {
+        return unionTypeStmt.types.stream().map(this::print).collect(Collectors.joining(" | "));
     }
 
 

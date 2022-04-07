@@ -66,7 +66,7 @@ public class Parser extends ParserBase {
         List<Stmt> stmts = new ArrayList<>();
         var loc = lok();
 
-        var type = new Stmt.Type(loc, new Token(TYPE, 0, 0, "string"), Optional.empty(), false);
+        var type = new Stmt.TypeStmt(loc, new Token(TYPE, 0, 0, "string"), Optional.empty(), false);
         Stmt.Parameter varArgs = new Stmt.Parameter(loc, new Token(IDENTIFIER, 0, 0, "args"), type);
         var args = new ArrayList<Stmt.Parameter>();
         args.add(varArgs);
@@ -288,7 +288,7 @@ public class Parser extends ParserBase {
         return new Stmt.Struct(loc, name, parameters);
     }
 
-    private Stmt.Type type() {
+    private Stmt.TypeStmt type() {
         var loc = lok();
 
         // get the identifier first
@@ -301,20 +301,20 @@ public class Parser extends ParserBase {
             consume(RBRACK, "Expected ']' in list type.");
         }
 
-        Optional<Stmt.Type> t = Optional.empty();
+        Optional<Stmt.TypeStmt> t = Optional.empty();
         // Check for . denoting qualified type
         if (match(DOT)) {
             t = Optional.of(type());
         }
 
-        return new Stmt.Type(loc, identifier, t, listType);
+        return new Stmt.TypeStmt(loc, identifier, t, listType);
     }
 
     private Stmt typeStmt() {
         var loc = lok();
         Token name = consume(IDENTIFIER, "Expected type name.");
         consume(ASSIGN, "Expected assignment operator.");
-        List<Stmt.Type> types = new ArrayList<>();
+        List<Stmt.TypeStmt> types = new ArrayList<>();
         do {
             if (check(PIPE)) consume();
             var type = type();
@@ -322,7 +322,7 @@ public class Parser extends ParserBase {
         }
         while (check(TokenType.PIPE));
 
-        return new Stmt.Alias(loc, name, types);
+        return new Stmt.Alias(loc, name, new Stmt.UnionTypeStmt(loc, types));
     }
 
     private Stmt.Variable variable() {

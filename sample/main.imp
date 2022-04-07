@@ -3,7 +3,7 @@ import "batteries"
 
 
 
-type intOrString = int | string
+type intOrString = int | string | int[]
 
 func testUnion(param intOrString) {
     log(param)

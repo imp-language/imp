@@ -530,7 +530,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     }
 
     @Override
-    public Optional<ImpType> visitType(Stmt.Type stmt) {
+    public Optional<ImpType> visitType(Stmt.TypeStmt stmt) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImpType> visitUnionType(Stmt.UnionTypeStmt unionTypeStmt) {
         return Optional.empty();
     }
 

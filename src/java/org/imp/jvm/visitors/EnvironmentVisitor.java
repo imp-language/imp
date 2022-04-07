@@ -42,11 +42,8 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitAlias(Stmt.Alias stmt) {
-        var union = new UnionType(stmt.types.stream()
-                .map(type -> type.accept(this).orElseThrow())
-                .toList()
-        );
-        currentEnvironment.addVariable(stmt.identifier.source(), union);
+        var type = stmt.typeStmt.accept(this);
+        currentEnvironment.addVariable(stmt.identifier.source(), type.orElseThrow());
         return Optional.empty();
     }
 
@@ -373,7 +370,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     }
 
     @Override
-    public Optional<ImpType> visitType(Stmt.Type stmt) {
+    public Optional<ImpType> visitType(Stmt.TypeStmt stmt) {
         ImpType type;
         // if no type.next exists, treat as normal type
         if (stmt.next.isEmpty()) {
@@ -398,6 +395,15 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         }
         // Todo: above ^^
         return Optional.of(type);
+    }
+
+    @Override
+    public Optional<ImpType> visitUnionType(Stmt.UnionTypeStmt unionTypeStmt) {
+        var union = new UnionType(unionTypeStmt.types.stream()
+                .map(type -> type.accept(this).orElseThrow())
+                .toList()
+        );
+        return Optional.of(union);
     }
 
 
