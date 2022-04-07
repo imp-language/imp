@@ -2,6 +2,9 @@
 import "batteries"
 
 
+
+type intOrString = int | string
+
 //func repeat(source string, num int) {
 //    mut b = ""
 //    for i in range(0,num) {
@@ -30,10 +33,10 @@ import "batteries"
 //        _ -> log("unneeded as int and string exhaust the type")
 //    }
 //}
-//
-//
-//
-//
+
+
+
+
 //log(padLeft(4,"matt"))
 
 //for i in range(0,len(s)) {

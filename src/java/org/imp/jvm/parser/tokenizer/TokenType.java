@@ -69,7 +69,7 @@ public enum TokenType {
     NUMBER,
 
     ERROR,
-    EOF;
+    EOF, PIPE("|");
 
 
     private static final HashMap<String, TokenType> matcher = new HashMap<>();

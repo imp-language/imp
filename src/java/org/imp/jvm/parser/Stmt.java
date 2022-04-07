@@ -24,6 +24,8 @@ public abstract class Stmt implements Node {
     public interface Visitor<R> {
         R visit(Stmt stmt);
 
+        R visitAlias(Alias stmt);
+
         R visitBlockStmt(Block stmt);
 
         R visitEnum(Enum stmt);
@@ -53,15 +55,15 @@ public abstract class Stmt implements Node {
         R visitVariable(Variable stmt);
     }
 
-    public interface Exportable {
+    public sealed interface Exportable permits Stmt.Function, Stmt.Enum, Stmt.Struct, Stmt.Variable, Stmt.Alias {
         String identifier();
     }
 
-    public sealed interface FunctionOrImport permits Stmt.Function, Stmt.Import {
+    public sealed interface TopLevel permits Stmt.Function, Stmt.Import {
     }
 
     // Maybe remove quotes from imports?
-    public static final class Import extends Stmt implements FunctionOrImport {
+    public static final class Import extends Stmt implements TopLevel {
         public final Token stringLiteral;
         public final Optional<Token> identifier;
 
@@ -74,6 +76,27 @@ public abstract class Stmt implements Node {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitImport(this);
+        }
+    }
+
+    public static final class Alias extends Stmt implements Exportable {
+        public final Token identifier;
+        public final List<Type> types;
+
+        public Alias(Location loc, Token identifier, List<Type> types) {
+            super(loc);
+            this.identifier = identifier;
+            this.types = types;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitAlias(this);
+        }
+
+        @Override
+        public String identifier() {
+            return identifier.source();
         }
     }
 
@@ -167,7 +190,7 @@ public abstract class Stmt implements Node {
     }
 
 
-    public static final class Function extends Stmt implements Exportable, FunctionOrImport {
+    public static final class Function extends Stmt implements Exportable, TopLevel {
         public final Token name;
         public final Block body;
         public final List<Parameter> parameters;

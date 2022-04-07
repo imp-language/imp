@@ -33,7 +33,7 @@ import         → "import" stringLiteral
                ;
 
 export         → "export" (struct | typeAlias | variable | enum | function) ;
-typeAlias      → "type" identifier "=" "extern" STRING ;
+typeAlias      → "type" identifier "=" union ;
 struct         → "struct" identifier "{" (parameter ","?)* ;
 enum           → "enum" identifier "{" (IDENTIFIER ","?)* "}" ;
 function       → "func" identifier "(" parameters ")" identifier? block ;
@@ -44,6 +44,7 @@ loop           → "for" loopCondition block ;
 return         → "return" expression?;
 block          → "{" (statement)* "};
 
+union          →  type ("," type)* ","?
 
 ```
 
@@ -80,7 +81,7 @@ Some helper rules:
 ```ebnf
 parameter      → identifier type;
 parameters     → nameType ("," nameType)* ",";
-arguments      → expression ("," expression)* ",";
+arguments      → expression ("," expression)* ","?;
 listLiteral    → "[" arguments "]" ;
 loopCondition  → identifier "in" expression
                | identifier "in" expression ".." expression

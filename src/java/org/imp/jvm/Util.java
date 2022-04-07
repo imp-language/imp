@@ -45,17 +45,6 @@ public class Util {
         System.exit(code);
     }
 
-    /**
-     * Is Object o an instance of one of the following classes?
-     */
-    public static boolean instanceOfOne(Object o, Class<?>... clazz) {
-        for (Class<?> c : clazz) {
-            if (c.isInstance(o)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public static String parameterString(List<? extends Identifier> parameters) {
         return parameters.stream().map(p -> p.name + " " + p.type).collect(Collectors.joining(", "));

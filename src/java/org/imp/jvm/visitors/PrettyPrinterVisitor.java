@@ -39,6 +39,12 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     }
 
     @Override
+    public String visitAlias(Stmt.Alias stmt) {
+        return s("type", stmt.identifier.source(), "=", stmt.types.stream().map(this::print).collect(Collectors.joining(" | ")));
+
+    }
+
+    @Override
     public String visitAssignExpr(Expr.Assign expr) {
         return s(print(expr.left), "=", print(expr.right));
     }

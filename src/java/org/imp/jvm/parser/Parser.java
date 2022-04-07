@@ -1,8 +1,8 @@
 package org.imp.jvm.parser;
 
 import org.imp.jvm.Environment;
-import org.imp.jvm.Util;
 import org.imp.jvm.parser.tokenizer.Token;
+import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.parser.tokenizer.Tokenizer;
 
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public class Parser extends ParserBase {
             if (stmt == null) break;
 
             switch (stmt) {
-                case Stmt.FunctionOrImport ignored -> stmts.add(stmt);
+                case Stmt.TopLevel ignored -> stmts.add(stmt);
                 case Stmt.Export exportStmt -> {
                     var subStmt = exportStmt.stmt;
                     if (subStmt instanceof Stmt.Exportable) {
@@ -153,12 +153,7 @@ public class Parser extends ParserBase {
     private Stmt.Export export() {
         var loc = lok();
         var stmt = statement();
-        if (Util.instanceOfOne(stmt,
-                Stmt.Struct.class,
-                Stmt.Variable.class,
-                Stmt.Enum.class,
-                Stmt.Function.class
-        )) {
+        if (stmt instanceof Stmt.Exportable) {
             return new Stmt.Export(loc, stmt);
         } else {
             System.err.println("Can only export struct, type alias, variable, enum or function.");
@@ -263,6 +258,7 @@ public class Parser extends ParserBase {
 
         if (match(IMPORT)) return importStmt();
         if (match(EXPORT)) return export();
+        if (match(TYPE)) return typeStmt();
 
         if (match(STRUCT)) return struct();
         if (match(FUNC)) return function();
@@ -314,6 +310,20 @@ public class Parser extends ParserBase {
         return new Stmt.Type(loc, identifier, t, listType);
     }
 
+    private Stmt typeStmt() {
+        var loc = lok();
+        Token name = consume(IDENTIFIER, "Expected type name.");
+        consume(ASSIGN, "Expected assignment operator.");
+        List<Stmt.Type> types = new ArrayList<>();
+        do {
+            if (check(PIPE)) consume();
+            var type = type();
+            types.add(type);
+        }
+        while (check(TokenType.PIPE));
+
+        return new Stmt.Alias(loc, name, types);
+    }
 
     private Stmt.Variable variable() {
         var loc = lok();

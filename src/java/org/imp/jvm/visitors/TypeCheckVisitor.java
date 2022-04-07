@@ -36,6 +36,11 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     }
 
     @Override
+    public Optional<ImpType> visitAlias(Stmt.Alias stmt) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<ImpType> visitAssignExpr(Expr.Assign expr) {
         expr.left.accept(this);
         expr.right.accept(this);

@@ -45,6 +45,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     }
 
     @Override
+    public Optional<ClassWriter> visitAlias(Stmt.Alias stmt) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<ClassWriter> visitAssignExpr(Expr.Assign expr) {
         // Mutability has already been checked at this point
         var funcType = functionStack.peek();

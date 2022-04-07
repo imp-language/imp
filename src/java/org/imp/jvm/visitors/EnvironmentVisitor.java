@@ -41,6 +41,15 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     }
 
     @Override
+    public Optional<ImpType> visitAlias(Stmt.Alias stmt) {
+        var union = new UnionType(stmt.types.stream()
+                .map(type -> type.accept(this).orElseThrow())
+                .toArray(ImpType[]::new)
+        );
+        return Optional.of(union);
+    }
+
+    @Override
     public Optional<ImpType> visitAssignExpr(Expr.Assign expr) {
         expr.left.accept(this);
         expr.right.accept(this);
@@ -86,7 +95,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         // Todo(CURRENT): finish index access expressions- they don't unbox properly
         // we know to do so when expr.source == "at"
         // need to develop a way to know what to do tho
-        
+
         for (var arg : expr.arguments) {
             arg.accept(this);
         }
