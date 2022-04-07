@@ -9,7 +9,8 @@ func testUnion(param intOrString) {
     log(param)
 }
 // Todo(CURRENT): must box things passed to union
-testUnion(4)
+//testUnion(4)
+testUnion(44)
 
 //func repeat(source string, num int) {
 //    mut b = ""

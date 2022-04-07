@@ -136,15 +136,28 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                         if (param.type instanceof ExternalType et && et.foundClass().equals(Object.class)) {
                             btArg.doBoxing(funcType.ga);
                         }
+
                     }
+
+
                 });
 
                 funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             } else {
                 // Generate arguments
-                for (var arg : expr.arguments) {
+                var ga = funcType.ga;
+                Util.zip(callType.parameters, expr.arguments, (param, arg) -> {
                     arg.accept(this);
-                }
+                    // Only box if the arg type is a Java primitive
+                    if (arg.realType != null && arg.realType instanceof BuiltInType btArg) {
+                        switch (param.type) {
+                            case ExternalType et && et.foundClass().equals(Object.class) -> btArg.doBoxing(ga);
+                            case UnionType ut -> btArg.doBoxing(funcType.ga);
+                            default -> {
+                            }
+                        }
+                    }
+                });
 
                 // Call the invoke method
                 String methodDescriptor = DescriptorFactory.getMethodDescriptor(callType.parameters, callType.returnType);

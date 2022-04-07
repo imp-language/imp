@@ -37,6 +37,13 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitAlias(Stmt.Alias stmt) {
+        var a = currentEnvironment.getVariable(stmt.identifier.source());
+        // Todo: do we need to disallow `string | string` cause that would really just be `string`?
+//        if (a instanceof UnionType ut) {
+//            for (var type : ut.types) {
+//                if
+//            }
+//        }
         return Optional.empty();
     }
 

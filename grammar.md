@@ -33,7 +33,7 @@ import         → "import" stringLiteral
                ;
 
 export         → "export" (struct | typeAlias | variable | enum | function) ;
-typeAlias      → "type" identifier "=" union ;
+typeAlias      → "type" identifier "=" type ;
 struct         → "struct" identifier "{" (parameter ","?)* ;
 enum           → "enum" identifier "{" (IDENTIFIER ","?)* "}" ;
 function       → "func" identifier "(" parameters ")" identifier? block ;
@@ -44,7 +44,6 @@ loop           → "for" loopCondition block ;
 return         → "return" expression?;
 block          → "{" (statement)* "};
 
-union          →  type ("," type)* ","?
 
 ```
 
@@ -90,6 +89,7 @@ loopCondition  → identifier "in" expression
                
 type           → identifier ("[" "]")? 
                | identifier "." type
-               ;
+               | union ;
+union          →  type ("," type)* ","? ;
 
 ```
