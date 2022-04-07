@@ -1,10 +1,16 @@
 package org.imp.jvm.types;
 
-public class UnionType implements ImpType {
-    public final ImpType[] types;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    public UnionType(ImpType... types) {
+public class UnionType implements ImpType {
+    public final List<ImpType> types;
+    private final String name;
+
+    public UnionType(List<ImpType> types) {
         this.types = types;
+        this.name = types.stream().map(Object::toString).collect(Collectors.joining(" | "));
+
     }
 
     @Override
@@ -19,7 +25,7 @@ public class UnionType implements ImpType {
 
     @Override
     public String getDescriptor() {
-        return null;
+        return "Ljava/lang/Object;";
     }
 
     @Override
@@ -44,7 +50,7 @@ public class UnionType implements ImpType {
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
@@ -80,5 +86,10 @@ public class UnionType implements ImpType {
     @Override
     public String kind() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

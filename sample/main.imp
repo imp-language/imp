@@ -5,6 +5,12 @@ import "batteries"
 
 type intOrString = int | string
 
+func testUnion(param intOrString) {
+    log(param)
+}
+// Todo(CURRENT): must box things passed to union
+testUnion(4)
+
 //func repeat(source string, num int) {
 //    mut b = ""
 //    for i in range(0,num) {

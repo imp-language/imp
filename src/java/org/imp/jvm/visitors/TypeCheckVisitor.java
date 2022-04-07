@@ -150,7 +150,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                             if (argType == BuiltInType.VOID) {
                                 Comptime.VoidUsage.submit(file, arg);
                             }
-                            if (!TypeResolver.typesMatch(argType, param.type)) {
+                            if (!TypeResolver.typesMatch(param.type, argType)) {
                                 Comptime.ParameterTypeMismatch.submit(file, arg, argType.getName(), param.type.getName());
                             }
 
@@ -256,7 +256,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
             for (var param : funcType.parameters) {
                 if (param.type instanceof UnknownType ut) {
-                    var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
+                    var attempt = currentEnvironment.getVariable(ut.typeName);
                     if (attempt != null) {
                         param.type = attempt;
                         childEnvironment.setVariableType(param.name, attempt);

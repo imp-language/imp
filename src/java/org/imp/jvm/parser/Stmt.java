@@ -59,7 +59,7 @@ public abstract class Stmt implements Node {
         String identifier();
     }
 
-    public sealed interface TopLevel permits Stmt.Function, Stmt.Import {
+    public sealed interface TopLevel permits Stmt.Function, Stmt.Import, Stmt.Alias {
     }
 
     // Maybe remove quotes from imports?
@@ -79,7 +79,7 @@ public abstract class Stmt implements Node {
         }
     }
 
-    public static final class Alias extends Stmt implements Exportable {
+    public static final class Alias extends Stmt implements Exportable, TopLevel {
         public final Token identifier;
         public final List<Type> types;
 

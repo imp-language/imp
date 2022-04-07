@@ -1,5 +1,6 @@
 package org.imp.jvm.types;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.Util;
 import org.imp.jvm.domain.Identifier;
 import org.objectweb.asm.Opcodes;
@@ -46,7 +47,7 @@ public class StructType implements ImpType, Serializable {
 
     @Override
     public int getAddOpcode() {
-        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
+        throw new NotImplementedException("Opcode not implemented");
     }
 
     @Override
@@ -62,7 +63,7 @@ public class StructType implements ImpType, Serializable {
 
     @Override
     public int getDivideOpcode() {
-        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
+        throw new NotImplementedException("Opcode not implemented");
     }
 
     @Override
@@ -77,7 +78,7 @@ public class StructType implements ImpType, Serializable {
 
     @Override
     public int getMultiplyOpcode() {
-        throw new RuntimeException("Multiplication operation not (yet ;) ) supported for custom objects");
+        throw new NotImplementedException("Opcode not implemented");
     }
 
     @Override
@@ -102,7 +103,7 @@ public class StructType implements ImpType, Serializable {
 
     @Override
     public int getSubtractOpcode() {
-        throw new RuntimeException("Subtraction operation not (yet ;) ) supported for custom objects");
+        throw new NotImplementedException("Opcode not implemented");
     }
 
     @Override
