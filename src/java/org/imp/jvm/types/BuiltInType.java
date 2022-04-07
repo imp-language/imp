@@ -49,11 +49,11 @@ public enum BuiltInType implements ImpType, Serializable {
     public static BuiltInType getFromToken(TokenType tokenType) {
         return switch (tokenType) {
             case LPAREN, IDENTIFIER, NUMBER, ERROR, EOF, IN, EXTERN,
-                    NEW, AS, IMPORT, EXPORT, MUT, VAL, TYPE, FUNC,
+                    NEW, AS, IMPORT, EXPORT, MUT, VAL, ALIAS, FUNC,
                     ENUM, STRUCT, RETURN, ELSE, IF, FOR, DEC, INC,
                     NOT, POW, MOD, DIV, SUB, MUL, ADD, OR, AND, NOTEQUAL,
                     EQUAL, LT, GT, LE, GE, ASSIGN, DOT, RANGE, VARARGS,
-                    COMMA, RBRACK, LBRACK, RBRACE, LBRACE, RPAREN -> null;
+                    COMMA, RBRACK, LBRACK, RBRACE, LBRACE, RPAREN, PIPE -> null;
             case TRUE, FALSE -> BuiltInType.BOOLEAN;
             case STRING -> BuiltInType.STRING;
             case INT -> BuiltInType.INT;

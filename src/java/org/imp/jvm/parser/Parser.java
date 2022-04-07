@@ -66,7 +66,7 @@ public class Parser extends ParserBase {
         List<Stmt> stmts = new ArrayList<>();
         var loc = lok();
 
-        var type = new Stmt.TypeStmt(loc, new Token(TYPE, 0, 0, "string"), Optional.empty(), false);
+        var type = new Stmt.TypeStmt(loc, new Token(ALIAS, 0, 0, "string"), Optional.empty(), false);
         Stmt.Parameter varArgs = new Stmt.Parameter(loc, new Token(IDENTIFIER, 0, 0, "args"), type);
         var args = new ArrayList<Stmt.Parameter>();
         args.add(varArgs);
@@ -75,7 +75,7 @@ public class Parser extends ParserBase {
                 loc,
                 new Token(IDENTIFIER, loc.line(), loc.col(), "main"),
                 args,
-                new Token(TYPE, loc.line(), loc.col(), "void"),
+                new Token(ALIAS, loc.line(), loc.col(), "void"),
                 new Stmt.Block(loc, new ArrayList<>(), new Environment())
         );
 
@@ -135,6 +135,16 @@ public class Parser extends ParserBase {
             expr = new Expr.Empty(loc);
         }
         return new Stmt.Return(loc, expr);
+    }
+
+    private Stmt alias() {
+        var loc = lok();
+        Token name = consume(IDENTIFIER, "Expected type name.");
+        consume(ASSIGN, "Expected assignment operator.");
+
+        var union = union();
+
+        return new Stmt.Alias(loc, name, union);
     }
 
     private Stmt.Block block() {
@@ -200,8 +210,9 @@ public class Parser extends ParserBase {
     private Stmt.Parameter parameter() {
         var loc = lok();
         Token name = consume(IDENTIFIER, "Expected field name.");
-        var type = type();
-        boolean listType = false;
+//        var type = type();
+
+        Stmt.TypeStmt type = union();
 
         return new Stmt.Parameter(loc, name, type);
     }
@@ -258,7 +269,7 @@ public class Parser extends ParserBase {
 
         if (match(IMPORT)) return importStmt();
         if (match(EXPORT)) return export();
-        if (match(TYPE)) return typeStmt();
+        if (match(ALIAS)) return alias();
 
         if (match(STRUCT)) return struct();
         if (match(FUNC)) return function();
@@ -288,6 +299,9 @@ public class Parser extends ParserBase {
         return new Stmt.Struct(loc, name, parameters);
     }
 
+    /**
+     * @return a single TypeStmt
+     */
     private Stmt.TypeStmt type() {
         var loc = lok();
 
@@ -308,12 +322,15 @@ public class Parser extends ParserBase {
         }
 
         return new Stmt.TypeStmt(loc, identifier, t, listType);
+
     }
 
-    private Stmt typeStmt() {
+    /**
+     * @return A UnionTypeStmt type in form of `t1 | t2 | t3`. If only one entry,
+     * * returns a base TypeStmt.
+     */
+    private Stmt.TypeStmt union() {
         var loc = lok();
-        Token name = consume(IDENTIFIER, "Expected type name.");
-        consume(ASSIGN, "Expected assignment operator.");
         List<Stmt.TypeStmt> types = new ArrayList<>();
         do {
             if (check(PIPE)) consume();
@@ -322,7 +339,12 @@ public class Parser extends ParserBase {
         }
         while (check(TokenType.PIPE));
 
-        return new Stmt.Alias(loc, name, new Stmt.UnionTypeStmt(loc, types));
+        Stmt.TypeStmt t = new Stmt.UnionTypeStmt(loc, types);
+        if (types.size() == 1) {
+            t = new Stmt.TypeStmt(loc, types.get(0).identifier, Optional.empty(), types.get(0).listType);
+        }
+
+        return t;
     }
 
     private Stmt.Variable variable() {

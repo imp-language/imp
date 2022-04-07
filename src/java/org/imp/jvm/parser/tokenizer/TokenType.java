@@ -48,7 +48,7 @@ public enum TokenType {
     STRUCT("struct"),
     ENUM("enum"),
     FUNC("func"),
-    TYPE("type"),
+    ALIAS("type"),
     VAL("val"),
     MUT("mut"),
     EXPORT("export"),

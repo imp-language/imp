@@ -1,5 +1,6 @@
 package org.imp.test;
 
+import org.imp.jvm.Util;
 import org.imp.jvm.tool.Compiler;
 
 import java.io.File;
@@ -42,7 +43,7 @@ public class Load {
         try {
             return Files.readString(Path.of(goldPath)).replaceAll("\\r\\n?", "\n");
         } catch (IOException e) {
-            e.printStackTrace();
+            Util.Exit("File at " + Path.of(goldPath) + " does not exist.", 1);
         }
         return null;
     }

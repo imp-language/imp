@@ -122,5 +122,13 @@ public class CompilerTest {
                 """);
     }
 
+    @Test
+    void unions() throws IOException, InterruptedException {
+        assertEquals(
+                Load.gold(Path.of(moduleLocation, "simple/unions.txt").toString()),
+                Load.run("simple/unions", moduleLocation)
+        );
+    }
+
 
 }

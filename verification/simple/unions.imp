@@ -1,0 +1,18 @@
+
+import "batteries"
+
+func testUnion(param int | string | int[]) {
+    log(param)
+}
+testUnion(4)
+testUnion([4])
+testUnion("44")
+
+
+type intOrString = int | string | int[]
+func testUnion2(param intOrString) {
+    log(param)
+}
+testUnion2(4)
+testUnion2([4])
+testUnion2("44")
