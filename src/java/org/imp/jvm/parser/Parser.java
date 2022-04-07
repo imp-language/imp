@@ -83,18 +83,18 @@ public class Parser extends ParserBase {
             var stmt = statement();
             if (stmt == null) break;
 
-            if (stmt instanceof Stmt.Import) {
-                stmts.add(stmt);
-            } else if (stmt instanceof Stmt.Function) {
-                stmts.add(stmt);
-            } else if (stmt instanceof Stmt.Export exportStmt) {
-                var subStmt = exportStmt.stmt;
-                if (subStmt instanceof Stmt.Enum || subStmt instanceof Stmt.Struct || subStmt instanceof Stmt.Function) {
-                    stmts.add(exportStmt);
+            switch (stmt) {
+                case Stmt.FunctionOrImport ignored -> stmts.add(stmt);
+                case Stmt.Export exportStmt -> {
+                    var subStmt = exportStmt.stmt;
+                    if (subStmt instanceof Stmt.Exportable) {
+                        stmts.add(exportStmt);
+                    }
                 }
-            } else {
-                main.body.statements.add(stmt);
+                case default -> main.body.statements.add(stmt);
             }
+
+
         }
         stmts.add(main);
         return stmts;

@@ -51,4 +51,8 @@ public class Batteries {
     public static <T> T at(List<T> r, int pos) {
         return r.get(pos);
     }
+
+    public static int len(List r) {
+        return r.size();
+    }
 }

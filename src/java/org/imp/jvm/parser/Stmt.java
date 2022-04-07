@@ -57,8 +57,11 @@ public abstract class Stmt implements Node {
         String identifier();
     }
 
+    public sealed interface FunctionOrImport permits Stmt.Function, Stmt.Import {
+    }
+
     // Maybe remove quotes from imports?
-    public static final class Import extends Stmt {
+    public static final class Import extends Stmt implements FunctionOrImport {
         public final Token stringLiteral;
         public final Optional<Token> identifier;
 
@@ -164,7 +167,7 @@ public abstract class Stmt implements Node {
     }
 
 
-    public static final class Function extends Stmt implements Exportable {
+    public static final class Function extends Stmt implements Exportable, FunctionOrImport {
         public final Token name;
         public final Block body;
         public final List<Parameter> parameters;

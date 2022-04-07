@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
@@ -128,44 +129,53 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         var e = expr.item.accept(this);
         if (e.isPresent()) {
             var t = e.get();
-            if (t instanceof FuncType ft) {
-                if (ft.parameters.size() != expr.arguments.size()) {
-                    Comptime.FunctionSignatureMismatch.submit(file, expr.item, ft.name, "a");
-                    return Optional.empty();
-                }
-                var returnType = ft.returnType;
-
-                // Make sure parameter and argument types match.
-                Util.zip(ft.parameters, expr.arguments, (param, arg) -> {
-                    var at = arg.accept(this);
-                    if (at.isPresent()) {
-                        var argType = at.get();
-                        if (argType == BuiltInType.VOID) {
-                            Comptime.VoidUsage.submit(file, arg);
-                        }
-                        if (!TypeResolver.typesMatch(argType, param.type)) {
-                            Comptime.ParameterTypeMismatch.submit(file, arg, argType.getName(), param.type.getName());
-                        }
+            switch (t) {
+                case FuncType ft -> {
+                    if (ft.parameters.size() != expr.arguments.size()) {
+                        Comptime.FunctionSignatureMismatch.submit(file, expr.item, ft.name, "a");
+                        return Optional.empty();
                     }
-                });
+                    AtomicReference<ImpType> returnType = new AtomicReference<>(ft.returnType);
 
-                for (var arg : expr.arguments) {
-                    arg.accept(this);
+                    // Make sure parameter and argument types match.
+                    Util.zip(ft.parameters, expr.arguments, (param, arg) -> {
+                        var at = arg.accept(this);
+                        if (at.isPresent()) {
+                            var argType = at.get();
+                            if (argType == BuiltInType.VOID) {
+                                Comptime.VoidUsage.submit(file, arg);
+                            }
+                            if (!TypeResolver.typesMatch(argType, param.type)) {
+                                Comptime.ParameterTypeMismatch.submit(file, arg, argType.getName(), param.type.getName());
+                            }
+
+                            if (argType instanceof ListType lt) {
+                                if (ft.name.equals("at")) {
+//                                returnType.set(lt.contentType);
+                                    // Todo: need to cast here
+                                }
+                            }
+                        }
+                    });
+
+                    expr.realType = returnType.get();
+                    return Optional.of(returnType.get());
                 }
-                expr.realType = returnType;
-                return Optional.of(returnType);
-            } else if (t instanceof StructType st) {
-                if (st.fieldNames.length != expr.arguments.size()) {
-                    Comptime.FunctionSignatureMismatch.submit(file, expr.item, st.name, "a");
-                    return Optional.empty();
+                case StructType st -> {
+                    if (st.fieldNames.length != expr.arguments.size()) {
+                        Comptime.FunctionSignatureMismatch.submit(file, expr.item, st.name, "a");
+                        return Optional.empty();
+                    }
+                    // constructor function
+                    for (var arg : expr.arguments) {
+                        arg.accept(this);
+                    }
+                    expr.realType = st;
+                    return Optional.of(st);
                 }
-                // constructor function
-                for (var arg : expr.arguments) {
-                    arg.accept(this);
-                }
-                expr.realType = st;
-                return Optional.of(st);
+                default -> throw new IllegalStateException("Unexpected value: " + t);
             }
+
         } else {
             // Todo: pass missing method name
             Comptime.MethodNotFound.submit(file, expr.item, "name");
@@ -209,18 +219,14 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         // visit expression (could be an iterator or a list)
         var b = stmt.expr.accept(this);
         if (b.isPresent()) {
-
-            if (b.get() instanceof ExternalType et /*for now assume it's an iterator every time*/) {
-                if (et.foundClass().getName().equals("java.util.Iterator")) {
-                    currentEnvironment.setVariableType(stmt.name.source(), BuiltInType.INT);
-
+            switch (b.get()) {
+                case ExternalType et/*for now assume it's an iterator every time*/ -> {
+                    if (et.foundClass().getName().equals("java.util.Iterator")) {
+                        currentEnvironment.setVariableType(stmt.name.source(), BuiltInType.INT);
+                    }
                 }
-            } else if (b.get() instanceof ListType lt) {
-                System.err.println("Todo: iterate over lists");
-                System.exit(97);
-                // Todo: iterate over lists
-            } else {
-                Comptime.NotIterable.submit(file, stmt.expr, b.get().getName());
+                case ListType lt -> Util.Exit("Todo: iterate over lists", 97);
+                default -> Comptime.NotIterable.submit(file, stmt.expr, b.get().getName());
             }
         }
 
@@ -310,6 +316,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitIndexAccess(Expr.IndexAccess expr) {
+
         return Optional.empty();
     }
 
@@ -494,6 +501,16 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     }
                 }
             });
+
+        }
+
+        var b = "";
+        switch (b) {
+            case "" -> System.out.println("a");
+            case "a" -> {
+                System.out.println("");
+                System.out.println("");
+            }
 
         }
 

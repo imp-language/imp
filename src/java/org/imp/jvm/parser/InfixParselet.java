@@ -67,7 +67,6 @@ public interface InfixParselet {
                     new Expr.Identifier(loc, new Token(TokenType.IDENTIFIER, loc.line(), loc.col(), "at")),
                     arguments
             );
-            // Todo(CURRENT): finish index access expressions- they don't unbox properly
 //            return new Expr.IndexAccess(loc, left, right);
 
         }

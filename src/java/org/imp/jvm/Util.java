@@ -40,6 +40,11 @@ public class Util {
         }
     }
 
+    public static void Exit(String message, int code) {
+        System.err.println(message);
+        System.exit(code);
+    }
+
     /**
      * Is Object o an instance of one of the following classes?
      */
