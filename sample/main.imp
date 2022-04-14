@@ -6,47 +6,11 @@ import "batteries"
 type intOrString = int | string | int[]
 
 func testUnion(param intOrString) {
-    log(param)
+    match param {
+        int -> log("this an int")
+        int[] -> log("this array of ints")
+    }
 }
-testUnion(4)
-testUnion([4])
-testUnion("44")
-//testUnion(44.0)
-
-//func repeat(source string, num int) {
-//    mut b = ""
-//    for i in range(0,num) {
-//        b = b + source
-//    }
-//    return b
-//}
-//
-//// Todo: need to check repeat before checking `val c = ...`. This breaks TypeCheckVisitor if padLeft is declared before repeat
-//func padLeft(padding int/* | string*/, input string) {
-//    val c = repeat(" ", padding) + input
-//    return c
-//}
-//
-//
-//type intOrString = int | string
-//
-//
-//
-//func padLeft(padding int | string, input string) {
-//    match padding of {
-//        int -> log(4 + 5)
-//        string -> {
-//
-//        }
-//        _ -> log("unneeded as int and string exhaust the type")
-//    }
-//}
-
-
-
-
-//log(padLeft(4,"matt"))
-
-//for i in range(0,len(s)) {
-//
-//}
+//testUnion(4)
+//testUnion([4])
+//testUnion("44")

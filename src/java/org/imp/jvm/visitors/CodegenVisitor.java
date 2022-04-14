@@ -136,10 +136,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                         if (param.type instanceof ExternalType et && et.foundClass().equals(Object.class)) {
                             btArg.doBoxing(funcType.ga);
                         }
-
                     }
-
-
                 });
 
                 funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
@@ -452,6 +449,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<ClassWriter> visitMatch(Stmt.Match match) {
+
+        return Optional.empty();
+    }
 
     @Override
     public Optional<ClassWriter> visitNew(Expr.New expr) {

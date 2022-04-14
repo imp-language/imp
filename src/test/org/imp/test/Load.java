@@ -50,12 +50,9 @@ public class Load {
 
     public static Set<Integer> checkForErrors(String testPath, String projectRoot) throws IOException {
         try {
-            String className = compiler.compile(projectRoot, testPath + ".imp");
+            compiler.compile(projectRoot, testPath + ".imp");
         } catch (MyError e) {
-            var errors = Comptime.errorData;
-
-            var errorSet = errors.stream().map(Comptime.Data::code).collect(Collectors.toSet());
-
+            var errorSet = Comptime.errorData.stream().map(Comptime.Data::code).collect(Collectors.toSet());
             System.out.println(errorSet);
             return errorSet;
         }

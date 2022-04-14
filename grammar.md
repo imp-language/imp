@@ -24,6 +24,7 @@ statement      → expression
                | loop
                | return
                | block
+               | match
                
                ;
                
@@ -44,6 +45,7 @@ loop           → "for" loopCondition block ;
 return         → "return" expression?;
 block          → "{" (statement)* "};
 
+match          → "match" expression "{" (type "->" expression)* "}"
 
 ```
 

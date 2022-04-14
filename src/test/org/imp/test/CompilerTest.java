@@ -23,7 +23,10 @@ public class CompilerTest {
 
     @Test
     void ExpectError() throws IOException {
-        assertEquals(Util.set(Comptime.ParameterTypeMismatch.code), Load.checkForErrors("errors/unions.txt", moduleLocation));
+        assertEquals(
+                Util.set(Comptime.ParameterTypeMismatch.code),
+                Load.checkForErrors("errors/unions.txt", moduleLocation)
+        );
     }
 
     @Test

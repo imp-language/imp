@@ -84,8 +84,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
                 repr += " : " + a.realType.getName();
             }
             return repr;
-        }).collect(Collectors.joining(", ")) +
-                ")";
+        }).collect(Collectors.joining(", ")) + ")";
     }
 
     @Override
@@ -200,6 +199,19 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         return "[" + expr.entries.stream().map(this::print).collect(Collectors.joining(",")) + "]";
     }
 
+    @Override
+    public String visitMatch(Stmt.Match match) {
+        StringBuilder s = new StringBuilder("match " + print(match.expr) + " {");
+        indent++;
+        for (var c : match.cases.entrySet()) {
+            var type = c.getKey();
+            var expr = c.getValue();
+            s.append(tabs()).append(s(print(type), "->", print(expr)));
+        }
+        indent--;
+        s.append(tabs()).append("}");
+        return s.toString();
+    }
 
     @Override
     public String visitNew(Expr.New expr) {

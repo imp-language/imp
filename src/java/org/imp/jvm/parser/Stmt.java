@@ -5,6 +5,7 @@ import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.Token;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class Stmt implements Node {
@@ -43,6 +44,8 @@ public abstract class Stmt implements Node {
 
         R visitImport(Import stmt);
 
+        R visitMatch(Match match);
+
         R visitParameterStmt(Parameter stmt);
 
         R visitReturnStmt(Return stmt);
@@ -62,6 +65,22 @@ public abstract class Stmt implements Node {
     }
 
     public sealed interface TopLevel permits Stmt.Function, Stmt.Import, Stmt.Alias {
+    }
+
+    public static final class Match extends Stmt {
+        public final Map<TypeStmt, Expr> cases;
+        public final Expr expr;
+
+        public Match(Location location, Expr expr, Map<TypeStmt, Expr> cases) {
+            super(location);
+            this.expr = expr;
+            this.cases = cases;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitMatch(this);
+        }
     }
 
     // Maybe remove quotes from imports?

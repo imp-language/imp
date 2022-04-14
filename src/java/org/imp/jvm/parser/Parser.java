@@ -5,9 +5,7 @@ import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.parser.tokenizer.Tokenizer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.imp.jvm.parser.tokenizer.TokenType.*;
 
@@ -207,6 +205,25 @@ public class Parser extends ParserBase {
         return new Stmt.Import(loc, str, id);
     }
 
+    private Stmt matchStmt() {
+        var loc = lok();
+
+        var expr = expression();
+        consume(LBRACE, "Expected opening curly braces before match body.");
+        Map<Stmt.TypeStmt, Expr> cases = new HashMap<>(); // todo: swap all hashmap for hashtable?
+
+        while (!check(RBRACE)) {
+            var type = union();
+            consume(ARROW, "Expected `->` after type before expression in match statement.");
+            var e = expression();
+            cases.put(type, e);
+        }
+
+        consume(RBRACE, "Expected closing curly braces after match body.");
+
+        return new Stmt.Match(loc, expr, cases);
+    }
+
     private Stmt.Parameter parameter() {
         var loc = lok();
         Token name = consume(IDENTIFIER, "Expected field name.");
@@ -271,6 +288,7 @@ public class Parser extends ParserBase {
         if (match(EXPORT)) return export();
         if (match(ALIAS)) return alias();
 
+        if (match(MATCH)) return matchStmt();
         if (match(STRUCT)) return struct();
         if (match(FUNC)) return function();
         if (match(ENUM)) return parseEnum();
@@ -294,7 +312,7 @@ public class Parser extends ParserBase {
             parameters.add(parameter);
         }
 
-        consume(RBRACE, "Expected opening curly braces before struct body.");
+        consume(RBRACE, "Expected closing curly braces after struct body.");
 
         return new Stmt.Struct(loc, name, parameters);
     }
@@ -327,7 +345,7 @@ public class Parser extends ParserBase {
 
     /**
      * @return A UnionTypeStmt type in form of `t1 | t2 | t3`. If only one entry,
-     * * returns a base TypeStmt.
+     * * returns a base TypeStmt. Used as the parent of any type.
      */
     private Stmt.TypeStmt union() {
         var loc = lok();

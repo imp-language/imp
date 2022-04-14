@@ -293,6 +293,15 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<ImpType> visitMatch(Stmt.Match match) {
+        match.expr.accept(this);
+        match.cases.forEach((k, v) -> {
+            k.accept(this);
+            v.accept(this);
+        });
+        return Optional.empty();
+    }
 
     @Override
     public Optional<ImpType> visitNew(Expr.New expr) {

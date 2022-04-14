@@ -32,6 +32,8 @@ public enum TokenType {
     DIV("/"),
     MOD("%"),
     POW("^"),
+    PIPE("|"),
+    ARROW("->"),
 
     // Prefix-only operators
     NOT("not", "!"),
@@ -57,6 +59,7 @@ public enum TokenType {
     NEW("new"),
     EXTERN("extern"),
     IN("in"),
+    MATCH("match"),
 
     // Literals
     TRUE("true"),
@@ -69,7 +72,7 @@ public enum TokenType {
     NUMBER,
 
     ERROR,
-    EOF, PIPE("|");
+    EOF;
 
 
     private static final HashMap<String, TokenType> matcher = new HashMap<>();
