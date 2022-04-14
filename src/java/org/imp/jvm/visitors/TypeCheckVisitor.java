@@ -367,9 +367,23 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitMatch(Stmt.Match match) {
         match.expr.accept(this);
         match.cases.forEach((k, v) -> {
-            k.accept(this);
+            k.accept(this); // Todo(CURRENT): doesn't resolve types. Need this for below on 378.
             v.accept(this);
         });
+
+        switch (match.expr.realType) {
+            case UnionType ut -> {
+                var coveredTypes = match.cases.keySet();
+                for (var t : ut.types) {
+                    System.out.println(t);
+                    System.out.println(coveredTypes);
+                }
+            }
+            default -> {
+                System.exit(69);
+            }
+        }
+
         return Optional.empty();
     }
 
