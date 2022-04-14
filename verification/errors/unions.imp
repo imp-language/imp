@@ -1,0 +1,5 @@
+import "batteries"
+func testUnion(param int | string | int[]) {
+    log(param)
+}
+testUnion(4.0) // errors as float does not match (int | string | int[])

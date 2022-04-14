@@ -1,7 +1,6 @@
 package org.imp.jvm.errors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.imp.jvm.Util;
 import org.imp.jvm.parser.Node;
 
 import java.io.File;
@@ -43,19 +42,19 @@ public enum Comptime {
     ListLiteralIncomplete(16, "List literals must have one or more elements.", "To create an empty list do `type[]`."),
     ListTypeError(17, "Expression of type `{0}` cannot be added to list of inferred type `{1}`", "Lists may only contain elements of the same type."),
     ParameterTypeMismatch(18, "Argument of type `{0}` cannot supply a parameter of type `{1}`.", null),
-    CannotPostfix(18, "Operator `{0}` cannot be applied to expression of type `{1}`.", null),
-    VoidUsage(19, "Cannot use the result of a void method in an expression.", "Methods returning `void` don't have any result so there is no return type to use.")
+    CannotPostfix(19, "Operator `{0}` cannot be applied to expression of type `{1}`.", null),
+    VoidUsage(20, "Cannot use the result of a void method in an expression.", "Methods returning `void` don't have any result so there is no return type to use.")
     // Todo: variable not found
     ;
 
     //
 
 
-    static final List<String> errors = new ArrayList<>();
+    public static final List<String> errors = new ArrayList<>();
+    public static final List<Data> errorData = new ArrayList<>();
+    public final int code;
     private final String suggestion;
-    private final int code;
     private final String templateString;
-
 
     Comptime(int code, String templateString, String suggestion) {
         this.suggestion = suggestion;
@@ -67,11 +66,12 @@ public enum Comptime {
         return errors.size() > 0;
     }
 
-    public static void killIfErrors(String message) {
+    public static void killIfErrors(String message) throws MyError {
         if (hasErrors()) {
             errors.forEach(System.out::println);
-            Util.println(message);
-            System.exit(1);
+            throw new MyError(message);
+//            Util.println(message);
+//            System.exit(1);
         }
     }
 
@@ -112,9 +112,14 @@ public enum Comptime {
             }
 
             errors.add(s);
+            errorData.add(new Data(code, s, line, loc.col()));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public record Data(int code, String message, int line, int col) {
+
     }
 
 }

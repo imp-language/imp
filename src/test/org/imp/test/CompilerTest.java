@@ -1,5 +1,7 @@
 package org.imp.test;
 
+import org.imp.jvm.Util;
+import org.imp.jvm.errors.Comptime;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -17,6 +19,11 @@ public class CompilerTest {
                 Load.gold(Path.of(moduleLocation, "simple/Arithmetic.txt").toString()),
                 Load.run("simple/Arithmetic", moduleLocation)
         );
+    }
+
+    @Test
+    void ExpectError() throws IOException {
+        assertEquals(Util.set(Comptime.ParameterTypeMismatch.code), Load.checkForErrors("errors/unions.txt", moduleLocation));
     }
 
     @Test

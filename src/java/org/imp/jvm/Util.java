@@ -3,10 +3,7 @@ package org.imp.jvm;
 import org.imp.jvm.domain.Identifier;
 import org.imp.jvm.types.ImpType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -40,9 +37,17 @@ public class Util {
         }
     }
 
-    public static void Exit(String message, int code) {
+    public static void exit(String message, int code) {
         System.err.println(message);
         System.exit(code);
+    }
+
+    public static List<Integer> list(Integer... i) {
+        return Arrays.asList(i);
+    }
+
+    public static Set<Integer> set(Integer... i) {
+        return Set.of(i);
     }
 
 

@@ -237,7 +237,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         currentEnvironment.setVariableType(stmt.name.source(), BuiltInType.INT);
                     }
                 }
-                case ListType lt -> Util.Exit("Todo: iterate over lists", 97);
+                case ListType lt -> Util.exit("Todo: iterate over lists", 97);
                 default -> Comptime.NotIterable.submit(file, stmt.expr, b.get().getName());
             }
         }

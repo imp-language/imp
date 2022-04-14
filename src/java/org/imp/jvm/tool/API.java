@@ -4,7 +4,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.SourceFile;
 import org.imp.jvm.codegen.BytecodeGenerator;
 import org.imp.jvm.errors.Comptime;
-import org.imp.jvm.errors.Logger;
+import org.imp.jvm.errors.MyError;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.EnvironmentVisitor;
@@ -25,7 +25,7 @@ public class API {
      *
      * @return SourceFile with exports gathered.
      */
-    public static SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException {
+    public static SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException, MyError {
 
         var source = new SourceFile(projectRoot, relativePath, name);
         compilationSet.add(source);
@@ -45,7 +45,7 @@ public class API {
                 SourceFile next = null;
                 try {
                     next = parse(projectRoot, Path.of(source.relativePath, relative).toString(), n);
-                } catch (FileNotFoundException e) {
+                } catch (FileNotFoundException | MyError e) {
                     e.printStackTrace();
                 }
                 source.addImport(f, next);
@@ -127,7 +127,6 @@ public class API {
             }
 
         }
-        Logger.killIfErrors("Errored during bytecode generation.");
 
     }
 

@@ -1,5 +1,7 @@
 package org.imp.jvm.tool.cli;
 
+import org.imp.jvm.Util;
+import org.imp.jvm.errors.MyError;
 import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.tool.Timer;
@@ -82,6 +84,8 @@ public class CLI implements Runnable {
         } catch (FileNotFoundException e) {
             System.err.println("Manifest.entry points to a file that does not exist.");
             System.exit(UnixErrors.ENOENT);
+        } catch (MyError e) {
+            Util.exit(e.getMessage(), 1);
         }
 
         try {
