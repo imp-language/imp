@@ -42,14 +42,13 @@ public class Util {
         System.exit(code);
     }
 
-    public static List<Integer> list(Integer... i) {
+    public static <T> List<T> list(T... i) {
         return Arrays.asList(i);
     }
 
-    public static Set<Integer> set(Integer... i) {
+    public static <T> Set<T> set(T... i) {
         return Set.of(i);
     }
-
 
     public static String parameterString(List<? extends Identifier> parameters) {
         return parameters.stream().map(p -> p.name + " " + p.type).collect(Collectors.joining(", "));
@@ -63,7 +62,6 @@ public class Util {
         System.out.println(o);
     }
 
-
     /**
      * Find class on classpath.
      *
@@ -76,5 +74,19 @@ public class Util {
         } catch (ClassNotFoundException e) {
             return Optional.empty();
         }
+    }
+
+
+    /**
+     * Join a list in normal language similar to JavaScript's Intl.ListFormat class.
+     *
+     * @return ex. Something, Another Object, Penultimate Object and Final Object.
+     */
+    public static <T> String joinConjunction(Collection<T> collection) {
+        var strList = collection.stream().map(Objects::toString).toList();
+        if (strList.size() == 0) return "";
+        if (strList.size() == 1) return strList.get(0);
+        if (strList.size() == 2) return String.join(" and ", strList);
+        return String.join(", ", strList.subList(0, strList.size() - 1)) + " and " + strList.get(strList.size() - 1);
     }
 }

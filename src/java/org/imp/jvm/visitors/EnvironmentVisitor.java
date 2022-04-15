@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
@@ -296,10 +297,26 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitMatch(Stmt.Match match) {
         match.expr.accept(this);
-        match.cases.forEach((k, v) -> {
-            k.accept(this);
-            v.accept(this);
+        match.cases.forEach((keyType, block) -> {
+            keyType.accept(this);
+            // create environment for case
+
+            var pt = keyType.accept(this);
+            if (pt.isPresent()) {
+                ImpType t = pt.get();
+                match.types.put(keyType, t);
+            } else {
+                System.err.println("pt not present");
+                System.exit(783);
+            }
+            var childEnvironment = block.environment;
+            childEnvironment.setParent(currentEnvironment);
+            childEnvironment.addVariable(match.identifier.identifier.source(), match.types.get(keyType));
+            currentEnvironment = childEnvironment;
+            block.accept(this);
+            currentEnvironment = currentEnvironment.getParent();
         });
+
         return Optional.empty();
     }
 
@@ -410,7 +427,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitUnionType(Stmt.UnionTypeStmt unionTypeStmt) {
         var union = new UnionType(unionTypeStmt.types.stream()
                 .map(type -> type.accept(this).orElseThrow())
-                .toList()
+                .collect(Collectors.toSet())
         );
         return Optional.of(union);
     }

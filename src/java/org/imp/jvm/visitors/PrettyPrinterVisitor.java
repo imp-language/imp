@@ -201,7 +201,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitMatch(Stmt.Match match) {
-        StringBuilder s = new StringBuilder("match " + print(match.expr) + " {");
+        StringBuilder s = new StringBuilder("match " + print(match.expr) + " as " + print(match.identifier) + " {");
         indent++;
         for (var c : match.cases.entrySet()) {
             var type = c.getKey();

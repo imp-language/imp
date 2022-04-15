@@ -1,6 +1,7 @@
 package org.imp.jvm.parser;
 
 import org.imp.jvm.Environment;
+import org.imp.jvm.Util;
 import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.parser.tokenizer.Tokenizer;
@@ -209,19 +210,29 @@ public class Parser extends ParserBase {
         var loc = lok();
 
         var expr = expression();
+        consume(AS, "Expected `as` before match identifier.");
+        var id = new Expr.Identifier(lok(), consume());
+
         consume(LBRACE, "Expected opening curly braces before match body.");
-        Map<Stmt.TypeStmt, Expr> cases = new HashMap<>(); // todo: swap all hashmap for hashtable?
+        Map<Stmt.TypeStmt, Stmt.Block> cases = new HashMap<>(); // todo: swap all hashmap for hashtable?
 
         while (!check(RBRACE)) {
             var type = union();
             consume(ARROW, "Expected `->` after type before expression in match statement.");
-            var e = expression();
-            cases.put(type, e);
+            Stmt.Block caseBody;
+            if (match(LBRACE)) {
+                caseBody = block();
+            } else {
+                // Allow cases to be a single expression, but wrap in a block to give it its own Environment
+                var stmt = new Stmt.ExpressionStmt(lok(), expression());
+                caseBody = new Stmt.Block(lok(), Util.list(stmt), new Environment());
+            }
+            cases.put(type, caseBody);
         }
 
         consume(RBRACE, "Expected closing curly braces after match body.");
 
-        return new Stmt.Match(loc, expr, cases);
+        return new Stmt.Match(loc, expr, cases, id);
     }
 
     private Stmt.Parameter parameter() {

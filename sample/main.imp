@@ -5,10 +5,19 @@ import "batteries"
 
 type intOrString = int | string | int[]
 
-func testUnion(param intOrString) {
-    match param {
-        int -> log("this an int")
-        int[] -> log("this array of ints")
+
+func logIntList(a int[]) {
+    for i in range(0,len(a)) {
+        log(i)
+    }
+}
+
+
+func testUnion(param int | int[]) {
+    log(intOrString)
+    match param as id {
+        int -> log(id)
+        int[] -> logIntList(id)
     }
 }
 //testUnion(4)

@@ -57,7 +57,7 @@ public class ListType implements ImpType {
 
     @Override
     public String getName() {
-        return "List<" + contentType + ">";
+        return contentType + "[]";
     }
 
     @Override

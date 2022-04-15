@@ -3,7 +3,9 @@ package org.imp.jvm.parser;
 import org.imp.jvm.Environment;
 import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.Token;
+import org.imp.jvm.types.ImpType;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -68,13 +70,17 @@ public abstract class Stmt implements Node {
     }
 
     public static final class Match extends Stmt {
-        public final Map<TypeStmt, Expr> cases;
+        public final Map<TypeStmt, Block> cases;
         public final Expr expr;
+        public final Expr.Identifier identifier;
 
-        public Match(Location location, Expr expr, Map<TypeStmt, Expr> cases) {
+        public final Map<TypeStmt, ImpType> types = new HashMap<>();
+
+        public Match(Location location, Expr expr, Map<TypeStmt, Block> cases, Expr.Identifier identifier) {
             super(location);
             this.expr = expr;
             this.cases = cases;
+            this.identifier = identifier;
         }
 
         @Override

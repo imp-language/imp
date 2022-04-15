@@ -43,7 +43,9 @@ public enum Comptime {
     ListTypeError(17, "Expression of type `{0}` cannot be added to list of inferred type `{1}`", "Lists may only contain elements of the same type."),
     ParameterTypeMismatch(18, "Argument of type `{0}` cannot supply a parameter of type `{1}`.", null),
     CannotPostfix(19, "Operator `{0}` cannot be applied to expression of type `{1}`.", null),
-    VoidUsage(20, "Cannot use the result of a void method in an expression.", "Methods returning `void` don't have any result so there is no return type to use.")
+    VoidUsage(20, "Cannot use the result of a void method in an expression.", "Methods returning `void` don't have any result so there is no return type to use."),
+    MatchCoverage(21, "Not all entries in UnionType `{0}` are covered by this match statement. Add cases for {1}.", "All possible values of a UnionType must be handled.")
+    
     // Todo: variable not found
     ;
 

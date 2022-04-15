@@ -1,13 +1,13 @@
 package org.imp.jvm.types;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UnionType implements ImpType {
-    public final List<ImpType> types;
+    public final Set<ImpType> types;
     private final String name;
 
-    public UnionType(List<ImpType> types) {
+    public UnionType(Set<ImpType> types) {
         this.types = types;
         this.name = types.stream().map(Object::toString).collect(Collectors.joining(" | "));
 

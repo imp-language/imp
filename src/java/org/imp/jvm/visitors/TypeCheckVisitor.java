@@ -12,6 +12,7 @@ import org.imp.jvm.types.*;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
@@ -365,23 +366,38 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitMatch(Stmt.Match match) {
-        match.expr.accept(this);
-        match.cases.forEach((k, v) -> {
-            k.accept(this); // Todo(CURRENT): doesn't resolve types. Need this for below on 378.
-            v.accept(this);
-        });
+        /*
+         * Steps to typecheck a match statement:
+         * - get real type of the parameter, if it's not a UnionType error?
+         * - get the real type of each case, making sure that there are no duplicate
+         * - if the union type isn't fully covered, error
+         *
+         */
 
-        switch (match.expr.realType) {
-            case UnionType ut -> {
-                var coveredTypes = match.cases.keySet();
-                for (var t : ut.types) {
-                    System.out.println(t);
-                    System.out.println(coveredTypes);
-                }
+        match.expr.accept(this);
+
+        if (match.expr.realType instanceof UnionType ut) {
+            var typesToCover = new HashSet<>(ut.types);
+            match.cases.forEach((keyTypeStmt, block) -> {
+                // Todo: Ensure the resolved ImpType is not an UnknownType
+                var caseType = match.types.get(keyTypeStmt);
+                typesToCover.remove(caseType);
+
+                var childEnvironment = block.environment;
+                childEnvironment.setParent(currentEnvironment);
+                childEnvironment.setVariableType(match.identifier.identifier.source(), caseType);
+
+                currentEnvironment = childEnvironment;
+                block.accept(this);
+                currentEnvironment = currentEnvironment.getParent();
+            });
+            if (!typesToCover.isEmpty()) {
+                Comptime.MatchCoverage.submit(file, match, ut, Util.joinConjunction(typesToCover));
             }
-            default -> {
-                System.exit(69);
-            }
+
+
+        } else {
+            Util.exit("error", 97);
         }
 
         return Optional.empty();
@@ -562,7 +578,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
-
     @Override
     public Optional<ImpType> visitVariable(Stmt.Variable stmt) {
 
@@ -576,4 +591,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         }
         return Optional.empty();
     }
+
+
 }
