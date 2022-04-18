@@ -3,21 +3,14 @@ import "batteries"
 
 
 
-type intOrString = int | string | int[]
 
 
-func logIntList(a int[]) {
-    for i in range(0,len(a)) {
-        log(i)
-    }
-}
-
-
-func testUnion(param int | int[]) {
-    log(intOrString)
+func testUnion(param int | int[] | string) {
+    log(param)
     match param as id {
         int -> log(id)
-        int[] -> logIntList(id)
+        int[] -> log(id)
+        string -> log(id)
     }
 }
 //testUnion(4)

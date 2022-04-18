@@ -75,6 +75,9 @@ public abstract class Stmt implements Node {
         public final Expr.Identifier identifier;
 
         public final Map<TypeStmt, ImpType> types = new HashMap<>();
+        public int localExprIndex = -1;
+        public int localTempIndex = -1;
+        public int localStartingBound = -1;
 
         public Match(Location location, Expr expr, Map<TypeStmt, Block> cases, Expr.Identifier identifier) {
             super(location);

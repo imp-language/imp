@@ -6,6 +6,7 @@ import org.imp.jvm.Environment;
 import org.imp.jvm.SourceFile;
 import org.imp.jvm.Util;
 import org.imp.jvm.codegen.DescriptorFactory;
+import org.imp.jvm.codegen.TableCode;
 import org.imp.jvm.domain.Identifier;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Expr;
@@ -450,7 +451,77 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     }
 
     @Override
-    public Optional<ClassWriter> visitMatch(Stmt.Match match) {
+    public Optional<ClassWriter> visitMatch(final Stmt.Match match) {
+        var funcType = functionStack.peek();
+        var ga = funcType.ga;
+        var endLabel = new Label();
+        var defaultLabel = new Label();
+
+        // Execute and store the match expression
+        match.expr.accept(this);
+        match.localExprIndex = ga.newLocal(Type.getType(Object.class));
+        funcType.localMap.put(match.identifier.identifier.source(), match.localExprIndex);
+        ga.storeLocal(match.localExprIndex);
+
+        // Load expression and check nullity
+        // aload_1, dup, invokestatic, pop
+        ga.loadLocal(match.localExprIndex);
+        ga.dup();
+        ga.invokeStatic(Type.getType(Objects.class), new Method("requireNonNull", "(Ljava/lang/Object;)Ljava/lang/Object;"));
+        ga.pop();
+
+        // Store second temp variable
+        // astore_2, iconst_0
+        match.localTempIndex = ga.newLocal(Type.getType(Object.class));
+        funcType.localMap.put("-----2", match.localTempIndex);
+        ga.storeLocal(match.localTempIndex);
+
+        // Store starting bound to LookupSwitch
+        // istore_3
+        ga.push(0);
+        match.localStartingBound = ga.newLocal(Type.getType(int.class));
+        funcType.localMap.put("-----3", match.localStartingBound);
+        ga.storeLocal(match.localStartingBound);
+
+        // Load second temp variable
+        // aload_2, iload_3,
+        ga.loadLocal(match.localTempIndex);
+        ga.loadLocal(match.localStartingBound);
+
+        // Invoke Dynamic!
+        var handle = new Handle(Opcodes.H_INVOKESTATIC, "java/lang/runtime/SwitchBootstraps", "typeSwitch", "(Ljava/lang/Object;I)I", false);
+        ga.invokeDynamic("typeSwitch", "(Ljava/lang/Object;I)I", handle);
+
+        int[] tableKeys = new int[match.cases.size()];
+        Label[] tableLabels = new Label[match.cases.size()];
+        for (int i = 0; i < match.cases.size(); i++) {
+            tableKeys[i] = i;
+            tableLabels[i] = new Label();
+        }
+
+        ga.tableSwitch(tableKeys, new TableCode(ga, match.localTempIndex, endLabel));
+//        ga.visitTableSwitchInsn(0, match.cases.size() - 1, defaultLabel, tableLabels);
+
+//        int i = 0;
+//        for (var key : match.cases.keySet()) {
+//            var block = match.cases.get(key);
+//            var label = tableLabels[i];
+//            ga.mark(label);
+//            // generate case block
+//            currentEnvironment = block.environment;
+//
+////            block.accept(this);
+//            currentEnvironment = currentEnvironment.getParent();
+//
+//            ga.goTo(endLabel);
+//        }
+
+        ga.mark(defaultLabel);
+        // Todo: default casing
+        ga.mark(endLabel);
+        /*
+         */
+
         // Todo(CURRENT): match codegen, need to store local var
         return Optional.empty();
     }
