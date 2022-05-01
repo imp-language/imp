@@ -13,6 +13,8 @@ func testUnion(param int | int[] | string) {
         string -> log(id)
     }
 }
+
+testUnion(40)
 //testUnion(4)
 //testUnion([4])
 //testUnion("44")

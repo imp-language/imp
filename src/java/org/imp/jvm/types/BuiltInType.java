@@ -53,7 +53,7 @@ public enum BuiltInType implements ImpType, Serializable {
                     ENUM, STRUCT, RETURN, ELSE, IF, FOR, DEC, INC,
                     NOT, POW, MOD, DIV, SUB, MUL, ADD, OR, AND, NOTEQUAL,
                     EQUAL, LT, GT, LE, GE, ASSIGN, DOT, RANGE, VARARGS,
-                    COMMA, RBRACK, LBRACK, RBRACE, LBRACE, RPAREN, PIPE -> null;
+                    COMMA, RBRACK, LBRACK, RBRACE, LBRACE, RPAREN, PIPE, ARROW, MATCH -> null;
             case TRUE, FALSE -> BuiltInType.BOOLEAN;
             case STRING -> BuiltInType.STRING;
             case INT -> BuiltInType.INT;
