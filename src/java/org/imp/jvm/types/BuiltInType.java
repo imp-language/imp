@@ -181,7 +181,6 @@ public enum BuiltInType implements ImpType, Serializable {
         return opcodes.getNeg();
     }
 
-
     @Override
     public int getReturnOpcode() {
         return opcodes.getReturn();
@@ -224,5 +223,26 @@ public enum BuiltInType implements ImpType, Serializable {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public void unboxNoCheck(MethodVisitor mv) {
+        // No unboxing required, String is already an object.
+        //                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "valueOf", "()Z", false);
+        switch (this) {
+            case INT -> {
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
+            }
+            case FLOAT -> {
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "floatValue", "()F", false);
+            }
+            case DOUBLE -> {
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false);
+            }
+            case BOOLEAN -> {
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
+            }
+            default -> {
+            }
+        }
     }
 }

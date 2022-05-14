@@ -65,16 +65,6 @@ public class ParserBase {
         return new Location(tokens.line, tokens.col);
     }
 
-    public boolean match(TokenType expected) {
-        Token token = lookAhead(0);
-        if (token.type() != expected) {
-            return false;
-        }
-
-        consume();
-        return true;
-    }
-
     /**
      * Registers a postfix unary operator parselet for the given token and
      * precedence.
@@ -144,6 +134,21 @@ public class ParserBase {
 
     void register(TokenType token, PrefixParselet parselet) {
         prefixParselets.put(token, parselet);
+    }
+
+    /**
+     * check then consume
+     *
+     * @return true if consumed
+     */
+    protected boolean match(TokenType expected) {
+        Token token = lookAhead(0);
+        if (token.type() != expected) {
+            return false;
+        }
+
+        consume();
+        return true;
     }
 
 }

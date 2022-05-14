@@ -220,7 +220,7 @@ public class Parser extends ParserBase {
             var type = union();
             consume(ARROW, "Expected `->` after type before expression in match statement.");
             Stmt.Block caseBody;
-            if (match(LBRACE)) {
+            if (check(LBRACE)) {
                 caseBody = block();
             } else {
                 // Allow cases to be a single expression, but wrap in a block to give it its own Environment

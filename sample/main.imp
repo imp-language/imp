@@ -2,19 +2,28 @@
 import "batteries"
 
 
+func doSomethingWithInt(i int) {
+    log(i + 42)
+}
 
 
-
-func testUnion(param int | int[] | string) {
-    log(param)
+func testUnion(param int | string) {
     match param as id {
-        int -> log(id)
-        int[] -> log(id)
-        string -> log(id)
+        int -> {
+            log(id)
+            log("param is an int")
+            doSomethingWithInt(id)
+        }
+        string -> {
+            log(id)
+            log("string")
+            doSomethingWithInt(id)
+        }
+//        int[] -> log("int[]")
     }
 }
 
-testUnion(40)
-//testUnion(4)
+//testUnion("40")
+testUnion(4)
 //testUnion([4])
 //testUnion("44")
