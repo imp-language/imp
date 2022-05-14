@@ -449,76 +449,56 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         return Optional.empty();
     }
 
+    /**
+     * Converting match statements to a sequence of if statements with `instanceof`
+     * calls provides union type checking. Each case generates its own if statement.
+     */
     @Override
     public Optional<ClassWriter> visitMatch(final Stmt.Match match) {
-        /*
-         * Match codegen- we need a bunch of if statements basically
-         *
-         */
         var funcType = functionStack.peek();
         var ga = funcType.ga;
-        var endLabel = new Label();
-        var defaultLabel = new Label();
 
-// Execute and store the match expression
+        // Execute and store the match expression as an untyped Object
         match.expr.accept(this);
-        match.localExprIndex = ga.newLocal(Type.getType(Object.class));
-        funcType.localMap.put(match.identifier.identifier.source(), match.localExprIndex);
-        ga.storeLocal(match.localExprIndex);
+        int localExprIndex = ga.newLocal(Type.getType(Object.class));
+        var scopedName = match.identifier.identifier.source();
+        funcType.localMap.put(scopedName, localExprIndex);
+        ga.storeLocal(localExprIndex);
 
-        var alias = match.identifier.identifier.source();
-
-//        Label[] tableLabels = new Label[match.cases.size()];
-//        for (int i = 0; i < tableLabels.length; i++) {
-//            var label = tableLabels[i];
-//            ga.mark(label);
-//        }
-
-        int i = 0;
         for (Stmt.TypeStmt typeStmt : match.cases.keySet()) {
             var end = new Label();
-            ga.loadLocal(match.localExprIndex);
+            ga.loadLocal(localExprIndex);
             var t = match.types.get(typeStmt);
 
-            var typeClass = t.getTypeClass();
-            if (typeClass.equals(int.class)) {
-                typeClass = Integer.class;
-            }
-
-            ga.instanceOf(Type.getType(typeClass));
+            // Check if match expression is  this case's type
+            var typeClass = Type.getType(t.getTypeClass());
+            ga.instanceOf(typeClass);
             ga.visitJumpInsn(Opcodes.IFEQ, end);
-//            ga.ifCmp(Type.getType(Object.class), GeneratorAdapter.EQ, endLabel);
-            ga.loadLocal(match.localExprIndex);
-            ga.checkCast(Type.getType(typeClass));
-//
+            ga.loadLocal(localExprIndex);
+            ga.checkCast(typeClass);
 
-//            ga.loadLocal(local);
-
+            // Store the scoped local and potentially cast to primitive
             if (t instanceof BuiltInType bt && bt.isNumeric()) {
-
                 // if a cast is needed, override the local index
                 bt.unboxNoCheck(ga);
                 int localPrimitiveType = ga.newLocal(Type.getType(int.class));
                 ga.storeLocal(localPrimitiveType);
-                funcType.localMap.put(alias, localPrimitiveType);
-//                ga.invokeStatic(Type.getType(Batteries.class), new Method("log", "(Ljava/lang/Object;)V"));
+                funcType.localMap.put(scopedName, localPrimitiveType);
             } else {
                 int localObjectType = ga.newLocal(Type.getType(Object.class));
                 ga.storeLocal(localObjectType);
-                funcType.localMap.put(alias, localObjectType);
+                funcType.localMap.put(scopedName, localObjectType);
             }
 
-            currentEnvironment = match.cases.get(typeStmt).environment;
-            match.cases.get(typeStmt).accept(this);
+            // Codegen the case body
+            var block = match.cases.get(typeStmt);
+            currentEnvironment = block.environment;
+            block.accept(this);
             currentEnvironment = currentEnvironment.getParent();
-            // Todo(CURRENT): cast to primitive type
+
+            // Mark the end of this if statement
             ga.mark(end);
-
-//            break;
-
         }
-
-//        ga.mark(endLabel);
 
         return Optional.empty();
     }

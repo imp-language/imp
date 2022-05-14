@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum BuiltInType implements ImpType, Serializable {
-    BOOLEAN("bool", boolean.class, "Z", TypeSpecificOpcodes.INT, false, false),
-    INT("int", int.class, "I", TypeSpecificOpcodes.INT, 0, true),
-    FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT, 0.0f, true),
-    DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE, 0.0d, true),
+    BOOLEAN("bool", Boolean.class, "Z", TypeSpecificOpcodes.INT, false, false),
+    INT("int", Integer.class, "I", TypeSpecificOpcodes.INT, 0, true),
+    FLOAT("float", Float.class, "F", TypeSpecificOpcodes.FLOAT, 0.0f, true),
+    DOUBLE("double", Double.class, "D", TypeSpecificOpcodes.DOUBLE, 0.0d, true),
     STRING("string", String.class, "Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, "", false),
     VOID("void", void.class, "V", TypeSpecificOpcodes.VOID, null, false),
     ANY("any", Object.class, "Ljava/lang/Object;", TypeSpecificOpcodes.OBJECT, false, false)

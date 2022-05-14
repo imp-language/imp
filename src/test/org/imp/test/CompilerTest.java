@@ -103,6 +103,14 @@ public class CompilerTest {
     }
 
     @Test
+    void match() throws IOException, InterruptedException {
+        assertEquals(
+                Load.gold(Path.of(moduleLocation, "simple/match.txt").toString()),
+                Load.run("simple/match", moduleLocation)
+        );
+    }
+
+    @Test
     void postfix() throws IOException, InterruptedException {
         assertEquals("""
                 1

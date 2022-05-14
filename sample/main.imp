@@ -17,7 +17,7 @@ func testUnion(param int | string) {
         string -> {
             log(id)
             log("string")
-            doSomethingWithInt(id)
+//            doSomethingWithInt(id)
         }
 //        int[] -> log("int[]")
     }

@@ -1,0 +1,19 @@
+// Simple match statement testing on union types
+
+import "batteries"
+
+func testUnion(param int | string) {
+    match param as id {
+        int -> {
+            log(id)
+            log("int")
+        }
+        string -> {
+            log(id)
+            log("string")
+        }
+    }
+}
+
+testUnion(4)
+testUnion("s")
