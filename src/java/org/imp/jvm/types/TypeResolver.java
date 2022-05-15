@@ -1,6 +1,7 @@
 package org.imp.jvm.types;
 
 import org.apache.commons.lang3.StringUtils;
+import org.imp.runtime.ListWrapper;
 
 public class TypeResolver {
 
@@ -63,6 +64,11 @@ public class TypeResolver {
             }
         }
         if (isList(arg)) {
+            // Todo: this is shoddy, fix
+            if (par instanceof ExternalType et && et.foundClass() == ListWrapper.class) {
+                return true;
+            }
+
             if (par instanceof ListType lta && arg instanceof ListType ltb) {
                 if (lta.contentType.equals(ltb.contentType)) return true;
             }
