@@ -12,6 +12,7 @@ import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.types.*;
+import org.imp.runtime.ListWrapper;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.commons.Method;
@@ -340,6 +341,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitIdentifierExpr(Expr.Identifier expr) {
 
         var funcType = functionStack.peek();
+        var ga = funcType.ga;
         var type = currentEnvironment.getVariable(expr.identifier.source());
         expr.realType = type;
         if (type instanceof FuncType ft) {
@@ -354,6 +356,18 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 index = funcType.argMap.get(source);
                 funcType.ga.loadArg(index);
             }
+        } else if (type instanceof ListType lt) {
+            String source = expr.identifier.source();
+            int index;
+            if (funcType.localMap.containsKey(source)) {
+                index = funcType.localMap.get(source);
+                funcType.ga.loadLocal(index, Type.getType(type.getDescriptor()));
+            } else {
+                index = funcType.argMap.get(source);
+                funcType.ga.loadArg(index);
+            }
+
+
         } else {
             String source = expr.identifier.source();
             int index;
@@ -364,7 +378,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 index = funcType.argMap.get(source);
                 funcType.ga.loadArg(index);
             }
-//            funcType.ga.visitVarInsn(type.getLoadVariableOpcode(), index);
+
         }
         return Optional.empty();
     }
@@ -425,12 +439,27 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitLiteralList(Expr.LiteralList expr) {
+        /*
+         * 1. Create an instance of ListWrapper
+         * 2. Save ImpType in constructor
+         * 3. Load the list, proceed as normal
+         */
+
         var ga = functionStack.peek().ga;
 
-        ga.newInstance(Type.getType("Ljava/util/ArrayList;"));
+        var lwc = Type.getType(ListWrapper.class);
+        ga.newInstance(lwc);
+        ga.dup();
+        ga.push(((ListType) expr.realType).contentType.getName());
+        ga.invokeConstructor(lwc, new Method("<init>", "(Ljava/lang/String;)V"));
         ga.dup();
 
-        ga.invokeConstructor(Type.getType("Ljava/util/ArrayList;"), new Method("<init>", "()V"));
+        ga.invokeVirtual(lwc, new Method("list", "()Ljava/util/ArrayList;"));
+
+//        ga.newInstance(Type.getType("Ljava/util/ArrayList;"));
+//        ga.dup();
+//
+//        ga.invokeConstructor(Type.getType("Ljava/util/ArrayList;"), new Method("<init>", "()V"));
 
         for (var entry : expr.entries) {
             // We never want to store the initialized list in this visitor location
@@ -446,6 +475,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             ga.invokeVirtual(Type.getType(ArrayList.class), new Method("add", "(Ljava/lang/Object;)Z"));
             ga.pop();
         }
+        ga.pop();
         return Optional.empty();
     }
 
@@ -455,6 +485,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
      */
     @Override
     public Optional<ClassWriter> visitMatch(final Stmt.Match match) {
+
+        // Todo: need to unwrap ListWrapper before calling at()
+//        var lwc = Type.getType(ListWrapper.class);
+//        ga.invokeVirtual(lwc, new Method("list", "()Ljava/util/ArrayList;"));
+
         var funcType = functionStack.peek();
         var ga = funcType.ga;
 
@@ -470,18 +505,39 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             ga.loadLocal(localExprIndex);
             var t = match.types.get(typeStmt);
 
-            // Check if match expression is  this case's type
-            var typeClass = Type.getType(t.getTypeClass());
-            ga.instanceOf(typeClass);
-            ga.visitJumpInsn(Opcodes.IFEQ, end);
-            ga.loadLocal(localExprIndex);
-            ga.checkCast(typeClass);
+            if (t instanceof ListType lt) {
+                // Cast to ListWrapper
+                var lwc = Type.getType(ListWrapper.class);
+                ga.instanceOf(lwc);
+                ga.visitJumpInsn(Opcodes.IFEQ, end);
+                ga.loadLocal(localExprIndex);
+                ga.checkCast(lwc);
+                ga.storeLocal(localExprIndex);
+
+                // Acquire the type
+                ga.loadLocal(localExprIndex);
+                funcType.ga.invokeVirtual(lwc, new Method("name", "()Ljava/lang/String;"));
+                // Compare content type
+                ga.push(lt.contentType.getName());
+                funcType.ga.invokeVirtual(Type.getType(String.class), new Method("equals", "(Ljava/lang/Object;)Z"));
+                ga.visitJumpInsn(Opcodes.IFEQ, end);
+                ga.loadLocal(localExprIndex);
+
+            } else {
+                // Check if match expression is this case's type
+                var typeClass = Type.getType(t.getTypeClass());
+                ga.instanceOf(typeClass);
+                ga.visitJumpInsn(Opcodes.IFEQ, end);
+                ga.loadLocal(localExprIndex);
+                ga.checkCast(typeClass);
+            }
 
             // Store the scoped local and potentially cast to primitive
             if (t instanceof BuiltInType bt && bt.isNumeric()) {
                 // if a cast is needed, override the local index
                 bt.unboxNoCheck(ga);
-                int localPrimitiveType = ga.newLocal(Type.getType(int.class));
+
+                int localPrimitiveType = ga.newLocal(Type.getType(Util.convert(bt.getTypeClass())));
                 ga.storeLocal(localPrimitiveType);
                 funcType.localMap.put(scopedName, localPrimitiveType);
             } else {

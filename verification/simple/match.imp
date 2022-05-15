@@ -2,7 +2,7 @@
 
 import "batteries"
 
-func testUnion(param int | string) {
+func testUnion(param int | string | int[]) {
     match param as id {
         int -> {
             log(id)
@@ -12,8 +12,13 @@ func testUnion(param int | string) {
             log(id)
             log("string")
         }
+        int[] -> {
+            log(id)
+            log("int[]")
+        }
     }
 }
 
 testUnion(4)
 testUnion("s")
+testUnion([4,3,2,1])

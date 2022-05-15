@@ -44,6 +44,8 @@ public enum BuiltInType implements ImpType, Serializable {
         this.opcodes = opcodes;
         this.defaultValue = defaultValue;
         this.isNumeric = isNumeric;
+
+        Integer.valueOf(0).getClass();
     }
 
     public static BuiltInType getFromToken(TokenType tokenType) {
@@ -233,7 +235,7 @@ public enum BuiltInType implements ImpType, Serializable {
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
             }
             case FLOAT -> {
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "floatValue", "()F", false);
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Float", "floatValue", "()F", false);
             }
             case DOUBLE -> {
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false);

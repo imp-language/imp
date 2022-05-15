@@ -2,28 +2,53 @@
 import "batteries"
 
 
-func doSomethingWithInt(i int) {
-    log(i + 42)
-}
+//func doSomethingWithInt(f float) {
+//    log(f + 42)
+//}
+//
+//func nested(param int[] | float[]) {
+//    match param as l {
+//        int[] -> log("I'm an int[]")
+//        float[] -> log(l)
+//    }
+//}
+//
+//func testUnion(param int[] | float | float[]) {
+//    match param as id {
+//        int[] -> log("I'm an int[]")
+//        float[] -> {
+//            log(id)
+//            nested(id)
+//        }
+//        float -> {
+//            log("param is a float")
+//            doSomethingWithInt(id)
+//        }
+//    }
+//}
+//
+////testUnion("40")
+////testUnion(4)
+//testUnion([3.])
+////testUnion(3.14)
 
-
-func testUnion(param int | string) {
+func testUnion(param int | string | int[]) {
     match param as id {
         int -> {
             log(id)
-            log("param is an int")
-            doSomethingWithInt(id)
+            log("int")
         }
         string -> {
             log(id)
             log("string")
-//            doSomethingWithInt(id)
         }
-//        int[] -> log("int[]")
+        int[] -> {
+            log(id)
+            log("int[]")
+        }
     }
 }
 
-//testUnion("40")
 testUnion(4)
-//testUnion([4])
-//testUnion("44")
+testUnion("s")
+testUnion([4,3,2,1])

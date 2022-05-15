@@ -89,4 +89,13 @@ public class Util {
         if (strList.size() == 2) return String.join(" and ", strList);
         return String.join(", ", strList.subList(0, strList.size() - 1)) + " and " + strList.get(strList.size() - 1);
     }
+
+
+    public static Class<?> convert(Class<?> c) {
+        if (c == Integer.class) return int.class;
+        if (c == Float.class) return float.class;
+        if (c == Boolean.class) return boolean.class;
+
+        return null;
+    }
 }
