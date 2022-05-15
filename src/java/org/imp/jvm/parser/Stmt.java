@@ -146,17 +146,6 @@ public abstract class Stmt implements Node {
 
     }
 
-    //    public static final class ListTypeStmt extends TypeStmt {
-//        private ListTypeStmt(Location location, Token identifier) {
-//            super(location, identifier, Optional.empty(), true);
-//        }
-//
-//        @Override
-//        public <R> R accept(Visitor<R> visitor) {
-//            return null;
-//        }
-//    }
-//
     public static final class UnionTypeStmt extends TypeStmt {
         public final List<TypeStmt> types;
 

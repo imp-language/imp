@@ -2,6 +2,7 @@ package org.imp.jvm.visitors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.NotImplementedException;
+import org.imp.jvm.Constants;
 import org.imp.jvm.Environment;
 import org.imp.jvm.SourceFile;
 import org.imp.jvm.Util;
@@ -12,7 +13,6 @@ import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.types.*;
-import org.imp.runtime.ListWrapper;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.commons.Method;
@@ -30,6 +30,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public final ClassWriter cw;
     public final Map<StructType, ClassWriter> structWriters = new HashMap<>();
     private final Stack<FuncType> functionStack = new Stack<>();
+
     public Environment currentEnvironment;
 
     public CodegenVisitor(Environment rootEnvironment, SourceFile source, ClassWriter cw) {
@@ -59,12 +60,9 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         if (expr.left instanceof Expr.Identifier id) {
             var index = funcType.localMap.get(id.identifier.source());
             funcType.ga.storeLocal(index);
-
         } else {
             Comptime.Implementation.submit(file, expr, "Assignment not implemented for any recipient but identifier yet");
-
         }
-
         return Optional.empty();
     }
 
@@ -96,9 +94,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitBlockStmt(Stmt.Block block) {
-        for (var stmt : block.statements) {
-            stmt.accept(this);
-        }
+        for (var stmt : block.statements) stmt.accept(this);
         return Optional.empty();
     }
 
@@ -293,20 +289,16 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         functionStack.add(funcType);
         var childEnvironment = stmt.body.environment;
 
-        // Generate class
+        // Generate function signature
         String name = "Function_" + funcType.name;
         var access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
-        // Generate invoker method
         String descriptor = DescriptorFactory.getMethodDescriptor(funcType.parameters, funcType.returnType);
-
         if (funcType.name.equals("main")) {
             name = "main";
             descriptor = "([Ljava/lang/String;)V";
         }
-
         var mv = cw.visitMethod(access, name, descriptor, null, null);
         funcType.ga = new GeneratorAdapter(mv, access, name, descriptor);
-
         for (int i = 0; i < funcType.parameters.size(); i++) {
             var param = funcType.parameters.get(i);
             funcType.argMap.put(param.name, i);
@@ -315,16 +307,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Generate function body
         currentEnvironment = childEnvironment;
         stmt.body.accept(this);
-
-        // Finish generating invoker function
-
-//        funcType.ga.visitMaxs(-1, -1);
         funcType.ga.endMethod();
-
-//        code.put(qualifiedName, cw.toByteArray());
-
-        // All methods must return something, even voids
-
         currentEnvironment = currentEnvironment.getParent();
         functionStack.pop();
 
@@ -339,47 +322,21 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitIdentifierExpr(Expr.Identifier expr) {
-
         var funcType = functionStack.peek();
         var ga = funcType.ga;
         var type = currentEnvironment.getVariable(expr.identifier.source());
         expr.realType = type;
-        if (type instanceof FuncType ft) {
-            System.err.println("unused");
-        } else if (type instanceof StructType st) {
-            int index;
-            String source = expr.identifier.source();
-            if (funcType.localMap.containsKey(source)) {
-                index = funcType.localMap.get(source);
-                funcType.ga.loadLocal(index, Type.getType(type.getDescriptor()));
-            } else {
-                index = funcType.argMap.get(source);
-                funcType.ga.loadArg(index);
-            }
-        } else if (type instanceof ListType lt) {
-            String source = expr.identifier.source();
-            int index;
-            if (funcType.localMap.containsKey(source)) {
-                index = funcType.localMap.get(source);
-                funcType.ga.loadLocal(index, Type.getType(type.getDescriptor()));
-            } else {
-                index = funcType.argMap.get(source);
-                funcType.ga.loadArg(index);
-            }
 
-
+        int index;
+        String source = expr.identifier.source();
+        if (funcType.localMap.containsKey(source)) {
+            index = funcType.localMap.get(source);
+            ga.loadLocal(index, Type.getType(type.getDescriptor()));
         } else {
-            String source = expr.identifier.source();
-            int index;
-            if (funcType.localMap.containsKey(source)) {
-                index = funcType.localMap.get(source);
-                funcType.ga.loadLocal(index, Type.getType(type.getDescriptor()));
-            } else {
-                index = funcType.argMap.get(source);
-                funcType.ga.loadArg(index);
-            }
-
+            index = funcType.argMap.get(source);
+            ga.loadArg(index);
         }
+
         return Optional.empty();
     }
 
@@ -387,24 +344,21 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitIf(Stmt.If stmt) {
         var funcType = functionStack.peek();
         var ga = funcType.ga;
+        Label endLabel = new Label();
+        Label falseLabel = new Label();
 
         // Generate condition (returns true or false)
         stmt.condition.accept(this);
 
-        currentEnvironment = stmt.trueBlock.environment;
-
-        Label endLabel = new Label();
-        Label falseLabel = new Label();
         // if condition is true (cond == 0) do trueLabel then jump to end
+        currentEnvironment = stmt.trueBlock.environment;
         ga.ifZCmp(GeneratorAdapter.EQ, falseLabel);
         stmt.trueBlock.accept(this);
         ga.goTo(endLabel);
         ga.mark(falseLabel);
         if (stmt.falseStmt != null) stmt.falseStmt.accept(this);
         ga.mark(endLabel);
-
         currentEnvironment = currentEnvironment.getParent();
-
         return Optional.empty();
     }
 
@@ -439,27 +393,14 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitLiteralList(Expr.LiteralList expr) {
-        /*
-         * 1. Create an instance of ListWrapper
-         * 2. Save ImpType in constructor
-         * 3. Load the list, proceed as normal
-         */
-
         var ga = functionStack.peek().ga;
 
-        var lwc = Type.getType(ListWrapper.class);
-        ga.newInstance(lwc);
+        ga.newInstance(Constants.ListWrapperType);
         ga.dup();
-        ga.push(((ListType) expr.realType).contentType.getName());
-        ga.invokeConstructor(lwc, new Method("<init>", "(Ljava/lang/String;)V"));
+        ga.push(((ListType) expr.realType).contentType().getName());
+        ga.invokeConstructor(Constants.ListWrapperType, new Method("<init>", "(Ljava/lang/String;)V"));
         ga.dup();
-
-        ga.invokeVirtual(lwc, new Method("list", "()Ljava/util/ArrayList;"));
-
-//        ga.newInstance(Type.getType("Ljava/util/ArrayList;"));
-//        ga.dup();
-//
-//        ga.invokeConstructor(Type.getType("Ljava/util/ArrayList;"), new Method("<init>", "()V"));
+        ga.invokeVirtual(Constants.ListWrapperType, new Method("list", "()Ljava/util/ArrayList;"));
 
         for (var entry : expr.entries) {
             // We never want to store the initialized list in this visitor location
@@ -486,10 +427,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitMatch(final Stmt.Match match) {
 
-        // Todo: need to unwrap ListWrapper before calling at()
-//        var lwc = Type.getType(ListWrapper.class);
-//        ga.invokeVirtual(lwc, new Method("list", "()Ljava/util/ArrayList;"));
-
         var funcType = functionStack.peek();
         var ga = funcType.ga;
 
@@ -507,18 +444,17 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
             if (t instanceof ListType lt) {
                 // Cast to ListWrapper
-                var lwc = Type.getType(ListWrapper.class);
-                ga.instanceOf(lwc);
+                ga.instanceOf(Constants.ListWrapperType);
                 ga.visitJumpInsn(Opcodes.IFEQ, end);
                 ga.loadLocal(localExprIndex);
-                ga.checkCast(lwc);
+                ga.checkCast(Constants.ListWrapperType);
                 ga.storeLocal(localExprIndex);
 
                 // Acquire the type
                 ga.loadLocal(localExprIndex);
-                funcType.ga.invokeVirtual(lwc, new Method("name", "()Ljava/lang/String;"));
+                funcType.ga.invokeVirtual(Constants.ListWrapperType, new Method("name", "()Ljava/lang/String;"));
                 // Compare content type
-                ga.push(lt.contentType.getName());
+                ga.push(lt.contentType().getName());
                 funcType.ga.invokeVirtual(Type.getType(String.class), new Method("equals", "(Ljava/lang/Object;)Z"));
                 ga.visitJumpInsn(Opcodes.IFEQ, end);
                 ga.loadLocal(localExprIndex);
@@ -559,10 +495,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ClassWriter> visitNew(Expr.New expr) {
-        throw new NotImplementedException("method not implemented");
-    }
 
     @Override
     public Optional<ClassWriter> visitParameterStmt(Stmt.Parameter stmt) {
@@ -604,14 +536,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitPropertyAccess(Expr.PropertyAccess expr) {
-
-//        throw new NotImplementedException("method not implemented");
         return Optional.empty();
     }
 
     @Override
     public Optional<ClassWriter> visitRange(Expr.Range range) {
-
         throw new NotImplementedException("method not implemented");
     }
 
@@ -733,6 +662,4 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         return Optional.empty();
     }
-
-
 }

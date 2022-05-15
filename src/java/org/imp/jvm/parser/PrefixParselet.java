@@ -54,15 +54,6 @@ public interface PrefixParselet {
         }
     }
 
-    record New() implements PrefixParselet {
-        public Expr parse(Parser parser, Token token) {
-            var loc = parser.lok();
-            Expr expr = parser.expression();
-
-            return new Expr.New(loc, expr);
-        }
-    }
-
 
     record Grouping() implements PrefixParselet {
         public Expr parse(Parser parser, Token token) {

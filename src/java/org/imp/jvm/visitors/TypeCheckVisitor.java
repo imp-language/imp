@@ -403,10 +403,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ImpType> visitNew(Expr.New expr) {
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ImpType> visitParameterStmt(Stmt.Parameter stmt) {
@@ -554,17 +550,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             });
 
         }
-
-        var b = "";
-        switch (b) {
-            case "" -> System.out.println("a");
-            case "a" -> {
-                System.out.println("");
-                System.out.println("");
-            }
-
-        }
-
+        
         return Optional.empty();
     }
 

@@ -2,42 +2,36 @@
 import "batteries"
 
 
-//func doSomethingWithInt(f float) {
-//    log(f + 42)
-//}
-//
-//func nested(param int[] | float[]) {
-//    match param as l {
-//        int[] -> log("I'm an int[]")
-//        float[] -> log(l)
-//    }
-//}
-//
-//func testUnion(param int[] | float | float[]) {
-//    match param as id {
-//        int[] -> log("I'm an int[]")
-//        float[] -> {
-//            log(id)
-//            nested(id)
-//        }
-//        float -> {
-//            log("param is a float")
-//            doSomethingWithInt(id)
-//        }
-//    }
-//}
-//
-////testUnion("40")
-////testUnion(4)
-//testUnion([3.])
-////testUnion(3.14)
-
-
-
-log("for loop access through range")
-val l = [0,1,3,2,4,5,6,7,8,9,10]
-for i in range(0,11) {
-    val c = at(l,i)
-    log(c)
+func doSomethingWithInt(f float) {
+    log(f + 42)
 }
+
+func nested(param int[] | float[]) {
+    match param as l {
+        int[] -> log("I'm an int[]")
+        float[] -> log(l)
+    }
+}
+
+func testUnion(param int[] | float | float[]) {
+    match param as id {
+        int[] -> log("I'm an int[]")
+        float[] -> {
+            log(id)
+            nested(id)
+        }
+        float -> {
+            log("param is a float")
+            doSomethingWithInt(id)
+        }
+    }
+}
+
+//testUnion("40")
+//testUnion(4)
+testUnion([3.])
+//testUnion(3.14)
+
+
+
 

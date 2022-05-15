@@ -45,8 +45,6 @@ public abstract class Expr implements Node {
         R visitLiteralList(LiteralList expr);
 
 
-        R visitNew(New expr);
-
         R visitPostfixExpr(Postfix expr);
 
         R visitPrefix(Prefix expr);
@@ -262,22 +260,6 @@ public abstract class Expr implements Node {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIndexAccess(this);
         }
-    }
-
-    // expression operator
-    public static class New extends Expr {
-        public final Expr call;
-
-        public New(Location location, Expr call) {
-            super(location);
-            this.call = call;
-        }
-
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitNew(this);
-        }
-
-
     }
 
     public static class EmptyList extends Expr {

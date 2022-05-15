@@ -57,7 +57,7 @@ public class TypeResolver {
         // 3
         if (isList(par)) {
             if (par instanceof ListType lta && arg instanceof ListType ltb) {
-                if (lta.contentType.equals(ltb.contentType)) return true;
+                if (lta.contentType().equals(ltb.contentType())) return true;
             }
             if (par instanceof ListType lta && arg.getName().equals("java.util.List")) {
                 return true;
@@ -70,7 +70,7 @@ public class TypeResolver {
             }
 
             if (par instanceof ListType lta && arg instanceof ListType ltb) {
-                if (lta.contentType.equals(ltb.contentType)) return true;
+                if (lta.contentType().equals(ltb.contentType())) return true;
             }
             return arg instanceof ListType ltb && par.getName().equals("java.util.List");
         }

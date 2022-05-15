@@ -213,10 +213,6 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         return s.toString();
     }
 
-    @Override
-    public String visitNew(Expr.New expr) {
-        return s("new", print(expr.call));
-    }
 
     @Override
     public String visitParameterStmt(Stmt.Parameter stmt) {

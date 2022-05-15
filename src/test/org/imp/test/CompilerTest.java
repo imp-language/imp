@@ -25,7 +25,7 @@ public class CompilerTest {
     void ExpectError() throws IOException {
         assertEquals(
                 Util.set(Comptime.ParameterTypeMismatch.code),
-                Load.checkForErrors("errors/unions.txt", moduleLocation)
+                Load.checkForErrors("errors/unions", moduleLocation)
         );
     }
 

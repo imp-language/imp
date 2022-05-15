@@ -23,10 +23,6 @@ public class Environment {
         this.parent = null;
     }
 
-    public Environment(Environment parent) {
-        this.parent = parent;
-    }
-
 
     public void addVariable(String name, ImpType type) {
         variables.put(name, type);

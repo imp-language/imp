@@ -26,7 +26,6 @@ public class Parser extends ParserBase {
         register(IDENTIFIER, new PrefixParselet.Identifier());
 
         register(ASSIGN, new InfixParselet.AssignOperator());
-        register(NEW, new PrefixParselet.New());
         register(DOT, new InfixParselet.PropertyAccess());
         register(LBRACK, new InfixParselet.IndexAccess());
 

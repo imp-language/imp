@@ -45,7 +45,7 @@ public enum Comptime {
     CannotPostfix(19, "Operator `{0}` cannot be applied to expression of type `{1}`.", null),
     VoidUsage(20, "Cannot use the result of a void method in an expression.", "Methods returning `void` don't have any result so there is no return type to use."),
     MatchCoverage(21, "Not all entries in UnionType `{0}` are covered by this match statement. Add cases for {1}.", "All possible values of a UnionType must be handled.")
-    
+
     // Todo: variable not found
     ;
 
@@ -72,8 +72,6 @@ public enum Comptime {
         if (hasErrors()) {
             errors.forEach(System.out::println);
             throw new MyError(message);
-//            Util.println(message);
-//            System.exit(1);
         }
     }
 

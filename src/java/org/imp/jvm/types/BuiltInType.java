@@ -45,7 +45,6 @@ public enum BuiltInType implements ImpType, Serializable {
         this.defaultValue = defaultValue;
         this.isNumeric = isNumeric;
 
-        Integer.valueOf(0).getClass();
     }
 
     public static BuiltInType getFromToken(TokenType tokenType) {

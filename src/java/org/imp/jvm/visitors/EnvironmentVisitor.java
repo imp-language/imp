@@ -320,10 +320,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ImpType> visitNew(Expr.New expr) {
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ImpType> visitParameterStmt(Stmt.Parameter stmt) {

@@ -4,20 +4,14 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Objects;
 
-public class ListType implements ImpType {
-
-    public final ImpType contentType;
-
-    public ListType(ImpType contentType) {
-        this.contentType = contentType;
-    }
+public record ListType(ImpType contentType) implements ImpType {
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ListType listType = (ListType) o;
-        return contentType.equals(listType.contentType);
+        return contentType.equals(listType.contentType());
     }
 
     @Override
