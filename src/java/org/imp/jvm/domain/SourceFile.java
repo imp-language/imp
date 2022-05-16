@@ -1,4 +1,4 @@
-package org.imp.jvm;
+package org.imp.jvm.domain;
 
 import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.io.FilenameUtils;

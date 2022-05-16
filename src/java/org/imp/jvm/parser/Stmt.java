@@ -1,6 +1,6 @@
 package org.imp.jvm.parser;
 
-import org.imp.jvm.Environment;
+import org.imp.jvm.domain.Environment;
 import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.types.ImpType;

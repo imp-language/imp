@@ -1,8 +1,8 @@
 package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.SourceFile;
-import org.imp.jvm.codegen.BytecodeGenerator;
+import org.imp.jvm.BytecodeGenerator;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.errors.MyError;
 import org.imp.jvm.parser.Stmt;

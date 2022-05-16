@@ -1,8 +1,8 @@
 package org.imp.jvm.visitors;
 
-import org.imp.jvm.Environment;
-import org.imp.jvm.SourceFile;
 import org.imp.jvm.Util;
+import org.imp.jvm.domain.Environment;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
@@ -550,7 +550,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             });
 
         }
-        
+
         return Optional.empty();
     }
 

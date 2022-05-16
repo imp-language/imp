@@ -1,37 +1,18 @@
-// tests for loops
+
 import "batteries"
 
-
-func doSomethingWithInt(f float) {
-    log(f + 42)
+func testUnion(param int | string | int[]) {
+    log(param)
 }
+testUnion(4)
+testUnion([4])
+testUnion("44")
 
-func nested(param int[] | float[]) {
-    match param as l {
-        int[] -> log("I'm an int[]")
-        float[] -> log(l)
-    }
+
+type intOrString = int | string | int[]
+func testUnion2(param intOrString) {
+    log(param)
 }
-
-func testUnion(param int[] | float | float[]) {
-    match param as id {
-        int[] -> log("I'm an int[]")
-        float[] -> {
-            log(id)
-            nested(id)
-        }
-        float -> {
-            log("param is a float")
-            doSomethingWithInt(id)
-        }
-    }
-}
-
-//testUnion("40")
-//testUnion(4)
-testUnion([3.])
-//testUnion(3.14)
-
-
-
-
+testUnion2(4)
+testUnion2([4])
+testUnion2("44")

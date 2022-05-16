@@ -79,11 +79,6 @@ public class FuncType implements ImpType, Serializable {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return 0;
-    }
-
-    @Override
     public int getSubtractOpcode() {
         return 0;
     }

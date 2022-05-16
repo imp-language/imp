@@ -1,7 +1,7 @@
 package org.imp.jvm.visitors;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.imp.jvm.Environment;
+import org.imp.jvm.domain.Environment;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.Token;

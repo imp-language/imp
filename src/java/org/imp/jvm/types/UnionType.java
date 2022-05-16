@@ -64,11 +64,6 @@ public class UnionType implements ImpType {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return 0;
-    }
-
-    @Override
     public int getSubtractOpcode() {
         return 0;
     }

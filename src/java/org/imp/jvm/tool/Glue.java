@@ -1,4 +1,4 @@
-package org.imp.jvm.runtimeHelp;
+package org.imp.jvm.tool;
 
 import org.imp.jvm.domain.Identifier;
 import org.imp.jvm.types.BuiltInType;

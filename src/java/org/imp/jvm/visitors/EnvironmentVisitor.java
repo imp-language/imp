@@ -1,16 +1,16 @@
 package org.imp.jvm.visitors;
 
-import org.imp.jvm.Environment;
-import org.imp.jvm.SourceFile;
+import org.imp.jvm.domain.Environment;
 import org.imp.jvm.domain.Identifier;
 import org.imp.jvm.domain.Mutability;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.ReservedWords;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.TokenType;
-import org.imp.jvm.runtimeHelp.Glue;
 import org.imp.jvm.tool.ExportTable;
+import org.imp.jvm.tool.Glue;
 import org.imp.jvm.types.*;
 
 import java.io.File;

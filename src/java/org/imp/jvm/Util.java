@@ -98,4 +98,13 @@ public class Util {
 
         return null;
     }
+
+    // According to https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.3
+    public static String getMethodDescriptor(Collection<? extends Identifier> parameters, ImpType returnType) {
+        String parametersDescriptor = parameters.stream()
+                .map(parameter -> parameter.type.getDescriptor())
+                .collect(Collectors.joining("", "(", ")"));
+        String returnDescriptor = returnType.getDescriptor();
+        return parametersDescriptor + returnDescriptor;
+    }
 }

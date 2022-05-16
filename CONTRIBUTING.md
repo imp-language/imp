@@ -32,7 +32,6 @@ Java projects are often large, sprawling codebases, so here's an attempt to brea
 #### Compiler
 
 - `src/java/org/imp/jvm` main package.
-    - `codegen/` codegen package. JVM bytecode generators for classes, methods, fields, etc.
     - `domain/` useful representations of constructs common to the compiler, e.g. identifiers and mutability.
     - `errors/` compiler error logging and template script.
     - `parser/` manually created Pratt-style parser.
@@ -44,6 +43,7 @@ Java projects are often large, sprawling codebases, so here's an attempt to brea
         - `Compile.java` compiler method.
     - `types/` classes representing types at compile time.
     - `visitors/` walk the tree, each visitor implements a single pass on the AST.
+    - `BytecodeGenerator.java` JVM bytecode generators for classes, methods, fields, etc.
     - `Environment.java` describes the variables in a single scope.
     - `SourceFile.java` maps one-to-one with a single Imp source file at compile time.
     - `Util.java` utilities!

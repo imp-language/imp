@@ -56,11 +56,6 @@ public record ExternalType(Class<?> foundClass) implements ImpType {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
-    }
-
-    @Override
     public int getSubtractOpcode() {
         return 0;
     }

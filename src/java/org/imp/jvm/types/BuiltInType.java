@@ -188,11 +188,6 @@ public enum BuiltInType implements ImpType, Serializable {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return opcodes.getStore();
-    }
-
-    @Override
     public int getSubtractOpcode() {
         return opcodes.getSubtract();
     }

@@ -70,11 +70,6 @@ public class UnknownType implements ImpType, Serializable {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
-    }
-
-    @Override
     public int getSubtractOpcode() {
         throw new RuntimeException("Subtraction operation not (yet ;) ) supported for custom objects");
     }

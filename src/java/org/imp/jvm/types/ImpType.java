@@ -24,8 +24,6 @@ public interface ImpType {
 
     int getReturnOpcode();
 
-    int getStoreVariableOpcode();
-
     int getSubtractOpcode();
 
     Class<?> getTypeClass();

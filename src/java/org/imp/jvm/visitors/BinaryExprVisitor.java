@@ -1,5 +1,6 @@
 package org.imp.jvm.visitors;
 
+import org.imp.jvm.Constants;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ImpType;
@@ -16,7 +17,7 @@ public class BinaryExprVisitor {
     public static void concatenateStrings(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
         ga.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
         ga.visitInsn(Opcodes.DUP);
-        ga.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+        ga.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", Constants.Init, "()V", false);
 
         expr.left.accept(visitor);
 

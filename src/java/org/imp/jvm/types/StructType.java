@@ -97,11 +97,6 @@ public class StructType implements ImpType, Serializable {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
-    }
-
-    @Override
     public int getSubtractOpcode() {
         throw new NotImplementedException("Opcode not implemented");
     }

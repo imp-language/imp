@@ -1,7 +1,6 @@
-package org.imp.jvm;
+package org.imp.jvm.domain;
 
 import org.apache.commons.collections4.map.LinkedMap;
-import org.imp.jvm.domain.Mutability;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Node;
 import org.imp.jvm.types.ImpType;

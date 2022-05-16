@@ -3,11 +3,10 @@ package org.imp.jvm.visitors;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.Constants;
-import org.imp.jvm.Environment;
-import org.imp.jvm.SourceFile;
 import org.imp.jvm.Util;
-import org.imp.jvm.codegen.DescriptorFactory;
+import org.imp.jvm.domain.Environment;
 import org.imp.jvm.domain.Identifier;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
@@ -123,7 +122,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
                 List<Identifier> params = callType.parameters.stream().map(arg -> new Identifier(arg.type.getName(), arg.type)).collect(Collectors.toList());
                 ImpType returnType = callType.returnType;
-                String methodDescriptor = DescriptorFactory.getMethodDescriptor(params, returnType);
+                String methodDescriptor = Util.getMethodDescriptor(params, returnType);
                 // Generate arguments
 
                 Util.zip(params, expr.arguments, (param, arg) -> {
@@ -154,7 +153,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 });
 
                 // Call the invoke method
-                String methodDescriptor = DescriptorFactory.getMethodDescriptor(callType.parameters, callType.returnType);
+                String methodDescriptor = Util.getMethodDescriptor(callType.parameters, callType.returnType);
                 String name = "Function_" + callType.name;
                 String owner = FilenameUtils.removeExtension(source.getFullRelativePath());
 
@@ -186,7 +185,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             funcType.ga.visitMethodInsn(
                     Opcodes.INVOKESPECIAL,
                     st.qualifiedName,
-                    "<init>",
+                    Constants.Init,
                     "(" + descriptor + typeDescriptor + ")V",
                     false
             );
@@ -208,10 +207,10 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitEmptyList(Expr.EmptyList emptyList) {
         var ga = functionStack.peek().ga;
 
-        ga.newInstance(Type.getType("Ljava/util/ArrayList;"));
+        ga.newInstance(Constants.ArrayListType);
         ga.dup();
 
-        ga.invokeConstructor(Type.getType("Ljava/util/ArrayList;"), new Method("<init>", "()V"));
+        ga.invokeConstructor(Constants.ArrayListType, new Method(Constants.Init, "()V"));
         return Optional.empty();
     }
 
@@ -249,15 +248,15 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         } else {
             stmt.expr.accept(this);
-            stmt.localExprIndex = ga.newLocal(Type.getType(Iterator.class));
+            stmt.localExprIndex = ga.newLocal(Constants.IteratorType);
             funcType.localMap.put("______", stmt.localExprIndex);
-            ga.storeLocal(stmt.localExprIndex, Type.getType(Iterator.class));
+            ga.storeLocal(stmt.localExprIndex, Constants.IteratorType);
             ga.mark(startLabel);
             ga.loadLocal(stmt.localExprIndex);
         }
 
         // Check if iterator has next
-        ga.invokeInterface(Type.getType(Iterator.class), new Method("hasNext", "()Z"));
+        ga.invokeInterface(Constants.IteratorType, new Method("hasNext", "()Z"));
         ga.visitJumpInsn(Opcodes.IFEQ, endLabel);
 
         // ALOAD the iterator for body
@@ -266,7 +265,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         } else {
             ga.loadLocal(stmt.localExprIndex);
         }
-        ga.invokeInterface(Type.getType(Iterator.class), new Method("next", "()Ljava/lang/Object;"));
+        ga.invokeInterface(Constants.IteratorType, new Method("next", "()Ljava/lang/Object;"));
         BuiltInType.INT.doUnboxing(ga);
         stmt.localNameIndex = ga.newLocal(Type.getType(BuiltInType.INT.getDescriptor()));
         funcType.localMap.put(stmt.name.source(), stmt.localNameIndex);
@@ -292,7 +291,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Generate function signature
         String name = "Function_" + funcType.name;
         var access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
-        String descriptor = DescriptorFactory.getMethodDescriptor(funcType.parameters, funcType.returnType);
+        String descriptor = Util.getMethodDescriptor(funcType.parameters, funcType.returnType);
         if (funcType.name.equals("main")) {
             name = "main";
             descriptor = "([Ljava/lang/String;)V";
@@ -398,7 +397,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         ga.newInstance(Constants.ListWrapperType);
         ga.dup();
         ga.push(((ListType) expr.realType).contentType().getName());
-        ga.invokeConstructor(Constants.ListWrapperType, new Method("<init>", "(Ljava/lang/String;)V"));
+        ga.invokeConstructor(Constants.ListWrapperType, new Method(Constants.Init, "(Ljava/lang/String;)V"));
         ga.dup();
         ga.invokeVirtual(Constants.ListWrapperType, new Method("list", "()Ljava/util/ArrayList;"));
 
@@ -413,7 +412,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             if (rt instanceof BuiltInType bt) {
                 bt.doBoxing(ga);
             }
-            ga.invokeVirtual(Type.getType(ArrayList.class), new Method("add", "(Ljava/lang/Object;)Z"));
+            ga.invokeVirtual(Constants.ArrayListType, new Method("add", "(Ljava/lang/Object;)Z"));
             ga.pop();
         }
         ga.pop();
@@ -432,7 +431,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         // Execute and store the match expression as an untyped Object
         match.expr.accept(this);
-        int localExprIndex = ga.newLocal(Type.getType(Object.class));
+        int localExprIndex = ga.newLocal(Constants.ObjectType);
         var scopedName = match.identifier.identifier.source();
         funcType.localMap.put(scopedName, localExprIndex);
         ga.storeLocal(localExprIndex);
@@ -477,7 +476,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 ga.storeLocal(localPrimitiveType);
                 funcType.localMap.put(scopedName, localPrimitiveType);
             } else {
-                int localObjectType = ga.newLocal(Type.getType(Object.class));
+                int localObjectType = ga.newLocal(Constants.ObjectType);
                 ga.storeLocal(localObjectType);
                 funcType.localMap.put(scopedName, localObjectType);
             }
@@ -594,7 +593,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         // Generate inner class Struct constructor
         descriptor = "(" + "L" + source.getFullRelativePath() + ";" + constructorDescriptor + ")V";
-        MethodVisitor mv = innerCw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", descriptor, null, null);
+        MethodVisitor mv = innerCw.visitMethod(Opcodes.ACC_PUBLIC, Constants.Init, descriptor, null, null);
         mv.visitCode();
 
         // Load outer class
@@ -607,7 +606,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Call super()
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         String ownerDescriptor = "java/lang/Object";
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V", false);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, Constants.Init, "()V", false);
         // Todo: set fields
 
         // Set fields
