@@ -5,6 +5,9 @@ import org.imp.jvm.types.ImpType;
 import java.io.Serializable;
 
 
+/**
+ * Todo: this should be a record
+ */
 public class Identifier implements Serializable {
     public final String name;
     public ImpType type;

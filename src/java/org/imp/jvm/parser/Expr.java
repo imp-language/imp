@@ -51,7 +51,6 @@ public abstract class Expr implements Node {
 
         R visitPropertyAccess(PropertyAccess expr);
 
-        R visitRange(Range range);
     }
 
     public static final class Empty extends Expr {
@@ -289,25 +288,6 @@ public abstract class Expr implements Node {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIdentifierExpr(this);
         }
-    }
-
-    // expression ... expression
-    public static class Range extends Expr {
-        public final Expr left;
-        public final Expr right;
-
-        Range(Location location, Expr left, Expr right) {
-            super(location);
-            this.left = left;
-            this.right = right;
-        }
-
-        @Override
-        public <R> R accept(Visitor<R> visitor) {
-            return visitor.visitRange(this);
-        }
-
-
     }
 
 

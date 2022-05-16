@@ -248,11 +248,6 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         return expr.exprs.stream().map(this::print).collect(Collectors.joining("."));
     }
 
-    // Todo: relate to binary expressions somehow
-    @Override
-    public String visitRange(Expr.Range range) {
-        return print(range.left) + ".." + print(range.right);
-    }
 
     @Override
     public String visitReturnStmt(Stmt.Return stmt) {

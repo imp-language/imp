@@ -2,7 +2,6 @@ package org.imp.test;
 
 import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
-import org.imp.jvm.errors.MyError;
 import org.imp.jvm.tool.Compiler;
 
 import java.io.File;
@@ -20,7 +19,7 @@ public class Load {
         String className = null;
         try {
             className = compiler.compile(projectRoot, testPath + ".imp");
-        } catch (MyError e) {
+        } catch (Comptime.MyError e) {
             e.printStackTrace();
         }
 
@@ -51,7 +50,7 @@ public class Load {
     public static Set<Integer> checkForErrors(String testPath, String projectRoot) throws IOException {
         try {
             compiler.compile(projectRoot, testPath + ".imp");
-        } catch (MyError e) {
+        } catch (Comptime.MyError e) {
             var errorSet = Comptime.errorData.stream().map(Comptime.Data::code).collect(Collectors.toSet());
             System.out.println(errorSet);
             return errorSet;

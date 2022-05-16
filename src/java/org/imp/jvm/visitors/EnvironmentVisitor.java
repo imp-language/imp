@@ -344,10 +344,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ImpType> visitRange(Expr.Range range) {
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ImpType> visitReturnStmt(Stmt.Return stmt) {

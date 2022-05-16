@@ -4,7 +4,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.Util;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
-import org.imp.jvm.errors.MyError;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
 
@@ -18,7 +17,7 @@ public record Compiler() {
     /**
      * @return java class name ('.' separated) relative to the project root
      */
-    public String compile(String projectRoot, String filename) throws FileNotFoundException, MyError {
+    public String compile(String projectRoot, String filename) throws FileNotFoundException, Comptime.MyError {
         Comptime.errors.clear(); // Todo: this should not be static
 
         String relativePath = FilenameUtils.getPath(filename);

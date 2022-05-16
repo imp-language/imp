@@ -16,6 +16,8 @@ public class Constants {
     public static final Type ObjectType = Type.getType(Object.class);
     public static final String Init = "<init>";
     public static final String Clinit = "<clinit>";
+    // https://mariadb.com/kb/en/operating-system-error-codes/
+    public static final int ENOENT = 2;
 
 
 }

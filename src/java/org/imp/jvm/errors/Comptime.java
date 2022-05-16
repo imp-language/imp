@@ -122,4 +122,11 @@ public enum Comptime {
 
     }
 
+
+    public static class MyError extends Exception {
+        public MyError(String errorMessage) {
+            super(errorMessage);
+        }
+    }
+
 }

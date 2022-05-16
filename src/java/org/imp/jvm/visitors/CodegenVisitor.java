@@ -538,10 +538,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<ClassWriter> visitRange(Expr.Range range) {
-        throw new NotImplementedException("method not implemented");
-    }
 
     @Override
     public Optional<ClassWriter> visitReturnStmt(Stmt.Return stmt) {

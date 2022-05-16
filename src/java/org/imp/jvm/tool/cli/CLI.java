@@ -1,7 +1,8 @@
 package org.imp.jvm.tool.cli;
 
+import org.imp.jvm.Constants;
 import org.imp.jvm.Util;
-import org.imp.jvm.errors.MyError;
+import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.tool.Timer;
@@ -66,7 +67,7 @@ public class CLI implements Runnable {
             assert manifest != null;
         } catch (FileNotFoundException e) {
             System.err.println("Manifest not found. Switch directories to an imp project, or run `imp new`.");
-            System.exit(UnixErrors.ENOENT);
+            System.exit(Constants.ENOENT);
         }
         String pwd = System.getProperty("user.dir");
         ExportTable.initDB(Path.of(pwd, ".compile", "imp.db"));
@@ -83,8 +84,8 @@ public class CLI implements Runnable {
             classPath = imp.compile(moduleLocation, manifest.entry());
         } catch (FileNotFoundException e) {
             System.err.println("Manifest.entry points to a file that does not exist.");
-            System.exit(UnixErrors.ENOENT);
-        } catch (MyError e) {
+            System.exit(Constants.ENOENT);
+        } catch (Comptime.MyError e) {
             Util.exit(e.getMessage(), 1);
         }
 
