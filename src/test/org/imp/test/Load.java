@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Load {
@@ -47,11 +47,12 @@ public class Load {
         return stdout.replaceAll("\\r\\n?", "\n");
     }
 
-    public static Set<Integer> checkForErrors(String testPath, String projectRoot) throws IOException {
+    public static Map<Integer, Long> checkForErrors(String testPath, String projectRoot) throws IOException {
         try {
-            compiler.compile(projectRoot, testPath + ".imp");
+            new Compiler().compile(projectRoot, testPath + ".imp");
         } catch (Comptime.MyError e) {
-            var errorSet = Comptime.errorData.stream().map(Comptime.Data::code).collect(Collectors.toSet());
+            var errorSet = e.errorData.stream().map(Comptime.Data::code).collect(Collectors.groupingBy(s -> s,
+                    Collectors.counting()));
             System.out.println(errorSet);
             return errorSet;
         }

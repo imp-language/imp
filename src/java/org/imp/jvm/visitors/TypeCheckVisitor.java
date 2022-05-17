@@ -8,6 +8,7 @@ import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.TokenType;
+import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.types.*;
 
 import java.io.File;
@@ -21,13 +22,15 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     public final Environment rootEnvironment;
     public final File file;
+    public final Compiler compiler;
     private final Stack<FuncType> functionStack = new Stack<>();
     public Environment currentEnvironment;
 
-    public TypeCheckVisitor(Environment rootEnvironment, SourceFile source) {
+    public TypeCheckVisitor(Compiler compiler, Environment rootEnvironment, SourceFile source) {
         this.rootEnvironment = rootEnvironment;
         this.file = source.file;
         this.currentEnvironment = this.rootEnvironment;
+        this.compiler = compiler;
     }
 
 
@@ -55,9 +58,9 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         if (expr.left.realType != expr.right.realType) {
             if (expr.left instanceof Expr.Identifier id) {
-                Comptime.BadAssignment.submit(file, expr, id.identifier.source(), expr.left.realType.getName(), expr.right.realType.getName());
+                Comptime.BadAssignment.submit(compiler, file, expr, id.identifier.source(), expr.left.realType.getName(), expr.right.realType.getName());
             } else {
-                Comptime.Implementation.submit(file, expr, "Assignment not implemented for any recipient but identifier yet");
+                Comptime.Implementation.submit(compiler, file, expr, "Assignment not implemented for any recipient but identifier yet");
             }
         }
 
@@ -75,12 +78,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         var t2 = expr.right.accept(this);
 
         if (t1.isEmpty() || t2.isEmpty()) {
-            Comptime.Implementation.submit(file, expr, "Types in binary expression not determined.");
+            Comptime.Implementation.submit(compiler, file, expr, "Types in binary expression not determined.");
             return Optional.empty();
         }
 
         if (t1.get() == BuiltInType.ANY || t2.get() == BuiltInType.ANY) {
-            Comptime.CannotApplyOperator.submit(file, expr, expr.operator.source(), t1.get(), t2.get());
+            Comptime.CannotApplyOperator.submit(compiler, file, expr, expr.operator.source(), t1.get(), t2.get());
             return Optional.empty();
         }
 
@@ -97,9 +100,9 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     // check if two values can be compared
                     if (expr.operator.type() != TokenType.EQUAL && expr.operator.type() != TokenType.NOTEQUAL) {
                         if (bt1 == BuiltInType.STRING || bt2 == BuiltInType.STRING) {
-                            Comptime.CannotApplyOperator.submit(file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
+                            Comptime.CannotApplyOperator.submit(compiler, file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
                         } else if (bt1 == BuiltInType.BOOLEAN || bt2 == BuiltInType.BOOLEAN) {
-                            Comptime.CannotApplyOperator.submit(file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
+                            Comptime.CannotApplyOperator.submit(compiler, file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
 
                         }
                     }
@@ -110,7 +113,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     // check if two values can be compared
                     if (bt1 != BuiltInType.BOOLEAN || bt2 != BuiltInType.BOOLEAN) {
-                        Comptime.CannotApplyOperator.submit(file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
+                        Comptime.CannotApplyOperator.submit(compiler, file, expr, expr.operator.source(), bt1.getName(), bt2.getName());
                     }
                     totalType = BuiltInType.BOOLEAN;
                 }
@@ -145,7 +148,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             switch (t) {
                 case FuncType ft -> {
                     if (ft.parameters.size() != expr.arguments.size()) {
-                        Comptime.FunctionSignatureMismatch.submit(file, expr.item, ft.name, "a");
+                        Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, ft.name, "a");
                         return Optional.empty();
                     }
                     AtomicReference<ImpType> returnType = new AtomicReference<>(ft.returnType);
@@ -156,10 +159,10 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         if (at.isPresent()) {
                             var argType = at.get();
                             if (argType == BuiltInType.VOID) {
-                                Comptime.VoidUsage.submit(file, arg);
+                                Comptime.VoidUsage.submit(compiler, file, arg);
                             }
                             if (!TypeResolver.typesMatch(param.type, argType)) {
-                                Comptime.ParameterTypeMismatch.submit(file, arg, argType.getName(), param.type.getName());
+                                Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
                             }
 
                             if (argType instanceof ListType lt) {
@@ -176,7 +179,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 }
                 case StructType st -> {
                     if (st.fieldNames.length != expr.arguments.size()) {
-                        Comptime.FunctionSignatureMismatch.submit(file, expr.item, st.name, "a");
+                        Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, st.name, "a");
                         return Optional.empty();
                     }
                     // constructor function
@@ -191,7 +194,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         } else {
             // Todo: pass missing method name
-            Comptime.MethodNotFound.submit(file, expr.item, "name");
+            Comptime.MethodNotFound.submit(compiler, file, expr.item, "name");
         }
 
         return Optional.empty();
@@ -239,7 +242,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     }
                 }
                 case ListType lt -> Util.exit("Todo: iterate over lists", 97);
-                default -> Comptime.NotIterable.submit(file, stmt.expr, b.get().getName());
+                default -> Comptime.NotIterable.submit(compiler, file, stmt.expr, b.get().getName());
             }
         }
 
@@ -270,7 +273,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         childEnvironment.setVariableType(param.name, attempt);
 
                     } else {
-                        Comptime.TypeNotFound.submit(file, stmt, ut.typeName);
+                        Comptime.TypeNotFound.submit(compiler, file, stmt, ut.typeName);
                     }
                 }
             }
@@ -306,7 +309,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         if (t != null) {
             expr.realType = t;
         } else {
-            Comptime.IdentifierNotFound.submit(file, expr, expr.identifier.source());
+            Comptime.IdentifierNotFound.submit(compiler, file, expr, expr.identifier.source());
         }
         return Optional.ofNullable(t);
     }
@@ -337,7 +340,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitLiteralExpr(Expr.Literal expr) {
         var t = expr.realType;
         if (t == null) {
-            Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
+            Comptime.Implementation.submit(compiler, file, expr, "This should never happen. All literals should be builtin, for now.");
         }
         return Optional.ofNullable(t);
     }
@@ -354,7 +357,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 var t = expr.entries.get(i).accept(this);
                 if (t.isPresent()) {
                     if (!(t.get().equals(type))) {
-                        Comptime.ListTypeError.submit(file, expr.entries.get(i), t.get().getName(), type.getName());
+                        Comptime.ListTypeError.submit(compiler, file, expr.entries.get(i), t.get().getName(), type.getName());
                         break;
                     }
                 }
@@ -392,7 +395,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 currentEnvironment = currentEnvironment.getParent();
             });
             if (!typesToCover.isEmpty()) {
-                Comptime.MatchCoverage.submit(file, match, ut, Util.joinConjunction(typesToCover));
+                Comptime.MatchCoverage.submit(compiler, file, match, ut, Util.joinConjunction(typesToCover));
             }
 
 
@@ -414,7 +417,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         expr.realType = expr.expr.accept(this).get();
 
         if (!(expr.realType instanceof BuiltInType bt && bt.isNumeric())) {
-            Comptime.CannotPostfix.submit(file, expr.expr, expr.operator.source(), expr.realType.getName());
+            Comptime.CannotPostfix.submit(compiler, file, expr.expr, expr.operator.source(), expr.realType.getName());
         }
         return Optional.empty();
     }
@@ -443,7 +446,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         int idx = Arrays.asList(structType.fieldNames).indexOf(id);
                         t = structType.fieldTypes[idx];
                     } else {
-                        Comptime.PropertyNotFound.submit(file, exprs.get(i), t.getName(), id);
+                        Comptime.PropertyNotFound.submit(compiler, file, exprs.get(i), t.getName(), id);
                     }
 
 
@@ -520,7 +523,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 if (top.returnType == BuiltInType.VOID) {
                     top.returnType = t.get();
                 } else if (newType != top.returnType) {
-                    Comptime.ReturnTypeMismatch.submit(file, stmt, top.name, top.returnType, newType);
+                    Comptime.ReturnTypeMismatch.submit(compiler, file, stmt, top.name, top.returnType, newType);
                 }
             }
         }
@@ -540,7 +543,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     if (attempt != null) {
                         b.type = attempt;
                     } else {
-                        Comptime.TypeNotFound.submit(file, a, ut.typeName);
+                        Comptime.TypeNotFound.submit(compiler, file, a, ut.typeName);
                     }
                 }
             });
@@ -569,7 +572,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         if (t.isPresent()) {
             currentEnvironment.setVariableType(stmt.name.source(), t.get());
         } else {
-            Comptime.TypeNotResolved.submit(file, expr, stmt.name.source());
+            Comptime.TypeNotResolved.submit(compiler, file, expr, stmt.name.source());
         }
         return Optional.empty();
     }

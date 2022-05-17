@@ -24,7 +24,7 @@ public class API {
      *
      * @return SourceFile with exports gathered.
      */
-    public static SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException, Comptime.MyError {
+    public static SourceFile parse(Compiler compiler, String projectRoot, String relativePath, String name) throws FileNotFoundException, Comptime.MyError {
 
         var source = new SourceFile(projectRoot, relativePath, name);
         compilationSet.add(source);
@@ -43,7 +43,7 @@ public class API {
             if (f.exists()) {
                 SourceFile next = null;
                 try {
-                    next = parse(projectRoot, Path.of(source.relativePath, relative).toString(), n);
+                    next = parse(compiler, projectRoot, Path.of(source.relativePath, relative).toString(), n);
                 } catch (FileNotFoundException | Comptime.MyError e) {
                     e.printStackTrace();
                 }
@@ -54,9 +54,9 @@ public class API {
 
         // EnvironmentVisitor builds scopes and assigns
         // UnknownType or Literal types to expressions.
-        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(source.rootEnvironment, source);
+        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(compiler, source.rootEnvironment, source);
         source.acceptVisitor(environmentVisitor);
-        Comptime.killIfErrors("Correct syntax errors before type checking can continue.");
+        Comptime.killIfErrors(compiler, "Correct syntax errors before type checking can continue.");
 
         // Process all exports in the current file
         source.filter(Stmt.Export.class, (exportStmt) -> {
@@ -80,11 +80,11 @@ public class API {
     }
 
 
-    public static void buildProgram(Map<String, ? extends SourceFile> compilationSet) {
+    public static void buildProgram(Compiler compiler, Map<String, ? extends SourceFile> compilationSet) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);
-            var allByteUnits = bytecodeGenerator.generate(source);
+            var allByteUnits = bytecodeGenerator.generate(compiler, source);
 
             // Generate outer class
             var byteUnit = allByteUnits.getValue0().toByteArray();

@@ -2,6 +2,7 @@ package org.imp.jvm;
 
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.visitors.CodegenVisitor;
 import org.javatuples.Pair;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 public class BytecodeGenerator {
 
-    public Pair<ClassWriter, Map<StructType, ClassWriter>> generate(SourceFile source) {
+    public Pair<ClassWriter, Map<StructType, ClassWriter>> generate(Compiler compiler, SourceFile source) {
         var cw = new ClassWriter(CodegenVisitor.flags);
 
         String qualifiedName = FilenameUtils.removeExtension(source.getFullRelativePath());
@@ -50,7 +51,7 @@ public class BytecodeGenerator {
         ga.endMethod();
 
         // Generate bytecode for each Type defined in the Imp file
-        var codegenVisitor = new CodegenVisitor(source.rootEnvironment, source, cw);
+        var codegenVisitor = new CodegenVisitor(compiler, source.rootEnvironment, source, cw);
 
         source.acceptVisitor(codegenVisitor);
 

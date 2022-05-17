@@ -11,6 +11,7 @@ import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.TokenType;
+import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.types.*;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.GeneratorAdapter;
@@ -26,13 +27,15 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public final Environment rootEnvironment;
     public final SourceFile source;
     public final File file;
+    public final Compiler compiler;
     public final ClassWriter cw;
     public final Map<StructType, ClassWriter> structWriters = new HashMap<>();
     private final Stack<FuncType> functionStack = new Stack<>();
 
     public Environment currentEnvironment;
 
-    public CodegenVisitor(Environment rootEnvironment, SourceFile source, ClassWriter cw) {
+    public CodegenVisitor(Compiler compiler, Environment rootEnvironment, SourceFile source, ClassWriter cw) {
+        this.compiler = compiler;
         this.rootEnvironment = rootEnvironment;
         this.source = source;
         this.currentEnvironment = this.rootEnvironment;
@@ -60,7 +63,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             var index = funcType.localMap.get(id.identifier.source());
             funcType.ga.storeLocal(index);
         } else {
-            Comptime.Implementation.submit(file, expr, "Assignment not implemented for any recipient but identifier yet");
+            Comptime.Implementation.submit(compiler, file, expr, "Assignment not implemented for any recipient but identifier yet");
         }
         return Optional.empty();
     }
@@ -385,7 +388,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 case STRING -> ga.push((String) transformed);
             }
         } else {
-            Comptime.Implementation.submit(source.file, expr, "This should never happen. All literals should be builtin, for now.");
+            Comptime.Implementation.submit(compiler, source.file, expr, "This should never happen. All literals should be builtin, for now.");
         }
         return Optional.empty();
     }

@@ -13,12 +13,19 @@ public class ErrorTest {
     static final String pwd = System.getProperty("user.dir");
     static final String moduleLocation = Path.of(pwd, "verification").toString();
 
+    @Test
+    void MatchCoverage() throws IOException {
+        assertEquals(
+                Util.countedSet(Comptime.MatchCoverage.code),
+                Load.checkForErrors("errors/matchCoverage", moduleLocation)
+        );
+    }
 
     @Test
-    void ExpectError() throws IOException {
+    void ParameterTypeMismatch() throws IOException {
         assertEquals(
-                Util.set(Comptime.ParameterTypeMismatch.code),
-                Load.checkForErrors("errors/unions", moduleLocation)
+                Util.countedSet(Comptime.ParameterTypeMismatch.code, Comptime.ParameterTypeMismatch.code),
+                Load.checkForErrors("errors/parameterTypeMismatch", moduleLocation)
         );
     }
 

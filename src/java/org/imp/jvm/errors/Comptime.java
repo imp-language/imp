@@ -2,12 +2,12 @@ package org.imp.jvm.errors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.parser.Node;
+import org.imp.jvm.tool.Compiler;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -52,8 +52,6 @@ public enum Comptime {
     //
 
 
-    public static final List<String> errors = new ArrayList<>();
-    public static final List<Data> errorData = new ArrayList<>();
     public final int code;
     private final String suggestion;
     private final String templateString;
@@ -64,18 +62,15 @@ public enum Comptime {
         this.templateString = templateString;
     }
 
-    public static boolean hasErrors() {
-        return errors.size() > 0;
-    }
 
-    public static void killIfErrors(String message) throws MyError {
-        if (hasErrors()) {
-            errors.forEach(System.out::println);
-            throw new MyError(message);
+    public static void killIfErrors(Compiler compiler, String message) throws MyError {
+        if (!compiler.errorData().isEmpty()) {
+            compiler.errorData().forEach(e -> System.out.println(e.message));
+            throw new MyError(message, compiler.errorData());
         }
     }
 
-    public void submit(File file, Node node, Object... varargs) {
+    public void submit(Compiler compiler, File file, Node node, Object... varargs) {
 
         try {
             var loc = node.location();
@@ -111,8 +106,8 @@ public enum Comptime {
                 s += suggestion;
             }
 
-            errors.add(s);
-            errorData.add(new Data(code, s, line, loc.col()));
+//            errors.add(s);
+            compiler.errorData().add(new Data(code, s, line, loc.col()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,8 +119,11 @@ public enum Comptime {
 
 
     public static class MyError extends Exception {
-        public MyError(String errorMessage) {
+        public final List<Data> errorData;
+
+        public MyError(String errorMessage, List<Data> data) {
             super(errorMessage);
+            this.errorData = data;
         }
     }
 

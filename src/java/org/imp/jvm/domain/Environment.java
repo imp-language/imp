@@ -3,6 +3,7 @@ package org.imp.jvm.domain;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Node;
+import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.types.ImpType;
 
 import java.io.File;
@@ -28,9 +29,9 @@ public class Environment {
         mutability.put(name, Mutability.Val);
     }
 
-    public void addVariableOrError(String name, ImpType type, File file, Node node) {
+    public void addVariableOrError(Compiler compiler, String name, ImpType type, File file, Node node) {
         if (getVariable(name) != null) {
-            Comptime.Redeclaration.submit(file, node, name);
+            Comptime.Redeclaration.submit(compiler, file, node, name);
         } else {
             addVariable(name, type);
         }

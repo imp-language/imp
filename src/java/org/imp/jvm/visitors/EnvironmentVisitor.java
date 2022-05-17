@@ -9,6 +9,7 @@ import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.ReservedWords;
 import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.TokenType;
+import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.tool.Glue;
 import org.imp.jvm.types.*;
@@ -25,14 +26,16 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     public final Environment rootEnvironment;
     public final SourceFile source;
+    public final Compiler compiler;
     final File file;
     public Environment currentEnvironment;
 
-    public EnvironmentVisitor(Environment rootEnvironment, SourceFile source) {
+    public EnvironmentVisitor(Compiler compiler, Environment rootEnvironment, SourceFile source) {
         this.rootEnvironment = rootEnvironment;
         this.source = source;
         this.file = source.file;
         this.currentEnvironment = this.rootEnvironment;
+        this.compiler = compiler;
     }
 
 
@@ -56,11 +59,11 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         if (expr.left instanceof Expr.Identifier identifier) {
             var mut = currentEnvironment.getVariableMutability(identifier.identifier.source());
             if (mut == Mutability.Val) {
-                Comptime.MutabilityError.submit(file, identifier, identifier.identifier.source());
+                Comptime.MutabilityError.submit(compiler, file, identifier, identifier.identifier.source());
             }
 
         } else {
-            Comptime.Implementation.submit(file, expr, "Assignment not implemented for any recipient but identifier yet");
+            Comptime.Implementation.submit(compiler, file, expr, "Assignment not implemented for any recipient but identifier yet");
         }
 
         return Optional.empty();
@@ -183,7 +186,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             var bt = BuiltInType.getFromString(stmt.returnType.source());
             funcType.returnType = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.returnType.source()));
         }
-        currentEnvironment.addVariableOrError(name, funcType, file, stmt);
+        currentEnvironment.addVariableOrError(compiler, name, funcType, file, stmt);
 
         currentEnvironment = childEnvironment;
         stmt.body.accept(this);
@@ -228,7 +231,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             var ree = Glue.getExports(requestedImport);
             for (var ft : ree) {
                 var typeName = ft.name;
-                this.currentEnvironment.addVariableOrError(typeName, ft, file, stmt);
+                this.currentEnvironment.addVariableOrError(compiler, typeName, ft, file, stmt);
             }
 
         } else {
@@ -248,12 +251,12 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                     case "struct" -> {
                         var st = (StructType) result.o();
                         st.name = typeName;
-                        this.currentEnvironment.addVariableOrError(typeName, st, file, stmt);
+                        this.currentEnvironment.addVariableOrError(compiler, typeName, st, file, stmt);
                     }
                     case "function" -> {
                         var funcType = (FuncType) result.o();
                         funcType.name = typeName;
-                        this.currentEnvironment.addVariableOrError(typeName, funcType, file, stmt);
+                        this.currentEnvironment.addVariableOrError(compiler, typeName, funcType, file, stmt);
                     }
                     default -> {
                         System.err.println("Bad deserialization.");
@@ -275,7 +278,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitLiteralExpr(Expr.Literal expr) {
         var t = BuiltInType.getFromToken(expr.literal.type());
         if (t == null) {
-            Comptime.Implementation.submit(file, expr, "This should never happen. All literals should be builtin, for now.");
+            Comptime.Implementation.submit(compiler, file, expr, "This should never happen. All literals should be builtin, for now.");
         } else {
             expr.realType = t;
         }
@@ -285,7 +288,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitLiteralList(Expr.LiteralList expr) {
         if (expr.entries.size() == 0) {
-            Comptime.ListLiteralIncomplete.submit(file, expr);
+            Comptime.ListLiteralIncomplete.submit(compiler, file, expr);
         }
 
         for (var entry : expr.entries) {
@@ -364,7 +367,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             var field = stmt.fields.get(i);
             fieldNames[i] = field.name.source();
             if (ReservedWords.isReserved(fieldNames[i])) {
-                Comptime.ReservedWord.submit(file, stmt.fields.get(i), fieldNames[i]);
+                Comptime.ReservedWord.submit(compiler, file, stmt.fields.get(i), fieldNames[i]);
             }
             var fieldT = field.type.accept(this);
             if (fieldT.isPresent()) {
@@ -382,7 +385,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         StructType structType = new StructType(name, fieldNames, fieldTypes);
         structType.qualifiedName = source.getFullRelativePath() + "$" + name;
         structType.parentName = source.getFullRelativePath();
-        currentEnvironment.addVariableOrError(name, structType, file, stmt);
+        currentEnvironment.addVariableOrError(compiler, name, structType, file, stmt);
 
         return Optional.of(structType);
     }
@@ -438,7 +441,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             mut = Mutability.Mut;
         }
 
-        currentEnvironment.addVariableOrError(stmt.name.source(), type, file, stmt);
+        currentEnvironment.addVariableOrError(compiler, stmt.name.source(), type, file, stmt);
         currentEnvironment.setVariableMutability(stmt.name.source(), mut);
         return Optional.empty();
     }

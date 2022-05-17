@@ -46,8 +46,20 @@ public class Util {
         return Arrays.asList(i);
     }
 
-    public static <T> Set<T> set(T... i) {
-        return Set.of(i);
+    /**
+     * Type-safe method to generate a Set based on varargs.
+     *
+     * @param varargs supplied to set
+     * @param <T>     type parameter
+     * @return new Set
+     */
+    public static <T> Set<T> set(T... varargs) {
+        return Set.of(varargs);
+    }
+
+    public static <T> Map<T, Long> countedSet(T... varargs) {
+        return Arrays.stream(varargs).collect(Collectors.groupingBy(s -> s,
+                Collectors.counting()));
     }
 
     public static String parameterString(List<? extends Identifier> parameters) {
