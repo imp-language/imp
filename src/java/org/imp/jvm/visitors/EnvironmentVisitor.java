@@ -352,7 +352,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitReturnStmt(Stmt.Return stmt) {
         stmt.expr.accept(this);
-
         return Optional.empty();
     }
 

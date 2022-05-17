@@ -1,17 +1,16 @@
+type sOrI = string | int
 
-
-
-
-//struct Error {
-//    message string
-//}
-//
-//struct Person {
-//    name string
-//    age int
-//}
-
-func taskThatFails(param string) string | int {
-    return param
-    // Todo(CURRENT): return to a union type
+func returnsUnion(cond bool) sOrI {
+    if cond {
+        log("first branch chosen- returning string type")
+        return "haha"
+    } else {
+        log("second branch chosen- returning int type")
+        return 42
+    }
 }
+
+mut a = returnsUnion( true)
+log(a)
+a = returnsUnion(false)
+log(a)

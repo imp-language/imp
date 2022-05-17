@@ -9,3 +9,13 @@ func takesInt(param int) {
 }
 val floatVal = 4.0
 takesInt(floatVal)
+
+// Fails as lists are not valid providers for string or int
+func returnsUnion(cond bool) string | int {
+    return [4]
+}
+
+// An extra test of the above method, but with a primitive value
+func returnsUnionPrimitive(cond bool) string | int {
+    return 4.0
+}

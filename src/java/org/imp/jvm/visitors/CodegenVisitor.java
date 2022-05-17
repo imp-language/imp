@@ -547,7 +547,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var funcType = functionStack.peek();
         if (!(stmt.expr instanceof Expr.Empty)) {
             stmt.expr.accept(this);
-            funcType.ga.visitInsn(stmt.expr.realType.getReturnOpcode());
+
+            // Box any primitive value that is returned by a function with UnionType result
+            if (funcType.returnType instanceof UnionType && stmt.expr.realType instanceof BuiltInType bt) {
+                bt.doBoxing(funcType.ga);
+            }
+
+            funcType.ga.visitInsn(funcType.returnType.getReturnOpcode());
         } else {
             funcType.ga.visitInsn(Opcodes.RETURN);
         }

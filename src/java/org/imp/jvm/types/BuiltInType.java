@@ -71,6 +71,7 @@ public enum BuiltInType implements ImpType, Serializable {
             case "bool" -> BuiltInType.BOOLEAN;
             case "string" -> BuiltInType.STRING;
             case "any" -> BuiltInType.ANY;
+            case "void" -> BuiltInType.VOID;
             default -> null;
         };
     }

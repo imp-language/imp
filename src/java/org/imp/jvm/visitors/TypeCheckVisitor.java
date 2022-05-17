@@ -278,7 +278,17 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 }
             }
 
+            if (funcType.returnType instanceof UnknownType ut) {
+                var attempt = currentEnvironment.getVariable(ut.typeName);
+                if (attempt != null) {
+                    funcType.returnType = attempt;
+                } else {
+                    Comptime.TypeNotFound.submit(compiler, file, stmt, ut.typeName);
+                }
+            }
+
             currentEnvironment = childEnvironment;
+
             stmt.body.accept(this);
 
             // Conditionally add a return stmt
@@ -519,11 +529,15 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         if (t.isPresent()) {
             if (functionStack.size() > 0) {
                 var newType = t.get();
-                var top = functionStack.peek();
-                if (top.returnType == BuiltInType.VOID) {
-                    top.returnType = t.get();
-                } else if (newType != top.returnType) {
-                    Comptime.ReturnTypeMismatch.submit(compiler, file, stmt, top.name, top.returnType, newType);
+                var functionType = functionStack.peek();
+                if (functionType.returnType instanceof UnionType ut) {
+                    if (!ut.types.contains(newType)) {
+                        Comptime.ParameterTypeMismatch.submit(compiler, file, stmt.expr, newType, functionType.returnType);
+                    }
+                } else if (functionType.returnType == BuiltInType.VOID) {
+                    functionType.returnType = t.get();
+                } else if (newType != functionType.returnType) {
+                    Comptime.ReturnTypeMismatch.submit(compiler, file, stmt, functionType.name, functionType.returnType, newType);
                 }
             }
         }

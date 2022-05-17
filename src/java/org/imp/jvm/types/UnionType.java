@@ -1,5 +1,7 @@
 package org.imp.jvm.types;
 
+import org.objectweb.asm.Opcodes;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -60,7 +62,7 @@ public class UnionType implements ImpType {
 
     @Override
     public int getReturnOpcode() {
-        return 0;
+        return Opcodes.ARETURN;
     }
 
     @Override

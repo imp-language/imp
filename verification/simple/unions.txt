@@ -4,3 +4,7 @@
 4
 [4]
 44
+first branch chosen- returning string type
+haha
+second branch chosen- returning int type
+42

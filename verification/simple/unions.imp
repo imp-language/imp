@@ -15,3 +15,18 @@ func testUnion2(param intOrString) {
 testUnion2(4)
 testUnion2([4])
 testUnion2("44")
+
+func returnsUnion(cond bool) string | int {
+    if cond {
+        log("first branch chosen- returning string type")
+        return "haha"
+    } else {
+        log("second branch chosen- returning int type")
+        return 42
+    }
+}
+
+mut a = returnsUnion(true)
+log(a)
+a = returnsUnion(false)
+log(a)
