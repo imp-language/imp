@@ -49,8 +49,6 @@ public enum Comptime {
     // Todo: variable not found
     ;
 
-    //
-
 
     public final int code;
     private final String suggestion;
@@ -63,10 +61,10 @@ public enum Comptime {
     }
 
 
-    public static void killIfErrors(Compiler compiler, String message) throws MyError {
+    public static void killIfErrors(Compiler compiler, String message) throws CompilerError {
         if (!compiler.errorData().isEmpty()) {
             compiler.errorData().forEach(e -> System.out.println(e.message));
-            throw new MyError(message, compiler.errorData());
+            throw new CompilerError(message, compiler.errorData());
         }
     }
 
@@ -106,7 +104,6 @@ public enum Comptime {
                 s += suggestion;
             }
 
-//            errors.add(s);
             compiler.errorData().add(new Data(code, s, line, loc.col()));
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,10 +115,10 @@ public enum Comptime {
     }
 
 
-    public static class MyError extends Exception {
+    public static class CompilerError extends Exception {
         public final List<Data> errorData;
 
-        public MyError(String errorMessage, List<Data> data) {
+        public CompilerError(String errorMessage, List<Data> data) {
             super(errorMessage);
             this.errorData = data;
         }

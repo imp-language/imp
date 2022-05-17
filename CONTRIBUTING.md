@@ -39,8 +39,7 @@ Java projects are often large, sprawling codebases, so here's an attempt to brea
     - `tool/` tooling package.
         - `cli/` the imp cli.
         - `manifest/` maifest parsing.
-        - `API.java` core functions of the compiler.
-        - `Compile.java` compiler method.
+        - `Compile.java` compiler.
     - `types/` classes representing types at compile time.
     - `visitors/` walk the tree, each visitor implements a single pass on the AST.
     - `BytecodeGenerator.java` JVM bytecode generators for classes, methods, fields, etc.

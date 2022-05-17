@@ -85,7 +85,7 @@ public class CLI implements Runnable {
         } catch (FileNotFoundException e) {
             System.err.println("Manifest.entry points to a file that does not exist.");
             System.exit(Constants.ENOENT);
-        } catch (Comptime.MyError e) {
+        } catch (Comptime.CompilerError e) {
             Util.exit(e.getMessage(), 1);
         }
 

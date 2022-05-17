@@ -19,7 +19,7 @@ public class Load {
         String className = null;
         try {
             className = compiler.compile(projectRoot, testPath + ".imp");
-        } catch (Comptime.MyError e) {
+        } catch (Comptime.CompilerError e) {
             e.printStackTrace();
         }
 
@@ -50,7 +50,7 @@ public class Load {
     public static Map<Integer, Long> checkForErrors(String testPath, String projectRoot) throws IOException {
         try {
             new Compiler().compile(projectRoot, testPath + ".imp");
-        } catch (Comptime.MyError e) {
+        } catch (Comptime.CompilerError e) {
             var errorSet = e.errorData.stream().map(Comptime.Data::code).collect(Collectors.groupingBy(s -> s,
                     Collectors.counting()));
             System.out.println(errorSet);
