@@ -1,2 +1,17 @@
 
-log(4)
+
+
+
+//struct Error {
+//    message string
+//}
+//
+//struct Person {
+//    name string
+//    age int
+//}
+
+func taskThatFails(param string) string | int {
+    return param
+    // Todo(CURRENT): return to a union type
+}

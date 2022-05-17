@@ -183,8 +183,9 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
         var funcType = new FuncType(name, parameters);
         if (stmt.returnType != null) {
-            var bt = BuiltInType.getFromString(stmt.returnType.source());
-            funcType.returnType = Objects.requireNonNullElseGet(bt, () -> new UnknownType(stmt.returnType.source()));
+            var ttt = stmt.returnType.accept(this);
+//            var bt = BuiltInType.getFromString(stmt.returnType.source());
+            funcType.returnType = ttt.get();
         }
         currentEnvironment.addVariableOrError(compiler, name, funcType, file, stmt);
 

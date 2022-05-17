@@ -73,7 +73,7 @@ public class Parser extends ParserBase {
                 loc,
                 new Token(IDENTIFIER, loc.line(), loc.col(), "main"),
                 args,
-                new Token(ALIAS, loc.line(), loc.col(), "void"),
+                Stmt.TypeStmt.voidInstance(lok()),
                 new Stmt.Block(loc, new ArrayList<>(), new Environment())
         );
 
@@ -184,9 +184,9 @@ public class Parser extends ParserBase {
 
         consume(RPAREN, "Expected closing parentheses after function parameters.");
 
-        Token returnType = null;
+        Stmt.TypeStmt returnType = null;
         if (!check(LBRACE)) {
-            returnType = consume();
+            returnType = union();
         }
 
         Stmt.Block block = block();

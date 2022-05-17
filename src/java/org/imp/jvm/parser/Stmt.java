@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.imp.jvm.parser.tokenizer.TokenType.ALIAS;
+
 public abstract class Stmt implements Node {
     public final Location location;
 
@@ -141,6 +143,10 @@ public abstract class Stmt implements Node {
             this.listType = listType;
         }
 
+        public static TypeStmt voidInstance(Location loc) {
+            return new TypeStmt(loc, new Token(ALIAS, loc.line(), loc.col(), "void"), Optional.empty(), false);
+        }
+
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitType(this);
@@ -256,9 +262,9 @@ public abstract class Stmt implements Node {
         public final Token name;
         public final Block body;
         public final List<Parameter> parameters;
-        public final Token returnType;
+        public final TypeStmt returnType;
 
-        public Function(Location loc, Token name, List<Parameter> parameters, Token returnType,
+        public Function(Location loc, Token name, List<Parameter> parameters, TypeStmt returnType,
                         Block body) {
             super(loc);
             this.name = name;
