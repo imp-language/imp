@@ -1,6 +1,5 @@
 // Tests relational expressions
 
-import "batteries"
 
 log("\nint")
 log(4 > 3)

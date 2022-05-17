@@ -3,6 +3,7 @@ package org.imp.jvm.parser;
 import org.imp.jvm.domain.Environment;
 import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.Token;
+import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.types.ImpType;
 
 import java.util.HashMap;
@@ -91,6 +92,7 @@ public abstract class Stmt implements Node {
 
     // Maybe remove quotes from imports?
     public static final class Import extends Stmt implements TopLevel {
+        public final static Import instance = new Import(new Location(0, 0), new Token(TokenType.STRING, 0, 0, "batteries"), Optional.empty());
         public final Token stringLiteral;
         public final Optional<Token> identifier;
 

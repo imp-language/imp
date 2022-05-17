@@ -1,6 +1,5 @@
 // https://www.rosettacode.org/wiki/Temperature_conversion
 
-import "batteries"
 func kelvinToCelsius(k float) float {
     return k - 273.15
 }

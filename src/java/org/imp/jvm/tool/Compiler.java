@@ -25,7 +25,47 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
         this(new ArrayList<>(), new ArrayList<>());
     }
 
-    public void buildProgram(Map<String, ? extends SourceFile> compilationSet) {
+    /**
+     * @return java class name ('.' separated) relative to the project root
+     */
+    public String compile(String projectRoot, String filename) throws FileNotFoundException, Comptime.CompilerError {
+
+        String relativePath = FilenameUtils.getPath(filename);
+        String name = FilenameUtils.getName(filename);
+
+        var entry = parse(projectRoot, relativePath, name);
+        Map<String, SourceFile> compilationSet = new HashMap<>();
+        Comptime.killIfErrors(this, "Correct parser errors before continuing.");
+
+        Timer.log("build dependency graph");
+
+        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(this, entry.rootEnvironment, entry);
+        entry.acceptVisitor(typeCheckVisitor);
+        Timer.log("Type checking done");
+
+        Comptime.killIfErrors(this, "Correct type errors before compilation can continue.");
+
+        var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
+        Util.println(pretty.print(entry.stmts));
+
+        for (var s : compilationSet()) {
+            if (!compilationSet.containsKey(s.getFullRelativePath())) {
+                compilationSet.put(s.getFullRelativePath(), s);
+            }
+        }
+
+        output(compilationSet);
+        Timer.log("generate bytecode");
+
+        Timer.LOG = true;
+        Timer.logTotalTime();
+
+        String base = entry.getFullRelativePath();
+
+        return base.replace("/", ".");
+    }
+
+    public void output(Map<String, ? extends SourceFile> compilationSet) {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);
@@ -75,46 +115,6 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
     }
 
     /**
-     * @return java class name ('.' separated) relative to the project root
-     */
-    public String compile(String projectRoot, String filename) throws FileNotFoundException, Comptime.CompilerError {
-
-        String relativePath = FilenameUtils.getPath(filename);
-        String name = FilenameUtils.getName(filename);
-
-        var entry = parse(projectRoot, relativePath, name);
-        Map<String, SourceFile> compilationSet = new HashMap<>();
-        Comptime.killIfErrors(this, "Correct parser errors before continuing.");
-
-        Timer.log("build dependency graph");
-
-        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(this, entry.rootEnvironment, entry);
-        entry.acceptVisitor(typeCheckVisitor);
-        Timer.log("Type checking done");
-
-        Comptime.killIfErrors(this, "Correct type errors before compilation can continue.");
-
-        var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
-        Util.println(pretty.print(entry.stmts));
-
-        for (var s : compilationSet()) {
-            if (!compilationSet.containsKey(s.getFullRelativePath())) {
-                compilationSet.put(s.getFullRelativePath(), s);
-            }
-        }
-
-        buildProgram(compilationSet);
-        Timer.log("generate bytecode");
-
-        Timer.LOG = true;
-        Timer.logTotalTime();
-
-        String base = entry.getFullRelativePath();
-
-        return base.replace("/", ".");
-    }
-
-    /**
      * Tokenize, parse, and build environments for a file.
      *
      * @return SourceFile with exports gathered.
@@ -122,6 +122,8 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
     public SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException, Comptime.CompilerError {
 
         var source = new SourceFile(projectRoot, relativePath, name);
+        source.stmts.add(0, Stmt.Import.instance);
+
         compilationSet.add(source);
 
         // Get all qualified imports (but don't load them)

@@ -1,6 +1,5 @@
 // tests primitive variable assignments
 
-import "batteries"
 
 val b = 4
 mut c = 49

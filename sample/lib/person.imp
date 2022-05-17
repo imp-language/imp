@@ -1,6 +1,5 @@
 import "date" as date
 
-import "batteries"
 
 export struct Person {
     fname string

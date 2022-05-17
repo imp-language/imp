@@ -1,5 +1,4 @@
 
-import "batteries"
 
 func logger() {
     log("r")

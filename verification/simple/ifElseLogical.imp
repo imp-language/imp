@@ -1,5 +1,4 @@
 // Tests if/else and logical and/or
-import "batteries"
 
 val zero = 0
 val one = 1

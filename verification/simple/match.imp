@@ -1,6 +1,5 @@
 // Simple match statement testing on union types
 
-import "batteries"
 
 func testUnion(param int | string | int[]) {
     match param as id {

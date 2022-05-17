@@ -213,7 +213,7 @@ public class Parser extends ParserBase {
         var id = new Expr.Identifier(lok(), consume());
 
         consume(LBRACE, "Expected opening curly braces before match body.");
-        Map<Stmt.TypeStmt, Stmt.Block> cases = new HashMap<>(); // todo: swap all hashmap for hashtable?
+        Map<Stmt.TypeStmt, Stmt.Block> cases = new HashMap<>();
 
         while (!check(RBRACE)) {
             var type = union();

@@ -1,7 +1,6 @@
 // Tests arithmetic operations for the three main types: int, float, double
 // on the four main operations: +, -, *, /
 
-import "batteries"
 
 log("addition")
 val i = 42

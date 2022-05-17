@@ -1,5 +1,4 @@
 // tests for loops
-import "batteries"
 
 log("range call requiring a separate allocation")
 for i in range(5, 15) {

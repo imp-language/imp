@@ -1,3 +1,2 @@
-import "batteries"
 
 log("Hello, World!")

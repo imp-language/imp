@@ -1,10 +1,2 @@
 
-import "batteries"
-
-func logger() {
-    log("r")
-}
-
-//log(logger())
-
 log(4)

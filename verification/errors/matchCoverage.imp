@@ -1,7 +1,6 @@
 // Test that the compiler errors when a match statement does not
 // cover all options of the union type.
 
-import "batteries"
 
 func a(b string | int | float) {
     match b as reified {

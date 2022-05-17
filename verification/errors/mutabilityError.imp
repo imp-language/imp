@@ -1,6 +1,5 @@
 // Errors on reassignment of immutable variable
 
-import "batteries"
 
 val m = 4
 m = 5

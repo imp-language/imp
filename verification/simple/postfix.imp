@@ -1,5 +1,4 @@
 // Test postfix increment and decrement operators
-import "batteries"
 
 val i = 0
 i++

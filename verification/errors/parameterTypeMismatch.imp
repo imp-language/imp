@@ -1,4 +1,3 @@
-import "batteries"
 func testUnion(param int | string | int[]) {
     log(param)
 }
