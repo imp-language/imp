@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="CompilerTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+  <configuration default="false" name="Test Suite" type="JUnit" factoryName="JUnit">
     <module name="imp" />
     <extension name="coverage">
       <pattern>
@@ -8,9 +8,9 @@
       </pattern>
     </extension>
     <option name="PACKAGE_NAME" value="org.imp.test" />
-    <option name="MAIN_CLASS_NAME" value="org.imp.test.CompilerTest" />
+    <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="class" />
+    <option name="TEST_OBJECT" value="package" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

@@ -1,7 +1,5 @@
 package org.imp.test;
 
-import org.imp.jvm.Util;
-import org.imp.jvm.errors.Comptime;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,13 +19,6 @@ public class CompilerTest {
         );
     }
 
-    @Test
-    void ExpectError() throws IOException {
-        assertEquals(
-                Util.set(Comptime.ParameterTypeMismatch.code),
-                Load.checkForErrors("errors/unions", moduleLocation)
-        );
-    }
 
     @Test
     void Function() throws IOException, InterruptedException {
