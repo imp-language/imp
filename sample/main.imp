@@ -6,34 +6,23 @@ struct Node {
 	left Tree
 	right Tree
 }
-//type Tree = Empty | Leaf | Node
-
 type TreeNode = Tree | Empty
-
 struct Tree {
     data int
     left TreeNode
     right TreeNode
 }
 
-//
-//struct List {
-//    data int
-//    next List | Empty
-//}
-
-
-
-// Todo(CURRENT): allow construction of product structs
 func makeTree(root int) Tree {
     val left = Empty()
     val right = Empty()
     val tree = Tree(root, left, right)
+    log(left)
+    log(right)
     log(tree)
     return tree
-//    return Tree(4, Empty(), Empty())
 }
 
-
 val tree = makeTree(42)
-log(tree)
+val l = Leaf(14)
+log(l)

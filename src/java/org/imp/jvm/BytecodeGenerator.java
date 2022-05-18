@@ -1,6 +1,7 @@
 package org.imp.jvm;
 
 import org.apache.commons.io.FilenameUtils;
+import org.imp.jvm.domain.Identifier;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.types.StructType;
@@ -13,60 +14,43 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.commons.Method;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.Map;
-
-import static java.lang.invoke.MethodType.methodType;
+import java.util.stream.Collectors;
 
 public class BytecodeGenerator {
-    static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
-    static final MethodType EQUALS_DESC = methodType(boolean.class, BytecodeGenerator.class, Object.class);
-    static final MethodType HASHCODE_DESC = methodType(int.class, BytecodeGenerator.class);
-    static final MethodType TO_STRING_DESC = methodType(String.class, BytecodeGenerator.class);
+    public static void addToString(ClassWriter cw, StructType st, String constructorDescriptor, String ownerInternalName) {
+        var _mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+        var ga = new GeneratorAdapter(_mv, Opcodes.ACC_PUBLIC, "toString", "()Ljava/lang/String;");
 
-    public static void addToString(ClassWriter cw) {
-        var _mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL, "toString", "()Ljava/lang/String;", null, null);
-        var ga = new GeneratorAdapter(_mv, Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL, "toString", "()Ljava/lang/String;");
-        ga.loadThis();
+        if (st.parameters.size() > 0) {
 
-        String owner = "java/lang/runtime/ObjectMethods";
-        String name = "bootstrap";
-        String descriptor = "("
-                + "Ljava/lang/invoke/MethodHandles$Lookup;" +
-                "Ljava/lang/String;" +
-                "Ljava/lang/invoke/TypeDescriptor;" +
-                "Ljava/lang/Class;" +
-                "Ljava/lang/String;" +
-                "[Ljava/lang/invoke/MethodHandle;" +
-                ")Ljava/lang/Object;";
+            String owner = "java/lang/invoke/StringConcatFactory";
+            String name = "makeConcatWithConstants";
+            String descriptor = "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;";
 
-        var handle = new Handle(Opcodes.H_INVOKESTATIC, owner, name, descriptor, false);
-        Object args = new Object[]{"data"};
+            var handle = new Handle(Opcodes.H_INVOKESTATIC, owner, name, descriptor, false);
 
-//        CallSite cs = (CallSite) ObjectMethods.bootstrap(LOOKUP, "toString", BytecodeGenerator.TO_STRING_DESC, BytecodeGenerator.class, BytecodeGenerator.NAME_LIST, C.ACCESSORS);
-//        MethodHandle handle = cs.dynamicInvoker();
-//        try {
-//            var b =MethodHandles.lookup().findClass("Lmain$Tree;");
+            for (Identifier parameter : st.parameters) {
+                ga.loadThis();
+                ga.getField(Type.getType("L" + ownerInternalName + ";"), parameter.name, Type.getType(parameter.type.getDescriptor()));
+            }
 
-//            var mh = MethodHandles.lookup().findGetter(b, "data", int.class);
-        ga.invokeDynamic(
-                "toString",
-                "(Lmain$Tree;)Ljava/lang/String;",
-                handle,
-                Type.getType("Lmain$Tree;"),
-                "data"
-        );
+            String recipe = st.name + "[" + st.parameters.stream().map(p -> p.name + "=\u0001").collect(Collectors.joining(", ")) + "]";
 
+            ga.invokeDynamic(
+                    name,
+                    "(" + constructorDescriptor + ")Ljava/lang/String;",
+                    handle,
+                    recipe
+            );
+
+        } else {
+            ga.push(st.name + "[]");
+        }
         ga.visitInsn(Opcodes.ARETURN);
+        ga.endMethod();
 
-//        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-
-//        ga.visitInvokeDynamicInsn("toString", "(Lmain$Tree;)Ljava/lang/String;",handle);
     }
 
     public Pair<ClassWriter, Map<StructType, ClassWriter>> generate(Compiler compiler, SourceFile source) {
@@ -113,14 +97,4 @@ public class BytecodeGenerator {
         return new Pair<>(cw, codegenVisitor.structWriters);
     }
 
-    static class Empty {
-        static final MethodType EQUALS_DESC = methodType(boolean.class, Empty.class, Object.class);
-        static final MethodType HASHCODE_DESC = methodType(int.class, Empty.class);
-        static final MethodType TO_STRING_DESC = methodType(String.class, Empty.class);
-        static final MethodHandle[] ACCESSORS = new MethodHandle[]{};
-        static final String NAME_LIST = "";
-
-        Empty() {
-        }
-    }
 }

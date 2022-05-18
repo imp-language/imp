@@ -630,9 +630,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         ga.endMethod();
 
         // Add toString
-        if (name.equals("Tree")) {
-            BytecodeGenerator.addToString(innerCw);
-        }
+        BytecodeGenerator.addToString(innerCw, structType, constructorDescriptor.toString(), ownerInternalName);
 
         structWriters.put(structType, innerCw);
 

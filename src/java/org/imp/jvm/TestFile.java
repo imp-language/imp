@@ -34,7 +34,7 @@ public class TestFile {
 
         @Override
         public String toString() {
-            return "Tree" + "[" + data + "]";
+            return "Tree" + "[data=" + this.data + ", left=" + this.left + ", right=" + this.right + "]";
         }
     }
 }
