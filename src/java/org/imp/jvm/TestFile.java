@@ -19,7 +19,7 @@ public class TestFile {
         public Empty() {
         }
     }
-    
+
 
     public static class Tree {
         public int data;
@@ -30,6 +30,11 @@ public class TestFile {
             this.data = var2;
             this.left = var3;
             this.right = var4;
+        }
+
+        @Override
+        public String toString() {
+            return "Tree" + "[" + data + "]";
         }
     }
 }

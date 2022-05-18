@@ -2,6 +2,7 @@ package org.imp.jvm.visitors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.NotImplementedException;
+import org.imp.jvm.BytecodeGenerator;
 import org.imp.jvm.Constants;
 import org.imp.jvm.Util;
 import org.imp.jvm.domain.Environment;
@@ -627,6 +628,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Append return
         ga.returnValue();
         ga.endMethod();
+
+        // Add toString
+        if (name.equals("Tree")) {
+            BytecodeGenerator.addToString(innerCw);
+        }
 
         structWriters.put(structType, innerCw);
 
