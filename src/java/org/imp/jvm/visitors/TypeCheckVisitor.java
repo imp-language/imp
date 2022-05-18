@@ -156,33 +156,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         var e = expr.item.accept(this);
         if (e.isPresent()) {
             var t = e.get();
-            if (t instanceof FuncType ttt) {
-                if (ttt.parameters.size() != expr.arguments.size()) {
-                    var params = ttt.parameters.stream().map(s -> s.type.getName()).collect(Collectors.joining(", "));
-                    Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, ttt.name, params);
-                    return Optional.empty();
-                }
-                ImpType returnType = ttt.returnType;
-
-                // Make sure parameter and argument types match.
-                Util.zip(ttt.parameters, expr.arguments, (param, arg) -> {
-                    var at = arg.accept(this);
-                    if (at.isPresent()) {
-                        var argType = at.get();
-                        if (argType == BuiltInType.VOID) {
-                            Comptime.VoidUsage.submit(compiler, file, arg);
-                        }
-                        if (!TypeResolver.typesMatch(param.type, argType)) {
-                            Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
-                        }
-
-                    }
-                });
-
-                expr.realType = returnType;
-                return Optional.of(returnType);
-            } else if (t instanceof StructType ttt) {
-                // Todo(CURRENT): redo struct constructor calls
+            if (t instanceof StructType ttt) {
                 if (ttt.parameters.size() != expr.arguments.size()) {
                     var params = ttt.parameters.stream().map(s -> s.type.getName()).collect(Collectors.joining(", "));
                     Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, ttt.name, params);
@@ -203,8 +177,13 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
                     }
                 });
-
-                return Optional.of(ttt);
+                if (t instanceof FuncType ftt) {
+                    ImpType returnType = ftt.returnType;
+                    expr.realType = returnType;
+                    return Optional.of(returnType);
+                } else {
+                    return Optional.of(ttt);
+                }
             } else {
                 throw new IllegalStateException("Unexpected value: " + t);
             }

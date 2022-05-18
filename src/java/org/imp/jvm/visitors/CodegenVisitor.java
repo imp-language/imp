@@ -164,34 +164,31 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             }
 
         } else if (expr.item.realType instanceof StructType st) {
-            // initialize instance of struct class and push to stack
             System.out.println("Generating instance of struct " + st.name);
             var ga = funcType.ga;
 
-            ga.visitTypeInsn(Opcodes.NEW, st.qualifiedName); //NEW instruction takes object descriptor as an input
-            ga.visitInsn(Opcodes.DUP); //Duplicate (we do not want invokespecial to "eat" our new object
-
-            String descriptor = "L" + st.parentName + ";";
-            ga.visitFieldInsn(Opcodes.GETSTATIC, st.parentName, "instance", descriptor);
+            ga.newInstance(Type.getType("L" + st.qualifiedName + ";"));
             ga.visitInsn(Opcodes.DUP);
-
-            ga.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Objects", "requireNonNull", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
-            ga.pop();
 
             StringBuilder typeDescriptor = new StringBuilder();
             // Generate arguments
-            for (var arg : expr.arguments) {
+//            for (var arg : expr.arguments) {
+//                arg.accept(this);
+//                typeDescriptor.append(arg.realType.getDescriptor());
+//            }
+            Util.zip(st.parameters, expr.arguments, (param, arg) -> {
                 arg.accept(this);
-                typeDescriptor.append(arg.realType.getDescriptor());
-            }
+                if (param.type instanceof UnionType ut) {
+                    typeDescriptor.append("Ljava/lang/Object;");
 
-            funcType.ga.visitMethodInsn(
-                    Opcodes.INVOKESPECIAL,
-                    st.qualifiedName,
-                    Constants.Init,
-                    "(" + descriptor + typeDescriptor + ")V",
-                    false
-            );
+                } else {
+                    typeDescriptor.append(arg.realType.getDescriptor());
+                }
+
+            });
+
+            ga.invokeConstructor(Type.getType("L" + st.qualifiedName + ";"), new Method(Constants.Init, "(" + typeDescriptor + ")V"));
+
 
         } else {
             System.err.println("Bad!");
@@ -582,34 +579,34 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         innerCw.visitOuterClass(source.getFullRelativePath(), name, "()V");
 
         // Add field reference to outer class
-        String descriptor = "L" + source.getFullRelativePath() + ";";
-        FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_FINAL + Opcodes.ACC_SYNTHETIC, "this$0", descriptor, null, null);
-        fieldVisitor.visitEnd();
+//        String descriptor = "L" + source.getFullRelativePath() + ";";
+//        FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_FINAL + Opcodes.ACC_SYNTHETIC, "this$0", descriptor, null, null);
+//        fieldVisitor.visitEnd();
 
         StringBuilder constructorDescriptor = new StringBuilder();
 
         for (Identifier field : structType.parameters) {
             ImpType type = field.type;
-            descriptor = type.getDescriptor();
+            var descriptor = type.getDescriptor();
             String n = field.name;
 
-            fieldVisitor = innerCw.visitField(Opcodes.ACC_PUBLIC, n, descriptor, null, null);
+            var fieldVisitor = innerCw.visitField(Opcodes.ACC_PUBLIC, n, descriptor, null, null);
             fieldVisitor.visitEnd();
 
             constructorDescriptor.append(descriptor);
         }
 
         // Generate inner class Struct constructor
-        descriptor = "(" + "L" + source.getFullRelativePath() + ";" + constructorDescriptor + ")V";
+        var descriptor = "(" + constructorDescriptor + ")V";
         MethodVisitor _mv = innerCw.visitMethod(Opcodes.ACC_PUBLIC, Constants.Init, descriptor, null, null);
         var ga = new GeneratorAdapter(_mv, Opcodes.ACC_PUBLIC, Constants.Init, descriptor);
 
         // Load outer class
-        descriptor = "L" + source.getFullRelativePath() + ";";
-        ga.visitVarInsn(Opcodes.ALOAD, 0);
-        ga.visitVarInsn(Opcodes.ALOAD, 1);
+//        descriptor = "L" + source.getFullRelativePath() + ";";
+//        ga.visitVarInsn(Opcodes.ALOAD, 0);
+//        ga.visitVarInsn(Opcodes.ALOAD, 1);
         String ownerInternalName = source.getFullRelativePath() + "$" + name;
-        ga.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, "this$0", descriptor);
+//        ga.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, "this$0", descriptor);
 
         // Call super()
         ga.loadThis();
@@ -621,7 +618,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             descriptor = type.getDescriptor();
             String n = structType.parameters.get(i).name;
             ga.visitVarInsn(Opcodes.ALOAD, 0);
-            ga.visitVarInsn(type.getLoadVariableOpcode(), i + 2);
+            ga.loadArg(i);
+//            ga.visitVarInsn(type.getLoadVariableOpcode(), i + 2);
 
             ga.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, n, descriptor);
         }

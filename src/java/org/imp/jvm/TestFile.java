@@ -2,8 +2,6 @@ package org.imp.jvm;
 
 import org.imp.runtime.Batteries;
 
-import java.util.Objects;
-
 public class TestFile {
     public static TestFile instance = new TestFile();
 
@@ -11,32 +9,27 @@ public class TestFile {
     }
 
     public static void main(String[] var0) {
-        TestFile var10002 = instance;
-        Objects.requireNonNull(var10002);
-        TestFile.Leaf var1 = var10002.new Leaf(4);
-        Batteries.log(var1);
+        var left = new Empty();
+        var right = new Empty();
+        var tree = new Tree(4, left, right);
+        Batteries.log(tree);
     }
 
-    public class Empty {
+    public static class Empty {
         public Empty() {
         }
     }
+    
 
-    public class Leaf {
+    public static class Tree {
         public int data;
-
-        public Leaf(int var2) {
-            this.data = var2;
-        }
-    }
-
-    public class Node {
         public Object left;
         public Object right;
 
-        public Node(Object var2, Object var3) {
-            this.left = var2;
-            this.right = var3;
+        public Tree(int var2, Object var3, Object var4) {
+            this.data = var2;
+            this.left = var3;
+            this.right = var4;
         }
     }
 }

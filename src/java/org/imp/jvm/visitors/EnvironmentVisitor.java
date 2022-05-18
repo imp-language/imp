@@ -100,6 +100,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         // we know to do so when expr.source == "at"
         // need to develop a way to know what to do tho
 
+        expr.item.accept(this);
         for (var arg : expr.arguments) {
             arg.accept(this);
         }

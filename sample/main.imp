@@ -28,10 +28,12 @@ struct Tree {
 func makeTree(root int) Tree {
     val left = Empty()
     val right = Empty()
-    val tree = Tree(4, left, right)
+    val tree = Tree(root, left, right)
+    log(tree)
     return tree
 //    return Tree(4, Empty(), Empty())
 }
 
 
 val tree = makeTree(42)
+log(tree)

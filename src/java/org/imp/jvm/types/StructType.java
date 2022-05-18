@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StructType implements ImpType, Serializable {
-    // Todo: replace with Map<String,Type>
     public final List<Identifier> parameters;
     public String name;
 

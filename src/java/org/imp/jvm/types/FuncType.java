@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class FuncType extends StructType {
-    public final List<Identifier> parameters;
     public final Map<String, Integer> localMap = new HashMap<>();
     public final Map<String, Integer> argMap = new HashMap<>();
     public String name;
@@ -23,7 +22,6 @@ public class FuncType extends StructType {
     public FuncType(String name, List<Identifier> parameters) {
         super(name, parameters);
         this.name = name;
-        this.parameters = parameters;
 
     }
 
