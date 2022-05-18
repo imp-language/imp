@@ -33,7 +33,7 @@ public class BytecodeGenerator {
                 "()V",
                 false
         );
-        ga.visitInsn(Opcodes.RETURN);
+        ga.returnValue();
         ga.endMethod();
 
         // Add instance field

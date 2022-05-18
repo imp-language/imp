@@ -1,6 +1,7 @@
 package org.imp.jvm;
 
 import org.imp.runtime.ListWrapper;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -19,5 +20,6 @@ public class Constants {
     // https://mariadb.com/kb/en/operating-system-error-codes/
     public static final int ENOENT = 2;
 
+    public static final int PublicStatic = Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC;
 
 }

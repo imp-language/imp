@@ -66,6 +66,7 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
     }
 
     public void output(Map<String, ? extends SourceFile> compilationSet) {
+
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);

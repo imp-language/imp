@@ -1,6 +1,7 @@
 package org.imp.jvm.visitors;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.imp.jvm.Util;
 import org.imp.jvm.domain.Environment;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.Stmt;
@@ -269,26 +270,19 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitStruct(Stmt.Struct stmt) {
-        StringBuilder result = new StringBuilder("struct " + stmt.name.source() + " {\n");
+        StringBuilder result = new StringBuilder("struct " + stmt.name.source() + " {");
         var structType = currentEnvironment.getVariableTyped(stmt.name.source(), StructType.class);
         if (structType != null) {
+            indent++;
             for (var field : structType.fields) {
-                result.append("\t").append(field.name).append(" ").append(field.type);
-                result.append("\n");
+                result.append(tabs()).append(field.name).append(" ").append(field.type);
             }
+            indent--;
         } else {
-
-            for (Stmt.Parameter field : stmt.fields) {
-                result.append("\t").append(field.name.source()).append(" ");
-                System.err.println("bad");
-
-// Todo: below
-//                if (field.listType()) result.append("[]");
-                result.append("\n");
-            }
+            Util.exit("struct type missing", 792);
         }
 
-        result.append("))");
+        result.append(tabs()).append("))");
         return result.toString();
     }
 

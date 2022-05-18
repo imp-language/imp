@@ -570,7 +570,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         String innerName = source.getFullRelativePath() + "$" + name;
 
         // Create the inner class
-        innerCw.visit(CodegenVisitor.CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, innerName, null, "java/lang/Object", null);
+        innerCw.visit(CodegenVisitor.CLASS_VERSION, Constants.PublicStatic, innerName, null, "java/lang/Object", null);
         // Link inner class to outer class
         cw.visitInnerClass(innerName, source.getFullRelativePath(), name, Opcodes.ACC_PUBLIC);
         // Link outer class to inner class
@@ -578,17 +578,15 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         // Add field reference to outer class
         String descriptor = "L" + source.getFullRelativePath() + ";";
-        System.out.println(descriptor);
         FieldVisitor fieldVisitor = innerCw.visitField(Opcodes.ACC_FINAL + Opcodes.ACC_SYNTHETIC, "this$0", descriptor, null, null);
         fieldVisitor.visitEnd();
 
         StringBuilder constructorDescriptor = new StringBuilder();
 
-        // Add fields
-        for (int i = 0; i < structType.fieldNames.length; i++) {
-            ImpType type = structType.fieldTypes[i];
+        for (Identifier field : structType.fields) {
+            ImpType type = field.type;
             descriptor = type.getDescriptor();
-            String n = structType.fieldNames[i];
+            String n = field.name;
 
             fieldVisitor = innerCw.visitField(Opcodes.ACC_PUBLIC, n, descriptor, null, null);
             fieldVisitor.visitEnd();
@@ -598,36 +596,36 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         // Generate inner class Struct constructor
         descriptor = "(" + "L" + source.getFullRelativePath() + ";" + constructorDescriptor + ")V";
-        MethodVisitor mv = innerCw.visitMethod(Opcodes.ACC_PUBLIC, Constants.Init, descriptor, null, null);
-        mv.visitCode();
+        MethodVisitor _mv = innerCw.visitMethod(Opcodes.ACC_PUBLIC, Constants.Init, descriptor, null, null);
+        var ga = new GeneratorAdapter(_mv, Opcodes.ACC_PUBLIC, Constants.Init, descriptor);
 
         // Load outer class
         descriptor = "L" + source.getFullRelativePath() + ";";
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        ga.visitVarInsn(Opcodes.ALOAD, 0);
+        ga.visitVarInsn(Opcodes.ALOAD, 1);
         String ownerInternalName = source.getFullRelativePath() + "$" + name;
-        mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, "this$0", descriptor);
+        ga.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, "this$0", descriptor);
 
         // Call super()
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        String ownerDescriptor = "java/lang/Object";
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, Constants.Init, "()V", false);
-        // Todo: set fields
+        ga.loadThis();
+        ga.invokeConstructor(Constants.ObjectType, new Method(Constants.Init, "()V"));
 
         // Set fields
-        for (int i = 0; i < structType.fieldNames.length; i++) {
-            ImpType type = structType.fieldTypes[i];
+        for (int i = 0; i < structType.fields.size(); i++) {
+            ImpType type = structType.fields.get(i).type;
             descriptor = type.getDescriptor();
-            String n = structType.fieldNames[i];
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitVarInsn(type.getLoadVariableOpcode(), i + 2);
-            mv.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, n, descriptor);
-        }
-        // Append return
-        mv.visitInsn(Opcodes.RETURN);
+            String n = structType.fields.get(i).name;
+            ga.visitVarInsn(Opcodes.ALOAD, 0);
+            var b = type.getLoadVariableOpcode();
+            System.out.println(b);
+            ga.visitVarInsn(type.getLoadVariableOpcode(), i + 2);
 
-        mv.visitEnd();
-        mv.visitMaxs(-1, -1);
+            ga.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, n, descriptor);
+        }
+
+        // Append return
+        ga.returnValue();
+        ga.endMethod();
 
         structWriters.put(structType, innerCw);
 

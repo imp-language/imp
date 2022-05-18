@@ -42,12 +42,25 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitAlias(Stmt.Alias stmt) {
         var a = currentEnvironment.getVariable(stmt.identifier.source());
+
+        var resolvedTypes = new HashSet<ImpType>();
         // Todo: do we need to disallow `string | string` cause that would really just be `string`?
-//        if (a instanceof UnionType ut) {
-//            for (var type : ut.types) {
-//                if
-//            }
-//        }
+        if (a instanceof UnionType ut) {
+            for (var type : ut.types) {
+                if (type instanceof UnknownType ukt) {
+                    var attempt = currentEnvironment.getVariable(ukt.typeName);
+                    if (attempt != null) {
+                        resolvedTypes.add(attempt);
+                    }
+                } else {
+                    resolvedTypes.add(type);
+                }
+            }
+            ut.types = resolvedTypes;
+
+            currentEnvironment.setVariableType(stmt.identifier(), ut);
+        }
+
         return Optional.empty();
     }
 
@@ -553,7 +566,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         if (structType != null) {
             Util.zip(struct.fields, structType.fields, (a, b) -> {
                 if (b.type instanceof UnknownType ut) {
-                    var attempt = currentEnvironment.getVariableTyped(ut.typeName, StructType.class);
+                    var attempt = currentEnvironment.getVariable(ut.typeName);
                     if (attempt != null) {
                         b.type = attempt;
                     } else {

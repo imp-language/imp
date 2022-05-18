@@ -69,7 +69,7 @@ public abstract class Stmt implements Node {
         String identifier();
     }
 
-    public sealed interface TopLevel permits Stmt.Function, Stmt.Import, Stmt.Alias {
+    public sealed interface TopLevel permits Stmt.Import {
     }
 
     public static final class Match extends Stmt {
@@ -110,7 +110,7 @@ public abstract class Stmt implements Node {
         }
     }
 
-    public static final class Alias extends Stmt implements Exportable, TopLevel {
+    public static final class Alias extends Stmt implements Exportable {
         public final Token identifier;
         public final TypeStmt typeStmt;
 
@@ -258,7 +258,7 @@ public abstract class Stmt implements Node {
     }
 
 
-    public static final class Function extends Stmt implements Exportable, TopLevel {
+    public static final class Function extends Stmt implements Exportable {
         public final Token name;
         public final Block body;
         public final List<Parameter> parameters;

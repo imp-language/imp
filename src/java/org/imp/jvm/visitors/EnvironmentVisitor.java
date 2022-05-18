@@ -30,6 +30,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     final File file;
     public Environment currentEnvironment;
 
+
     public EnvironmentVisitor(Compiler compiler, Environment rootEnvironment, SourceFile source) {
         this.rootEnvironment = rootEnvironment;
         this.source = source;
@@ -48,6 +49,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitAlias(Stmt.Alias stmt) {
         var type = stmt.typeStmt.accept(this);
         currentEnvironment.addVariable(stmt.identifier.source(), type.orElseThrow());
+        System.out.println("add type " + stmt.identifier());
         return Optional.empty();
     }
 
@@ -382,10 +384,11 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         String name = stmt.name.source();
 
         // Create struct type object
-        StructType structType = new StructType(name, fieldNames, fieldTypes);
+        StructType structType = new StructType(name, parameters);
         structType.qualifiedName = source.getFullRelativePath() + "$" + name;
         structType.parentName = source.getFullRelativePath();
         currentEnvironment.addVariableOrError(compiler, name, structType, file, stmt);
+        System.out.println("add struct " + name);
 
         return Optional.of(structType);
     }

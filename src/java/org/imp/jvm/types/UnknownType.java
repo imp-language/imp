@@ -45,7 +45,7 @@ public class UnknownType implements ImpType, Serializable {
 
     @Override
     public int getLoadVariableOpcode() {
-        return Opcodes.ALOAD;
+        throw new RuntimeException("ALOAD on UnknownType");
     }
 
     @Override

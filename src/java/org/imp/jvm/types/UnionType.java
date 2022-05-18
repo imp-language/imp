@@ -6,12 +6,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UnionType implements ImpType {
-    public final Set<ImpType> types;
-    private final String name;
+    public Set<ImpType> types;
 
     public UnionType(Set<ImpType> types) {
         this.types = types;
-        this.name = types.stream().map(Object::toString).collect(Collectors.joining(" | "));
 
     }
 
@@ -42,7 +40,7 @@ public class UnionType implements ImpType {
 
     @Override
     public int getLoadVariableOpcode() {
-        return 0;
+        return Opcodes.ALOAD;
     }
 
     @Override
@@ -52,7 +50,7 @@ public class UnionType implements ImpType {
 
     @Override
     public String getName() {
-        return name;
+        return "name";
     }
 
     @Override
@@ -85,8 +83,9 @@ public class UnionType implements ImpType {
         return null;
     }
 
+
     @Override
     public String toString() {
-        return name;
+        return types.stream().map(Object::toString).collect(Collectors.joining(" | "));
     }
 }
