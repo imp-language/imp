@@ -621,8 +621,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             descriptor = type.getDescriptor();
             String n = structType.parameters.get(i).name;
             ga.visitVarInsn(Opcodes.ALOAD, 0);
-            var b = type.getLoadVariableOpcode();
-            System.out.println(b);
             ga.visitVarInsn(type.getLoadVariableOpcode(), i + 2);
 
             ga.visitFieldInsn(Opcodes.PUTFIELD, ownerInternalName, n, descriptor);

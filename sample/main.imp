@@ -6,7 +6,15 @@ struct Node {
 	left Tree
 	right Tree
 }
-type Tree = Empty | Leaf | Node
+//type Tree = Empty | Leaf | Node
+
+type TreeNode = Tree | Empty
+
+struct Tree {
+    data int
+    left TreeNode
+    right TreeNode
+}
 
 //
 //struct List {
@@ -15,6 +23,15 @@ type Tree = Empty | Leaf | Node
 //}
 
 
-val leaf = Leaf(4)
-log(leaf)
 
+// Todo(CURRENT): allow construction of product structs
+func makeTree(root int) Tree {
+    val left = Empty()
+    val right = Empty()
+    val tree = Tree(4, left, right)
+    return tree
+//    return Tree(4, Empty(), Empty())
+}
+
+
+val tree = makeTree(42)
