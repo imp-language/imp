@@ -1,24 +1,20 @@
-//struct Empty {}
-//struct Leaf {
-//	data int
-//}
-//struct Node {
-//	left Tree
-//	right Tree
-//}
-//type Tree = Empty | Leaf | Node
-//
-////
-////struct List {
-////    data int
-////    next List | Empty
-////}
-
-
-type intOrString = int | string | int[]
-func testUnion2(param intOrString) {
-    log(param)
+struct Empty {}
+struct Leaf {
+	data int
 }
-testUnion2(4)
-testUnion2([4])
-testUnion2("44")
+struct Node {
+	left Tree
+	right Tree
+}
+type Tree = Empty | Leaf | Node
+
+//
+//struct List {
+//    data int
+//    next List | Empty
+//}
+
+
+val leaf = Leaf(4)
+log(leaf)
+

@@ -3,13 +3,10 @@ package org.imp.jvm.types;
 public interface ImpType {
 
 
-    int getAddOpcode();
-
     Object getDefaultValue();
 
     String getDescriptor();
 
-    int getDivideOpcode();
 
     String getInternalName();
 
@@ -19,12 +16,9 @@ public interface ImpType {
 
     String getName();
 
-    int getNegOpcode();
-
 
     int getReturnOpcode();
 
-    int getSubtractOpcode();
 
     Class<?> getTypeClass();
 

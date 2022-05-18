@@ -18,10 +18,6 @@ public class UnknownType implements ImpType, Serializable {
         counter++;
     }
 
-    @Override
-    public int getAddOpcode() {
-        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
-    }
 
     @Override
     public Object getDefaultValue() {
@@ -33,10 +29,6 @@ public class UnknownType implements ImpType, Serializable {
         return "L" + getInternalName() + ";";
     }
 
-    @Override
-    public int getDivideOpcode() {
-        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
-    }
 
     @Override
     public String getInternalName() {
@@ -58,21 +50,12 @@ public class UnknownType implements ImpType, Serializable {
         return typeName.length() > 0 ? typeName : "<unknown>";
     }
 
-    @Override
-    public int getNegOpcode() {
-        return 0;
-    }
-
 
     @Override
     public int getReturnOpcode() {
         return Opcodes.ARETURN;
     }
 
-    @Override
-    public int getSubtractOpcode() {
-        throw new RuntimeException("Subtraction operation not (yet ;) ) supported for custom objects");
-    }
 
     @Override
     public Class<?> getTypeClass() {

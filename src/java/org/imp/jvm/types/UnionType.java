@@ -13,10 +13,6 @@ public class UnionType implements ImpType {
 
     }
 
-    @Override
-    public int getAddOpcode() {
-        return 0;
-    }
 
     @Override
     public Object getDefaultValue() {
@@ -28,10 +24,6 @@ public class UnionType implements ImpType {
         return "Ljava/lang/Object;";
     }
 
-    @Override
-    public int getDivideOpcode() {
-        return 0;
-    }
 
     @Override
     public String getInternalName() {
@@ -53,20 +45,12 @@ public class UnionType implements ImpType {
         return "name";
     }
 
-    @Override
-    public int getNegOpcode() {
-        return 0;
-    }
 
     @Override
     public int getReturnOpcode() {
         return Opcodes.ARETURN;
     }
 
-    @Override
-    public int getSubtractOpcode() {
-        return 0;
-    }
 
     @Override
     public Class<?> getTypeClass() {

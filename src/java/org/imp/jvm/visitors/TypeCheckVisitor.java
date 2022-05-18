@@ -12,11 +12,10 @@ import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.types.*;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
@@ -154,55 +153,60 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitCall(Expr.Call expr) {
-
         var e = expr.item.accept(this);
         if (e.isPresent()) {
             var t = e.get();
-            switch (t) {
-                case FuncType ft -> {
-                    if (ft.parameters.size() != expr.arguments.size()) {
-                        Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, ft.name, "a");
-                        return Optional.empty();
-                    }
-                    AtomicReference<ImpType> returnType = new AtomicReference<>(ft.returnType);
+            if (t instanceof FuncType ttt) {
+                if (ttt.parameters.size() != expr.arguments.size()) {
+                    var params = ttt.parameters.stream().map(s -> s.type.getName()).collect(Collectors.joining(", "));
+                    Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, ttt.name, params);
+                    return Optional.empty();
+                }
+                ImpType returnType = ttt.returnType;
 
-                    // Make sure parameter and argument types match.
-                    Util.zip(ft.parameters, expr.arguments, (param, arg) -> {
-                        var at = arg.accept(this);
-                        if (at.isPresent()) {
-                            var argType = at.get();
-                            if (argType == BuiltInType.VOID) {
-                                Comptime.VoidUsage.submit(compiler, file, arg);
-                            }
-                            if (!TypeResolver.typesMatch(param.type, argType)) {
-                                Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
-                            }
-
-                            if (argType instanceof ListType lt) {
-                                if (ft.name.equals("at")) {
-//                                returnType.set(lt.contentType);
-                                    // Todo: need to cast here
-                                }
-                            }
+                // Make sure parameter and argument types match.
+                Util.zip(ttt.parameters, expr.arguments, (param, arg) -> {
+                    var at = arg.accept(this);
+                    if (at.isPresent()) {
+                        var argType = at.get();
+                        if (argType == BuiltInType.VOID) {
+                            Comptime.VoidUsage.submit(compiler, file, arg);
                         }
-                    });
+                        if (!TypeResolver.typesMatch(param.type, argType)) {
+                            Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
+                        }
 
-                    expr.realType = returnType.get();
-                    return Optional.of(returnType.get());
-                }
-                case StructType st -> {
-                    if (st.fieldNames.length != expr.arguments.size()) {
-                        Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, st.name, "a");
-                        return Optional.empty();
                     }
-                    // constructor function
-                    for (var arg : expr.arguments) {
-                        arg.accept(this);
-                    }
-                    expr.realType = st;
-                    return Optional.of(st);
+                });
+
+                expr.realType = returnType;
+                return Optional.of(returnType);
+            } else if (t instanceof StructType ttt) {
+                // Todo(CURRENT): redo struct constructor calls
+                if (ttt.parameters.size() != expr.arguments.size()) {
+                    var params = ttt.parameters.stream().map(s -> s.type.getName()).collect(Collectors.joining(", "));
+                    Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, ttt.name, params);
+                    return Optional.empty();
                 }
-                default -> throw new IllegalStateException("Unexpected value: " + t);
+
+                // Make sure parameter and argument types match.
+                Util.zip(ttt.parameters, expr.arguments, (param, arg) -> {
+                    var at = arg.accept(this);
+                    if (at.isPresent()) {
+                        var argType = at.get();
+                        if (argType == BuiltInType.VOID) {
+                            Comptime.VoidUsage.submit(compiler, file, arg);
+                        }
+                        if (!TypeResolver.typesMatch(param.type, argType)) {
+                            Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
+                        }
+
+                    }
+                });
+
+                return Optional.of(ttt);
+            } else {
+                throw new IllegalStateException("Unexpected value: " + t);
             }
 
         } else {
@@ -452,82 +456,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitPropertyAccess(Expr.PropertyAccess expr) {
-        // For now, assume all expr chains are identifiers
-        var exprs = expr.exprs;
-
-        var start = exprs.get(0);
-        var startType = start.accept(this);
-        ImpType t;
-        if (startType.isPresent()) {
-            t = startType.get();
-            for (int i = 1; i < exprs.size(); i++) {
-                if (t instanceof StructType structType) {
-                    var identifier = (Expr.Identifier) exprs.get(i);
-                    var id = identifier.identifier.source();
-                    if (Arrays.asList(structType.fieldNames).contains(id)) {
-                        // Ok, continue to next step
-                        int idx = Arrays.asList(structType.fieldNames).indexOf(id);
-                        t = structType.fieldTypes[idx];
-                    } else {
-                        Comptime.PropertyNotFound.submit(compiler, file, exprs.get(i), t.getName(), id);
-                    }
-
-
-                }/* else if (t instanceof BuiltInType builtInType) {
-                    System.out.println(builtInType);
-                }*/
-            }
-            return Optional.of(t);
-        } else {
-            // Todo: Property access error
-            System.err.println("bad");
-        }
-
-//        System.exit(-1);
-
-//        var left = expr.left();
-//        var right = expr.right();
-//        // Left is usually an identifier
-//        var lType = left.accept(this);
-//        if (right instanceof Expr.Identifier identifier) {
-//
-//        } else {
-//
-//        }
-//
-//        // 1. Get type of left-hand component
-////        var rType = right.accept(this);
-//        if (lType.isPresent()) {
-//            // 2. Find available fields in said type
-//            //    (For now, StructType only)
-//            var structType = (StructType) lType.get();
-//            System.out.println(structType);
-//            // 3. See if the right expression is available in the right
-//            // Todo: figure out how to do this (it should be a flat list of identifiers as we don't have methods yet)
-//            String rightId = "dob";
-//            var t = structType.findType(rightId);
-//            if (t.isPresent()) {
-//                System.out.println(t.get());
-//            } else {
-//                // Todo: Property access error
-//                System.err.println("bad");
-//            }
-//
-//            System.exit(9);
-//            var field = StructType.findStructField(structType, rightId);
-//            if (field.isPresent()) {
-//                var type = field.get().type;
-//                System.out.println(type);
-//
-//                var n = type.getName().split("\\.");
-//                var p = Path.of("examples", n[0]);
-//
-//                var fieldType = ExportTable.get(p.toString(), n[1]);
-//                System.out.println(fieldType);
-//            }
-//        }
-        //    (only Identifier, PropertyAccess, and FunctionCall can be a right side expression here)
-        // 4. Return the type of the rightmost expression (after recursion)
 
         return Optional.empty();
     }
@@ -564,7 +492,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitStruct(Stmt.Struct struct) {
         var structType = currentEnvironment.getVariableTyped(struct.name.source(), StructType.class);
         if (structType != null) {
-            Util.zip(struct.fields, structType.fields, (a, b) -> {
+            Util.zip(struct.fields, structType.parameters, (a, b) -> {
                 if (b.type instanceof UnknownType ut) {
                     var attempt = currentEnvironment.getVariable(ut.typeName);
                     if (attempt != null) {

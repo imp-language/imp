@@ -66,10 +66,6 @@ public class Util {
         return parameters.stream().map(p -> p.name + " " + p.type).collect(Collectors.joining(", "));
     }
 
-    public static String parameterString(String[] names, ImpType[] types) {
-        return zipMap(Arrays.asList(names), Arrays.asList(types), (name, type) -> name + " " + type).collect(Collectors.joining(", "));
-    }
-
     public static void println(Object o) {
         System.out.println(o);
     }

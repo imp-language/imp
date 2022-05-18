@@ -1,36 +1,24 @@
 package org.imp.jvm.types;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.imp.jvm.Util;
 import org.imp.jvm.domain.Identifier;
 import org.objectweb.asm.Opcodes;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StructType implements ImpType, Serializable {
     // Todo: replace with Map<String,Type>
-    public final List<Identifier> fields;
-    public final String[] fieldNames;
-    public final ImpType[] fieldTypes;
+    public final List<Identifier> parameters;
     public String name;
 
     public String qualifiedName;
     public String parentName;
 
-    public StructType(String name, String[] fieldNames, ImpType[] fieldTypes) {
-        this.name = name;
-        this.fields = Collections.emptyList();
-        this.fieldNames = fieldNames;
-        this.fieldTypes = fieldTypes;
-    }
-
     public StructType(String name, List<Identifier> identifiers) {
         this.name = name;
-        this.fields = identifiers;
-        this.fieldNames = new String[0];
-        this.fieldTypes = new ImpType[0];
+        this.parameters = identifiers;
 
     }
 
@@ -46,11 +34,6 @@ public class StructType implements ImpType, Serializable {
 
 
     @Override
-    public int getAddOpcode() {
-        throw new NotImplementedException("Opcode not implemented");
-    }
-
-    @Override
     public Object getDefaultValue() {
         return null;
     }
@@ -61,10 +44,6 @@ public class StructType implements ImpType, Serializable {
         return "L" + n + ";";
     }
 
-    @Override
-    public int getDivideOpcode() {
-        throw new NotImplementedException("Opcode not implemented");
-    }
 
     @Override
     public String getInternalName() {
@@ -86,19 +65,10 @@ public class StructType implements ImpType, Serializable {
         return name;
     }
 
-    @Override
-    public int getNegOpcode() {
-        return 0;
-    }
 
     @Override
     public int getReturnOpcode() {
         return Opcodes.ARETURN;
-    }
-
-    @Override
-    public int getSubtractOpcode() {
-        throw new NotImplementedException("Opcode not implemented");
     }
 
     @Override
@@ -118,7 +88,9 @@ public class StructType implements ImpType, Serializable {
 
     @Override
     public String toString() {
-        return "struct " + getName() + " {" + Util.parameterString(fieldNames, fieldTypes) + "}";
+        // Todo: this is getting dangerously close to endless recursion if you got a struct that holds a union referencing said struct
+        // Need to find an end condition.
+        return "struct " + getName() + " {" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + "}";
     }
 
 }

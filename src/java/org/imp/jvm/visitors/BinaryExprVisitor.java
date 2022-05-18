@@ -1,6 +1,7 @@
 package org.imp.jvm.visitors;
 
 import org.imp.jvm.Constants;
+import org.imp.jvm.Util;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.types.BuiltInType;
 import org.imp.jvm.types.ImpType;
@@ -179,16 +180,21 @@ public class BinaryExprVisitor {
             }
 
         }
-        int op = switch (expr.operator.type()) {
-            case ADD -> goalType.getAddOpcode();
-            case SUB -> goalType.getSubtractOpcode();
-            case MUL -> goalType.getMultiplyOpcode();
-            case DIV -> goalType.getDivideOpcode();
-            // Todo: Modulus implementation is more complicated than just a single opcode
-            case MOD -> 0;
-            case LT, GT, LE, GE -> 0;
-            default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
-        };
-        ga.visitInsn(op);
+        if (goalType instanceof BuiltInType bt) {
+
+            int op = switch (expr.operator.type()) {
+                case ADD -> bt.getAddOpcode();
+                case SUB -> bt.getSubtractOpcode();
+                case MUL -> bt.getMultiplyOpcode();
+                case DIV -> bt.getDivideOpcode();
+                // Todo: Modulus implementation is more complicated than just a single opcode
+                case MOD -> 0;
+                case LT, GT, LE, GE -> 0;
+                default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
+            };
+            ga.visitInsn(op);
+        } else {
+            Util.exit("need a test case here", 452);
+        }
     }
 }

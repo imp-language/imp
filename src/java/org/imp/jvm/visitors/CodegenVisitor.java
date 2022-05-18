@@ -509,15 +509,19 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         var ga = functionStack.peek().ga;
         expr.expr.accept(this);
-        ((BuiltInType) expr.realType).pushOne(ga);
-        int opcode = expr.realType.getAddOpcode();
-        if (expr.operator.type() == TokenType.DEC) opcode = expr.realType.getSubtractOpcode();
+        if (expr.realType instanceof BuiltInType bt) {
+            bt.pushOne(ga);
+            int opcode = bt.getAddOpcode();
+            if (expr.operator.type() == TokenType.DEC) opcode = bt.getSubtractOpcode();
 
-        ga.visitInsn(opcode);
-        // Todo: store this
-        if (expr.expr instanceof Expr.Identifier eid) {
+            ga.visitInsn(opcode);
+            // Todo: store this
+            if (expr.expr instanceof Expr.Identifier eid) {
 
-            ga.storeLocal(functionStack.peek().localMap.get(eid.identifier.source()));
+                ga.storeLocal(functionStack.peek().localMap.get(eid.identifier.source()));
+            }
+        } else {
+            Util.exit("postfix only works with builtin types", 49);
         }
         return Optional.empty();
     }
@@ -529,8 +533,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         expr.right.accept(this);
 
         var t = expr.right.realType;
-        if (expr.operator.type() == TokenType.SUB) {
-            ga.visitInsn(t.getNegOpcode());
+        if (expr.operator.type() == TokenType.SUB && t instanceof BuiltInType bt) {
+            ga.visitInsn(bt.getNegOpcode());
             expr.realType = t;
         }
         return Optional.empty();
@@ -572,6 +576,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Create the inner class
         innerCw.visit(CodegenVisitor.CLASS_VERSION, Constants.PublicStatic, innerName, null, "java/lang/Object", null);
         // Link inner class to outer class
+        // Todo: should this be public + static?
         cw.visitInnerClass(innerName, source.getFullRelativePath(), name, Opcodes.ACC_PUBLIC);
         // Link outer class to inner class
         innerCw.visitOuterClass(source.getFullRelativePath(), name, "()V");
@@ -583,7 +588,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         StringBuilder constructorDescriptor = new StringBuilder();
 
-        for (Identifier field : structType.fields) {
+        for (Identifier field : structType.parameters) {
             ImpType type = field.type;
             descriptor = type.getDescriptor();
             String n = field.name;
@@ -611,10 +616,10 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         ga.invokeConstructor(Constants.ObjectType, new Method(Constants.Init, "()V"));
 
         // Set fields
-        for (int i = 0; i < structType.fields.size(); i++) {
-            ImpType type = structType.fields.get(i).type;
+        for (int i = 0; i < structType.parameters.size(); i++) {
+            ImpType type = structType.parameters.get(i).type;
             descriptor = type.getDescriptor();
-            String n = structType.fields.get(i).name;
+            String n = structType.parameters.get(i).name;
             ga.visitVarInsn(Opcodes.ALOAD, 0);
             var b = type.getLoadVariableOpcode();
             System.out.println(b);

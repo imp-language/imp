@@ -138,7 +138,6 @@ public enum BuiltInType implements ImpType, Serializable {
         }
     }
 
-    @Override
     public int getAddOpcode() {
         return opcodes.getAdd();
     }
@@ -153,7 +152,6 @@ public enum BuiltInType implements ImpType, Serializable {
         return descriptor;
     }
 
-    @Override
     public int getDivideOpcode() {
         return opcodes.getDivide();
     }
@@ -178,7 +176,6 @@ public enum BuiltInType implements ImpType, Serializable {
         return name;
     }
 
-    @Override
     public int getNegOpcode() {
         return opcodes.getNeg();
     }
@@ -188,7 +185,6 @@ public enum BuiltInType implements ImpType, Serializable {
         return opcodes.getReturn();
     }
 
-    @Override
     public int getSubtractOpcode() {
         return opcodes.getSubtract();
     }

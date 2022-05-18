@@ -20,6 +20,6 @@ public class Constants {
     // https://mariadb.com/kb/en/operating-system-error-codes/
     public static final int ENOENT = 2;
 
-    public static final int PublicStatic = Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC;
+    public static final int PublicStatic = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
 
 }
