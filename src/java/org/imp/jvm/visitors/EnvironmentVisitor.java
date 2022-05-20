@@ -354,6 +354,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitPropertyAccess(Expr.PropertyAccess expr) {
 
+        expr.expr.accept(this);
         return Optional.empty();
     }
 

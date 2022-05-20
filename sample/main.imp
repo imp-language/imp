@@ -28,6 +28,7 @@ struct Top {
 struct Middle {
     value Bottom
     other Bottom
+    union string | int
 }
 
 struct Bottom {
@@ -37,9 +38,22 @@ struct Bottom {
 //val b1 = Bottom(2)
 //val b2 = Bottom(9)
 //val mid = Middle(b1, b2)
-val top = Top(Middle(Bottom(2), Bottom(9)))
-log(top)
+val top = Top(Middle(Bottom(2), Bottom(9), 9))
 
 //Todo(CURRENT): property access!
+log(top)
+log(top.middle)
 log(top.middle.value)
+log(top.middle.other)
 
+val union = top.middle.union
+log(union)
+
+match union as reified {
+    string -> {
+        log("string")
+    }
+    int -> {
+        log("int")
+    }
+}

@@ -4,6 +4,7 @@ import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.types.ImpType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Expr implements Node {
@@ -235,6 +236,7 @@ public abstract class Expr implements Node {
     public static final class PropertyAccess extends Expr {
         public final Expr expr;
         public final List<Identifier> identifiers;
+        public List<ImpType> typeChain = new ArrayList<>();
 
         public PropertyAccess(Location location, Expr expr, List<Identifier> identifiers) {
             super(location);
@@ -279,6 +281,7 @@ public abstract class Expr implements Node {
     }
 
     // identifier
+    // Todo: combine with other Identifier class somehow?
     public static class Identifier extends Expr {
         public final Token identifier;
 

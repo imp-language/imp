@@ -12,6 +12,7 @@ import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.types.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Stack;
@@ -437,8 +438,49 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitPropertyAccess(Expr.PropertyAccess expr) {
+        /*
+         * The last identifier in the chain determines the realType of
+         * this PropertyAccess expression. We do not need to store the
+         * intermediate types that are determined during this process.
+         */
+        var t = expr.expr.accept(this);
 
-        return Optional.empty();
+        var typeChain = new ArrayList<ImpType>();
+
+        if (t.isPresent()) {
+            var exprType = t.get();
+            if (exprType instanceof StructType st) {
+                StructType pointer = st;
+                typeChain.add(pointer);
+
+                ImpType result = st;
+
+                for (Expr.Identifier identifier : expr.identifiers) {
+                    var foundField = pointer.parameters.stream().filter(i -> i.name.equals(identifier.identifier.source())).findAny();
+                    if (foundField.isPresent()) {
+                        System.out.println("ruh roh");
+                        var pointerCandidate = foundField.get().type;
+                        if (pointerCandidate instanceof StructType pst) {
+                            pointer = pst;
+                            typeChain.add(pointer);
+                        } else {
+                            result = pointerCandidate;
+                            typeChain.add(pointerCandidate);
+
+                        }
+
+                    } else {
+                        Comptime.FieldNotPresent.submit(compiler, file, identifier, identifier.identifier.source(), pointer.name);
+                        break;
+                    }
+                }
+                System.out.println(result);
+                expr.realType = result;
+            }
+        }
+        expr.typeChain = typeChain;
+
+        return Optional.of(expr.realType);
     }
 
 

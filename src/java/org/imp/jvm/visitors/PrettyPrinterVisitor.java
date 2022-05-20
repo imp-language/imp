@@ -250,7 +250,9 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitPropertyAccess(Expr.PropertyAccess expr) {
-        return "expr.exprs.stream().map(this::print).collect(Collectors.joining(.))";
+        String s = print(expr.expr);
+        s += "." + expr.identifiers.stream().map(i -> i.identifier.source()).collect(Collectors.joining("."));
+        return s;
     }
 
 

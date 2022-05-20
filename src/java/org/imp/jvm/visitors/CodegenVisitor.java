@@ -181,6 +181,10 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 arg.accept(this);
                 if (param.type instanceof UnionType ut) {
                     typeDescriptor.append("Ljava/lang/Object;");
+                    // Only box if the arg type is a Java primitive and the param type is Object
+                    if (arg.realType instanceof BuiltInType btArg) {
+                        btArg.doBoxing(ga);
+                    }
 
                 } else {
                     typeDescriptor.append(arg.realType.getDescriptor());
@@ -540,6 +544,22 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
     @Override
     public Optional<ClassWriter> visitPropertyAccess(Expr.PropertyAccess expr) {
+        var ga = functionStack.peek().ga;
+        var t = expr.realType;
+
+        var root = expr.expr;
+        var rootType = root.realType;
+        System.out.println(rootType);
+
+        root.accept(this);
+
+        for (int i = 0; i < expr.typeChain.size() - 1; i++) {
+            var current = expr.typeChain.get(i);
+            var next = expr.typeChain.get(i + 1);
+            var fieldName = expr.identifiers.get(i).identifier.source();
+            ga.getField(Type.getType(current.getDescriptor()), fieldName, Type.getType(next.getDescriptor()));
+        }
+
         return Optional.empty();
     }
 
@@ -575,7 +595,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         innerCw.visit(CodegenVisitor.CLASS_VERSION, Constants.PublicStatic, innerName, null, "java/lang/Object", null);
         // Link inner class to outer class
         // Todo: should this be public + static?
-        cw.visitInnerClass(innerName, source.getFullRelativePath(), name, Opcodes.ACC_PUBLIC);
+        cw.visitInnerClass(innerName, source.getFullRelativePath(), name, Constants.PublicStatic);
         // Link outer class to inner class
         innerCw.visitOuterClass(source.getFullRelativePath(), name, "()V");
 

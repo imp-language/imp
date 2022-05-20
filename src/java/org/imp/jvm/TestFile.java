@@ -1,40 +1,54 @@
 package org.imp.jvm;
 
-import org.imp.runtime.Batteries;
-
 public class TestFile {
     public static TestFile instance = new TestFile();
 
     public TestFile() {
     }
 
-    public static void main(String[] var0) {
-        var left = new Empty();
-        var right = new Empty();
-        var tree = new Tree(4, left, right);
-        Batteries.log(tree);
+    public static void main(String[] param0) {
+        var top = new Top(new Middle(new Bottom(2), new Bottom(9)));
+        TestFile.log(top.middle.value);
     }
 
-    public static class Empty {
-        public Empty() {
-        }
+    public static void log(Object o) {
     }
 
+    public static class Top {
+        public TestFile.Middle middle;
 
-    public static class Tree {
-        public int data;
-        public Object left;
-        public Object right;
-
-        public Tree(int var2, Object var3, Object var4) {
-            this.data = var2;
-            this.left = var3;
-            this.right = var4;
+        public Top(TestFile.Middle var1) {
+            this.middle = var1;
         }
 
-        @Override
         public String toString() {
-            return "Tree" + "[data=" + this.data + ", left=" + this.left + ", right=" + this.right + "]";
+            return "Top[middle=" + this.middle + "]";
+        }
+    }
+
+    public static class Middle {
+        public TestFile.Bottom value;
+        public TestFile.Bottom other;
+
+        public Middle(TestFile.Bottom var1, TestFile.Bottom var2) {
+            this.value = var1;
+            this.other = var2;
+        }
+
+        public String toString() {
+            return "Middle[value=" + this.value + ", other=" + this.other + "]";
+        }
+    }
+
+    public static class Bottom {
+        public int data;
+
+        public Bottom(int var1) {
+            this.data = var1;
+        }
+
+        public String toString() {
+            return "Bottom[data=" + this.data + "]";
         }
     }
 }
