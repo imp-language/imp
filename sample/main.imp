@@ -1,28 +1,43 @@
-struct Empty {}
-struct Leaf {
-	data int
-}
-struct Node {
-	left Tree
-	right Tree
-}
-type TreeNode = Tree | Empty
-struct Tree {
-    data int
-    left TreeNode
-    right TreeNode
-}
+//struct Empty {}
+//struct Leaf {
+//	data int
+//}
+//struct Node {
+//	left Tree
+//	right Tree
+//}
+//type TreeNode = Tree | Empty
+//struct Tree {
+//    data int
+//    left TreeNode
+//    right TreeNode
+//}
+//
+//func makeTree(root int) Tree {
+//    val left = Empty()
+//    val right = Empty()
+//    val tree = Tree(root, left, right)
+//    log(left)
+//    log(right)
+//    log(tree)
+//    return tree
+//    log(tree)
+//}
+//
+//val tree = makeTree(42)
+//val l = Leaf(14)
+//log(l)
 
-func makeTree(root int) Tree {
-    val left = Empty()
-    val right = Empty()
-    val tree = Tree(root, left, right)
-    log(left)
-    log(right)
-    log(tree)
-    return tree
+func hasUnreachable() {
+    log("before")
+    return
+    log("after")
 }
-
-val tree = makeTree(42)
-val l = Leaf(14)
-log(l)
+func hasNestedUnreachable() {
+    if 4 == 4 {
+        return
+        log("unreachable")
+    } else {
+        log("4")
+    }
+}

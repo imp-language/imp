@@ -1,0 +1,18 @@
+// Unreachable code after a return statement errors in all cases
+func hasUnreachable() {
+    log("before")
+    return
+    log("after")
+}
+func hasNestedUnreachable() {
+    if 4 == 4 {
+        return
+        log("unreachable")
+    } else {
+        log("4")
+    }
+}
+func hasUnreachableAfterExpr(i int) {
+    return i
+    log("unreachable")
+}

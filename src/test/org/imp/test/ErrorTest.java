@@ -43,6 +43,14 @@ public class ErrorTest {
     }
 
     @Test
+    void Unreachable() throws IOException {
+        assertEquals(
+                Util.countedSet(Comptime.Unreachable.code, Comptime.Unreachable.code, Comptime.Unreachable.code),
+                Load.checkForErrors("errors/unreachable", moduleLocation)
+        );
+    }
+
+    @Test
     void VoidUsage() throws IOException {
         assertEquals(
                 Util.countedSet(Comptime.VoidUsage.code),

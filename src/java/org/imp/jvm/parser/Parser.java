@@ -127,7 +127,10 @@ public class Parser extends ParserBase {
     Stmt.Return parseReturn() {
         var loc = lok();
         Expr expr;
-        if (peek().type() != RBRACE) {
+        /*
+         * return must be on same line as statement
+         */
+        if (peek().type() != RBRACE && peek().line() == loc.line()) {
             expr = expression();
         } else {
             expr = new Expr.Empty(loc);

@@ -87,8 +87,14 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
     @Override
     public Optional<ImpType> visitBlockStmt(Stmt.Block block) {
+        boolean returned = false;
         for (var stmt : block.statements) {
             stmt.accept(this);
+            if (!returned) {
+                if (stmt instanceof Stmt.Return) returned = true;
+            } else {
+                Comptime.Unreachable.submit(compiler, file, stmt);
+            }
         }
         return Optional.empty();
     }
