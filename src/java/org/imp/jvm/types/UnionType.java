@@ -42,7 +42,7 @@ public class UnionType implements ImpType {
 
     @Override
     public String getName() {
-        return "name";
+        return types.stream().map(ImpType::getName).collect(Collectors.joining(" | "));
     }
 
 

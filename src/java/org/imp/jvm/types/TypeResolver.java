@@ -38,6 +38,7 @@ public class TypeResolver {
      *                 Assume this is a standard library function that accepts Object.</li>
      *                <li>If both types are BuiltInType, they must be equal to match.</li>
      *                <li>List types.</li>
+     *                <li>Struct types matched on all fields and name.</li>
      *            </ol>
      */
     public static boolean typesMatch(ImpType par, ImpType arg) {
@@ -73,6 +74,9 @@ public class TypeResolver {
                 if (lta.contentType().equals(ltb.contentType())) return true;
             }
             return arg instanceof ListType ltb && par.getName().equals("java.util.List");
+        }
+        if (arg instanceof StructType ast && par instanceof StructType pst) {
+            if (ast.parameters.equals(pst.parameters) && ast.name.equals(pst.name)) return true;
         }
 
         return false;

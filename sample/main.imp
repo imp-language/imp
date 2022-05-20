@@ -2,10 +2,7 @@
 //struct Leaf {
 //	data int
 //}
-//struct Node {
-//	left Tree
-//	right Tree
-//}
+//
 //type TreeNode = Tree | Empty
 //struct Tree {
 //    data int
@@ -14,30 +11,35 @@
 //}
 //
 //func makeTree(root int) Tree {
-//    val left = Empty()
+//    val left = Tree(4, Empty(), Empty())
 //    val right = Empty()
 //    val tree = Tree(root, left, right)
 //    log(left)
 //    log(right)
 //    log(tree)
 //    return tree
-//    log(tree)
 //}
-//
 //val tree = makeTree(42)
-//val l = Leaf(14)
-//log(l)
 
-func hasUnreachable() {
-    log("before")
-    return
-    log("after")
+struct Top {
+    middle Middle
 }
-func hasNestedUnreachable() {
-    if 4 == 4 {
-        return
-        log("unreachable")
-    } else {
-        log("4")
-    }
+
+struct Middle {
+    value Bottom
+    other Bottom
 }
+
+struct Bottom {
+    data int
+}
+
+//val b1 = Bottom(2)
+//val b2 = Bottom(9)
+//val mid = Middle(b1, b2)
+val top = Top(Middle(Bottom(2), Bottom(9)))
+log(top)
+
+//Todo(CURRENT): property access!
+log(top.middle.value)
+

@@ -70,7 +70,7 @@ literal        → NUMBER | TRUE | FALSE | STRING | listLiteral ;
 call           → identifier "(" arguments ")" ;
 grouping       → "(" expression ")" 
 new            → "new" call ;
-propertyAccess → expression "." expression ;
+propertyAccess → expression ("." identifier)+ ;
 indexAccess    → expression "[" expression "]" ;
 emptyList      → type "[" "]" ;
 

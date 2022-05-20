@@ -233,11 +233,13 @@ public abstract class Expr implements Node {
 
     // expression . expression
     public static final class PropertyAccess extends Expr {
-        public final List<Expr> exprs;
+        public final Expr expr;
+        public final List<Identifier> identifiers;
 
-        public PropertyAccess(Location location, List<Expr> exprs) {
+        public PropertyAccess(Location location, Expr expr, List<Identifier> identifiers) {
             super(location);
-            this.exprs = exprs;
+            this.expr = expr;
+            this.identifiers = identifiers;
         }
 
         public <R> R accept(Visitor<R> visitor) {

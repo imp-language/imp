@@ -32,16 +32,27 @@ public interface InfixParselet {
     record PropertyAccess() implements InfixParselet {
         public Expr parse(Parser parser, Expr left, Token token) {
             var loc = parser.lok();
-            List<Expr> exprs = new ArrayList<>();
-            exprs.add(left);
-            Expr right = parser.expression(precedence());
-            exprs.add(right);
+            List<Expr.Identifier> identifiers = new ArrayList<>();
+
+            var i = parser.consume();
+            identifiers.add(new Expr.Identifier(parser.lok(), i));
             while (parser.peek().type() == TokenType.DOT) {
                 parser.consume();
-                right = parser.expression(precedence());
-                exprs.add(right);
+                if (parser.peek().type() == TokenType.IDENTIFIER) {
+                    i = parser.consume();
+                    identifiers.add(new Expr.Identifier(parser.lok(), i));
+                }
+
             }
-            return new Expr.PropertyAccess(loc, exprs);
+//
+//            Expr.Identifier id =
+//            exprs.add(id);
+//            while (parser.peek().type() == TokenType.DOT) {
+//                parser.consume();
+//                id = parser.expression(precedence());
+//                exprs.add(id);
+//            }
+            return new Expr.PropertyAccess(loc, left, identifiers);
         }
 
 

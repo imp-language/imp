@@ -102,7 +102,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitCall(Expr.Call expr) {
 
-        // Todo(CURRENT): finish index access expressions- they don't unbox properly
+        // Todo: finish index access expressions- they don't unbox properly
         // we know to do so when expr.source == "at"
         // need to develop a way to know what to do tho
 

@@ -173,6 +173,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         }
                         if (!TypeResolver.typesMatch(param.type, argType)) {
                             Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
+                        } else {
+                            arg.realType = argType;
                         }
 
                     }
