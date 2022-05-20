@@ -55,5 +55,8 @@ match union as reified {
     }
     int -> {
         log("int")
+        log(4+reified)
     }
 }
+
+top.middle = Middle(Bottom(4),Bottom(5),6)

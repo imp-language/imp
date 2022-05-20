@@ -106,6 +106,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             case ADD, SUB, MUL, DIV, MOD -> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     totalType = BuiltInType.widen(bt1, bt2);
+                } else {
+                    Comptime.CannotApplyOperator.submit(compiler, file, expr, expr.operator.source(), t1.get(), t2.get());
                 }
             }
             case EQUAL, NOTEQUAL, LT, GT, LE, GE -> {
