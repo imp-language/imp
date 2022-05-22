@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// Todo: move to BaseTest class an delete this
 public class Load {
 
     static final Compiler compiler = new Compiler();

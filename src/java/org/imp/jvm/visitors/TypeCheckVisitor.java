@@ -444,7 +444,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
 
         } else {
-            Util.exit("error", 97);
+            Comptime.TypeNotResolved.submit(compiler, file, match.expr, "print");
+//            Util.exit("error", 97);
         }
 
         return Optional.empty();
@@ -512,10 +513,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 System.out.println(result);
                 expr.realType = result;
             }
+        } else {
+            Comptime.MethodNotFound.submit(compiler, file, expr.expr, "ree");
         }
         expr.typeChain = typeChain;
 
-        return Optional.of(expr.realType);
+        return Optional.ofNullable(expr.realType);
     }
 
 

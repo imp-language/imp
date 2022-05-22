@@ -3,6 +3,7 @@ package org.imp.test;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BaseTest {
@@ -21,7 +22,10 @@ public class BaseTest {
         assertEquals(gold(goldPath), run(runPath));
     }
 
-    protected void testLiteral(String runPath, String goldContent) throws IOException, InterruptedException {
-        assertEquals(goldContent, run(runPath));
+    protected void testLiteral(String runPath, String goldContent) {
+        assertDoesNotThrow(() -> {
+            assertEquals(goldContent, run(runPath));
+        });
+
     }
 }

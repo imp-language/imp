@@ -9,7 +9,6 @@ func factorial(n int) {
     for i in range(1,n+1) {
         result = result * i
     }
-    // Todo: not all code paths return error
     return result
 }
 

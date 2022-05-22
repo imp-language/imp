@@ -1,0 +1,41 @@
+struct Top {
+    middle Middle
+}
+struct Middle {
+    value Bottom
+    other Bottom
+    union string | int
+}
+struct Bottom {
+    data int
+}
+
+val top = Top(Middle(Bottom(2), Bottom(9), 9))
+
+log("access")
+log(top)
+log(top.middle)
+log(top.middle.value)
+log(top.middle.other)
+
+val union = top.middle.union
+log(union)
+
+match union as reified {
+    string -> {
+        log("string")
+    }
+    int -> {
+        log("int")
+        log(4 + reified)
+    }
+}
+
+log("assignment")
+log(top)
+top.middle = Middle(Bottom(4),Bottom(5),"6aaa")
+log(top)
+top.middle.value = Bottom(99)
+log(top)
+top.middle.union = 5
+log(top)
