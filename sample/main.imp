@@ -1,26 +1,107 @@
-// https://www.rosettacode.org/wiki/Factorial
-// Iterative and recursive solutions to calculate a factorial
-
-func factorial(n int) {
-    mut result = 1
-    if n < 0 {
-        return -1
-    }
-    for i in range(1,n+1) {
-        result = result * i
-    }
-    // Todo: not all code paths return error
-    return result
+struct Empty {}
+struct Leaf {
+	data int
 }
 
-func factorialRecursive(n int) {
-    if n == 0 {
-        return 1
-    }
-    return n * factorialRecursive(n-1)
+type TreeNode = Tree | Empty
+struct Tree {
+    data int
+    left TreeNode
+    right TreeNode
 }
 
-for i in range(1, 10) {
-    log(factorial(i))
-    log(factorialRecursive(i))
+func makeTree(value int) Tree {
+    val left = Empty()
+    val right = Empty()
+    val tree = Tree(value, left, right)
+    return tree
 }
+
+func insert(root Tree, value int) {
+    if value < root.data {
+        match root.left as a {
+            Empty -> root.left = makeTree(value)
+            Tree ->  insert(a, value)
+        }
+    } else {
+        match root.right as a {
+            Empty ->  root.right = makeTree(value)
+            Tree -> insert(a, value)
+        }
+    }
+}
+/*
+
+val tree = makeTree(16)
+for i in range(-10,10) {
+    insert(tree, i)
+}
+//log(tree)
+
+
+func inorder(node Tree | Empty) {
+    match node as a {
+        Empty -> {}
+        Tree -> {
+            inorder(a.left)
+            log(a.data)
+            inorder(a.right)
+        }
+    }
+}
+*/
+
+func printLevelOrder(node Tree | Empty) {
+    val h = height(node)
+    for i in range(1, h + 1) {
+        log("\nlevel " + i)
+        printCurrentLevel(node, i)
+    }
+}
+
+func printCurrentLevel(node TreeNode, level int) {
+        match node as a {
+            Empty -> {}
+            Tree -> {
+                if level == 1 {
+                    write(a.data)
+                } else {
+                    printCurrentLevel(a.left, level - 1)
+                    printCurrentLevel(a.right, level - 1)
+                }
+            }
+        }
+}
+
+func height(node TreeNode) int {
+    match node as a {
+        Empty -> {
+            return 0
+        }
+        Tree -> {
+            val lHeight = height(a.left)
+            val rHeight = height(a.right)
+            if lHeight > rHeight {
+                return lHeight + 1
+            } else {
+                return rHeight + 1
+            }
+        }
+    }
+    return 0 // Todo(URGENT): NEED RETURN ERRORS AND EXPRESSION RETURNS
+}
+
+
+val t = makeTree(0)
+insert(t, -2)
+insert(t, -3)
+insert(t, -1)
+insert(t, 1)
+log(t)
+
+//log(t.left.left) // Todo(Current): need to cast during the property access chain in codegen
+//t.left.left = makeTree(4)
+//t.right.right = makeTree(5)
+//log(height(tree))
+
+printLevelOrder(t)

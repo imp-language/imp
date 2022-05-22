@@ -473,6 +473,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             var end = new Label();
             ga.loadLocal(localExprIndex);
             var t = match.types.get(typeStmt);
+            // Todo: fix this with TypeCheckVisitor, should have no UKTs in this pass
+            if (t instanceof UnknownType ukt) {
+                var attempt = currentEnvironment.getVariable(ukt.typeName);
+                if (attempt != null) {
+                    t = attempt;
+                }
+            }
 
             if (t instanceof ListType lt) {
                 // Cast to ListWrapper
@@ -493,7 +500,14 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
             } else {
                 // Check if match expression is this case's type
-                var typeClass = Type.getType(t.getTypeClass());
+                Type typeClass;
+                if (t instanceof BuiltInType bt) {
+                    typeClass = Type.getType(t.getTypeClass());
+                } else if (t instanceof StructType st) {
+                    typeClass = Type.getType("L" + st.qualifiedName + ";");
+                } else {
+                    typeClass = Type.getType(t.getDescriptor());
+                }
                 ga.instanceOf(typeClass);
                 ga.visitJumpInsn(Opcodes.IFEQ, end);
                 ga.loadLocal(localExprIndex);
@@ -586,6 +600,13 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             var next = expr.typeChain.get(i + 1);
             var fieldName = expr.identifiers.get(i).identifier.source();
             ga.getField(Type.getType(current.getDescriptor()), fieldName, Type.getType(next.getDescriptor()));
+            if (current instanceof StructType st && next instanceof UnionType ut) {
+//                if (ut.getDescriptor().equals("Ljava/lang/Object;")) {
+//
+//                } else {
+//                ga.visitTypeInsn(Opcodes.CHECKCAST, current.getDescriptor());
+//                }
+            }
         }
 
         return Optional.empty();

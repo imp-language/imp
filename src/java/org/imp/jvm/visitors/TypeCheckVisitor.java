@@ -78,9 +78,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             case Expr.PropertyAccess pa -> {
                 var lType = expr.left.realType;
                 var rType = expr.right.realType;
-                if (TypeResolver.typesMatch(lType, rType)) {
-                    System.out.println("prop type match ok");
-                } else {
+                if (!TypeResolver.typesMatch(lType, rType)) {
                     Comptime.ParameterTypeMismatch.submit(compiler, file, expr.left, rType.getName(), lType.getName());
                 }
 
@@ -200,6 +198,15 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
                 // Make sure parameter and argument types match.
                 Util.zip(ttt.parameters, expr.arguments, (param, arg) -> {
+                    if (param.type instanceof UnknownType ut) {
+                        var attempt = currentEnvironment.getVariable(ut.typeName);
+                        if (attempt != null) {
+                            param.type = attempt;
+                        } else {
+                            Comptime.TypeNotFound.submit(compiler, file, arg, ut.typeName);
+                        }
+                    }
+
                     var at = arg.accept(this);
                     if (at.isPresent()) {
                         var argType = at.get();
@@ -208,6 +215,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         }
                         if (!TypeResolver.typesMatch(param.type, argType)) {
                             Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
+                            TypeResolver.typesMatch(param.type, argType);
+                            arg.accept(this);
                         } else {
                             arg.realType = argType;
                         }
@@ -309,6 +318,22 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     } else {
                         Comptime.TypeNotFound.submit(compiler, file, stmt, ut.typeName);
                     }
+                } else if (param.type instanceof UnionType ut) {
+                    var resolvedTypes = new HashSet<ImpType>();
+                    // Todo: do we need to disallow `string | string` cause that would really just be `string`?
+                    for (var type : ut.types) {
+                        if (type instanceof UnknownType ukt) {
+                            var attempt = currentEnvironment.getVariable(ukt.typeName);
+                            if (attempt != null) {
+                                resolvedTypes.add(attempt);
+                            }
+                        } else {
+                            resolvedTypes.add(type);
+                        }
+                    }
+                    ut.types = resolvedTypes;
+
+                    currentEnvironment.setVariableType(param.name, ut);
                 }
             }
 
@@ -351,6 +376,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitIdentifierExpr(Expr.Identifier expr) {
         var t = currentEnvironment.getVariable(expr.identifier.source());
         if (t != null) {
+            if (t instanceof UnknownType ukt) {
+                var attempt = currentEnvironment.getVariable(ukt.typeName);
+                if (attempt != null) {
+                    t = attempt;
+                }
+            }
             expr.realType = t;
         } else {
             Comptime.IdentifierNotFound.submit(compiler, file, expr, expr.identifier.source());
@@ -428,6 +459,13 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             match.cases.forEach((keyTypeStmt, block) -> {
                 // Todo: Ensure the resolved ImpType is not an UnknownType
                 var caseType = match.types.get(keyTypeStmt);
+                if (caseType instanceof UnknownType ukt) {
+                    var attempt = currentEnvironment.getVariable(ukt.typeName);
+                    if (attempt != null) {
+                        caseType = attempt;
+                    }
+                }
+
                 typesToCover.remove(caseType);
 
                 var childEnvironment = block.environment;
@@ -444,7 +482,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
 
         } else {
-            Comptime.TypeNotResolved.submit(compiler, file, match.expr, "print");
+            Comptime.TypeNotResolved.submit(compiler, file, match.expr, "");
 //            Util.exit("error", 97);
         }
 

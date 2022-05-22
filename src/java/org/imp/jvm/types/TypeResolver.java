@@ -43,10 +43,14 @@ public class TypeResolver {
      */
     public static boolean typesMatch(ImpType par, ImpType arg) {
         // 0
+        if (par instanceof UnionType uPar) {
+            System.out.println("bitch");
+        }
         if (par instanceof UnionType uPar && arg instanceof UnionType uArg) {
             if (uPar.types.containsAll(uArg.types)) return true;
         }
         if (par instanceof UnionType ua && ua.types.contains(arg)) return true;
+//        if (par instanceof UnionType ua && ua.types.contains(arg)) return true;
         // 1
         if (par.getName().equals("java.lang.Object") || arg.getName().equals("java.lang.Object")) {
             return true;

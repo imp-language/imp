@@ -16,6 +16,10 @@ public class Batteries {
         System.out.println(arg);
     }
 
+    public static void write(Object arg) {
+        System.out.print(arg + " ");
+    }
+
     public static float _float(Object o) {
         if (o == null) return 0;
         if (o instanceof Integer i) return i.floatValue();

@@ -2,6 +2,7 @@ package org.imp.test;
 
 import org.junit.jupiter.api.Test;
 
+// Tests that may be from Rosetta Code or a similar aggregator
 public class RosettaCodeTest extends BaseTest {
     @Test
     void Factorial() {
@@ -24,6 +25,32 @@ public class RosettaCodeTest extends BaseTest {
                 40320
                 362880
                 362880
+                """);
+    }
+
+    @Test
+    void fibonacci() {
+        testLiteral("rosetta/fibonacci", """
+                0
+                0
+                1
+                1
+                2
+                2
+                3
+                3
+                5
+                5
+                8
+                8
+                13
+                13
+                21
+                21
+                34
+                34
+                55
+                55
                 """);
     }
 

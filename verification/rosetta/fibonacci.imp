@@ -1,0 +1,26 @@
+//https://www.rosettacode.org/wiki/Fibonacci_sequence
+
+func fibonacci(n int) {
+    if n < 2 { return n }
+    mut ans = 0
+    mut n1 = 0
+    mut n2 = 1
+    for i in range(0,n) {
+        ans = n1 + n2
+        n1 = n2
+        n2 = ans
+    }
+    return ans
+}
+// extremely naive but simple implementation
+func fibonacciRecursive(n int) {
+    if n < 2 {
+        return n
+    }
+    return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2)
+}
+
+for i in range(0, 10) {
+    log(fibonacciRecursive(i))
+    log(fibonacci(i))
+}
