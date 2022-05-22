@@ -1,0 +1,23 @@
+struct Top {
+    middle Middle
+}
+struct Middle {
+    value Bottom
+    other Bottom
+    union string | int
+}
+struct Bottom {
+    data int
+}
+
+val b1 = Bottom(2)
+val b2 = Bottom(9)
+val m1 = Middle(b1, b2, 9)
+val t1 = Top(m1)
+log(b1)
+log(b2)
+log(m1)
+log(t1)
+
+val t2 = Top(Middle(Bottom(4), Bottom(-427), "aaa"))
+log(t2)

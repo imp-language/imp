@@ -58,11 +58,45 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitAssignExpr(Expr.Assign expr) {
         // Mutability has already been checked at this point
         var funcType = functionStack.peek();
-        expr.right.accept(this);
+        var ga = funcType.ga;
 
         if (expr.left instanceof Expr.Identifier id) {
+            expr.right.accept(this);
             var index = funcType.localMap.get(id.identifier.source());
-            funcType.ga.storeLocal(index);
+            ga.storeLocal(index);
+        } else if (expr.left instanceof Expr.PropertyAccess pa) {
+            var lType = expr.left.realType;
+            var rType = expr.right.realType;
+
+            // Load top of access chain
+            var root = pa.expr;
+            root.accept(this);
+
+            // Get fields
+            var typeChain = pa.typeChain;
+            var identifiers = pa.identifiers;
+            for (int i = 0; i < typeChain.size() - 2; i++) {
+                var current = typeChain.get(i);
+                var next = typeChain.get(i + 1);
+                var fieldName = identifiers.get(i).identifier.source();
+                ga.getField(Type.getType(current.getDescriptor()), fieldName, Type.getType(next.getDescriptor()));
+            }
+
+            // Generate expr
+            expr.right.accept(this);
+
+            // Only box if the arg type is a Java primitive
+            if (rType instanceof BuiltInType btArg) {
+                if (lType instanceof UnionType) {
+                    btArg.doBoxing(ga);
+                }
+            }
+
+            // Put expr into field
+            ga.putField(Type.getType(typeChain.get(typeChain.size() - 2).getDescriptor()),
+                    identifiers.get(identifiers.size() - 1).identifier.source(),
+                    Type.getType(typeChain.get(typeChain.size() - 1).getDescriptor()));
+
         } else {
             Comptime.Implementation.submit(compiler, file, expr, "Assignment not implemented for any recipient but identifier yet");
         }
@@ -165,18 +199,12 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             }
 
         } else if (expr.item.realType instanceof StructType st) {
-            System.out.println("Generating instance of struct " + st.name);
             var ga = funcType.ga;
 
             ga.newInstance(Type.getType("L" + st.qualifiedName + ";"));
             ga.visitInsn(Opcodes.DUP);
 
             StringBuilder typeDescriptor = new StringBuilder();
-            // Generate arguments
-//            for (var arg : expr.arguments) {
-//                arg.accept(this);
-//                typeDescriptor.append(arg.realType.getDescriptor());
-//            }
             Util.zip(st.parameters, expr.arguments, (param, arg) -> {
                 arg.accept(this);
                 if (param.type instanceof UnionType ut) {

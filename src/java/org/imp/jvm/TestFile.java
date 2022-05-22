@@ -8,7 +8,7 @@ public class TestFile {
 
     public static void main(String[] param0) {
         var top = new Top(new Middle(new Bottom(2), new Bottom(9)));
-        TestFile.log(top.middle.value);
+        top.middle = new Middle(new Bottom(4), new Bottom(5));
     }
 
     public static void log(Object o) {

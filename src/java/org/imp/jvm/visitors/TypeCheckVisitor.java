@@ -69,13 +69,45 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         expr.left.accept(this);
         expr.right.accept(this);
 
-        if (expr.left.realType != expr.right.realType) {
-            if (expr.left instanceof Expr.Identifier id) {
-                Comptime.BadAssignment.submit(compiler, file, expr, id.identifier.source(), expr.left.realType.getName(), expr.right.realType.getName());
-            } else {
-                Comptime.Implementation.submit(compiler, file, expr, "Assignment not implemented for any recipient but identifier yet");
+        switch (expr.left) {
+            case Expr.Identifier id -> {
+                if (expr.left.realType != expr.right.realType) {
+                    Comptime.BadAssignment.submit(compiler, file, expr, id.identifier.source(), expr.left.realType.getName(), expr.right.realType.getName());
+                }
             }
+            case Expr.PropertyAccess pa -> {
+                var lType = expr.left.realType;
+                var rType = expr.right.realType;
+                if (TypeResolver.typesMatch(lType, rType)) {
+                    System.out.println("prop type match ok");
+                } else {
+                    Comptime.ParameterTypeMismatch.submit(compiler, file, expr.left, rType.getName(), lType.getName());
+                }
+
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + expr.left.realType);
         }
+
+//        if (expr.left.realType != expr.right.realType) {
+//            if (expr.left instanceof Expr.Identifier id) {
+//                Comptime.BadAssignment.submit(compiler, file, expr, id.identifier.source(), expr.left.realType.getName(), expr.right.realType.getName());
+//            } else {
+//                Comptime.Implementation.submit(compiler, file, expr, "bad property access assignment, error todo");
+//            }
+//        } else {
+//            if (expr.left instanceof Expr.PropertyAccess pa) {
+//                var lType = expr.left.realType;
+//                var rType = expr.right.realType;
+//                if (TypeResolver.typesMatch(lType, rType)) {
+//                    System.out.println("prop type match ok");
+//                } else {
+//                    Util.exit("prop type match bad", 79);
+//                }
+//
+//            } else {
+//                Util.exit("what", 428);
+//            }
+//        }
 
         return Optional.empty();
     }
@@ -187,6 +219,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     expr.realType = returnType;
                     return Optional.of(returnType);
                 } else {
+                    expr.realType = ttt;
                     return Optional.of(ttt);
                 }
             } else {
@@ -460,11 +493,11 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 for (Expr.Identifier identifier : expr.identifiers) {
                     var foundField = pointer.parameters.stream().filter(i -> i.name.equals(identifier.identifier.source())).findAny();
                     if (foundField.isPresent()) {
-                        System.out.println("ruh roh");
                         var pointerCandidate = foundField.get().type;
                         if (pointerCandidate instanceof StructType pst) {
                             pointer = pst;
                             typeChain.add(pointer);
+                            result = pointerCandidate;
                         } else {
                             result = pointerCandidate;
                             typeChain.add(pointerCandidate);

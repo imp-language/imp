@@ -24,39 +24,57 @@
 struct Top {
     middle Middle
 }
-
 struct Middle {
     value Bottom
     other Bottom
     union string | int
 }
-
 struct Bottom {
     data int
 }
 
-//val b1 = Bottom(2)
-//val b2 = Bottom(9)
-//val mid = Middle(b1, b2)
-val top = Top(Middle(Bottom(2), Bottom(9), 9))
+val b1 = Bottom(2)
+val b2 = Bottom(9)
+val m1 = Middle(b1, b2, 9)
+val t1 = Top(m1)
+log(b1)
+log(b2)
+log(m1)
+log(t1)
 
-//Todo(CURRENT): property access!
-log(top)
-log(top.middle)
-log(top.middle.value)
-log(top.middle.other)
+val t2 = Top(Middle(Bottom(4), Bottom(-427), "aaa"))
+log(t2)
 
-val union = top.middle.union
-log(union)
+//val top = Top(Middle(Bottom(2), Bottom(9), 9))
 
-match union as reified {
-    string -> {
-        log("string")
-    }
-    int -> {
-        log("int")
-        log(4+reified)
-    }
-}
+//log(top)
+//log(top.middle)
+//log(top.middle.value)
+//log(top.middle.other)
+//
+//val union = top.middle.union
+//log(union)
 
-top.middle = Middle(Bottom(4),Bottom(5),6)
+// Todo: needs error if var not found
+//match union as reified {
+//    string -> {
+//        log("string")
+//    }
+//    int -> {
+//        log("int")
+//        log(4+reified)
+//    }
+//}
+// Todo(CURRENT): property assignment!
+// Steps:
+// Load `top`
+// Load entire chain up until last step
+// Generate expression
+// Put field
+
+//log(top)
+//top.middle = Middle(Bottom(4),Bottom(5),"6aaa")
+//log(top)
+//top.middle.value = Bottom(99)
+//top.middle.union = 5
+//log(top)

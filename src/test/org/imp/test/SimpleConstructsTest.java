@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CompilerTest {
+public class SimpleConstructsTest {
     static final String pwd = System.getProperty("user.dir");
     static final String moduleLocation = Path.of(pwd, "verification").toString();
 
@@ -86,22 +86,6 @@ public class CompilerTest {
     }
 
     @Test
-    void lists() throws IOException, InterruptedException {
-        assertEquals(
-                Load.gold(Path.of(moduleLocation, "stdlib/lists.txt").toString()),
-                Load.run("stdlib/lists", moduleLocation)
-        );
-    }
-
-    @Test
-    void match() throws IOException, InterruptedException {
-        assertEquals(
-                Load.gold(Path.of(moduleLocation, "simple/match.txt").toString()),
-                Load.run("simple/match", moduleLocation)
-        );
-    }
-
-    @Test
     void postfix() throws IOException, InterruptedException {
         assertEquals("""
                 1
@@ -129,14 +113,6 @@ public class CompilerTest {
                 F: -421.87003
                 R: 37.8
                 """);
-    }
-
-    @Test
-    void unions() throws IOException, InterruptedException {
-        assertEquals(
-                Load.gold(Path.of(moduleLocation, "simple/unions.txt").toString()),
-                Load.run("simple/unions", moduleLocation)
-        );
     }
 
 

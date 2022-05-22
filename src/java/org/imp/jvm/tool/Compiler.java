@@ -65,12 +65,13 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
         return base.replace("/", ".");
     }
 
-    public void output(Map<String, ? extends SourceFile> compilationSet) {
+    public void output(Map<String, ? extends SourceFile> compilationSet) throws Comptime.CompilerError {
 
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         for (var key : compilationSet.keySet()) {
             var source = compilationSet.get(key);
             var allByteUnits = bytecodeGenerator.generate(this, source);
+            Comptime.killIfErrors(this, "Correct build errors before compilation can complete.");
 
             // Generate outer class
             var byteUnit = allByteUnits.getValue0().toByteArray();

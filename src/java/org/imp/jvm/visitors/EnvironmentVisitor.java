@@ -64,6 +64,8 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                 Comptime.MutabilityError.submit(compiler, file, identifier, identifier.identifier.source());
             }
 
+        } else if (expr.left instanceof Expr.PropertyAccess pa) {
+            
         } else {
             Comptime.Implementation.submit(compiler, file, expr, "Assignment not implemented for any recipient but identifier yet");
         }
