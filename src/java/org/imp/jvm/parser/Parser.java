@@ -316,6 +316,14 @@ public class Parser extends ParserBase {
     private Stmt.Struct struct() {
         var loc = lok();
         Token name = consume(IDENTIFIER, "Expected struct name.");
+        var generics = new ArrayList<Token>();
+        if (match(LBRACK)) {
+            // Todo: more than one generic parameter
+            var t = consume();
+            generics.add(t);
+            consume(RBRACK, "Expected closing bracket after struct generics.");
+        }
+
         consume(LBRACE, "Expected opening curly braces before struct body.");
 
         List<Stmt.Parameter> parameters = new ArrayList<>();
@@ -327,7 +335,7 @@ public class Parser extends ParserBase {
 
         consume(RBRACE, "Expected closing curly braces after struct body.");
 
-        return new Stmt.Struct(loc, name, parameters);
+        return new Stmt.Struct(loc, name, parameters, generics);
     }
 
     /**

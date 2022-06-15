@@ -36,10 +36,6 @@ public record ListType(ImpType contentType) implements ImpType {
         return Opcodes.ALOAD;
     }
 
-    @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
 
     @Override
     public String getName() {

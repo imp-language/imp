@@ -166,7 +166,6 @@ public enum BuiltInType implements ImpType, Serializable {
         return opcodes.getLoad();
     }
 
-    @Override
     public int getMultiplyOpcode() {
         return opcodes.getMultiply();
     }

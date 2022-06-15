@@ -8,6 +8,7 @@ import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Expr;
 import org.imp.jvm.parser.ReservedWords;
 import org.imp.jvm.parser.Stmt;
+import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.tool.ExportTable;
@@ -65,7 +66,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             }
 
         } else if (expr.left instanceof Expr.PropertyAccess pa) {
-            
+
         } else {
             Comptime.Implementation.submit(compiler, file, expr, "Assignment not implemented for any recipient but identifier yet");
         }
@@ -392,9 +393,11 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             }
         }
         String name = stmt.name.source();
+        List<String> generics = stmt.generics.stream().map(Token::source).collect(Collectors.toList());
+
 
         // Create struct type object
-        StructType structType = new StructType(name, parameters);
+        StructType structType = new StructType(name, parameters, generics);
         structType.qualifiedName = source.getFullRelativePath() + "$" + name;
         structType.parentName = source.getFullRelativePath();
         currentEnvironment.addVariableOrError(compiler, name, structType, file, stmt);

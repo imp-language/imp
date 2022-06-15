@@ -194,10 +194,13 @@ public abstract class Stmt implements Node {
         public final Token name;
         public final List<Parameter> fields;
 
-        public Struct(Location loc, Token name, List<Parameter> fields) {
+        public final List<Token> generics;
+
+        public Struct(Location loc, Token name, List<Parameter> fields, List<Token> generics) {
             super(loc);
             this.name = name;
             this.fields = fields;
+            this.generics = generics;
         }
 
         public <R> R accept(Visitor<R> visitor) {

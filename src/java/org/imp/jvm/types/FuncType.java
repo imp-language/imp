@@ -4,6 +4,7 @@ import org.imp.jvm.Util;
 import org.imp.jvm.domain.Identifier;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class FuncType extends StructType {
     public String owner;
 
     public FuncType(String name, List<Identifier> parameters) {
-        super(name, parameters);
+        super(name, parameters, new ArrayList<>());
         this.name = name;
 
     }
@@ -47,10 +48,6 @@ public class FuncType extends StructType {
         return 0;
     }
 
-    @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
 
     @Override
     public String getName() {

@@ -365,7 +365,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             index = funcType.localMap.get(source);
             ga.loadLocal(index, Type.getType(type.getDescriptor()));
         } else {
-            index = funcType.argMap.get(source);
+            index = funcType.argMap.getOrDefault(source, -1);
+            if (index == -1) {
+                Comptime.IdentifierNotFound.submit(compiler, file, expr, source);
+                return Optional.empty();
+            }
             ga.loadArg(index);
         }
 

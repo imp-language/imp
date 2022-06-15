@@ -40,10 +40,6 @@ public class UnknownType implements ImpType, Serializable {
         throw new RuntimeException("ALOAD on UnknownType");
     }
 
-    @Override
-    public int getMultiplyOpcode() {
-        throw new RuntimeException("Multiplication operation not (yet ;) ) supported for custom objects");
-    }
 
     @Override
     public String getName() {

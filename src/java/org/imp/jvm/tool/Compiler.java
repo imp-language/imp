@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilationSet) {
 
@@ -29,6 +31,13 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
      * @return java class name ('.' separated) relative to the project root
      */
     public String compile(String projectRoot, String filename) throws FileNotFoundException, Comptime.CompilerError {
+
+        AtomicInteger closure = new AtomicInteger(42);
+
+        Consumer<Integer> addToClosure = (i) -> {
+            closure.set(closure.get() + i);
+        };
+
 
         String relativePath = FilenameUtils.getPath(filename);
         String name = FilenameUtils.getName(filename);

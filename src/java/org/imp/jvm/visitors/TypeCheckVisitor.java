@@ -596,6 +596,10 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     var attempt = currentEnvironment.getVariable(ut.typeName);
                     if (attempt != null) {
                         b.type = attempt;
+                    } else if (structType.generics.contains(ut.typeName)) {
+                        // todo: maybe generics should come first- don't want scope conflicts with other structs
+                        // todo: or perhaps this can even go in environment visitor, after all we already got the data there
+                        b.type = new GenericType(ut.typeName);
                     } else {
                         Comptime.TypeNotFound.submit(compiler, file, a, ut.typeName);
                     }

@@ -36,11 +36,6 @@ public class UnionType implements ImpType {
     }
 
     @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
-
-    @Override
     public String getName() {
         return types.stream().map(ImpType::getName).collect(Collectors.joining(" | "));
     }

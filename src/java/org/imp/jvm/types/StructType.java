@@ -1,6 +1,5 @@
 package org.imp.jvm.types;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.imp.jvm.domain.Identifier;
 import org.objectweb.asm.Opcodes;
 
@@ -14,10 +13,12 @@ public class StructType implements ImpType, Serializable {
 
     public String qualifiedName;
     public String parentName;
+    public final List<String> generics;
 
-    public StructType(String name, List<Identifier> identifiers) {
+    public StructType(String name, List<Identifier> identifiers, List<String> generics) {
         this.name = name;
         this.parameters = identifiers;
+        this.generics = generics;
 
     }
 
@@ -54,10 +55,6 @@ public class StructType implements ImpType, Serializable {
         return Opcodes.ALOAD;
     }
 
-    @Override
-    public int getMultiplyOpcode() {
-        throw new NotImplementedException("Opcode not implemented");
-    }
 
     @Override
     public String getName() {

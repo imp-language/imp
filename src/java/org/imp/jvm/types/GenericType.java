@@ -2,7 +2,7 @@ package org.imp.jvm.types;
 
 import org.objectweb.asm.Opcodes;
 
-public record ExternalType(Class<?> foundClass) implements ImpType {
+public record GenericType(String key) implements ImpType {
 
 
     @Override
@@ -12,13 +12,12 @@ public record ExternalType(Class<?> foundClass) implements ImpType {
 
     @Override
     public String getDescriptor() {
-        return foundClass.descriptorString();
+        return "Ljava/lang/Object;";
     }
-
 
     @Override
     public String getInternalName() {
-        return getName().replace(".", "/");
+        return key;
     }
 
     @Override
@@ -29,19 +28,17 @@ public record ExternalType(Class<?> foundClass) implements ImpType {
 
     @Override
     public String getName() {
-        return foundClass.getName();
+        return null;
     }
-
 
     @Override
     public int getReturnOpcode() {
         return Opcodes.ARETURN;
     }
 
-
     @Override
     public Class<?> getTypeClass() {
-        return foundClass;
+        return Object.class;
     }
 
     @Override
@@ -52,10 +49,5 @@ public record ExternalType(Class<?> foundClass) implements ImpType {
     @Override
     public String kind() {
         return null;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

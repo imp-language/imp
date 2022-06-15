@@ -12,7 +12,6 @@ public interface ImpType {
 
     int getLoadVariableOpcode();
 
-    int getMultiplyOpcode();
 
     String getName();
 

@@ -1,0 +1,18 @@
+
+
+struct Generic[T] {
+    key string
+    t T
+}
+
+struct Name {
+    first string
+    last string
+}
+val name = Name("jamie", "welu")
+log(name)
+
+//
+//val genericName = Generic("s", name)
+//
+//val genericInteger = Generic("s", 4)

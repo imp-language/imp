@@ -276,7 +276,13 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitStruct(Stmt.Struct stmt) {
-        StringBuilder result = new StringBuilder("struct " + stmt.name.source() + " {");
+        StringBuilder result = new StringBuilder("struct " + stmt.name.source());
+        if (stmt.generics.size() > 0) {
+            result.append("[");
+            result.append(stmt.generics.stream().map(Token::source).collect(Collectors.joining(", ")));
+            result.append("]");
+        }
+        result.append(" {");
         var structType = currentEnvironment.getVariableTyped(stmt.name.source(), StructType.class);
         if (structType != null) {
             indent++;
