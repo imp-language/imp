@@ -596,23 +596,54 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         var root = expr.expr;
         var rootType = root.realType;
-        System.out.println(rootType);
 
-        root.accept(this);
+        if (rootType instanceof MonomorphizedStruct mst) {
+            System.out.println(rootType);
 
-        for (int i = 0; i < expr.typeChain.size() - 1; i++) {
-            var current = expr.typeChain.get(i);
-            var next = expr.typeChain.get(i + 1);
-            var fieldName = expr.identifiers.get(i).identifier.source();
-            ga.getField(Type.getType(current.getDescriptor()), fieldName, Type.getType(next.getDescriptor()));
-            if (current instanceof StructType st && next instanceof UnionType ut) {
+            root.accept(this);
+
+            for (int i = 0; i < expr.typeChain.size() - 1; i++) {
+                var current = expr.typeChain.get(i);
+                var next = expr.typeChain.get(i + 1);
+
+                var key = ((GenericType) next).key();
+
+                var r = mst.resolved.get(key);
+                System.out.println(r);
+
+                var fieldName = expr.identifiers.get(i).identifier.source();
+                ga.getField(Type.getType(current.getDescriptor()), fieldName, Type.getType(next.getDescriptor()));
+
+
+                ga.checkCast(Type.getType(r.getDescriptor()));
+
+
+            }
+        } else {
+            System.out.println(rootType);
+
+            root.accept(this);
+
+            for (int i = 0; i < expr.typeChain.size() - 1; i++) {
+                var current = expr.typeChain.get(i);
+                var next = expr.typeChain.get(i + 1);
+                var fieldName = expr.identifiers.get(i).identifier.source();
+                ga.getField(Type.getType(current.getDescriptor()), fieldName, Type.getType(next.getDescriptor()));
+
+
+//            ga.checkCast();
+
+
+                if (current instanceof StructType st && next instanceof UnionType ut) {
 //                if (ut.getDescriptor().equals("Ljava/lang/Object;")) {
 //
 //                } else {
 //                ga.visitTypeInsn(Opcodes.CHECKCAST, current.getDescriptor());
 //                }
+                }
             }
         }
+
 
         return Optional.empty();
     }
