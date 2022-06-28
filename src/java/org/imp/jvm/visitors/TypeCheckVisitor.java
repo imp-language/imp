@@ -189,48 +189,90 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         var e = expr.item.accept(this);
         if (e.isPresent()) {
             var t = e.get();
-            if (t instanceof StructType ttt) {
-                if (ttt.parameters.size() != expr.arguments.size()) {
-                    var params = ttt.parameters.stream().map(s -> s.type.getName()).collect(Collectors.joining(", "));
-                    Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, ttt.name, params);
+            if (t instanceof StructType structType) {
+                if (structType.parameters.size() != expr.arguments.size()) {
+                    var params = structType.parameters.stream().map(s -> s.type.getName()).collect(Collectors.joining(", "));
+                    Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, structType.name, params);
                     return Optional.empty();
                 }
 
-                // Make sure parameter and argument types match.
-                Util.zip(ttt.parameters, expr.arguments, (param, arg) -> {
-                    if (param.type instanceof UnknownType ut) {
-                        var attempt = currentEnvironment.getVariable(ut.typeName);
-                        if (attempt != null) {
-                            param.type = attempt;
-                        } else {
-                            Comptime.TypeNotFound.submit(compiler, file, arg, ut.typeName);
+                if ((structType.hasGenerics())) {
+                    var mst = new MonomorphizedStruct(structType);
+                    Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
+                        if (param.type instanceof UnknownType ut) {
+                            var attempt = currentEnvironment.getVariable(ut.typeName);
+                            if (attempt != null) {
+                                param.type = attempt;
+                            } else {
+                                Comptime.TypeNotFound.submit(compiler, file, arg, ut.typeName);
+                            }
                         }
-                    }
+                        var at = arg.accept(this);
+                        if (at.isPresent()) {
+                            var argType = at.get();
+                            if (argType == BuiltInType.VOID) {
+                                Comptime.VoidUsage.submit(compiler, file, arg);
+                            }
+                            if (!TypeResolver.typesMatch(param.type, argType)) {
+                                Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
+                                TypeResolver.typesMatch(param.type, argType);
+                                arg.accept(this);
+                            } else {
+                                arg.realType = argType;
+                            }
 
-                    var at = arg.accept(this);
-                    if (at.isPresent()) {
-                        var argType = at.get();
-                        if (argType == BuiltInType.VOID) {
-                            Comptime.VoidUsage.submit(compiler, file, arg);
+                            if (param.type instanceof GenericType gt) {
+                                mst.resolved.put(gt.key(), argType);
+                            }
                         }
-                        if (!TypeResolver.typesMatch(param.type, argType)) {
-                            Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
-                            TypeResolver.typesMatch(param.type, argType);
-                            arg.accept(this);
-                        } else {
-                            arg.realType = argType;
+                    });
+
+
+                    expr.realType = mst;
+                    return Optional.of(mst);
+
+
+                } else {
+
+                    // **Parameter is the recipient, Argument is the provider**
+                    // Make sure parameter and argument types match.
+                    Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
+                        if (param.type instanceof UnknownType ut) {
+                            var attempt = currentEnvironment.getVariable(ut.typeName);
+                            if (attempt != null) {
+                                param.type = attempt;
+                            } else {
+                                Comptime.TypeNotFound.submit(compiler, file, arg, ut.typeName);
+                            }
                         }
 
-                    }
-                });
+                        var at = arg.accept(this);
+                        if (at.isPresent()) {
+                            var argType = at.get();
+                            if (argType == BuiltInType.VOID) {
+                                Comptime.VoidUsage.submit(compiler, file, arg);
+                            }
+                            if (!TypeResolver.typesMatch(param.type, argType)) {
+                                Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.type.getName());
+                                TypeResolver.typesMatch(param.type, argType);
+                                arg.accept(this);
+                            } else {
+                                arg.realType = argType;
+                            }
+
+                        }
+                    });
+                }
                 if (t instanceof FuncType ftt) {
                     ImpType returnType = ftt.returnType;
                     expr.realType = returnType;
                     return Optional.of(returnType);
                 } else {
-                    expr.realType = ttt;
-                    return Optional.of(ttt);
+                    expr.realType = structType;
+                    return Optional.of(structType);
                 }
+            } else if (t instanceof MonomorphizedStruct mt) {
+                System.out.println("ree");
             } else {
                 throw new IllegalStateException("Unexpected value: " + t);
             }
@@ -523,7 +565,37 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         if (t.isPresent()) {
             var exprType = t.get();
-            if (exprType instanceof StructType st) {
+            if (exprType instanceof MonomorphizedStruct mt) {
+                StructType pointer = mt.struct;
+                typeChain.add(pointer);
+
+                ImpType result = mt.struct;
+
+                for (Expr.Identifier identifier : expr.identifiers) {
+                    var foundField = pointer.parameters.stream().filter(i -> i.name.equals(identifier.identifier.source())).findAny();
+                    if (foundField.isPresent()) {
+                        var pointerCandidate = foundField.get().type;
+                        if (pointerCandidate instanceof StructType pst) {
+                            pointer = pst;
+                            typeChain.add(pointer);
+                            result = pointerCandidate;
+                        } else {
+                            result = pointerCandidate;
+                            typeChain.add(pointerCandidate);
+
+                        }
+
+                    } else {
+                        Comptime.FieldNotPresent.submit(compiler, file, identifier, identifier.identifier.source(), pointer.name);
+                        break;
+                    }
+                }
+                System.out.println(result);
+                if (result instanceof GenericType gt) {
+                    result = mt.resolved.get(gt.key());
+                }
+                expr.realType = result;
+            } else if (exprType instanceof StructType st) {
                 StructType pointer = st;
                 typeChain.add(pointer);
 

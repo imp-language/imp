@@ -207,8 +207,9 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             StringBuilder typeDescriptor = new StringBuilder();
             Util.zip(st.parameters, expr.arguments, (param, arg) -> {
                 arg.accept(this);
-                if (param.type instanceof UnionType ut) {
-                    typeDescriptor.append("Ljava/lang/Object;");
+                // If param is an "any" type like Generics or Unions we need to use the param type instead of the arg type
+                if (param.type instanceof UnionType ut || param.type instanceof GenericType) {
+                    typeDescriptor.append(param.type.getDescriptor());
                     // Only box if the arg type is a Java primitive and the param type is Object
                     if (arg.realType instanceof BuiltInType btArg) {
                         btArg.doBoxing(ga);

@@ -4,6 +4,7 @@ import org.imp.jvm.domain.Identifier;
 import org.objectweb.asm.Opcodes;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,11 +16,21 @@ public class StructType implements ImpType, Serializable {
     public String parentName;
     public final List<String> generics;
 
+    public boolean hasGenerics() {
+        return generics.size() > 0;
+    }
+
     public StructType(String name, List<Identifier> identifiers, List<String> generics) {
         this.name = name;
         this.parameters = identifiers;
         this.generics = generics;
 
+    }
+
+    public StructType(StructType o) {
+        this.name = o.name;
+        this.parameters = new ArrayList<>(o.parameters);
+        this.generics = new ArrayList<>(o.generics);
     }
 
     @Override

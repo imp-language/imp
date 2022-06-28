@@ -9,10 +9,22 @@ struct Name {
     first string
     last string
 }
-val name = Name("jamie", "welu")
+
+//val genericInteger = Generic("s", 4)
+//val i = genericInteger.t
+//log(i+4)
+
+// Todo(Current): CHECKCAST generics
+val name = Name("matt", "hall")
 log(name)
 
+val genericName = Generic("s", name)
+val n = genericName.t
+log(n)
+log(n.first)
+
+
+
+//func worksWithGenericIntegers(g Generic[Integer]) {
 //
-//val genericName = Generic("s", name)
-//
-//val genericInteger = Generic("s", 4)
+//}

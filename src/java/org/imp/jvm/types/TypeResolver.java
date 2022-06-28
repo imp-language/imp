@@ -50,9 +50,10 @@ public class TypeResolver {
             if (uPar.types.containsAll(uArg.types)) return true;
         }
         if (par instanceof UnionType ua && ua.types.contains(arg)) return true;
-//        if (par instanceof UnionType ua && ua.types.contains(arg)) return true;
         // 1
-        if (par.getName().equals("java.lang.Object") || arg.getName().equals("java.lang.Object")) {
+        var parTypeClass = par.getTypeClass();
+        var argTypeClass = arg.getTypeClass();
+        if ((parTypeClass != null && parTypeClass.equals(Object.class)) || (argTypeClass != null && argTypeClass.equals(Object.class))) {
             return true;
         }
         // 2
@@ -79,6 +80,7 @@ public class TypeResolver {
             }
             return arg instanceof ListType ltb && par.getName().equals("java.util.List");
         }
+        // 5
         if (arg instanceof StructType ast && par instanceof StructType pst) {
             if (ast.parameters.equals(pst.parameters) && ast.name.equals(pst.name)) return true;
         }
