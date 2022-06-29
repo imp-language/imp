@@ -38,7 +38,7 @@ public class Load {
         Process process = processBuilder.start();
 
         String stdout = new String(process.getInputStream().readAllBytes());
-        System.out.println(stdout);
+        Util.println(stdout);
         String stderr = new String(process.getErrorStream().readAllBytes());
         System.err.println(stderr);
 
@@ -54,7 +54,7 @@ public class Load {
         } catch (Comptime.CompilerError e) {
             var errorSet = e.errorData.stream().map(Comptime.Data::code).collect(Collectors.groupingBy(s -> s,
                     Collectors.counting()));
-            System.out.println(errorSet);
+            System.err.println(errorSet);
             return errorSet;
         }
 

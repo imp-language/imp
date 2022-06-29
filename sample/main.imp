@@ -9,6 +9,9 @@ struct Name {
     first string
     last string
 }
+struct Data {
+     content string
+ }
 
 //val genericInteger = Generic("s", 4)
 //val i = genericInteger.t
@@ -23,6 +26,11 @@ val n = genericName.t
 log(n)
 log(n.first)
 
+
+val genericData = Generic("d", Data("a"))
+val data = genericData.t
+log(data)
+log(data.content)
 
 
 //func worksWithGenericIntegers(g Generic[Integer]) {

@@ -598,7 +598,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var rootType = root.realType;
 
         if (rootType instanceof MonomorphizedStruct mst) {
-            System.out.println(rootType);
 
             root.accept(this);
 
@@ -609,7 +608,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 var key = ((GenericType) next).key();
 
                 var r = mst.resolved.get(key);
-                System.out.println(r);
 
                 var fieldName = expr.identifiers.get(i).identifier.source();
                 ga.getField(Type.getType(current.getDescriptor()), fieldName, Type.getType(next.getDescriptor()));
@@ -620,7 +618,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
             }
         } else {
-            System.out.println(rootType);
 
             root.accept(this);
 

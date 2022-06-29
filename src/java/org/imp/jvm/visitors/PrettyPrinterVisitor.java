@@ -82,9 +82,6 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         return print(expr.item) + "(" + expr.arguments.stream().map(a -> {
             String repr = print(a);
             var c = a.realType;
-            if (c == null) {
-                System.out.println("reee");
-            }
             if (displayAnnotations) {
                 repr += " : " + a.realType.getName();
             }

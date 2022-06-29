@@ -42,7 +42,7 @@ public class Timer {
             float runtime = ((float) delta) / 1000000;
             String formattedRuntime = String.format("%.2fms", runtime);
             formattedRuntime = StringUtils.rightPad(formattedRuntime, 10);
-            System.out.println(colorize(TIME_SYMBOL + formattedRuntime + "done", TEXT_COLOR(212)));
+            Util.println(colorize(TIME_SYMBOL + formattedRuntime + "done", TEXT_COLOR(212)));
             return runtime;
         }
         return 0;

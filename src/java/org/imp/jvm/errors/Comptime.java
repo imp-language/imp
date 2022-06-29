@@ -62,7 +62,7 @@ public enum Comptime {
 
     public static void killIfErrors(Compiler compiler, String message) throws CompilerError {
         if (!compiler.errorData().isEmpty()) {
-            compiler.errorData().forEach(e -> System.out.println(e.message));
+            compiler.errorData().forEach(e -> System.err.println(e.message));
             throw new CompilerError(message, compiler.errorData());
         }
     }

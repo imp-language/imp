@@ -86,27 +86,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             default -> throw new IllegalStateException("Unexpected value: " + expr.left.realType);
         }
 
-//        if (expr.left.realType != expr.right.realType) {
-//            if (expr.left instanceof Expr.Identifier id) {
-//                Comptime.BadAssignment.submit(compiler, file, expr, id.identifier.source(), expr.left.realType.getName(), expr.right.realType.getName());
-//            } else {
-//                Comptime.Implementation.submit(compiler, file, expr, "bad property access assignment, error todo");
-//            }
-//        } else {
-//            if (expr.left instanceof Expr.PropertyAccess pa) {
-//                var lType = expr.left.realType;
-//                var rType = expr.right.realType;
-//                if (TypeResolver.typesMatch(lType, rType)) {
-//                    System.out.println("prop type match ok");
-//                } else {
-//                    Util.exit("prop type match bad", 79);
-//                }
-//
-//            } else {
-//                Util.exit("what", 428);
-//            }
-//        }
-
         return Optional.empty();
     }
 
@@ -272,7 +251,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     return Optional.of(structType);
                 }
             } else if (t instanceof MonomorphizedStruct mt) {
-                System.out.println("ree");
+                System.out.println("mst detected");
             } else {
                 throw new IllegalStateException("Unexpected value: " + t);
             }
@@ -590,7 +569,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         break;
                     }
                 }
-                System.out.println(result);
                 if (result instanceof GenericType gt) {
                     result = mt.resolved.get(gt.key());
                 }
@@ -620,7 +598,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         break;
                     }
                 }
-                System.out.println(result);
                 expr.realType = result;
             }
         } else {

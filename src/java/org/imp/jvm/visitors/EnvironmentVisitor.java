@@ -50,7 +50,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitAlias(Stmt.Alias stmt) {
         var type = stmt.typeStmt.accept(this);
         currentEnvironment.addVariable(stmt.identifier.source(), type.orElseThrow());
-        System.out.println("add type " + stmt.identifier());
         return Optional.empty();
     }
 
@@ -153,11 +152,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         currentEnvironment = childEnvironment;
 
         stmt.expr.accept(this);
-        // visit expression (could be an iterator or a list)
-//        var b = stmt.expr.accept(this);
-//        if (true /*for now assume it's an iterator every time*/) {
-//            System.out.println(b);
-//        }
+        // Todo: visit expression (could be an iterator or a list)
 
         // add variable for iterator in child block scope
         currentEnvironment.addVariable(stmt.name.source(), new UnknownType());
@@ -401,7 +396,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         structType.qualifiedName = source.getFullRelativePath() + "$" + name;
         structType.parentName = source.getFullRelativePath();
         currentEnvironment.addVariableOrError(compiler, name, structType, file, stmt);
-        System.out.println("add struct " + name);
 
         return Optional.of(structType);
     }

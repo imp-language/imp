@@ -44,7 +44,7 @@ public class TypeResolver {
     public static boolean typesMatch(ImpType par, ImpType arg) {
         // 0
         if (par instanceof UnionType uPar) {
-            System.out.println("bitch");
+            System.err.println("oops");
         }
         if (par instanceof UnionType uPar && arg instanceof UnionType uArg) {
             if (uPar.types.containsAll(uArg.types)) return true;
