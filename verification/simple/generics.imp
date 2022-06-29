@@ -1,0 +1,33 @@
+
+
+struct Generic[T] {
+    key string
+    t T
+}
+
+struct Name {
+    first string
+    last string
+}
+struct Data {
+     content string
+ }
+
+//val genericInteger = Generic("s", 4)
+//val i = genericInteger.t
+//log(i+4)
+
+// Todo(Current): CHECKCAST generics
+val name = Name("matt", "hall")
+log(name)
+
+val genericName = Generic("s", name)
+val n = genericName.t
+log(n)
+log(n.first)
+
+
+val genericData = Generic("d", Data("a"))
+val data = genericData.t
+log(data)
+log(data.content)

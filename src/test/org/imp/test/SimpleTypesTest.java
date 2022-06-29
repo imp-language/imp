@@ -7,6 +7,17 @@ import java.io.IOException;
 public class SimpleTypesTest extends BaseTest {
 
 	@Test
+	void generics() {
+		testLiteral("simple/generics", """
+				Name[first=matt, last=hall]
+				Name[first=matt, last=hall]
+				matt
+				Data[content=a]
+				a
+				""");
+	}
+
+	@Test
 	void lists() throws IOException, InterruptedException {
 		test("stdlib/lists.txt", "stdlib/lists");
 	}
