@@ -9,19 +9,19 @@ import java.io.Serializable;
  * Todo: this should be a record
  */
 public class Identifier implements Serializable {
-    public final String name;
-    public ImpType type;
+	public final String name;
+	public ImpType type;
 
-    public Identifier(String name, ImpType type) {
-        this.name = name;
-        this.type = type;
-    }
+	public Identifier(String name, ImpType type) {
+		this.name = name;
+		this.type = type;
+	}
 
 
-    @Override
-    public String toString() {
-        return name + " " + type.getName();
-    }
+	@Override
+	public String toString() {
+		return name + " " + type.getName();
+	}
 
 
 }

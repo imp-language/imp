@@ -8,12 +8,12 @@ import java.util.ArrayList;
  */
 public record ListWrapper(ArrayList<?> list, String name) {
 
-    public ListWrapper(String name) {
-        this(new ArrayList<>(), name);
-    }
+	public ListWrapper(String name) {
+		this(new ArrayList<>(), name);
+	}
 
-    @Override
-    public String toString() {
-        return list.toString();
-    }
+	@Override
+	public String toString() {
+		return list.toString();
+	}
 }

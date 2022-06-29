@@ -3,30 +3,30 @@ package org.imp.jvm.types;
 public interface ImpType {
 
 
-    Object getDefaultValue();
+	Object getDefaultValue();
 
-    String getDescriptor();
-
-
-    String getInternalName();
-
-    int getLoadVariableOpcode();
+	String getDescriptor();
 
 
-    String getName();
+	String getInternalName();
+
+	int getLoadVariableOpcode();
 
 
-    int getReturnOpcode();
+	String getName();
 
 
-    Class<?> getTypeClass();
+	int getReturnOpcode();
 
-    boolean isNumeric();
 
-    /**
-     * The kind we serialize to in SQL.
-     *
-     * @return "function"|"struct"|"enum"|"variable"|"alias"
-     */
-    String kind();
+	Class<?> getTypeClass();
+
+	boolean isNumeric();
+
+	/**
+	 * The kind we serialize to in SQL.
+	 *
+	 * @return "function"|"struct"|"enum"|"variable"|"alias"
+	 */
+	String kind();
 }

@@ -9,95 +9,94 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StructType implements ImpType, Serializable {
-    public final List<Identifier> parameters;
-    public String name;
+	public final List<Identifier> parameters;
+	public final List<String> generics;
+	public String name;
+	public String qualifiedName;
+	public String parentName;
 
-    public String qualifiedName;
-    public String parentName;
-    public final List<String> generics;
+	public StructType(String name, List<Identifier> identifiers, List<String> generics) {
+		this.name = name;
+		this.parameters = identifiers;
+		this.generics = generics;
 
-    public boolean hasGenerics() {
-        return generics.size() > 0;
-    }
+	}
 
-    public StructType(String name, List<Identifier> identifiers, List<String> generics) {
-        this.name = name;
-        this.parameters = identifiers;
-        this.generics = generics;
+	public StructType(StructType o) {
+		this.name = o.name;
+		this.parameters = new ArrayList<>(o.parameters);
+		this.generics = new ArrayList<>(o.generics);
+	}
 
-    }
+	public boolean hasGenerics() {
+		return generics.size() > 0;
+	}
 
-    public StructType(StructType o) {
-        this.name = o.name;
-        this.parameters = new ArrayList<>(o.parameters);
-        this.generics = new ArrayList<>(o.generics);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj instanceof StructType o) {
-            return this.name.equals(o.name);
-        } else {
-            return false;
-        }
-    }
-
-
-    @Override
-    public Object getDefaultValue() {
-        return null;
-    }
-
-    @Override
-    public String getDescriptor() {
-        String n = qualifiedName.replace(":", "/");
-        return "L" + n + ";";
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (obj instanceof StructType o) {
+			return this.name.equals(o.name);
+		} else {
+			return false;
+		}
+	}
 
 
-    @Override
-    public String getInternalName() {
-        return getName().replace(".", "/");
-    }
+	@Override
+	public Object getDefaultValue() {
+		return null;
+	}
 
-    @Override
-    public int getLoadVariableOpcode() {
-        return Opcodes.ALOAD;
-    }
-
-
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getDescriptor() {
+		String n = qualifiedName.replace(":", "/");
+		return "L" + n + ";";
+	}
 
 
-    @Override
-    public int getReturnOpcode() {
-        return Opcodes.ARETURN;
-    }
+	@Override
+	public String getInternalName() {
+		return getName().replace(".", "/");
+	}
 
-    @Override
-    public Class<?> getTypeClass() {
-        return null;
-    }
+	@Override
+	public int getLoadVariableOpcode() {
+		return Opcodes.ALOAD;
+	}
 
-    @Override
-    public boolean isNumeric() {
-        return false;
-    }
 
-    @Override
-    public String kind() {
-        return "struct";
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        // Todo: this is getting dangerously close to endless recursion if you got a struct that holds a union referencing said struct
-        // Need to find an end condition.
-        return "struct " + getName() + " {" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + "}";
-    }
+
+	@Override
+	public int getReturnOpcode() {
+		return Opcodes.ARETURN;
+	}
+
+	@Override
+	public Class<?> getTypeClass() {
+		return null;
+	}
+
+	@Override
+	public boolean isNumeric() {
+		return false;
+	}
+
+	@Override
+	public String kind() {
+		return "struct";
+	}
+
+	@Override
+	public String toString() {
+		// Todo: this is getting dangerously close to endless recursion if you got a struct that holds a union referencing said struct
+		// Need to find an end condition.
+		return "struct " + getName() + " {" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + "}";
+	}
 
 }

@@ -6,71 +6,71 @@ import java.util.Objects;
 
 public record ListType(ImpType contentType) implements ImpType {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ListType listType = (ListType) o;
-        return contentType.equals(listType.contentType());
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ListType listType = (ListType) o;
+		return contentType.equals(listType.contentType());
+	}
 
 
-    @Override
-    public Object getDefaultValue() {
-        return null;
-    }
+	@Override
+	public Object getDefaultValue() {
+		return null;
+	}
 
-    @Override
-    public String getDescriptor() {
-        return "Ljava/util/List;";
-    }
-
-
-    @Override
-    public String getInternalName() {
-        return null;
-    }
-
-    @Override
-    public int getLoadVariableOpcode() {
-        return Opcodes.ALOAD;
-    }
+	@Override
+	public String getDescriptor() {
+		return "Ljava/util/List;";
+	}
 
 
-    @Override
-    public String getName() {
-        return contentType + "[]";
-    }
+	@Override
+	public String getInternalName() {
+		return null;
+	}
+
+	@Override
+	public int getLoadVariableOpcode() {
+		return Opcodes.ALOAD;
+	}
 
 
-    @Override
-    public int getReturnOpcode() {
-        return Opcodes.ARETURN;
-    }
+	@Override
+	public String getName() {
+		return contentType + "[]";
+	}
 
 
-    @Override
-    public Class<?> getTypeClass() {
-        return java.util.List.class;
-    }
+	@Override
+	public int getReturnOpcode() {
+		return Opcodes.ARETURN;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(contentType);
-    }
 
-    @Override
-    public boolean isNumeric() {
-        return false;
-    }
+	@Override
+	public Class<?> getTypeClass() {
+		return java.util.List.class;
+	}
 
-    @Override
-    public String kind() {
-        return "list";
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(contentType);
+	}
 
-    @Override
-    public String toString() {
-        return getName();
-    }
+	@Override
+	public boolean isNumeric() {
+		return false;
+	}
+
+	@Override
+	public String kind() {
+		return "list";
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }
