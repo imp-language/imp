@@ -1,5 +1,7 @@
 package org.imp.jvm.errors;
 
+import com.diogonunes.jcolor.AnsiFormat;
+import com.diogonunes.jcolor.Attribute;
 import org.apache.commons.lang3.StringUtils;
 import org.imp.jvm.parser.Node;
 import org.imp.jvm.tool.Compiler;
@@ -13,11 +15,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.diogonunes.jcolor.Ansi.colorize;
+
 public enum Comptime {
     Implementation(-1, "{0}", "If you are seeing this message it indicates a regression in the Imp compiler. Please contact the developers."),
 
-    TypeNotFound(1, "Type `{0}` does not exist in the current environment.",
-            "Make sure all types are defined or builtin."),
     TypeNotResolved(2, "Variable `{0}` cannot be resolved to a type.",
             "Make sure all variables are properly spelled etc."),
     @SuppressWarnings("unused") ModuleNotFound(3, "Module `{0}` is not found.", "Is the module misspelled?"),
@@ -36,7 +38,7 @@ public enum Comptime {
     BadAssignment(11, "Variable `{0}` of type `{1}` cannot accept assignment of type `{2}`.",
             "Check that both sides of the assignment have the same type."),
     FunctionSignatureMismatch(12, "No function overloads exist on `{0}` that match the parameters `{1}`.", "Check the parameter positions and types of the called function."),
-    IdentifierNotFound(13, "Identifier `{0}` not found.", null),
+    IdentifierNotFound(13, "Identifier `{0}` not found.", "Make sure that all identifiers are defined, builtin or imported."),
     ReservedWord(14, "Identifier `{0}` is a reserved word.", null),
     NotIterable(15, "Expression of type `{0}` is not iterable.", "Check to be sure the type is iterable, like a list or range."),
     ListLiteralIncomplete(16, "List literals must have one or more elements.", "To create an empty list do `type[]`."),
@@ -49,6 +51,7 @@ public enum Comptime {
     FieldNotPresent(23, "Field `{0}` not present on type `{1}`.", null);
 
 
+    private static final AnsiFormat RED = new AnsiFormat(Attribute.RED_TEXT());
     public final int code;
     private final String suggestion;
     private final String templateString;
@@ -62,7 +65,7 @@ public enum Comptime {
 
     public static void killIfErrors(Compiler compiler, String message) throws CompilerError {
         if (!compiler.errorData().isEmpty()) {
-            compiler.errorData().forEach(e -> System.err.println(e.message));
+            compiler.errorData().forEach(e -> System.out.println(e.message));
             throw new CompilerError(message, compiler.errorData());
         }
     }
@@ -85,9 +88,10 @@ public enum Comptime {
                     .mapToObj(i -> {
                         if (i < selection.size()) {
 
-                            var s = StringUtils.leftPad((i + startLine + 1) + "|", padding) + " " + selection.get(i);
+                            var s = colorize(StringUtils.leftPad((i + startLine + 1) + "|", padding) + " ", Attribute.BLUE_TEXT());
+                            s += selection.get(i);
                             if (i + startLine + 1 == loc.line()) {
-                                s += "\n" + "^".repeat(loc.col() + padding);
+                                s += "\n" + RED.format("^".repeat(loc.col() + padding));
                             }
                             return s;
                         } else {
@@ -96,7 +100,8 @@ public enum Comptime {
                     })
                     .collect(Collectors.joining("\n"));
 
-            String s = file.getName() + "@" + loc.line() + ":" + loc.col() + " Error[" + code + ", " + name() + "] ";
+            String s = file.getName() + "@" + loc.line() + ":" + loc.col() + " ";
+            s += colorize("Error[" + code + ", " + name() + "] ", RED);
             s += MessageFormat.format(templateString, varargs) + "\n";
             s += result + "\n";
             if (suggestion != null) {

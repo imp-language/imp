@@ -46,7 +46,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         var resolvedTypes = new HashSet<ImpType>();
         if (a instanceof UnionType ut) {
-            extractedMethodForUnions(resolvedTypes, ut);
+            extractedMethodForUnions(resolvedTypes, ut, stmt);
 
             currentEnvironment.setVariableType(stmt.identifier(), ut);
         }
@@ -176,7 +176,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                                 // oh  fuck immutability
                                 parametersAfter.add(param.setAt1(attempt));
                             } else {
-                                Comptime.TypeNotFound.submit(compiler, file, arg, ut.typeName);
+                                Comptime.IdentifierNotFound.submit(compiler, file, arg, ut.typeName);
                                 parametersAfter.add(param);
                             }
                         } else {
@@ -226,7 +226,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 //                                param.getValue1() = attempt;
                                 parametersAfter.add(param.setAt1(attempt));
                             } else {
-                                Comptime.TypeNotFound.submit(compiler, file, arg, ut.typeName);
+                                Comptime.IdentifierNotFound.submit(compiler, file, arg, ut.typeName);
                                 parametersAfter.add(param);
                             }
                         } else {
@@ -357,13 +357,13 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         parametersAfter.add(nt);
 
                     } else {
-                        Comptime.TypeNotFound.submit(compiler, file, stmt, ut.typeName);
+                        Comptime.IdentifierNotFound.submit(compiler, file, stmt, ut.typeName);
                         parametersAfter.add(param); // this can go if we break here
                     }
                 } else if (param.getValue1() instanceof UnionType ut) {
                     parametersAfter.add(param);
                     var resolvedTypes = new HashSet<ImpType>();
-                    extractedMethodForUnions(resolvedTypes, ut);
+                    extractedMethodForUnions(resolvedTypes, ut, stmt);
 
                     currentEnvironment.setVariableType(param.getValue0(), ut);
                 } else {
@@ -379,7 +379,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 if (attempt != null) {
                     funcType.returnType = attempt;
                 } else {
-                    Comptime.TypeNotFound.submit(compiler, file, stmt, ut.typeName);
+                    Comptime.IdentifierNotFound.submit(compiler, file, stmt, ut.typeName);
                 }
             }
 
@@ -631,7 +631,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         // todo: or perhaps this can even go in environment visitor, after all we already got the data there
                         parametersAfter.add(b.setAt1(new GenericType(ut.typeName)));
                     } else {
-                        Comptime.TypeNotFound.submit(compiler, file, a, ut.typeName);
+                        Comptime.IdentifierNotFound.submit(compiler, file, a, ut.typeName);
                         parametersAfter.add(b);
                     }
                 } else {
@@ -686,12 +686,14 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
-    private void extractedMethodForUnions(HashSet<ImpType> resolvedTypes, UnionType ut) {
+    private void extractedMethodForUnions(HashSet<ImpType> resolvedTypes, UnionType ut, Stmt node) {
         for (var type : ut.types) {
             if (type instanceof UnknownType ukt) {
                 var attempt = currentEnvironment.getVariable(ukt.typeName);
                 if (attempt != null) {
                     resolvedTypes.add(attempt);
+                } else {
+                    Comptime.IdentifierNotFound.submit(compiler, file, node, ukt.typeName);
                 }
             } else {
                 resolvedTypes.add(type);

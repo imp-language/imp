@@ -1,10 +1,7 @@
-// Work in progress binary tree algorithm
-
 struct Empty {}
 struct Leaf {
 	data int
 }
-
 type TreeNode = Tree | Empty
 struct Tree {
     data int
@@ -21,37 +18,28 @@ func makeTree(value int) Tree {
 
 func insert(root Tree, value int) {
     if value < root.data {
-        match root.left as a {
-            Empty -> root.left = makeTree(value)
-            Tree ->  insert(a, value)
+        match root.left {
+            Empty e -> root.left = makeTree(value)
+            Tree left ->  insert(left, value)
         }
     } else {
-        match root.right as a {
-            Empty ->  root.right = makeTree(value)
-            Tree -> insert(a, value)
+        match root.right {
+            Empty e -> root.right = makeTree(value)
+            Tree right -> insert(right, value)
         }
     }
 }
-/*
-
-val tree = makeTree(16)
-for i in range(-10,10) {
-    insert(tree, i)
-}
-//log(tree)
-
 
 func inorder(node Tree | Empty) {
-    match node as a {
-        Empty -> {}
-        Tree -> {
-            inorder(a.left)
-            log(a.data)
-            inorder(a.right)
+    match node {
+        Empty e -> {}
+        Tree t -> {
+            inorder(t.left)
+            log(t.data)
+            inorder(t.right)
         }
     }
 }
-*/
 
 func printLevelOrder(node Tree | Empty) {
     val h = height(node)
@@ -62,27 +50,27 @@ func printLevelOrder(node Tree | Empty) {
 }
 
 func printCurrentLevel(node TreeNode, level int) {
-        match node as a {
-            Empty -> {}
-            Tree -> {
+        match node {
+            Empty e -> {}
+            Tree t -> {
                 if level == 1 {
-                    write(a.data)
+                    write(t.data)
                 } else {
-                    printCurrentLevel(a.left, level - 1)
-                    printCurrentLevel(a.right, level - 1)
+                    printCurrentLevel(t.left, level - 1)
+                    printCurrentLevel(t.right, level - 1)
                 }
             }
         }
 }
 
 func height(node TreeNode) int {
-    match node as a {
-        Empty -> {
+    match node {
+        Empty e -> {
             return 0
         }
-        Tree -> {
-            val lHeight = height(a.left)
-            val rHeight = height(a.right)
+        Tree tree -> {
+            val lHeight = height(tree.left)
+            val rHeight = height(tree.right)
             if lHeight > rHeight {
                 return lHeight + 1
             } else {

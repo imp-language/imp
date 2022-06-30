@@ -35,12 +35,6 @@ public class RosettaCodeTest extends BaseTest {
                 """);
     }
 
-//	@Test
-//	void binaryTreeWorkInProgress() {
-//		testLiteral("rosetta/binaryTreeWorkInProgress", """
-//				Tree[data=0, left=Tree[data=-2, left=Tree[data=-3, left=Empty[], right=Empty[]], right=Tree[data=-1, left=Empty[], right=Empty[]]], right=Tree[data=1, left=Empty[], right=Empty[]]]
-//				""");
-//	}
 
     @Test
     void fibonacci() {

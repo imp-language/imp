@@ -37,14 +37,14 @@ log(second.val1)
 
 
 
-type alias = string | string
+type alias = string | int | Data
 
 func method(a alias) {
     log(a)
 }
 method("a")
-//method(1)
-//method(4.0)
+method(1)
+method(4.0)
 
 //func testUnion(param int | string | int[]) {
 //    match param {
