@@ -52,10 +52,13 @@ testUnion([4.0])
     - [X] Variable assignments from expressions
 - [x] JVM Codegen
 - [ ] Core
-    - [x] Loops
+    - [x] For-each loop
+    - [ ] While loop
     - [x] Control flow
     - [x] Structs
     - [x] Functions
+    - [x] Union types
+    - [ ] Generics
     - [x] Pattern matching
     - [ ] Enums
 - [ ] First-class functions
