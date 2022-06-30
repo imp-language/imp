@@ -285,7 +285,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         if (structType != null) {
             indent++;
             for (var field : structType.parameters) {
-                result.append(tabs()).append(field.name).append(" ").append(field.type);
+                result.append(tabs()).append(field.getValue0()).append(" ").append(field.getValue1());
             }
             indent--;
         } else {

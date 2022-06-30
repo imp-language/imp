@@ -1,6 +1,6 @@
 package org.imp.jvm.types;
 
-import org.imp.jvm.domain.Identifier;
+import org.javatuples.Pair;
 import org.objectweb.asm.Opcodes;
 
 import java.io.Serializable;
@@ -9,94 +9,90 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StructType implements ImpType, Serializable {
-	public final List<Identifier> parameters;
-	public final List<String> generics;
-	public String name;
-	public String qualifiedName;
-	public String parentName;
+    public final List<Pair<String, ImpType>> parameters;
+    public final List<String> generics;
+    public String name;
+    public String qualifiedName;
+    public String parentName;
 
-	public StructType(String name, List<Identifier> identifiers, List<String> generics) {
-		this.name = name;
-		this.parameters = identifiers;
-		this.generics = generics;
+    public StructType(String name, List<Pair<String, ImpType>> identifiers, List<String> generics) {
+        this.name = name;
+        this.parameters = identifiers;
+        this.generics = generics;
 
-	}
+    }
 
-	public StructType(StructType o) {
-		this.name = o.name;
-		this.parameters = new ArrayList<>(o.parameters);
-		this.generics = new ArrayList<>(o.generics);
-	}
+    public StructType(StructType o) {
+        this.name = o.name;
+        this.parameters = new ArrayList<>(o.parameters);
+        this.generics = new ArrayList<>(o.generics);
+    }
 
-	public boolean hasGenerics() {
-		return generics.size() > 0;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj instanceof StructType o) {
+            return this.name.equals(o.name);
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (obj instanceof StructType o) {
-			return this.name.equals(o.name);
-		} else {
-			return false;
-		}
-	}
+    @Override
+    public Object getDefaultValue() {
+        return null;
+    }
 
+    @Override
+    public String getDescriptor() {
+        String n = qualifiedName.replace(":", "/");
+        return "L" + n + ";";
+    }
 
-	@Override
-	public Object getDefaultValue() {
-		return null;
-	}
+    @Override
+    public String getInternalName() {
+        return getName().replace(".", "/");
+    }
 
-	@Override
-	public String getDescriptor() {
-		String n = qualifiedName.replace(":", "/");
-		return "L" + n + ";";
-	}
+    @Override
+    public int getLoadVariableOpcode() {
+        return Opcodes.ALOAD;
+    }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String getInternalName() {
-		return getName().replace(".", "/");
-	}
+    @Override
+    public int getReturnOpcode() {
+        return Opcodes.ARETURN;
+    }
 
-	@Override
-	public int getLoadVariableOpcode() {
-		return Opcodes.ALOAD;
-	}
+    @Override
+    public Class<?> getTypeClass() {
+        return null;
+    }
 
+    public boolean hasGenerics() {
+        return generics.size() > 0;
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public boolean isNumeric() {
+        return false;
+    }
 
+    @Override
+    public String kind() {
+        return "struct";
+    }
 
-	@Override
-	public int getReturnOpcode() {
-		return Opcodes.ARETURN;
-	}
-
-	@Override
-	public Class<?> getTypeClass() {
-		return null;
-	}
-
-	@Override
-	public boolean isNumeric() {
-		return false;
-	}
-
-	@Override
-	public String kind() {
-		return "struct";
-	}
-
-	@Override
-	public String toString() {
-		// Todo: this is getting dangerously close to endless recursion if you got a struct that holds a union referencing said struct
-		// Need to find an end condition.
-		return "struct " + getName() + " {" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + "}";
-	}
+    @Override
+    public String toString() {
+        // Todo: this is getting dangerously close to endless recursion if you got a struct that holds a union referencing said struct
+        // Need to find an end condition.
+        return "struct " + getName() + " {" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + "}";
+    }
 
 }
