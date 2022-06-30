@@ -544,68 +544,54 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
 		if (t.isPresent()) {
 			var exprType = t.get();
+			StructType pointer;
+			ImpType result = null;
 			if (exprType instanceof MonomorphizedStruct mt) {
-				StructType pointer = mt.struct;
+				pointer = mt.struct;
 				typeChain.add(pointer);
+				result = pointer;
 
-				ImpType result = mt.struct;
-
-				for (Expr.Identifier identifier : expr.identifiers) {
-					var foundField = pointer.parameters.stream().filter(i -> i.name.equals(identifier.identifier.source())).findAny();
-					if (foundField.isPresent()) {
-						var pointerCandidate = foundField.get().type;
-						if (pointerCandidate instanceof StructType pst) {
-							pointer = pst;
-							typeChain.add(pointer);
-							result = pointerCandidate;
-						} else {
-							result = pointerCandidate;
-							typeChain.add(pointerCandidate);
-
-						}
-
-					} else {
-						Comptime.FieldNotPresent.submit(compiler, file, identifier, identifier.identifier.source(), pointer.name);
-						break;
-					}
-				}
+				result = getTempMSTType(expr, typeChain, pointer, result);
 				if (result instanceof GenericType gt) {
 					result = mt.resolved.get(gt.key());
 				}
-				expr.realType = result;
 			} else if (exprType instanceof StructType st) {
-				StructType pointer = st;
+				pointer = st;
 				typeChain.add(pointer);
+				result = st;
 
-				ImpType result = st;
-
-				for (Expr.Identifier identifier : expr.identifiers) {
-					var foundField = pointer.parameters.stream().filter(i -> i.name.equals(identifier.identifier.source())).findAny();
-					if (foundField.isPresent()) {
-						var pointerCandidate = foundField.get().type;
-						if (pointerCandidate instanceof StructType pst) {
-							pointer = pst;
-							typeChain.add(pointer);
-							result = pointerCandidate;
-						} else {
-							result = pointerCandidate;
-							typeChain.add(pointerCandidate);
-
-						}
-
-					} else {
-						Comptime.FieldNotPresent.submit(compiler, file, identifier, identifier.identifier.source(), pointer.name);
-						break;
-					}
-				}
-				expr.realType = result;
+				result = getTempMSTType(expr, typeChain, pointer, result);
 			}
+			expr.realType = result;
 		} else {
 			Comptime.MethodNotFound.submit(compiler, file, expr.expr, "ree");
 		}
 		expr.typeChain = typeChain;
 
 		return Optional.ofNullable(expr.realType);
+	}
+
+	private ImpType getTempMSTType(Expr.PropertyAccess expr, ArrayList<ImpType> typeChain, StructType pointer, ImpType result) {
+		for (Expr.Identifier identifier : expr.identifiers) {
+			var foundField = pointer.parameters.stream().filter(i -> i.name.equals(identifier.identifier.source())).findAny();
+			if (foundField.isPresent()) {
+				var pointerCandidate = foundField.get().type;
+				if (pointerCandidate instanceof StructType pst) {
+					pointer = pst;
+					typeChain.add(pointer);
+					result = pointerCandidate;
+				} else {
+					result = pointerCandidate;
+					typeChain.add(pointerCandidate);
+
+				}
+
+			} else {
+				Comptime.FieldNotPresent.submit(compiler, file, identifier, identifier.identifier.source(), pointer.name);
+				break;
+			}
+		}
+		return result;
 	}
 
 
