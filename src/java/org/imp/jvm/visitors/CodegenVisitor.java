@@ -192,7 +192,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
                 // Call the invoke method
                 String methodDescriptor = Util.getMethodDescriptor(callType.parameters, callType.returnType);
-                String name = "Function_" + callType.name;
+                String name = "_" + callType.name;
                 String owner = FilenameUtils.removeExtension(source.getFullRelativePath());
 
                 funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
@@ -322,7 +322,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var childEnvironment = stmt.body.environment;
 
         // Generate function signature
-        String name = "Function_" + funcType.name;
+        String name = "_" + funcType.name;
         var access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
         String descriptor = Util.getMethodDescriptor(funcType.parameters, funcType.returnType);
         if (funcType.name.equals("main")) {
@@ -465,21 +465,25 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Execute and store the match expression as an untyped Object
         match.expr.accept(this);
         int localExprIndex = ga.newLocal(Constants.ObjectType);
-        var scopedName = match.identifier.identifier.source();
-        funcType.localMap.put(scopedName, localExprIndex);
+        var s = "bitch";
+        funcType.localMap.put(s, localExprIndex);
         ga.storeLocal(localExprIndex);
 
         for (Stmt.TypeStmt typeStmt : match.cases.keySet()) {
-            var end = new Label();
-            ga.loadLocal(localExprIndex);
-            var t = match.types.get(typeStmt);
+            var pair = match.cases.get(typeStmt);
+            var scopedName = pair.getValue0();
+            var block = pair.getValue1();
             // Todo: fix this with TypeCheckVisitor, should have no UKTs in this pass
+            var t = match.types.get(typeStmt);
             if (t instanceof UnknownType ukt) {
                 var attempt = currentEnvironment.getVariable(ukt.typeName);
                 if (attempt != null) {
                     t = attempt;
                 }
             }
+
+            var end = new Label();
+            ga.loadLocal(localExprIndex);
 
             if (t instanceof ListType lt) {
                 // Cast to ListWrapper
@@ -529,7 +533,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             }
 
             // Codegen the case body
-            var block = match.cases.get(typeStmt);
             currentEnvironment = block.environment;
             block.accept(this);
             currentEnvironment = currentEnvironment.getParent();
@@ -591,7 +594,6 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         var root = expr.expr;
         var rootType = root.realType;
-        System.out.println(rootType);
 
         root.accept(this);
 
@@ -736,6 +738,28 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             pe.localIndex = stmt.localIndex;
         }
 
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ClassWriter> visitWhile(Stmt.While w) {
+
+        var funcType = functionStack.peek();
+        var ga = funcType.ga;
+        Label endLabel = new Label();
+        Label startLabel = new Label();
+
+        ga.mark(startLabel);
+        // Generate condition (returns true or false)
+        w.condition.accept(this);
+
+        // if condition is true (cond == 0) do trueLabel then jump to end
+        currentEnvironment = w.block.environment;
+        ga.ifZCmp(GeneratorAdapter.EQ, endLabel);
+        w.block.accept(this);
+        ga.goTo(startLabel);
+        ga.mark(endLabel);
+        currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
     }
 }

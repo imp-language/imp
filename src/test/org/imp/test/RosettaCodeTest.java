@@ -5,6 +5,13 @@ import org.junit.jupiter.api.Test;
 // Tests that may be from Rosetta Code or a similar aggregator
 public class RosettaCodeTest extends BaseTest {
     @Test
+    void BST() {
+        testLiteral("rosetta/binaryTree.imp", """
+                Tree[data=0, left=Tree[data=-2, left=Tree[data=-3, left=Empty[], right=Empty[]], right=Tree[data=-1, left=Empty[], right=Empty[]]], right=Tree[data=1, left=Empty[], right=Empty[]]]
+                """);
+    }
+
+    @Test
     void Factorial() {
         testLiteral("rosetta/factorial.imp", """
                 1

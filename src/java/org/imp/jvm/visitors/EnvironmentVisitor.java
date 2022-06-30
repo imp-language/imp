@@ -49,7 +49,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     public Optional<ImpType> visitAlias(Stmt.Alias stmt) {
         var type = stmt.typeStmt.accept(this);
         currentEnvironment.addVariable(stmt.identifier.source(), type.orElseThrow());
-        System.out.println("add type " + stmt.identifier());
         return Optional.empty();
     }
 
@@ -65,7 +64,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             }
 
         } else if (expr.left instanceof Expr.PropertyAccess pa) {
-            
+
         } else {
             Comptime.Implementation.submit(compiler, file, expr, "Assignment not implemented for any recipient but identifier yet");
         }
@@ -312,7 +311,9 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitMatch(Stmt.Match match) {
         match.expr.accept(this);
-        match.cases.forEach((keyType, block) -> {
+        match.cases.forEach((keyType, pair) -> {
+            String id = pair.getValue0();
+            Stmt.Block block = pair.getValue1();
             keyType.accept(this);
             // create environment for case
 
@@ -326,7 +327,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             }
             var childEnvironment = block.environment;
             childEnvironment.setParent(currentEnvironment);
-            childEnvironment.addVariable(match.identifier.identifier.source(), match.types.get(keyType));
+            childEnvironment.addVariable(id, match.types.get(keyType));
             currentEnvironment = childEnvironment;
             block.accept(this);
             currentEnvironment = currentEnvironment.getParent();
@@ -398,7 +399,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         structType.qualifiedName = source.getFullRelativePath() + "$" + name;
         structType.parentName = source.getFullRelativePath();
         currentEnvironment.addVariableOrError(compiler, name, structType, file, stmt);
-        System.out.println("add struct " + name);
 
         return Optional.of(structType);
     }
@@ -456,6 +456,22 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
         currentEnvironment.addVariableOrError(compiler, stmt.name.source(), type, file, stmt);
         currentEnvironment.setVariableMutability(stmt.name.source(), mut);
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImpType> visitWhile(Stmt.While w) {
+        var childEnvironment = w.block.environment;
+        childEnvironment.setParent(currentEnvironment);
+
+        currentEnvironment = childEnvironment;
+        w.condition.accept(this);
+
+        // visit block
+        w.block.accept(this);
+
+        // reset environment pointer
+        currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
     }
 }

@@ -191,7 +191,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             var t = e.get();
             if (t instanceof StructType ttt) {
                 if (ttt.parameters.size() != expr.arguments.size()) {
-                    var params = ttt.parameters.stream().map(s -> s.type.getName()).collect(Collectors.joining(", "));
+                    var params = expr.arguments.stream().map(s -> s.realType.getName()).collect(Collectors.joining(", "));
                     Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, ttt.name, params);
                     return Optional.empty();
                 }
@@ -237,7 +237,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         } else {
             // Todo: pass missing method name
-            Comptime.MethodNotFound.submit(compiler, file, expr.item, "name");
+            Comptime.MethodNotFound.submit(compiler, file, expr.item);
         }
 
         return Optional.empty();
@@ -456,7 +456,9 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
         if (match.expr.realType instanceof UnionType ut) {
             var typesToCover = new HashSet<>(ut.types);
-            match.cases.forEach((keyTypeStmt, block) -> {
+            match.cases.forEach((keyTypeStmt, pair) -> {
+                String id = pair.getValue0();
+                Stmt.Block block = pair.getValue1();
                 // Todo: Ensure the resolved ImpType is not an UnknownType
                 var caseType = match.types.get(keyTypeStmt);
                 if (caseType instanceof UnknownType ukt) {
@@ -470,7 +472,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
                 var childEnvironment = block.environment;
                 childEnvironment.setParent(currentEnvironment);
-                childEnvironment.setVariableType(match.identifier.identifier.source(), caseType);
+                childEnvironment.setVariableType(id, caseType);
 
                 currentEnvironment = childEnvironment;
                 block.accept(this);
@@ -548,11 +550,10 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                         break;
                     }
                 }
-                System.out.println(result);
                 expr.realType = result;
             }
         } else {
-            Comptime.MethodNotFound.submit(compiler, file, expr.expr, "ree");
+            Comptime.MethodNotFound.submit(compiler, file, expr.expr);
         }
         expr.typeChain = typeChain;
 
@@ -628,6 +629,22 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         } else {
             Comptime.TypeNotResolved.submit(compiler, file, expr, stmt.name.source());
         }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImpType> visitWhile(Stmt.While w) {
+        var childEnvironment = w.block.environment;
+        childEnvironment.setParent(currentEnvironment);
+
+        currentEnvironment = childEnvironment;
+        w.condition.accept(this);
+
+        // visit block
+        w.block.accept(this);
+
+        // reset environment pointer
+        currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
     }
 

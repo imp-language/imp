@@ -1,6 +1,7 @@
 package org.imp.jvm.errors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.imp.jvm.Util;
 import org.imp.jvm.parser.Node;
 import org.imp.jvm.tool.Compiler;
 
@@ -29,7 +30,7 @@ public enum Comptime {
     PropertyNotFound(6, "Type `{0}` contains no field `{1}`.", null),
     CannotApplyOperator(7, "Operator `{0}` cannot be applied to types `{1}` and `{2}`", null),
     @SuppressWarnings("unused") ExternNotFound(8, "External object `{0}` not found.", "Ensure the external type you are referencing actually exists."),
-    MethodNotFound(9, "Method `{0}` not found.", null),
+    MethodNotFound(9, "Method not found.", null),
 
     MutabilityError(10, "Variable `{0}` is immutable and cannot receive assignment.",
             "Declare a variable with the `mut` keyword to allow mutability."),
@@ -62,7 +63,7 @@ public enum Comptime {
 
     public static void killIfErrors(Compiler compiler, String message) throws CompilerError {
         if (!compiler.errorData().isEmpty()) {
-            compiler.errorData().forEach(e -> System.out.println(e.message));
+            compiler.errorData().forEach(e -> Util.println(e.message));
             throw new CompilerError(message, compiler.errorData());
         }
     }

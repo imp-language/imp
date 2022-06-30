@@ -5,6 +5,7 @@ import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.types.ImpType;
+import org.javatuples.Pair;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +64,8 @@ public abstract class Stmt implements Node {
 
 
         R visitVariable(Variable stmt);
+
+        R visitWhile(While aWhile);
     }
 
     public sealed interface Exportable permits Stmt.Function, Stmt.Enum, Stmt.Struct, Stmt.Variable, Stmt.Alias {
@@ -73,17 +76,16 @@ public abstract class Stmt implements Node {
     }
 
     public static final class Match extends Stmt {
-        public final Map<TypeStmt, Block> cases;
+        public final Map<TypeStmt, Pair<String, Block>> cases;
         public final Expr expr;
-        public final Expr.Identifier identifier;
 
         public final Map<TypeStmt, ImpType> types = new HashMap<>();
 
-        public Match(Location location, Expr expr, Map<TypeStmt, Block> cases, Expr.Identifier identifier) {
+
+        public Match(Location location, Expr expr, Map<TypeStmt, Pair<String, Block>> cases) {
             super(location);
             this.expr = expr;
             this.cases = cases;
-            this.identifier = identifier;
         }
 
         @Override
@@ -301,6 +303,22 @@ public abstract class Stmt implements Node {
 
     }
 
+    public static final class While extends Stmt {
+        public final Block block;
+        public final Expr condition;
+
+        public While(Location loc, Expr condition, Block block) {
+            super(loc);
+            this.condition = condition;
+            this.block = block;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitWhile(this);
+        }
+
+    }
+
 
     public static final class If extends Stmt {
         public final Block trueBlock;
@@ -317,7 +335,6 @@ public abstract class Stmt implements Node {
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitIf(this);
         }
-
 
     }
 

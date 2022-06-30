@@ -3,7 +3,7 @@
 
 
 func a(b string | int | float) {
-    match b as reified {
-        string -> log("a")
+    match b {
+        string s -> log("a")
     }
 }

@@ -206,16 +206,16 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitMatch(Stmt.Match match) {
-        StringBuilder s = new StringBuilder("match " + print(match.expr) + " as " + print(match.identifier) + " {");
-        indent++;
-        for (var c : match.cases.entrySet()) {
-            var type = c.getKey();
-            var expr = c.getValue();
-            s.append(tabs()).append(s(print(type), "->", print(expr)));
-        }
-        indent--;
-        s.append(tabs()).append("}");
-        return s.toString();
+//        StringBuilder s = new StringBuilder("match " + print(match.expr) + " as " + print(match.identifier) + " {");
+//        indent++;
+//        for (var c : match.cases.entrySet()) {
+//            var type = c.getKey();
+//            var expr = c.getValue();
+//            s.append(tabs()).append(s(print(type), "->", print(expr)));
+//        }
+//        indent--;
+//        s.append(tabs()).append("}");
+        return "s.toString()";
     }
 
 
@@ -288,7 +288,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
             Util.exit("struct type missing", 792);
         }
 
-        result.append(tabs()).append("))");
+        result.append(tabs()).append("}");
         return result.toString();
     }
 
@@ -330,6 +330,11 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         }
 
         return s(stmt.mutability.source(), name, "=", print(stmt.expr));
+    }
+
+    @Override
+    public String visitWhile(Stmt.While aWhile) {
+        return s("while", print(aWhile.condition), print(aWhile.block));
     }
 
     String print(Expr expr) {
