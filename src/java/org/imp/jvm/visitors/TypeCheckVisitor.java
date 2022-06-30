@@ -45,19 +45,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         var a = currentEnvironment.getVariable(stmt.identifier.source());
 
         var resolvedTypes = new HashSet<ImpType>();
-        // Todo: do we need to disallow `string | string` cause that would really just be `string`?
         if (a instanceof UnionType ut) {
-            for (var type : ut.types) {
-                if (type instanceof UnknownType ukt) {
-                    var attempt = currentEnvironment.getVariable(ukt.typeName);
-                    if (attempt != null) {
-                        resolvedTypes.add(attempt);
-                    }
-                } else {
-                    resolvedTypes.add(type);
-                }
-            }
-            ut.types = resolvedTypes;
+            extractedMethodForUnions(resolvedTypes, ut);
 
             currentEnvironment.setVariableType(stmt.identifier(), ut);
         }
@@ -374,18 +363,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 } else if (param.getValue1() instanceof UnionType ut) {
                     parametersAfter.add(param);
                     var resolvedTypes = new HashSet<ImpType>();
-                    // Todo: do we need to disallow `string | string` cause that would really just be `string`?
-                    for (var type : ut.types) {
-                        if (type instanceof UnknownType ukt) {
-                            var attempt = currentEnvironment.getVariable(ukt.typeName);
-                            if (attempt != null) {
-                                resolvedTypes.add(attempt);
-                            }
-                        } else {
-                            resolvedTypes.add(type);
-                        }
-                    }
-                    ut.types = resolvedTypes;
+                    extractedMethodForUnions(resolvedTypes, ut);
 
                     currentEnvironment.setVariableType(param.getValue0(), ut);
                 } else {
@@ -550,7 +528,6 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
-
     @Override
     public Optional<ImpType> visitParameterStmt(Stmt.Parameter stmt) {
         return Optional.empty();
@@ -707,6 +684,20 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
         // reset environment pointer
         currentEnvironment = currentEnvironment.getParent();
         return Optional.empty();
+    }
+
+    private void extractedMethodForUnions(HashSet<ImpType> resolvedTypes, UnionType ut) {
+        for (var type : ut.types) {
+            if (type instanceof UnknownType ukt) {
+                var attempt = currentEnvironment.getVariable(ukt.typeName);
+                if (attempt != null) {
+                    resolvedTypes.add(attempt);
+                }
+            } else {
+                resolvedTypes.add(type);
+            }
+        }
+        ut.types = resolvedTypes;
     }
 
     private ImpType getTempMSTType(Expr.PropertyAccess expr, ArrayList<ImpType> typeChain, StructType pointer, ImpType result) {

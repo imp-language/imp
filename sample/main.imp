@@ -37,41 +37,28 @@ log(second.val1)
 
 
 
+type alias = string | string
 
-struct Generic[T] {
-    key string
-    t T
+func method(a alias) {
+    log(a)
 }
+method("a")
+//method(1)
+//method(4.0)
 
-struct Name {
-    first string
-    last string
-}
-struct Data {
-    content string
-}
-
-//val genericInteger = Generic("s", 4)
-//val i = genericInteger.t
-//log(i+4)
-
-val name = Name("matt", "hall")
-//log(name)
-
-val genericName = Generic("s", name)
-val n = genericName.t
-log(n)
-log(n.first)
-
-
-val genericData = Generic("d", Data("a"))
-val data = genericData.t
-log(data)
-log(data.content)
-
-
-func takesParam(i int[]) {
-
-}
-
-takes()
+//func testUnion(param int | string | int[]) {
+//    match param {
+//        int i -> {
+//            log(i)
+//            log("int")
+//        }
+//        string s -> {
+//            log(s)
+//            log("string")
+//        }
+//        int[] ii -> {
+//            log(ii)
+//            log("int[]")
+//        }
+//    }
+//}
