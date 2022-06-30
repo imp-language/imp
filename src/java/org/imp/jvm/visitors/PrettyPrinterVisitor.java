@@ -146,7 +146,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
         if (funcType != null) {
             String result = "func " + name + "(";
-            result += stmt.parameters.stream().map(parameter -> parameter.name.source() + " " + parameter.type.accept(this)).collect(Collectors.joining(", "));
+            result += stmt.parameters.stream().map(parameter -> parameter.accept(this)).collect(Collectors.joining(", "));
             result += ") " + funcType.returnType + " ";
             result += print(stmt.body);
             currentEnvironment = currentEnvironment.getParent();
@@ -203,17 +203,20 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
 
     @Override
     public String visitMatch(Stmt.Match match) {
-        // Fixme: pretty print
-//        StringBuilder s = new StringBuilder("match " + print(match.expr) + " as " + print(match.identifier) + " {");
-//        indent++;
-//        for (var c : match.cases.entrySet()) {
-//            var type = c.getKey();
-//            var expr = c.getValue();
-//            s.append(tabs()).append(s(print(type), "->", print(expr)));
-//        }
-//        indent--;
-//        s.append(tabs()).append("}");
-        return "s.toString()";
+        StringBuilder s = new StringBuilder("match " + print(match.expr) + " {");
+        indent++;
+        for (var c : match.cases.entrySet()) {
+            var type = c.getKey();
+            var pair = c.getValue();
+            var id = pair.getValue0();
+            var block = pair.getValue1();
+
+            s.append(tabs()).append(s(print(type), id, "-> "));
+            s.append(block.accept(this));
+        }
+        indent--;
+        s.append(tabs()).append("}");
+        return s.toString();
     }
 
 
@@ -231,9 +234,7 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
                 name += " : ";
             }
         }
-        //Todo: below
-//        if (stmt.listType()) result += "[]";
-        return name + " " + stmt.type.accept(this);
+        return name;
     }
 
     @Override

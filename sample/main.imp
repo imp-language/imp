@@ -69,3 +69,7 @@ val data = genericData.t
 log(data)
 log(data.content)
 
+
+func takesParam(i int[]) {
+
+}
