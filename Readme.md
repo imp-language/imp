@@ -1,7 +1,5 @@
 # Imp (README TODO)
 
-
-
 Imp is a statically typed and compiled scripting language with the goal of increasing programmer confidence.
 
 Note that this project is under development and functionality can be expected to change rapidly. I'm blogging my
@@ -10,26 +8,27 @@ progress [here](https://matthall.codes/tags/imp/).
 ## Example
 
 ```go
-struct Person {
-    fname string
-    lname string
-    dob Date
+func testUnion(param int | float[] | int[]) {
+    match param as id {
+        int -> {
+            log(id)
+            log("int")
+        }
+        int[] -> {
+            log(id)
+            log("int[]")
+        }
+        // Comment this case out for a MatchCoverage error
+        float[] -> {
+            log(id)
+            log("float[]")
+        }
+    }
 }
 
-val matt = new Person("Matt", "Hall")
-val peter = new Person("Peter", "Hall")
-
-func greet(p Person) {
-    val name = p.fname
-    log("Hello, " + name)
-}
-
-func greet(fname string) {
-    log("Hello, " + fname)
-}
-
-greet(matt)      // Hello, Matt
-greet("World!")  // Hello, World!
+testUnion(4)
+testUnion([4,3,2,1])
+testUnion([4.0])
 ```
 
 ## About
@@ -46,7 +45,7 @@ greet("World!")  // Hello, World!
 ### Roadmap
 
 - [x] Grammars
-- [x] Parser
+- [x] Parser (custom Pratt parser)
 - [x] AST
 - [x] Type inference
     - [x] Variable assignments from literals
@@ -57,10 +56,10 @@ greet("World!")  // Hello, World!
     - [x] Control flow
     - [x] Structs
     - [x] Functions
-    - [ ] Pattern matching
+    - [x] Pattern matching
     - [ ] Enums
 - [ ] First-class functions
-    - [x] Closures
+    - [ ] Closures
     - [ ] Storing functions in a variable
 - [ ] Event loop
 - [ ] Debugger
