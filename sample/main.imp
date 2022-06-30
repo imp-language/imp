@@ -59,7 +59,8 @@ testUnion([4.0])
 */
 
 
-
+// Binary Tree Example
+/*
 struct Empty {}
 struct Leaf {
 	data int
@@ -80,22 +81,49 @@ func makeTree(value int) Tree {
 
 func insert(root Tree, value int) {
     if value < root.data {
-        match root.left as a {
-            Empty -> root.left = makeTree(value)
-            Tree ->  insert(a, value)
+        match root.left {
+            Empty e -> root.left = makeTree(value)
+            Tree left ->  insert(left, value)
         }
     } else {
-        match root.right as a {
-            Empty ->  root.right = makeTree(value)
-            Tree -> insert(a, value)
+        match root.right {
+            Empty e -> root.right = makeTree(value)
+            Tree right -> insert(right, value)
         }
     }
 }
 
+func height(node TreeNode) int {
+    match node {
+        Empty e -> {
+            return 0
+        }
+        Tree tree -> {
+            val lHeight = height(tree.left)
+            val rHeight = height(tree.right)
+            if lHeight > rHeight {
+                return lHeight + 1
+            } else {
+                return rHeight + 1
+            }
+        }
+    }
+    return 0
+}
+
+val t = makeTree(0)
+insert(t, -2)
+insert(t, -3)
+insert(t, -1)
+insert(t, 1)
+log(t)
+log(height(t))
+*/
 
 
-
+// Generics example
 /*
+*/
 struct Generic[T] {
     key string
     t T
@@ -115,4 +143,3 @@ val n = genericName.t
 log(n)
 log(n.first)
 
-*/
