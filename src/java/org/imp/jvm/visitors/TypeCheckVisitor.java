@@ -282,8 +282,8 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             }
 
         } else {
-            // Todo: pass missing method name
-            Comptime.MethodNotFound.submit(compiler, file, expr.item, "name");
+            var b = new PrettyPrinterVisitor(currentEnvironment).print(expr.item);
+            Comptime.MethodNotFound.submit(compiler, file, expr.item, b);
         }
 
         return Optional.empty();

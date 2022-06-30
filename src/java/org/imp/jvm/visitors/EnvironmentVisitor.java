@@ -425,7 +425,6 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                     new UnknownType(path.toString())
             );
         }
-        // Todo: above ^^
         return Optional.of(type);
     }
 

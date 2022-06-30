@@ -73,3 +73,5 @@ log(data.content)
 func takesParam(i int[]) {
 
 }
+
+takes()
