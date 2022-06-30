@@ -90,9 +90,7 @@ public class StructType implements ImpType, Serializable {
 
     @Override
     public String toString() {
-        // Todo: this is getting dangerously close to endless recursion if you got a struct that holds a union referencing said struct
-        // Need to find an end condition.
-        return "struct " + getName() + " {" + parameters.stream().map(Object::toString).collect(Collectors.joining(", ")) + "}";
+        return "struct " + getName() + " {" + parameters.stream().map(m -> m.getValue1().getName()).collect(Collectors.joining(", ")) + "}";
     }
 
 }

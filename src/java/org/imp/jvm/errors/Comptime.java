@@ -103,12 +103,13 @@ public enum Comptime {
                 s += suggestion;
             }
 
-            // Todo: only display below info in dev mode
-            var stackTrace = Thread.currentThread().getStackTrace()[2];
-            int sourceLineNumber = stackTrace.getLineNumber();
-            String sourceLocation = stackTrace.getClassName() + ":" + stackTrace.getMethodName();
-            var logSource = "\nLogged from " + sourceLocation + "@" + sourceLineNumber + "\n";
-            s += logSource;
+            if (compiler.developmentMode()) {
+                var stackTrace = Thread.currentThread().getStackTrace()[2];
+                int sourceLineNumber = stackTrace.getLineNumber();
+                String sourceLocation = stackTrace.getClassName() + ":" + stackTrace.getMethodName();
+                var logSource = "\nLogged from " + sourceLocation + "@" + sourceLineNumber + "\n";
+                s += logSource;
+            }
 
             compiler.errorData().add(new Data(code, s, line, loc.col()));
         } catch (IOException e) {
