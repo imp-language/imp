@@ -305,28 +305,30 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 		return Optional.empty();
 	}
 
-	@Override
-	public Optional<ImpType> visitMatch(Stmt.Match match) {
-		match.expr.accept(this);
-		match.cases.forEach((keyType, block) -> {
-			keyType.accept(this);
-			// create environment for case
+    @Override
+    public Optional<ImpType> visitMatch(Stmt.Match match) {
+        match.expr.accept(this);
+        match.cases.forEach((keyType, pair) -> {
+            String id = pair.getValue0();
+            Stmt.Block block = pair.getValue1();
+            keyType.accept(this);
+            // create environment for case
 
-			var pt = keyType.accept(this);
-			if (pt.isPresent()) {
-				ImpType t = pt.get();
-				match.types.put(keyType, t);
-			} else {
-				System.err.println("pt not present");
-				System.exit(783);
-			}
-			var childEnvironment = block.environment;
-			childEnvironment.setParent(currentEnvironment);
-			childEnvironment.addVariable(match.identifier.identifier.source(), match.types.get(keyType));
-			currentEnvironment = childEnvironment;
-			block.accept(this);
-			currentEnvironment = currentEnvironment.getParent();
-		});
+            var pt = keyType.accept(this);
+            if (pt.isPresent()) {
+                ImpType t = pt.get();
+                match.types.put(keyType, t);
+            } else {
+                System.err.println("pt not present");
+                System.exit(783);
+            }
+            var childEnvironment = block.environment;
+            childEnvironment.setParent(currentEnvironment);
+            childEnvironment.addVariable(id, match.types.get(keyType));
+            currentEnvironment = childEnvironment;
+            block.accept(this);
+            currentEnvironment = currentEnvironment.getParent();
+        });
 
 		return Optional.empty();
 	}
@@ -451,8 +453,24 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 			mut = Mutability.Mut;
 		}
 
-		currentEnvironment.addVariableOrError(compiler, stmt.name.source(), type, file, stmt);
-		currentEnvironment.setVariableMutability(stmt.name.source(), mut);
-		return Optional.empty();
-	}
+        currentEnvironment.addVariableOrError(compiler, stmt.name.source(), type, file, stmt);
+        currentEnvironment.setVariableMutability(stmt.name.source(), mut);
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImpType> visitWhile(Stmt.While w) {
+        var childEnvironment = w.block.environment;
+        childEnvironment.setParent(currentEnvironment);
+
+        currentEnvironment = childEnvironment;
+        w.condition.accept(this);
+
+        // visit block
+        w.block.accept(this);
+
+        // reset environment pointer
+        currentEnvironment = currentEnvironment.getParent();
+        return Optional.empty();
+    }
 }

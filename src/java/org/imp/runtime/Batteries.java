@@ -2,6 +2,7 @@ package org.imp.runtime;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.IntStream;
 
 /**
@@ -30,6 +31,23 @@ public class Batteries {
 
 		return 0;
 	}
+
+    public static int _int(Object o) {
+        if (o == null) return 0;
+        if (o instanceof String s) return Integer.parseInt(s);
+
+        return 0;
+    }
+
+    public static String readLine() {
+        var scanner = new Scanner(System.in);
+        if (scanner.hasNextLine()) {
+            var s = scanner.nextLine();
+            return s;
+        }
+        scanner.close();
+        return null;
+    }
 
 
 	public static int length(String s) {

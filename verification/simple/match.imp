@@ -2,17 +2,17 @@
 
 
 func testUnion(param int | string | int[]) {
-    match param as id {
-        int -> {
-            log(id)
+    match param {
+        int i -> {
+            log(i)
             log("int")
         }
-        string -> {
-            log(id)
+        string s -> {
+            log(s)
             log("string")
         }
-        int[] -> {
-            log(id)
+        int[] ii -> {
+            log(ii)
             log("int[]")
         }
     }

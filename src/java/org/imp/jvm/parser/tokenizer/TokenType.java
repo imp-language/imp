@@ -44,6 +44,7 @@ public enum TokenType {
 
 	// Keywords
 	FOR("for"),
+    WHILE("while"),
 	IF("if"),
 	ELSE("else"),
 	RETURN("return"),

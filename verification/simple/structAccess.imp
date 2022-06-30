@@ -21,13 +21,13 @@ log(top.middle.other)
 val union = top.middle.union
 log(union)
 
-match union as reified {
-    string -> {
+match union {
+    string s -> {
         log("string")
     }
-    int -> {
+    int i -> {
         log("int")
-        log(4 + reified)
+        log(4 + i)
     }
 }
 

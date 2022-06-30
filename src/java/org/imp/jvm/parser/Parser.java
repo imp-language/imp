@@ -5,6 +5,7 @@ import org.imp.jvm.domain.Environment;
 import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.parser.tokenizer.Tokenizer;
+import org.javatuples.Pair;
 
 import java.util.*;
 
@@ -211,31 +212,31 @@ public class Parser extends ParserBase {
 	private Stmt matchStmt() {
 		var loc = lok();
 
-		var expr = expression();
-		consume(AS, "Expected `as` before match identifier.");
-		var id = new Expr.Identifier(lok(), consume());
+        var expr = expression();
 
-		consume(LBRACE, "Expected opening curly braces before match body.");
-		Map<Stmt.TypeStmt, Stmt.Block> cases = new HashMap<>();
+        consume(LBRACE, "Expected opening curly braces before match body.");
+        Map<Stmt.TypeStmt, Pair<String, Stmt.Block>> cases = new HashMap<>();
 
-		while (!check(RBRACE)) {
-			var type = union();
-			consume(ARROW, "Expected `->` after type before expression in match statement.");
-			Stmt.Block caseBody;
-			if (check(LBRACE)) {
-				caseBody = block();
-			} else {
-				// Allow cases to be a single expression, but wrap in a block to give it its own Environment
-				var stmt = new Stmt.ExpressionStmt(lok(), expression());
-				caseBody = new Stmt.Block(lok(), Util.list(stmt), new Environment());
-			}
-			cases.put(type, caseBody);
-		}
+        while (!check(RBRACE)) {
+            var type = union();
+            var s = consume(IDENTIFIER, "Expected name for reified value before `->` in match statement.");
+
+            consume(ARROW, "Expected `->` after type before expression in match statement.");
+            Stmt.Block caseBody;
+            if (check(LBRACE)) {
+                caseBody = block();
+            } else {
+                // Allow cases to be a single expression, but wrap in a block to give it its own Environment
+                var stmt = new Stmt.ExpressionStmt(lok(), expression());
+                caseBody = new Stmt.Block(lok(), Util.list(stmt), new Environment());
+            }
+            cases.put(type, new Pair<>(s.source(), caseBody));
+        }
 
 		consume(RBRACE, "Expected closing curly braces after match body.");
 
-		return new Stmt.Match(loc, expr, cases, id);
-	}
+        return new Stmt.Match(loc, expr, cases);
+    }
 
 	private Stmt.Parameter parameter() {
 		var loc = lok();
@@ -291,27 +292,36 @@ public class Parser extends ParserBase {
 		return new Stmt.If(loc, condition, trueBlock, falseStmt);
 	}
 
-	private Stmt statement() {
-		var loc = lok();
-		if (check(ERROR)) {
-			throw new Error("wut");
-		}
+    private Stmt.While parseWhile() {
+        var loc = lok();
+        Expr condition = expression();
+        Stmt.Block block = block();
+
+        return new Stmt.While(loc, condition, block);
+    }
+
+    private Stmt statement() {
+        var loc = lok();
+        if (check(ERROR)) {
+            throw new Error("wut");
+        }
 
 		if (match(IMPORT)) return importStmt();
 		if (match(EXPORT)) return export();
 		if (match(ALIAS)) return alias();
 
-		if (match(MATCH)) return matchStmt();
-		if (match(STRUCT)) return struct();
-		if (match(FUNC)) return function();
-		if (match(ENUM)) return parseEnum();
-		if (match(IF)) return parseIf();
-		if (check(MUT) || check(VAL)) return variable();
-		if (match(FOR)) return parseFor();
-		if (match(RETURN)) return parseReturn();
-		if (check(LBRACE)) return block();
-		else return new Stmt.ExpressionStmt(loc, expression());
-	}
+        if (match(MATCH)) return matchStmt();
+        if (match(STRUCT)) return struct();
+        if (match(FUNC)) return function();
+        if (match(ENUM)) return parseEnum();
+        if (match(IF)) return parseIf();
+        if (check(MUT) || check(VAL)) return variable();
+        if (match(FOR)) return parseFor();
+        if (match(WHILE)) return parseWhile();
+        if (match(RETURN)) return parseReturn();
+        if (check(LBRACE)) return block();
+        else return new Stmt.ExpressionStmt(loc, expression());
+    }
 
 	private Stmt.Struct struct() {
 		var loc = lok();

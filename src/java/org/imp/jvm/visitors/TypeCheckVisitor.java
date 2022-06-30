@@ -475,23 +475,25 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
 		match.expr.accept(this);
 
-		if (match.expr.realType instanceof UnionType ut) {
-			var typesToCover = new HashSet<>(ut.types);
-			match.cases.forEach((keyTypeStmt, block) -> {
-				// Todo: Ensure the resolved ImpType is not an UnknownType
-				var caseType = match.types.get(keyTypeStmt);
-				if (caseType instanceof UnknownType ukt) {
-					var attempt = currentEnvironment.getVariable(ukt.typeName);
-					if (attempt != null) {
-						caseType = attempt;
-					}
-				}
+        if (match.expr.realType instanceof UnionType ut) {
+            var typesToCover = new HashSet<>(ut.types);
+            match.cases.forEach((keyTypeStmt, pair) -> {
+                String id = pair.getValue0();
+                Stmt.Block block = pair.getValue1();
+                // Todo: Ensure the resolved ImpType is not an UnknownType
+                var caseType = match.types.get(keyTypeStmt);
+                if (caseType instanceof UnknownType ukt) {
+                    var attempt = currentEnvironment.getVariable(ukt.typeName);
+                    if (attempt != null) {
+                        caseType = attempt;
+                    }
+                }
 
 				typesToCover.remove(caseType);
 
-				var childEnvironment = block.environment;
-				childEnvironment.setParent(currentEnvironment);
-				childEnvironment.setVariableType(match.identifier.identifier.source(), caseType);
+                var childEnvironment = block.environment;
+                childEnvironment.setParent(currentEnvironment);
+                childEnvironment.setVariableType(id, caseType);
 
 				currentEnvironment = childEnvironment;
 				block.accept(this);
@@ -662,13 +664,29 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 		var expr = stmt.expr;
 		var t = expr.accept(this);
 
-		if (t.isPresent()) {
-			currentEnvironment.setVariableType(stmt.name.source(), t.get());
-		} else {
-			Comptime.TypeNotResolved.submit(compiler, file, expr, stmt.name.source());
-		}
-		return Optional.empty();
-	}
+        if (t.isPresent()) {
+            currentEnvironment.setVariableType(stmt.name.source(), t.get());
+        } else {
+            Comptime.TypeNotResolved.submit(compiler, file, expr, stmt.name.source());
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImpType> visitWhile(Stmt.While w) {
+        var childEnvironment = w.block.environment;
+        childEnvironment.setParent(currentEnvironment);
+
+        currentEnvironment = childEnvironment;
+        w.condition.accept(this);
+
+        // visit block
+        w.block.accept(this);
+
+        // reset environment pointer
+        currentEnvironment = currentEnvironment.getParent();
+        return Optional.empty();
+    }
 
 
 }

@@ -1,6 +1,7 @@
 package org.imp.jvm.errors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.imp.jvm.Util;
 import org.imp.jvm.parser.Node;
 import org.imp.jvm.tool.Compiler;
 
