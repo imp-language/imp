@@ -26,7 +26,9 @@ struct Pair[A,B] {
 }
 
 struct Data {}
-
-val pair = Pair("a", Data())
+// Todo(CURRENT): need to unbox when generic is a primitive
+val pair = Pair("a", Pair("a",4))
 log(pair.val0)
 log(pair.val1)
+val second = pair.val1
+log(second.val1)
