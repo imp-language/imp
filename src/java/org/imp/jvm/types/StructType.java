@@ -4,7 +4,6 @@ import org.javatuples.Pair;
 import org.objectweb.asm.Opcodes;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,12 +19,6 @@ public class StructType implements ImpType, Serializable {
         this.parameters = identifiers;
         this.generics = generics;
 
-    }
-
-    public StructType(StructType o) {
-        this.name = o.name;
-        this.parameters = new ArrayList<>(o.parameters);
-        this.generics = new ArrayList<>(o.generics);
     }
 
     @Override

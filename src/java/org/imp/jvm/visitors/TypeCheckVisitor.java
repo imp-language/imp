@@ -167,41 +167,13 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
                 if ((structType.hasGenerics())) {
                     var mst = new MonomorphizedStruct(structType);
-                    var parametersAfter = new ArrayList<Pair<String, ImpType>>();
-                    Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
-                        if (param.getValue1() instanceof UnknownType ut) {
-                            var attempt = currentEnvironment.getVariable(ut.typeName);
-                            if (attempt != null) {
-//                                param.type = attempt;
-                                // oh  fuck immutability
-                                parametersAfter.add(param.setAt1(attempt));
-                            } else {
-                                Comptime.IdentifierNotFound.submit(compiler, file, arg, ut.typeName);
-                                parametersAfter.add(param);
-                            }
-                        } else {
-                            parametersAfter.add(param);
-
-                        }
-                    });
-
-                    structType.parameters.clear();
-                    structType.parameters.addAll(parametersAfter);
+                    updateUnknownParameters(expr, structType);
 
                     Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
                         var at = arg.accept(this);
                         if (at.isPresent()) {
-                            var argType = at.get();
-                            if (argType == BuiltInType.VOID) {
-                                Comptime.VoidUsage.submit(compiler, file, arg);
-                            }
-                            if (!TypeResolver.typesMatch(param.getValue1(), argType)) {
-                                Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.getValue1().getName());
-                                TypeResolver.typesMatch(param.getValue1(), argType);
-                                arg.accept(this);
-                            } else {
-                                arg.realType = argType;
-                            }
+                            ImpType argType = at.get();
+                            typecheckCallParameters(param, arg, argType);
 
                             if (param.getValue1() instanceof GenericType gt) {
                                 mst.resolved.put(gt.key(), argType);
@@ -217,42 +189,11 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 
                     // **Parameter is the recipient, Argument is the provider**
                     // Make sure parameter and argument types match.
-                    var parametersAfter = new ArrayList<Pair<String, ImpType>>();
-                    Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
-                        if (param.getValue1() instanceof UnknownType ut) {
-                            var attempt = currentEnvironment.getVariable(ut.typeName);
-                            if (attempt != null) {
-                                // oh  fuck immutability
-//                                param.getValue1() = attempt;
-                                parametersAfter.add(param.setAt1(attempt));
-                            } else {
-                                Comptime.IdentifierNotFound.submit(compiler, file, arg, ut.typeName);
-                                parametersAfter.add(param);
-                            }
-                        } else {
-                            parametersAfter.add(param);
-
-                        }
-                    });
-                    structType.parameters.clear();
-                    structType.parameters.addAll(parametersAfter);
+                    updateUnknownParameters(expr, structType);
 
                     Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
                         var at = arg.accept(this);
-                        if (at.isPresent()) {
-                            var argType = at.get();
-                            if (argType == BuiltInType.VOID) {
-                                Comptime.VoidUsage.submit(compiler, file, arg);
-                            }
-                            if (!TypeResolver.typesMatch(param.getValue1(), argType)) {
-                                Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.getValue1().getName());
-                                TypeResolver.typesMatch(param.getValue1(), argType);
-                                arg.accept(this);
-                            } else {
-                                arg.realType = argType;
-                            }
-
-                        }
+                        at.ifPresent(type -> typecheckCallParameters(param, arg, type));
                     });
 
                 }
@@ -723,6 +664,54 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
             }
         }
         return result;
+    }
+
+    /**
+     * Ensure that parameter to function call can supply the required argument type.
+     *
+     * @param param   pair identifier
+     * @param arg     expression
+     * @param argType resolved type of arg expression
+     */
+    private void typecheckCallParameters(Pair<String, ImpType> param, Expr arg, ImpType argType) {
+        if (argType == BuiltInType.VOID) {
+            Comptime.VoidUsage.submit(compiler, file, arg);
+        }
+        if (!TypeResolver.typesMatch(param.getValue1(), argType)) {
+            Comptime.ParameterTypeMismatch.submit(compiler, file, arg, argType.getName(), param.getValue1().getName());
+            TypeResolver.typesMatch(param.getValue1(), argType);
+            arg.accept(this);
+        } else {
+            arg.realType = argType;
+        }
+    }
+
+    /**
+     * Immutably update previously UnknownTypes in this parameter set that may have been
+     * resolved since the EnvironmentVisitor pass. Error if we can't resolve the type.
+     *
+     * @param expr       method call expression
+     * @param structType struct or function to typecheck parameters of
+     */
+    private void updateUnknownParameters(Expr.Call expr, StructType structType) {
+        var parametersAfter = new ArrayList<Pair<String, ImpType>>();
+        Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
+            if (param.getValue1() instanceof UnknownType ut) {
+                var attempt = currentEnvironment.getVariable(ut.typeName);
+                if (attempt != null) {
+                    parametersAfter.add(param.setAt1(attempt));
+                } else {
+                    Comptime.IdentifierNotFound.submit(compiler, file, arg, ut.typeName);
+                    parametersAfter.add(param);
+                }
+            } else {
+                parametersAfter.add(param);
+
+            }
+        });
+
+        structType.parameters.clear();
+        structType.parameters.addAll(parametersAfter);
     }
 
 

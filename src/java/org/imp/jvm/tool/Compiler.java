@@ -34,9 +34,7 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
 
         AtomicInteger closure = new AtomicInteger(42);
 
-        Consumer<Integer> addToClosure = (i) -> {
-            closure.set(closure.get() + i);
-        };
+        Consumer<Integer> addToClosure = (i) -> closure.set(closure.get() + i);
 
         String relativePath = FilenameUtils.getPath(filename);
         String name = FilenameUtils.getName(filename);
@@ -174,7 +172,7 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
                     source.exports.put(identifier, type);
                     ExportTable.add(source, identifier, type);
                     ExportTable.addSQL(source.file, identifier, type);
-                    // Feature: figure out what data to store in the table.
+                    // Must figure out what data to store in the table.
                     // Is it as simple as a list of fields and their types?
                 }
             }

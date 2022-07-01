@@ -17,7 +17,6 @@ struct Data {
 //val i = genericInteger.t
 //log(i+4)
 
-// Todo(Current): CHECKCAST generics
 val name = Name("matt", "hall")
 log(name)
 

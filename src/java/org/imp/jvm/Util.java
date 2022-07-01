@@ -42,6 +42,7 @@ public class Util {
         System.exit(code);
     }
 
+    @SafeVarargs
     public static <T> List<T> list(T... i) {
         return Arrays.asList(i);
     }
@@ -53,10 +54,12 @@ public class Util {
      * @param <T>     type parameter
      * @return new Set
      */
+    @SafeVarargs
     public static <T> Set<T> set(T... varargs) {
         return Set.of(varargs);
     }
 
+    @SafeVarargs
     public static <T> Map<T, Long> countedSet(T... varargs) {
         return Arrays.stream(varargs).collect(Collectors.groupingBy(s -> s,
                 Collectors.counting()));

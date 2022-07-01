@@ -65,6 +65,6 @@ public class UnionType implements ImpType {
 
     @Override
     public String toString() {
-        return types.stream().map(m -> m.getName()).collect(Collectors.joining(" | "));
+        return types.stream().map(ImpType::getName).collect(Collectors.joining(" | "));
     }
 }

@@ -80,9 +80,7 @@ public class BaseTest {
     }
 
     protected void testLiteral(String runPath, String goldContent) {
-        assertDoesNotThrow(() -> {
-            assertEquals(goldContent, run(runPath));
-        });
+        assertDoesNotThrow(() -> assertEquals(goldContent, run(runPath)));
 
     }
 }
