@@ -17,7 +17,7 @@ public enum TokenType {
 
 
 	// Binary operators
-	ASSIGN("="),
+	ASSIGN("<-"),
 	GE(">="),
 	LE("<="),
 	GT(">"),
