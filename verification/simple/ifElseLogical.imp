@@ -64,6 +64,12 @@ if true xor false {
     log("not here")
 }
 
+if true xor true {
+    log("here")
+} else {
+    log("not here")
+}
+
 if false {
     log("not here")
 }
