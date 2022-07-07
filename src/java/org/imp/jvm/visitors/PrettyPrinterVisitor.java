@@ -83,7 +83,12 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
             String repr = print(a);
             var c = a.realType;
             if (displayAnnotations) {
-                repr += " : " + a.realType.getName();
+                if (a.realType == null) {
+                    repr += " : NULL";
+                } else {
+
+                    repr += " : " + a.realType.getName();
+                }
             }
             return repr;
         }).collect(Collectors.joining(", ")) + ")";
@@ -145,7 +150,13 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         currentEnvironment = stmt.body.environment;
 
         if (funcType != null) {
-            String result = "func " + name + "(";
+            String result = "func " + name;
+            if (stmt.generics.size() > 0) {
+                result += "[";
+                result += stmt.generics.stream().map(Token::source).collect(Collectors.joining(", "));
+                result += "]";
+            }
+            result += "(";
             result += stmt.parameters.stream().map(parameter -> parameter.accept(this)).collect(Collectors.joining(", "));
             result += ") " + funcType.returnType + " ";
             result += print(stmt.body);

@@ -156,59 +156,81 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitCall(Expr.Call expr) {
         var e = expr.item.accept(this);
-        if (e.isPresent()) {
-            var t = e.get();
-            if (t instanceof StructType structType) {
-                if (structType.parameters.size() != expr.arguments.size()) {
-                    var params = structType.parameters.stream().map(s -> s.getValue1().getName()).collect(Collectors.joining(", "));
-                    Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, structType.name, params);
-                    return Optional.empty();
+        if (e.isEmpty()) Util.exit("Big issue.", 95);
+        var t = e.orElseThrow();
+        // Shared code
+        if (t instanceof StructType st) {
+            if (st.parameters.size() != expr.arguments.size()) {
+                var params = st.parameters.stream().map(s -> s.getValue1().getName()).collect(Collectors.joining(", "));
+                Comptime.FunctionSignatureMismatch.submit(compiler, file, expr.item, st.name, params);
+                return Optional.empty();
+            }
+            // **Parameter is the recipient, Argument is the provider**
+            // Make sure parameter and argument types match.
+            updateUnknownParameters(expr, st);
+
+            // Visit and resolve argument types
+            Util.zip(st.parameters, expr.arguments, (param, arg) -> {
+                var at = arg.accept(this);
+                at.ifPresent(type -> typecheckCallParameters(param, arg, type));
+            });
+        }
+        // End shared code
+
+        if (t instanceof FuncType ft) {
+
+            // Specialize any generic calls
+            var rt = ft.returnType;
+            if (ft.hasGenerics()) {
+
+                var specialization = ft.buildSpecialization(expr.arguments);
+
+                ft.specializations.add(specialization);
+
+                if (rt instanceof GenericType gt) {
+                    rt = specialization.get(gt.key());
                 }
+            }
 
-                if ((structType.hasGenerics())) {
-                    var mst = new MonomorphizedStruct(structType);
-                    updateUnknownParameters(expr, structType);
+            expr.realType = rt;
 
-                    Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
-                        var at = arg.accept(this);
-                        if (at.isPresent()) {
-                            ImpType argType = at.get();
-                            typecheckCallParameters(param, arg, argType);
+            return Optional.of(rt);
+        } else if (t instanceof StructType structType) {
 
-                            if (param.getValue1() instanceof GenericType gt) {
-                                mst.resolved.put(gt.key(), argType);
-                            }
-                        }
-                    });
+//                if ((structType.hasGenerics())) {
+//                    var mst = new MonomorphizedStruct(structType);
+//                    updateUnknownParameters(expr, structType);
+//
+//                    Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
+//                        var at = arg.accept(this);
+//                        if (at.isPresent()) {
+//                            ImpType argType = at.get();
+//                            typecheckCallParameters(param, arg, argType);
+//
+//                            if (param.getValue1() instanceof GenericType gt) {
+//                                mst.resolved.put(gt.key(), argType);
+//                            }
+//                        }
+//                    });
+//
+//                    expr.realType = mst;
+//                    return Optional.of(mst);
+//
+//
+//                } else {
 
-                    expr.realType = mst;
-                    return Optional.of(mst);
+//                }
+            if (t instanceof FuncType ftt) {
+                ImpType returnType = ftt.returnType;
+                expr.realType = returnType;
 
-
-                } else {
-
-                    // **Parameter is the recipient, Argument is the provider**
-                    // Make sure parameter and argument types match.
-                    updateUnknownParameters(expr, structType);
-
-                    Util.zip(structType.parameters, expr.arguments, (param, arg) -> {
-                        var at = arg.accept(this);
-                        at.ifPresent(type -> typecheckCallParameters(param, arg, type));
-                    });
-
+                if (ftt.name.equals("genericFunc")) {
+                    var arg0type = expr.arguments.get(0).realType;
                 }
-                if (t instanceof FuncType ftt) {
-                    ImpType returnType = ftt.returnType;
-                    expr.realType = returnType;
-                    return Optional.of(returnType);
-                } else {
-                    expr.realType = structType;
-                    return Optional.of(structType);
-                }
-            } else if (t instanceof MonomorphizedStruct mt) {
-                System.out.println("mst detected");
+                return Optional.of(returnType);
             } else {
-                throw new IllegalStateException("Unexpected value: " + t);
+                expr.realType = structType;
+                return Optional.of(structType);
             }
 
         } else {
@@ -291,12 +313,9 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                 if (param.getValue1() instanceof UnknownType ut) {
                     var attempt = currentEnvironment.getVariable(ut.typeName);
                     if (attempt != null) {
-                        // oh  fuck immutability
-//                        param.type = attempt;
                         childEnvironment.setVariableType(param.getValue0(), attempt);
                         var nt = param.setAt1(attempt);
                         parametersAfter.add(nt);
-
                     } else {
                         Comptime.IdentifierNotFound.submit(compiler, file, stmt, ut.typeName);
                         parametersAfter.add(param); // this can go if we break here

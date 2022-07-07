@@ -3,13 +3,14 @@ package org.imp.jvm.parser;
 import org.imp.jvm.parser.tokenizer.Location;
 import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.types.ImpType;
+import org.imp.jvm.types.UnknownType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Expr implements Node {
     public final Location location;
-    public ImpType realType;
+    public ImpType realType = new UnknownType("unknown");
 
     protected Expr(Location location) {
         this.location = location;

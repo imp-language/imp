@@ -1,64 +1,35 @@
 // Generics example
-/*
-struct Generic[T] {
-    key string
-    t T
-}
 
+//struct Generic[T] {
+//    key string
+//    t T
+//}
+//
 struct Name {
     first string
     last string
 }
-
-
-val name = Name("matt", "hall")
-//log(name)
-
-val genericName = Generic("s", name)
-val n = genericName.t
+//
+//
+//val name = Name("matt", "hall")
+////log(name)
+//
+//val genericName = Generic("s", name)
+//val n = genericName.t
 //log(n)
-//log(n.first)
+////log(n.first)
+
+// Todo(CURRENT): traits?
 
 
-struct Pair[A,B] {
-    val0 A
-    val1 B
+func genericFunc[T,C](a T, b C) {
+    val d = a
+    log(d)
+    return a
 }
 
-struct Data {}
-// Todo(CURRENT): need to unbox when generic is a primitive
-val pair = Pair("a", Pair("a",4))
-log(pair.val0)
-log(pair.val1)
-val second = pair.val1
-log(second.val1)
-
-*/
-
-
-
-type alias = string | int | Data
-
-func method(a alias) {
-    log(a)
-}
-method("a")
-method(1)
-method(4.0)
-
-//func testUnion(param int | string | int[]) {
-//    match param {
-//        int i -> {
-//            log(i)
-//            log("int")
-//        }
-//        string s -> {
-//            log(s)
-//            log("string")
-//        }
-//        int[] ii -> {
-//            log(ii)
-//            log("int[]")
-//        }
-//    }
-//}
+val name = Name("f", "j")
+val b = genericFunc(4, 5.0)
+val c = genericFunc(name,7)
+//log(b)
+//log(c)

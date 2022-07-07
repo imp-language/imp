@@ -170,6 +170,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitFunctionStmt(Stmt.Function stmt) {
         String name = stmt.name.source();
+        List<String> generics = stmt.generics.stream().map(Token::source).toList();
 
         var childEnvironment = stmt.body.environment;
         childEnvironment.setParent(currentEnvironment);
@@ -180,15 +181,22 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             var pt = param.type.accept(this);
             if (pt.isPresent()) {
                 ImpType t = pt.get();
-                childEnvironment.addVariable(param.name.source(), t);
-                parameters.add(Pair.with(param.name.source(), t));
+                if (t instanceof UnknownType ut && generics.contains(ut.typeName)) {
+                    var gt = new GenericType(ut.typeName);
+                    parameters.add(Pair.with(param.name.source(), gt));
+                    childEnvironment.addVariable(param.name.source(), gt);
+
+                } else {
+                    childEnvironment.addVariable(param.name.source(), t);
+                    parameters.add(Pair.with(param.name.source(), t));
+                }
             } else {
                 System.err.println("pt not present");
                 System.exit(783);
             }
         }
 
-        var funcType = new FuncType(name, parameters);
+        var funcType = new FuncType(name, parameters, generics);
         if (stmt.returnType != null) {
             var ttt = stmt.returnType.accept(this);
 //            var bt = BuiltInType.getFromString(stmt.returnType.source());
