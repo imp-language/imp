@@ -19,7 +19,11 @@ struct Name {
 //log(n)
 ////log(n.first)
 
-// Todo(CURRENT): traits?
+// Todo(CURRENT): traits? native arrays first
+
+struct ArrayList[T] {
+
+}
 
 
 func genericFunc[T,C](a T, b C) {
