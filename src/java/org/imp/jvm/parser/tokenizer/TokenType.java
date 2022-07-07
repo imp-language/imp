@@ -17,7 +17,7 @@ public enum TokenType {
 
 
 	// Binary operators
-	ASSIGN("<-"),
+	ASSIGN("="),
 	GE(">="),
 	LE("<="),
 	GT(">"),
@@ -26,12 +26,13 @@ public enum TokenType {
 	NOTEQUAL("!="),
 	AND("and", "&&"),
 	OR("or", "||"),
+	XOR("xor","^"),
 	ADD("+"),
 	MUL("*"),
 	SUB("-"),
 	DIV("/"),
 	MOD("%"),
-	POW("^"),
+	POW("**"),
 	PIPE("|"),
 	ARROW("->"),
 

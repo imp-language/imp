@@ -123,7 +123,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     totalType = BuiltInType.BOOLEAN;
                 }
             }
-            case AND, OR -> {
+            case AND, OR, XOR-> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     // check if two values can be compared
                     if (bt1 != BuiltInType.BOOLEAN || bt2 != BuiltInType.BOOLEAN) {

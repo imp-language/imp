@@ -55,6 +55,7 @@ public class Parser extends ParserBase {
         infixLeft(GE, Precedence.COMPARISON);
         infixLeft(AND, Precedence.AND);
         infixLeft(OR, Precedence.OR);
+        infixLeft(XOR, Precedence.XOR);
 
         // Postfix operators
         postfix(INC, Precedence.POSTFIX);

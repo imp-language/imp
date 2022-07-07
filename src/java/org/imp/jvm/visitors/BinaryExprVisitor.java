@@ -89,6 +89,39 @@ public class BinaryExprVisitor {
         ga.mark(endLabel);
     }
 
+    /**
+     *  Generates standard logical xor behaviour
+     */
+    public static void logicalXor(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor){
+        Label falseLabel = new Label();
+        Label successLabel = new Label();
+        Label aSuccess = new Label();
+        Label aFailure = new Label();
+        Label endLabel = new Label();
+
+        expr.left.accept(visitor);
+        ga.ifZCmp(GeneratorAdapter.EQ, aFailure);   //if the left expression is false, check if the right expression is false
+        ga.goTo(aSuccess);                          //otherwise, check if the right expression is true
+
+        ga.mark(aFailure);
+        expr.right.accept(visitor);
+        ga.ifZCmp(GeneratorAdapter.EQ, falseLabel); //if the right expression is false, return false
+        ga.goTo(successLabel);                      //otherwise, return true
+
+        ga.mark(aSuccess);
+        expr.right.accept(visitor);
+        ga.ifZCmp(GeneratorAdapter.NE, falseLabel); //if both expressions are true, return false
+        ga.goTo(successLabel);                      //else, return true
+
+        ga.mark(successLabel);                      //return true
+        ga.push(true);
+
+        ga.mark(falseLabel);                        //return false
+        ga.push(false);
+
+        ga.mark(endLabel);
+    }
+
     public static void relational(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
         // Currently, only primitive comparisons are implemented
         var left = expr.left;

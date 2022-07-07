@@ -122,6 +122,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 BinaryExprVisitor.logicalAnd(ga, expr, this);
             } else if (expr.operator.type() == TokenType.OR) {
                 BinaryExprVisitor.logicalOr(ga, expr, this);
+            } else if (expr.operator.type() == TokenType.XOR){
+                BinaryExprVisitor.logicalXor(ga, expr, this);
             } else {
                 BinaryExprVisitor.relational(ga, expr, this);
             }
