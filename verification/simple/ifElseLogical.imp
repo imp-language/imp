@@ -58,6 +58,28 @@ if 4 == 5 or false {
     log("not here")
 }
 
+if true xor false {
+    log("here")
+} else {
+    log("not here")
+}
+
+if true xor true {
+    log("here")
+} else {
+    log("not here")
+}
+if true ^ false {
+    log("here")
+} else {
+    log("not here")
+}
+
+if true ^ true {
+    log("here")
+} else {
+    log("not here")
+}
 
 if false {
     log("not here")

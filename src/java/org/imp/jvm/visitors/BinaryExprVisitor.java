@@ -89,6 +89,18 @@ public class BinaryExprVisitor {
         ga.mark(endLabel);
     }
 
+    /**
+     * Generates standard logical xor behaviour
+     */
+    public static void logicalXor(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
+        Label falseLabel = new Label();
+        Label endLabel = new Label();
+
+        expr.left.accept(visitor);
+        expr.right.accept(visitor);
+        ga.visitInsn(Opcodes.IXOR);
+    }
+
     public static void relational(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
         // Currently, only primitive comparisons are implemented
         var left = expr.left;
