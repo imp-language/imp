@@ -76,7 +76,8 @@ public class Parser extends ParserBase {
                 new Token(IDENTIFIER, loc.line(), loc.col(), "main"),
                 args,
                 Stmt.TypeStmt.voidInstance(lok()),
-                new Stmt.Block(loc, new ArrayList<>(), new Environment())
+                new Stmt.Block(loc, new ArrayList<>(), new Environment()),
+                Collections.emptyList()
         );
 
         while (notAtEnd()) {
@@ -178,6 +179,19 @@ public class Parser extends ParserBase {
     private Stmt.Function function() {
         var loc = lok();
         Token name = consume(IDENTIFIER, "Expected function name.");
+
+        var generics = new ArrayList<Token>();
+        if (match(LBRACK)) {
+            var t = consume();
+            generics.add(t);
+            while (check(COMMA)) {
+                consume();
+                t = consume();
+                generics.add(t);
+            }
+            consume(RBRACK, "Expected closing bracket after function generics.");
+        }
+
         consume(LPAREN, "Expected opening parentheses after function name.");
 
         List<Stmt.Parameter> parameters = new ArrayList<>();
@@ -196,7 +210,7 @@ public class Parser extends ParserBase {
 
         Stmt.Block block = block();
 
-        return new Stmt.Function(loc, name, parameters, returnType, block);
+        return new Stmt.Function(loc, name, parameters, returnType, block, generics);
     }
 
     private Stmt.Import importStmt() {

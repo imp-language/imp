@@ -15,70 +15,71 @@ import java.util.Optional;
 import static org.imp.jvm.parser.tokenizer.TokenType.ALIAS;
 
 public abstract class Stmt implements Node {
-	public final Location location;
+    public final Location location;
 
-	protected Stmt(Location location) {
-		this.location = location;
-	}
-
-	public abstract <R> R accept(Visitor<R> visitor);
-
-	@Override
-	public Location location() {
-		return location;
-	}
-
-	public interface Visitor<R> {
-		R visit(Stmt stmt);
-
-		R visitAlias(Alias stmt);
-
-		R visitBlockStmt(Block stmt);
-
-		R visitEnum(Enum stmt);
-
-		R visitExport(Export stmt);
-
-		R visitExpressionStmt(ExpressionStmt stmt);
-
-		R visitFor(For stmt);
-
-
-		R visitFunctionStmt(Function stmt);
-
-		R visitIf(If stmt);
-
-		R visitImport(Import stmt);
-
-		R visitMatch(Match match);
-
-		R visitParameterStmt(Parameter stmt);
-
-		R visitReturnStmt(Return stmt);
-
-		R visitStruct(Struct stmt);
-
-		R visitType(TypeStmt stmt);
-
-		R visitUnionType(UnionTypeStmt unionTypeStmt);
-
-
-		R visitVariable(Variable stmt);
-	R visitWhile(While aWhile);
+    protected Stmt(Location location) {
+        this.location = location;
     }
 
-	public sealed interface Exportable permits Stmt.Function, Stmt.Enum, Stmt.Struct, Stmt.Variable, Stmt.Alias {
-		String identifier();
-	}
+    public abstract <R> R accept(Visitor<R> visitor);
 
-	public sealed interface TopLevel permits Stmt.Import {
-	}
+    @Override
+    public Location location() {
+        return location;
+    }
+
+    public interface Visitor<R> {
+        R visit(Stmt stmt);
+
+        R visitAlias(Alias stmt);
+
+        R visitBlockStmt(Block stmt);
+
+        R visitEnum(Enum stmt);
+
+        R visitExport(Export stmt);
+
+        R visitExpressionStmt(ExpressionStmt stmt);
+
+        R visitFor(For stmt);
+
+
+        R visitFunctionStmt(Function stmt);
+
+        R visitIf(If stmt);
+
+        R visitImport(Import stmt);
+
+        R visitMatch(Match match);
+
+        R visitParameterStmt(Parameter stmt);
+
+        R visitReturnStmt(Return stmt);
+
+        R visitStruct(Struct stmt);
+
+        R visitType(TypeStmt stmt);
+
+        R visitUnionType(UnionTypeStmt unionTypeStmt);
+
+
+        R visitVariable(Variable stmt);
+
+        R visitWhile(While aWhile);
+    }
+
+    public sealed interface Exportable permits Stmt.Function, Stmt.Enum, Stmt.Struct, Stmt.Variable, Stmt.Alias {
+        String identifier();
+    }
+
+    public sealed interface TopLevel permits Stmt.Import {
+    }
 
     public static final class Match extends Stmt {
         public final Map<TypeStmt, Pair<String, Block>> cases;
         public final Expr expr;
 
-		public final Map<TypeStmt, ImpType> types = new HashMap<>();
+        public final Map<TypeStmt, ImpType> types = new HashMap<>();
 
 
         public Match(Location location, Expr expr, Map<TypeStmt, Pair<String, Block>> cases) {
@@ -87,223 +88,225 @@ public abstract class Stmt implements Node {
             this.cases = cases;
         }
 
-		@Override
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitMatch(this);
-		}
-	}
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitMatch(this);
+        }
+    }
 
-	// Maybe remove quotes from imports?
-	public static final class Import extends Stmt implements TopLevel {
-		public final static Import instance = new Import(new Location(0, 0), new Token(TokenType.STRING, 0, 0, "batteries"), Optional.empty());
-		public final Token stringLiteral;
-		public final Optional<Token> identifier;
+    // Maybe remove quotes from imports?
+    public static final class Import extends Stmt implements TopLevel {
+        public final static Import instance = new Import(new Location(0, 0), new Token(TokenType.STRING, 0, 0, "batteries"), Optional.empty());
+        public final Token stringLiteral;
+        public final Optional<Token> identifier;
 
-		public Import(Location loc, Token stringLiteral, Optional<Token> identifier) {
-			super(loc);
-			this.stringLiteral = stringLiteral;
-			this.identifier = identifier;
-		}
+        public Import(Location loc, Token stringLiteral, Optional<Token> identifier) {
+            super(loc);
+            this.stringLiteral = stringLiteral;
+            this.identifier = identifier;
+        }
 
-		@Override
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitImport(this);
-		}
-	}
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitImport(this);
+        }
+    }
 
-	public static final class Alias extends Stmt implements Exportable {
-		public final Token identifier;
-		public final TypeStmt typeStmt;
+    public static final class Alias extends Stmt implements Exportable {
+        public final Token identifier;
+        public final TypeStmt typeStmt;
 
-		public Alias(Location loc, Token identifier, TypeStmt typeStmt) {
-			super(loc);
-			this.identifier = identifier;
-			this.typeStmt = typeStmt;
-		}
+        public Alias(Location loc, Token identifier, TypeStmt typeStmt) {
+            super(loc);
+            this.identifier = identifier;
+            this.typeStmt = typeStmt;
+        }
 
-		@Override
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitAlias(this);
-		}
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitAlias(this);
+        }
 
-		@Override
-		public String identifier() {
-			return identifier.source();
-		}
-	}
+        @Override
+        public String identifier() {
+            return identifier.source();
+        }
+    }
 
-	public static class TypeStmt extends Stmt {
-		public final Token identifier;
-		public final Optional<TypeStmt> next;
-		public final boolean listType;
+    public static class TypeStmt extends Stmt {
+        public final Token identifier;
+        public final Optional<TypeStmt> next;
+        public final boolean listType;
 
-		public TypeStmt(Location loc, Token identifier, Optional<TypeStmt> next, boolean listType) {
-			super(loc);
-			this.identifier = identifier;
-			this.next = next;
-			this.listType = listType;
-		}
+        public TypeStmt(Location loc, Token identifier, Optional<TypeStmt> next, boolean listType) {
+            super(loc);
+            this.identifier = identifier;
+            this.next = next;
+            this.listType = listType;
+        }
 
-		public static TypeStmt voidInstance(Location loc) {
-			return new TypeStmt(loc, new Token(ALIAS, loc.line(), loc.col(), "void"), Optional.empty(), false);
-		}
+        public static TypeStmt voidInstance(Location loc) {
+            return new TypeStmt(loc, new Token(ALIAS, loc.line(), loc.col(), "void"), Optional.empty(), false);
+        }
 
-		@Override
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitType(this);
-		}
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitType(this);
+        }
 
-	}
+    }
 
-	public static final class UnionTypeStmt extends TypeStmt {
-		public final List<TypeStmt> types;
+    public static final class UnionTypeStmt extends TypeStmt {
+        public final List<TypeStmt> types;
 
-		public UnionTypeStmt(Location location, List<TypeStmt> types) {
-			super(location, null, Optional.empty(), true);
-			this.types = types;
-		}
+        public UnionTypeStmt(Location location, List<TypeStmt> types) {
+            super(location, null, Optional.empty(), true);
+            this.types = types;
+        }
 
-		@Override
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitUnionType(this);
-		}
-	}
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitUnionType(this);
+        }
+    }
 
-	public static final class Enum extends Stmt implements Exportable {
-		public final Token name;
-		public final List<Token> values;
+    public static final class Enum extends Stmt implements Exportable {
+        public final Token name;
+        public final List<Token> values;
 
-		public Enum(Location loc, Token name, List<Token> values) {
-			super(loc);
-			this.name = name;
-			this.values = values;
-		}
+        public Enum(Location loc, Token name, List<Token> values) {
+            super(loc);
+            this.name = name;
+            this.values = values;
+        }
 
-		@Override
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitEnum(this);
-		}
-
-
-		@Override
-		public String identifier() {
-			return name.source();
-		}
-	}
-
-	public static final class Struct extends Stmt implements Exportable {
-		public final Token name;
-		public final List<Parameter> fields;
-
-		public final List<Token> generics;
-
-		public Struct(Location loc, Token name, List<Parameter> fields, List<Token> generics) {
-			super(loc);
-			this.name = name;
-			this.fields = fields;
-			this.generics = generics;
-		}
-
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitStruct(this);
-		}
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitEnum(this);
+        }
 
 
-		@Override
-		public String identifier() {
-			return name.source();
-		}
-	}
+        @Override
+        public String identifier() {
+            return name.source();
+        }
+    }
 
-	public static final class Block extends Stmt {
-		public final List<Stmt> statements;
-		public final Environment environment;
+    public static final class Struct extends Stmt implements Exportable {
+        public final Token name;
+        public final List<Parameter> fields;
 
-		public Block(Location loc, List<Stmt> statements, Environment environment) {
-			super(loc);
-			this.statements = statements;
-			this.environment = environment;
-		}
+        public final List<Token> generics;
 
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitBlockStmt(this);
-		}
+        public Struct(Location loc, Token name, List<Parameter> fields, List<Token> generics) {
+            super(loc);
+            this.name = name;
+            this.fields = fields;
+            this.generics = generics;
+        }
 
-
-	}
-
-	public static final class Export extends Stmt {
-		public final Stmt stmt;
-
-		public Export(Location loc, Stmt stmt) {
-			super(loc);
-			this.stmt = stmt;
-		}
-
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitExport(this);
-		}
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitStruct(this);
+        }
 
 
-	}
+        @Override
+        public String identifier() {
+            return name.source();
+        }
+    }
 
-	public static final class ExpressionStmt extends Stmt {
-		public final Expr expr;
+    public static final class Block extends Stmt {
+        public final List<Stmt> statements;
+        public final Environment environment;
 
-		public ExpressionStmt(Location loc, Expr expr) {
-			super(loc);
-			this.expr = expr;
-		}
+        public Block(Location loc, List<Stmt> statements, Environment environment) {
+            super(loc);
+            this.statements = statements;
+            this.environment = environment;
+        }
 
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitExpressionStmt(this);
-		}
-
-	}
-
-
-	public static final class Function extends Stmt implements Exportable {
-		public final Token name;
-		public final Block body;
-		public final List<Parameter> parameters;
-		public final TypeStmt returnType;
-
-		public Function(Location loc, Token name, List<Parameter> parameters, TypeStmt returnType,
-						Block body) {
-			super(loc);
-			this.name = name;
-			this.parameters = parameters;
-			this.returnType = returnType;
-			this.body = body;
-		}
-
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitFunctionStmt(this);
-		}
-
-		@Override
-		public String identifier() {
-			return name.source();
-		}
-
-	}
-
-	public static final class Parameter extends Stmt {
-		public final Token name;
-		public final TypeStmt type;
-
-		public Parameter(Location loc, Token name, TypeStmt type) {
-			super(loc);
-			this.name = name;
-			this.type = type;
-		}
-
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitParameterStmt(this);
-		}
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBlockStmt(this);
+        }
 
 
-	}
+    }
+
+    public static final class Export extends Stmt {
+        public final Stmt stmt;
+
+        public Export(Location loc, Stmt stmt) {
+            super(loc);
+            this.stmt = stmt;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitExport(this);
+        }
+
+
+    }
+
+    public static final class ExpressionStmt extends Stmt {
+        public final Expr expr;
+
+        public ExpressionStmt(Location loc, Expr expr) {
+            super(loc);
+            this.expr = expr;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitExpressionStmt(this);
+        }
+
+    }
+
+
+    public static final class Function extends Stmt implements Exportable {
+        public final Token name;
+        public final Block body;
+        public final List<Parameter> parameters;
+        public final TypeStmt returnType;
+        public final List<Token> generics;
+
+        public Function(Location loc, Token name, List<Parameter> parameters, TypeStmt returnType,
+                        Block body, List<Token> generics) {
+            super(loc);
+            this.name = name;
+            this.parameters = parameters;
+            this.returnType = returnType;
+            this.body = body;
+            this.generics = generics;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitFunctionStmt(this);
+        }
+
+        @Override
+        public String identifier() {
+            return name.source();
+        }
+
+    }
+
+    public static final class Parameter extends Stmt {
+        public final Token name;
+        public final TypeStmt type;
+
+        public Parameter(Location loc, Token name, TypeStmt type) {
+            super(loc);
+            this.name = name;
+            this.type = type;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitParameterStmt(this);
+        }
+
+
+    }
 
     public static final class While extends Stmt {
         public final Block block;
@@ -322,85 +325,85 @@ public abstract class Stmt implements Node {
     }
 
 
-	public static final class If extends Stmt {
-		public final Block trueBlock;
-		public final Stmt falseStmt;
-		public final Expr condition;
+    public static final class If extends Stmt {
+        public final Block trueBlock;
+        public final Stmt falseStmt;
+        public final Expr condition;
 
-		public If(Location loc, Expr condition, Block trueBlock, Stmt falseStmt) {
-			super(loc);
-			this.condition = condition;
-			this.trueBlock = trueBlock;
-			this.falseStmt = falseStmt;
-		}
+        public If(Location loc, Expr condition, Block trueBlock, Stmt falseStmt) {
+            super(loc);
+            this.condition = condition;
+            this.trueBlock = trueBlock;
+            this.falseStmt = falseStmt;
+        }
 
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitIf(this);
-		}
-
-
-	}
-
-	public static final class Return extends Stmt {
-		public final Expr expr;
-
-		public Return(Location loc, Expr expr) {
-			super(loc);
-			this.expr = expr;
-		}
-
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitReturnStmt(this);
-		}
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitIf(this);
+        }
 
 
-	}
+    }
 
-	public static final class Variable extends Stmt implements Exportable {
-		public final Token name;
-		public final Expr expr;
-		public final Token mutability;
+    public static final class Return extends Stmt {
+        public final Expr expr;
 
-		public int localIndex = -1;
+        public Return(Location loc, Expr expr) {
+            super(loc);
+            this.expr = expr;
+        }
 
-		public Variable(Location loc, Token mutability, Token name, Expr expr) {
-			super(loc);
-			this.mutability = mutability;
-			this.name = name;
-			this.expr = expr;
-		}
-
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitVariable(this);
-		}
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitReturnStmt(this);
+        }
 
 
-		@Override
-		public String identifier() {
-			return name.source();
-		}
-	}
+    }
 
-	public static final class For extends Stmt {
-		public final Block block;
-		public final Token name;
-		public final Expr expr;
-		public int localNameIndex = -1;
-		public int localExprIndex = -1;
+    public static final class Variable extends Stmt implements Exportable {
+        public final Token name;
+        public final Expr expr;
+        public final Token mutability;
+
+        public int localIndex = -1;
+
+        public Variable(Location loc, Token mutability, Token name, Expr expr) {
+            super(loc);
+            this.mutability = mutability;
+            this.name = name;
+            this.expr = expr;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariable(this);
+        }
 
 
-		public For(Location loc, Token name, Expr expr, Block block) {
-			super(loc);
-			this.block = block;
-			this.name = name;
-			this.expr = expr;
-		}
+        @Override
+        public String identifier() {
+            return name.source();
+        }
+    }
 
-		public <R> R accept(Visitor<R> visitor) {
-			return visitor.visitFor(this);
-		}
+    public static final class For extends Stmt {
+        public final Block block;
+        public final Token name;
+        public final Expr expr;
+        public int localNameIndex = -1;
+        public int localExprIndex = -1;
 
-	}
+
+        public For(Location loc, Token name, Expr expr, Block block) {
+            super(loc);
+            this.block = block;
+            this.name = name;
+            this.expr = expr;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitFor(this);
+        }
+
+    }
 
 
 }

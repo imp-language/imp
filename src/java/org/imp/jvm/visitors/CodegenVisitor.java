@@ -164,6 +164,22 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 if (callType.isPrefixed) name = "_" + name;
 
                 var params = callType.parameters.stream().map(arg -> Pair.with(arg.getValue1().getName(), arg.getValue1())).collect(Collectors.toList());
+
+//                var argTypes = expr.arguments.stream().map(ex -> ex.realType).toList();
+//                var specialization = funcType.currentSpecialization;
+//                var p2 = new ArrayList<Pair<String, ImpType>>();
+//                for (int i = 0; i < callType.parameters.size(); i++) {
+//                    var paramPair = callType.parameters.get(i);
+//                    var arg = argTypes.get(i);
+//                    if (paramPair.getValue1() instanceof GenericType gt) {
+//                        p2.add(paramPair.setAt1(specialization.get(gt.key())));
+//                    } else {
+//                        p2.add(paramPair);
+//                    }
+//
+//                }
+//                System.out.println(p2);
+
                 ImpType returnType = callType.returnType;
                 String methodDescriptor = Util.getMethodDescriptor(params, returnType);
                 // Generate arguments
@@ -195,8 +211,20 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                     }
                 });
 
+                var specialization = callType.buildSpecialization(expr.arguments);
+                var returnType = callType.returnType;
+                if (returnType instanceof GenericType gt) {
+                    returnType = FuncType.getSpecializedType(specialization, gt.key());
+
+                }
+
+                var parameters = callType.buildParametersFromSpecialization(specialization);
+
+                String descriptor = Util.getMethodDescriptor(parameters, returnType);
+
                 // Call the invoke method
                 String methodDescriptor = Util.getMethodDescriptor(callType.parameters, callType.returnType);
+                methodDescriptor = descriptor;
                 String name = "_" + callType.name;
                 String owner = FilenameUtils.removeExtension(source.getFullRelativePath());
 
@@ -327,29 +355,61 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var funcType = currentEnvironment.getVariableTyped(stmt.name.source(), FuncType.class);
         functionStack.add(funcType);
         var childEnvironment = stmt.body.environment;
-
+        // Common code
         // Generate function signature
         String name = "_" + funcType.name;
         var access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
-        String descriptor = Util.getMethodDescriptor(funcType.parameters, funcType.returnType);
-        if (funcType.name.equals("main")) {
-            name = "main";
-            descriptor = "([Ljava/lang/String;)V";
-        }
-        var mv = cw.visitMethod(access, name, descriptor, null, null);
-        funcType.ga = new GeneratorAdapter(mv, access, name, descriptor);
-        for (int i = 0; i < funcType.parameters.size(); i++) {
-            var param = funcType.parameters.get(i);
-            funcType.argMap.put(param.getValue0(), i);
-        }
+        // End common code
 
-        // Generate function body
-        currentEnvironment = childEnvironment;
-        stmt.body.accept(this);
-        funcType.ga.endMethod();
-        currentEnvironment = currentEnvironment.getParent();
-        functionStack.pop();
+        if (funcType.hasGenerics()) {
 
+            for (Map<String, ImpType> specialization : funcType.specializations) {
+                funcType.currentSpecialization = specialization;
+                var returnType = funcType.returnType;
+                if (returnType instanceof GenericType gt) {
+                    returnType = FuncType.getSpecializedType(specialization, gt.key());
+                }
+
+                var parameters = funcType.buildParametersFromSpecialization(specialization);
+
+                String descriptor = Util.getMethodDescriptor(parameters, returnType);
+
+                var mv = cw.visitMethod(access, name, descriptor, null, null);
+                funcType.ga = new GeneratorAdapter(mv, access, name, descriptor);
+                for (int i = 0; i < funcType.parameters.size(); i++) {
+                    var param = funcType.parameters.get(i);
+                    funcType.argMap.put(param.getValue0(), i);
+                }
+
+                // Generate function body
+                currentEnvironment = childEnvironment;
+                stmt.body.accept(this);
+                funcType.ga.endMethod();
+                currentEnvironment = currentEnvironment.getParent();
+            }
+            functionStack.pop();
+        } else {
+
+            String descriptor = Util.getMethodDescriptor(funcType.parameters, funcType.returnType);
+            if (funcType.name.equals("main")) {
+                name = "main";
+                descriptor = "([Ljava/lang/String;)V";
+            }
+            var mv = cw.visitMethod(access, name, descriptor, null, null);
+            funcType.ga = new GeneratorAdapter(mv, access, name, descriptor);
+            for (int i = 0; i < funcType.parameters.size(); i++) {
+                var param = funcType.parameters.get(i);
+                funcType.argMap.put(param.getValue0(), i);
+            }
+
+            // Generate function body
+            currentEnvironment = childEnvironment;
+            stmt.body.accept(this);
+            funcType.ga.endMethod();
+            currentEnvironment = currentEnvironment.getParent();
+            functionStack.pop();
+
+        }
         return Optional.empty();
     }
 
@@ -364,6 +424,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         var funcType = functionStack.peek();
         var ga = funcType.ga;
         var type = currentEnvironment.getVariable(expr.identifier.source());
+
+        if (type instanceof GenericType gt) {
+            type = funcType.currentSpecialization.get(gt.key());
+        }
+
         expr.realType = type;
 
         int index;
@@ -654,7 +719,12 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 bt.doBoxing(funcType.ga);
             }
 
-            funcType.ga.visitInsn(funcType.returnType.getReturnOpcode());
+            var returnType = funcType.returnType;
+            if (returnType instanceof GenericType gt) {
+                returnType = FuncType.getSpecializedType(funcType.currentSpecialization, gt.key());
+            }
+
+            funcType.ga.visitInsn(returnType.getReturnOpcode());
         } else {
             funcType.ga.visitInsn(Opcodes.RETURN);
         }
@@ -747,6 +817,9 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
 
         // Add another local to the function
         var type = currentEnvironment.getVariable(stmt.identifier());
+        if (type instanceof GenericType gt) {
+            type = funcType.currentSpecialization.get(gt.key());
+        }
         stmt.localIndex = funcType.ga.newLocal(Type.getType(type.getDescriptor()));
         funcType.localMap.put(stmt.identifier(), stmt.localIndex);
         funcType.ga.storeLocal(stmt.localIndex, Type.getType(type.getDescriptor()));
