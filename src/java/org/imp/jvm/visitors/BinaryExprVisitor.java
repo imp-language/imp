@@ -99,14 +99,6 @@ public class BinaryExprVisitor {
         expr.left.accept(visitor);
         expr.right.accept(visitor);
         ga.visitInsn(Opcodes.IXOR);
-        ga.ifICmp(Opcodes.IFEQ, falseLabel);
-
-        ga.push(true);
-        ga.goTo(endLabel);
-
-        ga.mark(falseLabel);
-        ga.push(false);
-        ga.mark(endLabel);
     }
 
     public static void relational(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
