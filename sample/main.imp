@@ -1,64 +1,90 @@
-// Generics example
+// Tests if/else and logical and/or
+
+val zero = 0
+val one = 1
+val two = 2
+val three = 3
+
 /*
-struct Generic[T] {
-    key string
-    t T
-}
-
-struct Name {
-    first string
-    last string
-}
-
-
-val name = Name("matt", "hall")
-//log(name)
-
-val genericName = Generic("s", name)
-val n = genericName.t
-//log(n)
-//log(n.first)
-
-
-struct Pair[A,B] {
-    val0 A
-    val1 B
-}
-
-struct Data {}
-// Todo(CURRENT): need to unbox when generic is a primitive
-val pair = Pair("a", Pair("a",4))
-log(pair.val0)
-log(pair.val1)
-val second = pair.val1
-log(second.val1)
-
 */
-
-
-
-type alias = string | int | Data
-
-func method(a alias) {
-    log(a)
+if zero == 0 and one == 1 {
+    log("here")
+} else {
+    log("not here")
 }
-method("a")
-method(1)
-method(4.0)
 
-//func testUnion(param int | string | int[]) {
-//    match param {
-//        int i -> {
-//            log(i)
-//            log("int")
-//        }
-//        string s -> {
-//            log(s)
-//            log("string")
-//        }
-//        int[] ii -> {
-//            log(ii)
-//            log("int[]")
-//        }
-//    }
-//}
+if zero == 0 and one == two {
+    log("not here")
+} else {
+    log("here")
+}
+
+if zero == 0 or one == two {
+    log("here")
+} else {
+    log("not here")
+}
+if zero == 0 and one == 1 and two == 2 {
+    log("here")
+} else {
+    log("not here")
+}
+
+if zero == three or two == one or three == two {
+   log("not here")
+} else {
+   log("here")
+}
+
+// Some combined examples
+
+if (zero == 0 and one == 1) or two == 42 {
+    log("here")
+} else {
+    log("not here")
+}
+
+if zero == 0 and one == 1 or two == 42 {
+    log("here")
+} else {
+    log("not here")
+}
+
+if 4 == 5 or false {
+    log("not here")
+} else if 5 > -9 {
+    log("here")
+} else {
+    log("not here")
+}
+
+if true xor false {
+    log("here")
+} else {
+    log("not here")
+}
+
+if true xor true {
+    log("here")
+} else {
+    log("not here")
+}
+if true ^ false {
+    log("here")
+} else {
+    log("not here")
+}
+
+if true ^ true {
+    log("here")
+} else {
+    log("not here")
+}
+
+if false {
+    log("not here")
+}
+
+if true {
+    log("here")
+}
