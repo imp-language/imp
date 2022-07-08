@@ -41,23 +41,9 @@ public class BinaryExprVisitor {
      * `expr.right` must never be executed if `expr.left` does not evaluate to true.
      */
     public static void logicalAnd(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
-        Label falseLabel = new Label(); // short-circuit evaluation, if left is false, skip remaining clauses and return "false"
-        Label successLabel = new Label(); // both clauses are truthy, return "true"
-
-        expr.left.accept(visitor); // get the truthiness of the left expression
-        ga.ifZCmp(GeneratorAdapter.EQ, falseLabel); // if first expression is false, return early
-
-        expr.right.accept(visitor); // get the truthiness of the right expression
-        ga.ifZCmp(GeneratorAdapter.EQ, falseLabel); // if second expression is false, return false
-        ga.push(true); // success
-        ga.goTo(successLabel); // skip to end
-
-        // if either case failed, return false
-        ga.mark(falseLabel);
-        ga.push(false);
-
-        // if both cases pass, return true
-        ga.mark(successLabel);
+        expr.left.accept(visitor);
+        expr.right.accept(visitor);
+        ga.visitInsn(Opcodes.IAND);
     }
 
     /**
@@ -65,40 +51,18 @@ public class BinaryExprVisitor {
      * `expr.right` should only be executed if `expr.left` is false.
      */
     public static void logicalOr(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
-        Label falseLabel = new Label(); // short-circuit evaluation, if left is false, skip remaining clauses and return "false"
-        Label successLabel = new Label(); // both clauses are truthy, return "true"
-        Label endLabel = new Label();
-
-        expr.left.accept(visitor); // get the truthiness of the left expression
-        ga.ifZCmp(GeneratorAdapter.NE, successLabel); // if first expression is true, return true
-        // else, fallthrough to second expression
-
-        expr.right.accept(visitor); // get the truthiness of the right expression
-        ga.ifZCmp(GeneratorAdapter.NE, successLabel); // if second expression is false, return false
-        ga.goTo(falseLabel);
-
-        ga.mark(successLabel);
-        ga.push(true);
-        ga.goTo(endLabel); // skip to end
-
-        // if either case failed, return false
-        ga.mark(falseLabel);
-        ga.push(false);
-
-        // if both cases pass, return true
-        ga.mark(endLabel);
+        expr.left.accept(visitor);
+        expr.right.accept(visitor);
+        ga.visitInsn(Opcodes.IOR);
     }
 
     /**
      * Generates standard logical xor behaviour
      */
     public static void logicalXor(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
-        Label falseLabel = new Label();
-        Label endLabel = new Label();
-
         expr.left.accept(visitor);
         expr.right.accept(visitor);
-        ga.visitInsn(Opcodes.IXOR);
+        ga.visitInsn(Opcodes.IXOR);     //apply XOR operation to left and right expressions
     }
 
     public static void relational(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
