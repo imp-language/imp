@@ -1,5 +1,5 @@
 // Tests arithmetic operations for the three main types: int, float, double
-// on the four main operations: +, -, *, /
+// on the four main operations: +, -, *, / and also %
 
 
 log("addition")
@@ -43,3 +43,12 @@ log(33/4)
 log(33/4.)
 log(6/0.1)
 log(62/10000d)
+log("")
+
+// modulus
+log("modulo")
+log(3%2)
+log(d%f)
+log(i%f)
+log(i%d)
+log(d%i)

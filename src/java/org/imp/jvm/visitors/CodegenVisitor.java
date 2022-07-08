@@ -127,8 +127,14 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             } else {
                 BinaryExprVisitor.relational(ga, expr, this);
             }
-        } else {
-            BinaryExprVisitor.arithmetic(ga, expr, this);
+        } else {                                                //handle arithmetic tokens that need multiple opcodes
+            if (expr.operator.type() == TokenType.MOD) {        //Modulus
+                BinaryExprVisitor.modulus(ga, expr, this);
+            } else if (expr.operator.type() == TokenType.POW){  //Exponents
+                BinaryExprVisitor.exponents(ga, expr, this);
+            } else {
+                BinaryExprVisitor.arithmetic(ga, expr, this);
+            }
 
         }
         return Optional.empty();
@@ -541,7 +547,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Execute and store the match expression as an untyped Object
         match.expr.accept(this);
         int localExprIndex = ga.newLocal(Constants.ObjectType);
-        var s = "bitch";
+        var s = "bruh";
         funcType.localMap.put(s, localExprIndex);
         ga.storeLocal(localExprIndex);
 
@@ -630,14 +636,22 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitPostfixExpr(Expr.Postfix expr) {
 
+        //FIXME: Got'damn this code need to improved
         var ga = functionStack.peek().ga;
         expr.expr.accept(this);
         if (expr.realType instanceof BuiltInType bt) {
             bt.pushOne(ga);
+            /*
             int opcode = bt.getAddOpcode();
             if (expr.operator.type() == TokenType.DEC) opcode = bt.getSubtractOpcode();
+            */
+            int op = switch (expr.operator.type()){
+                case INC -> bt.getAddOpcode();
+                case DEC -> bt.getSubtractOpcode();
+                default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
+            };
 
-            ga.visitInsn(opcode);
+            ga.visitInsn(op);
             // Todo: store this
             if (expr.expr instanceof Expr.Identifier eid) {
 

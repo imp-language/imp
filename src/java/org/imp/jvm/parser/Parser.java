@@ -36,10 +36,12 @@ public class Parser extends ParserBase {
         // Register the simple operator parselets.
         prefix(ADD, Precedence.PREFIX);
         prefix(SUB, Precedence.PREFIX);
+        prefix(MOD, Precedence.PREFIX);
         prefix(NOT, Precedence.PREFIX);
 
         infixLeft(ADD, Precedence.SUM);
         infixLeft(SUB, Precedence.SUM);
+        infixLeft(MOD, Precedence.SUM);
         infixLeft(MUL, Precedence.PRODUCT);
         infixLeft(DIV, Precedence.PRODUCT);
         infixRight(POW, Precedence.EXPONENT);
