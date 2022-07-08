@@ -41,9 +41,23 @@ public class BinaryExprVisitor {
      * `expr.right` must never be executed if `expr.left` does not evaluate to true.
      */
     public static void logicalAnd(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
-        expr.left.accept(visitor);
-        expr.right.accept(visitor);
-        ga.visitInsn(Opcodes.IAND);
+        Label falseLabel = new Label(); // short-circuit evaluation, if left is false, skip remaining clauses and return "false"
+        Label successLabel = new Label(); // both clauses are truthy, return "true"
+
+        expr.left.accept(visitor); // get the truthiness of the left expression
+        ga.ifZCmp(GeneratorAdapter.EQ, falseLabel); // if first expression is false, return early
+
+        expr.right.accept(visitor); // get the truthiness of the right expression
+        ga.ifZCmp(GeneratorAdapter.EQ, falseLabel); // if second expression is false, return false
+        ga.push(true); // success
+        ga.goTo(successLabel); // skip to end
+
+        // if either case failed, return false
+        ga.mark(falseLabel);
+        ga.push(false);
+
+        // if both cases pass, return true
+        ga.mark(successLabel);
     }
 
     /**
@@ -51,9 +65,28 @@ public class BinaryExprVisitor {
      * `expr.right` should only be executed if `expr.left` is false.
      */
     public static void logicalOr(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
-        expr.left.accept(visitor);
-        expr.right.accept(visitor);
-        ga.visitInsn(Opcodes.IOR);
+        Label falseLabel = new Label(); // short-circuit evaluation, if left is false, skip remaining clauses and return "false"
+        Label successLabel = new Label(); // both clauses are truthy, return "true"
+        Label endLabel = new Label();
+
+        expr.left.accept(visitor); // get the truthiness of the left expression
+        ga.ifZCmp(GeneratorAdapter.NE, successLabel); // if first expression is true, return true
+        // else, fallthrough to second expression
+
+        expr.right.accept(visitor); // get the truthiness of the right expression
+        ga.ifZCmp(GeneratorAdapter.NE, successLabel); // if second expression is false, return false
+        ga.goTo(falseLabel);
+
+        ga.mark(successLabel);
+        ga.push(true);
+        ga.goTo(endLabel); // skip to end
+
+        // if either case failed, return false
+        ga.mark(falseLabel);
+        ga.push(false);
+
+        // if both cases pass, return true
+        ga.mark(endLabel);
     }
 
     /**
@@ -121,6 +154,14 @@ public class BinaryExprVisitor {
         ga.mark(endLabel);
     }
 
+    public static void modulus(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor){
+        //Todo: modulus handling
+    }
+
+    public static void exponents(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor){
+        //Todo: Exponent handling
+    }
+
     public static void arithmetic(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
         var left = expr.left;
         var right = expr.right;
@@ -160,8 +201,6 @@ public class BinaryExprVisitor {
                 case SUB -> bt.getSubtractOpcode();
                 case MUL -> bt.getMultiplyOpcode();
                 case DIV -> bt.getDivideOpcode();
-                // Todo: Modulus implementation is more complicated than just a single opcode
-                case MOD -> 0;
                 case LT, GT, LE, GE -> 0;
                 default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
             };

@@ -127,8 +127,14 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             } else {
                 BinaryExprVisitor.relational(ga, expr, this);
             }
-        } else {
-            BinaryExprVisitor.arithmetic(ga, expr, this);
+        } else {                                                //handle arithemtic tokens that need multiple opcodes
+            if (expr.operator.type() == TokenType.MOD) {        //Modulus
+                BinaryExprVisitor.modulus(ga, expr, this);
+            } else if (expr.operator.type() == TokenType.POW){  //Exponents
+                BinaryExprVisitor.exponents(ga, expr, this);
+            } else {
+                BinaryExprVisitor.arithmetic(ga, expr, this);
+            }
 
         }
         return Optional.empty();
