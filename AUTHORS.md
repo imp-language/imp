@@ -1,2 +1,2 @@
 - Matt Hall [mh15](https://github.com/MH15)
-- 
+- Fostyr Sloan [omnit3a](https://github.com/omnit3a)
