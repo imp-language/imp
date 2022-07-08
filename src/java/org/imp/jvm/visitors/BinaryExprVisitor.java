@@ -90,15 +90,28 @@ public class BinaryExprVisitor {
     }
 
     /**
-     *  Generates standard logical xor behaviour
+     * Generates standard logical xor behaviour
      */
-    public static void logicalXor(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor){
+    public static void logicalXor(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {
         Label falseLabel = new Label();
         Label successLabel = new Label();
         Label aSuccess = new Label();
         Label aFailure = new Label();
         Label endLabel = new Label();
 
+        expr.left.accept(visitor);
+        expr.right.accept(visitor);
+        ga.visitInsn(Opcodes.IXOR);
+//        ga.ifICmp(Opcodes.IFEQ, falseLabel);
+//
+//        ga.push(true);
+//        ga.goTo(endLabel);
+//
+//        ga.mark(falseLabel);
+//        ga.push(false);
+//        ga.mark(endLabel);
+
+        /*
         expr.left.accept(visitor);
         ga.ifZCmp(GeneratorAdapter.EQ, aFailure);   //if the left expression is false, check if the right expression is false
         ga.goTo(aSuccess);                          //otherwise, check if the right expression is true
@@ -119,7 +132,7 @@ public class BinaryExprVisitor {
         ga.mark(falseLabel);                        //return false
         ga.push(false);
 
-        ga.mark(endLabel);
+        ga.mark(endLabel);*/
     }
 
     public static void relational(GeneratorAdapter ga, Expr.Binary expr, CodegenVisitor visitor) {

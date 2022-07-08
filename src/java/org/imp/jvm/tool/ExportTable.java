@@ -2,8 +2,6 @@ package org.imp.jvm.tool;
 
 import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.io.FilenameUtils;
-import org.imp.jvm.Constants;
-import org.imp.jvm.Util;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.types.ImpType;
 
@@ -26,7 +24,7 @@ public class ExportTable {
     public static void initDB(Path path) {
         try {
             var mkdirsResult = new File(path.toString()).getParentFile().mkdirs();
-            if (!mkdirsResult) Util.exit("mkdirs command failed due to unknown issue", Constants.EIO);
+//            if (!mkdirsResult) Util.exit("mkdirs command failed due to unknown issue", Constants.EIO);
             connection = DriverManager.getConnection("jdbc:sqlite:" + path);
             Statement statement = ExportTable.connection.createStatement();
             statement.executeUpdate("drop table if exists ExportTable");
