@@ -72,6 +72,9 @@ public class SimpleConstructsTest extends BaseTest {
                 here
                 not here
                 here
+                not here
+                here
+                not here
                 here
                 """);
     }
