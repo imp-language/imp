@@ -125,8 +125,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 case OR -> BinaryExprVisitor.logicalOr(ga, left, right, this);
                 case XOR -> BinaryExprVisitor.logicalXor(ga, left, right, this);
                 case EQUAL, NOTEQUAL, LT, GT, LE, GE -> BinaryExprVisitor.relational(ga, left, right, expr.operator, this);
-                case MOD -> BinaryExprVisitor.modulus(ga, left, right, this);       //Modulo function
-                case POW -> BinaryExprVisitor.exponents(ga, left, right, this);     //Exponents function
+                case MOD -> BinaryExprVisitor.modulus(ga, left, right, this);
+                case POW -> BinaryExprVisitor.exponents(ga, left, right, this);
                 case ADD, SUB, MUL, DIV -> BinaryExprVisitor.arithmetic(ga, left, right, expr.operator, expr.realType, this);
                 case null, default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
             }

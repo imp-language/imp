@@ -99,8 +99,10 @@ public class BinaryExprVisitor {
         ga.visitInsn(Opcodes.IXOR);     //apply XOR operation to left and right expressions
     }
 
+    /**
+     * Visit left and right expressions and cast to the "bigger" common type.
+     */
     private static Type castAndAccept(GeneratorAdapter ga, Expr left, Expr right, CodegenVisitor visitor) {
-        // Cast to the "bigger" type
         int lWide = BuiltInType.widenings.getOrDefault((BuiltInType) left.realType, -1);
         int rWide = BuiltInType.widenings.getOrDefault((BuiltInType) right.realType, -1);
         var lType = Type.getType(left.realType.getDescriptor());
