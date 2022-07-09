@@ -115,25 +115,20 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitBinaryExpr(Expr.Binary expr) {
         var funcType = functionStack.peek();
         var ga = funcType.ga;
+        var left = expr.left;
+        var right = expr.right;
         if (expr.realType.equals(BuiltInType.STRING)) {
             BinaryExprVisitor.concatenateStrings(ga, expr, this);
-        } else if (expr.realType == BuiltInType.BOOLEAN) {
-            if (expr.operator.type() == TokenType.AND) {
-                BinaryExprVisitor.logicalAnd(ga, expr, this);
-            } else if (expr.operator.type() == TokenType.OR) {
-                BinaryExprVisitor.logicalOr(ga, expr, this);
-            } else if (expr.operator.type() == TokenType.XOR){
-                BinaryExprVisitor.logicalXor(ga, expr, this);
-            } else {
-                BinaryExprVisitor.relational(ga, expr, this);
-            }
-        } else {                                                //handle arithmetic tokens that need multiple opcodes
-            if (expr.operator.type() == TokenType.MOD) {        //Modulus
-                BinaryExprVisitor.modulus(ga, expr, this);
-            } else if (expr.operator.type() == TokenType.POW){  //Exponents
-                BinaryExprVisitor.exponents(ga, expr, this);
-            } else {
-                BinaryExprVisitor.arithmetic(ga, expr, this);
+        } else {
+            switch (expr.operator.type()) {
+                case AND -> BinaryExprVisitor.logicalAnd(ga, left, right, this);
+                case OR -> BinaryExprVisitor.logicalOr(ga, left, right, this);
+                case XOR -> BinaryExprVisitor.logicalXor(ga, left, right, this);
+                case EQUAL, NOTEQUAL, LT, GT, LE, GE -> BinaryExprVisitor.relational(ga, left, right, expr.operator, this);
+                case MOD -> BinaryExprVisitor.modulus(ga, left, right, this);
+                case POW -> BinaryExprVisitor.exponents(ga, left, right, this);
+                case ADD, SUB, MUL, DIV -> BinaryExprVisitor.arithmetic(ga, left, right, expr.operator, expr.realType, this);
+                case null, default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
             }
 
         }
@@ -645,7 +640,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
             int opcode = bt.getAddOpcode();
             if (expr.operator.type() == TokenType.DEC) opcode = bt.getSubtractOpcode();
             */
-            int op = switch (expr.operator.type()){
+            int op = switch (expr.operator.type()) {
                 case INC -> bt.getAddOpcode();
                 case DEC -> bt.getSubtractOpcode();
                 default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
