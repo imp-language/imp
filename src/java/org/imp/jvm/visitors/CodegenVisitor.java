@@ -125,8 +125,8 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 case OR -> BinaryExprVisitor.logicalOr(ga, left, right, this);
                 case XOR -> BinaryExprVisitor.logicalXor(ga, left, right, this);
                 case EQUAL, NOTEQUAL, LT, GT, LE, GE -> BinaryExprVisitor.relational(ga, left, right, expr.operator, this);
-                case MOD -> BinaryExprVisitor.modulus(ga, left, right, this);
-                case POW -> BinaryExprVisitor.exponents(ga, left, right, this);
+                case MOD -> BinaryExprVisitor.modulus(ga, left, right, this);       //Modulo function
+                case POW -> BinaryExprVisitor.exponents(ga, left, right, this);     //Exponents function
                 case ADD, SUB, MUL, DIV -> BinaryExprVisitor.arithmetic(ga, left, right, expr.operator, expr.realType, this);
                 case null, default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
             }
@@ -631,14 +631,12 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     @Override
     public Optional<ClassWriter> visitPostfixExpr(Expr.Postfix expr) {
 
-        //FIXME: Got'damn this code need to improved
         var ga = functionStack.peek().ga;
         expr.expr.accept(this);
         if (expr.realType instanceof BuiltInType bt) {
             bt.pushOne(ga);
             /*
-            int opcode = bt.getAddOpcode();
-            if (expr.operator.type() == TokenType.DEC) opcode = bt.getSubtractOpcode();
+            extensible switch statement between prefix operators
             */
             int op = switch (expr.operator.type()) {
                 case INC -> bt.getAddOpcode();
