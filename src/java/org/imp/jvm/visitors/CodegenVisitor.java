@@ -115,20 +115,21 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     public Optional<ClassWriter> visitBinaryExpr(Expr.Binary expr) {
         var funcType = functionStack.peek();
         var ga = funcType.ga;
+        var left = expr.left;
+        var right = expr.right;
         if (expr.realType.equals(BuiltInType.STRING)) {
             BinaryExprVisitor.concatenateStrings(ga, expr, this);
-        } else if (expr.realType == BuiltInType.BOOLEAN) {
-            if (expr.operator.type() == TokenType.AND) {
-                BinaryExprVisitor.logicalAnd(ga, expr, this);
-            } else if (expr.operator.type() == TokenType.OR) {
-                BinaryExprVisitor.logicalOr(ga, expr, this);
-            } else if (expr.operator.type() == TokenType.XOR){
-                BinaryExprVisitor.logicalXor(ga, expr, this);
-            } else {
-                BinaryExprVisitor.relational(ga, expr, this);
-            }
         } else {
-            BinaryExprVisitor.arithmetic(ga, expr, this);
+            switch (expr.operator.type()) {
+                case AND -> BinaryExprVisitor.logicalAnd(ga, left, right, this);
+                case OR -> BinaryExprVisitor.logicalOr(ga, left, right, this);
+                case XOR -> BinaryExprVisitor.logicalXor(ga, left, right, this);
+                case EQUAL, NOTEQUAL, LT, GT, LE, GE -> BinaryExprVisitor.relational(ga, left, right, expr.operator, this);
+                case MOD -> BinaryExprVisitor.modulus(ga, left, right, this);
+                case POW -> BinaryExprVisitor.exponents(ga, left, right, this);
+                case ADD, SUB, MUL, DIV -> BinaryExprVisitor.arithmetic(ga, left, right, expr.operator, expr.realType, this);
+                case null, default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
+            }
 
         }
         return Optional.empty();
@@ -541,7 +542,7 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         // Execute and store the match expression as an untyped Object
         match.expr.accept(this);
         int localExprIndex = ga.newLocal(Constants.ObjectType);
-        var s = "bitch";
+        var s = "bruh";
         funcType.localMap.put(s, localExprIndex);
         ga.storeLocal(localExprIndex);
 
@@ -634,10 +635,16 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         expr.expr.accept(this);
         if (expr.realType instanceof BuiltInType bt) {
             bt.pushOne(ga);
-            int opcode = bt.getAddOpcode();
-            if (expr.operator.type() == TokenType.DEC) opcode = bt.getSubtractOpcode();
+            /*
+            extensible switch statement between prefix operators
+            */
+            int op = switch (expr.operator.type()) {
+                case INC -> bt.getAddOpcode();
+                case DEC -> bt.getSubtractOpcode();
+                default -> throw new IllegalStateException("Unexpected value: " + expr.operator.type());
+            };
 
-            ga.visitInsn(opcode);
+            ga.visitInsn(op);
             // Todo: store this
             if (expr.expr instanceof Expr.Identifier eid) {
 

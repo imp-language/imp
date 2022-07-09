@@ -1,39 +1,13 @@
-// Generics example
+// modulus
 
-//struct Generic[T] {
-//    key string
-//    t T
-//}
-//
-struct Name {
-    first string
-    last string
-}
-//
-//
-//val name = Name("matt", "hall")
-////log(name)
-//
-//val genericName = Generic("s", name)
-//val n = genericName.t
-//log(n)
-////log(n.first)
+val i = 42
+val f = 4.9
+val d = 17.9812d
 
-// Todo(CURRENT): traits? native arrays first
-
-struct ArrayList[T] {
-
-}
-
-
-func genericFunc[T,C](a T, b C) {
-    val d = a
-    log(d)
-    return a
-}
-
-val name = Name("f", "j")
-val b = genericFunc(4, 5.0)
-val c = genericFunc(name,7)
-//log(b)
-//log(c)
+log("modulo")
+log(3%2)
+log(d%f)
+log(i%f)
+log(i%d)
+log(d%i)
+log(-3%2)
