@@ -75,6 +75,7 @@ public class SimpleConstructsTest extends BaseTest {
                 here
                 not here
                 here
+                false
                 """);
     }
 

@@ -52,3 +52,4 @@ log(d%f)
 log(i%f)
 log(i%d)
 log(d%i)
+log(-3%2) // http://rigaux.org/language-study/syntax-across-languages.html#MthmtMdl Java modulus allows negative
