@@ -142,6 +142,35 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
     }
 
     @Override
+    public Optional<ClassWriter> visitBytecodeStatement(Stmt.Bytecode stmt) {
+        var funcType = currentEnvironment.getVariableTyped(stmt.name.source(), FuncType.class);
+        functionStack.add(funcType);
+        // Generate function signature
+        String name = "_" + funcType.name;
+        var access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
+
+        String descriptor = Util.getMethodDescriptor(funcType.parameters, funcType.returnType);
+        if (funcType.name.equals("main")) {
+            name = "main";
+            descriptor = "([Ljava/lang/String;)V";
+        }
+        var mv = cw.visitMethod(access, name, descriptor, null, null);
+        funcType.ga = new GeneratorAdapter(mv, access, name, descriptor);
+        for (int i = 0; i < funcType.parameters.size(); i++) {
+            var param = funcType.parameters.get(i);
+            funcType.argMap.put(param.getValue0(), i);
+        }
+
+        // Generate function body
+        BytecodeGenerator.inlineBytecode(funcType.ga, stmt.code);
+
+        funcType.ga.endMethod();
+        functionStack.pop();
+
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<ClassWriter> visitCall(Expr.Call expr) {
 
         var funcType = functionStack.peek();

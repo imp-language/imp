@@ -1,13 +1,20 @@
-// modulus
 
-val i = 42
-val f = 4.9
-val d = 17.9812d
+import "shared" as shared
+import "neighbor" as neighbor
 
-log("modulo")
-log(3%2)
-log(d%f)
-log(i%f)
-log(i%d)
-log(d%i)
-log(-3%2)
+add(1,2)
+//shared::add(1,2)
+
+
+//bytecode pow(a int, b int) int {
+//    iload0;
+//    i2d;
+//    iload1;
+//    i2d;
+//    invokestatic "java/lang/Math.pow:(DD)D";
+//    d21;
+//    ireturn;
+//}
+//
+//val b = pow(2,3)
+//log(b)

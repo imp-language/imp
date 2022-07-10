@@ -77,6 +77,11 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
     }
 
     @Override
+    public String visitBytecodeStatement(Stmt.Bytecode bytecode) {
+        return "bytecode";
+    }
+
+    @Override
     public String visitCall(Expr.Call expr) {
 
         return print(expr.item) + "(" + expr.arguments.stream().map(a -> {

@@ -10,17 +10,13 @@ import org.imp.jvm.parser.Stmt;
 import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.parser.tokenizer.TokenType;
 import org.imp.jvm.tool.Compiler;
-import org.imp.jvm.tool.ExportTable;
 import org.imp.jvm.tool.Glue;
 import org.imp.jvm.types.*;
 import org.javatuples.Pair;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
@@ -99,6 +95,39 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImpType> visitBytecodeStatement(Stmt.Bytecode stmt) {
+        String name = stmt.name.source();
+
+        // Annotate parameters in the current scope
+        List<Pair<String, ImpType>> parameters = new ArrayList<>();
+        for (var param : stmt.parameters) {
+            var pt = param.type.accept(this);
+            if (pt.isPresent()) {
+                ImpType t = pt.get();
+                if (t instanceof UnknownType ut) {
+                    var gt = new GenericType(ut.typeName);
+                    parameters.add(Pair.with(param.name.source(), gt));
+
+                } else {
+                    parameters.add(Pair.with(param.name.source(), t));
+                }
+            } else {
+                System.err.println("pt not present");
+                System.exit(783);
+            }
+        }
+
+        var funcType = new FuncType(name, parameters, Collections.emptyList());
+        if (stmt.returnType != null) {
+            var ttt = stmt.returnType.accept(this);
+//            var bt = BuiltInType.getFromString(stmt.returnType.source());
+            funcType.returnType = ttt.get();
+        }
+        currentEnvironment.addVariableOrError(compiler, name, funcType, file, stmt);
+        return Optional.of(funcType);
     }
 
     @Override
@@ -252,7 +281,16 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
 
         } else {
 
-            var results = ExportTable.getExportsFromSource(importPath);
+//            for (String s : source.imports.keySet()) {
+//                var sourceFile = source.imports.get(s);
+//                var exportedMembers = sourceFile.exports;
+//                for (String exportedName : exportedMembers.keySet()) {
+//                    var exportedType = exportedMembers.get(exportedName);
+//                    System.out.println(exportedType);
+//                }
+//            }
+
+            /*var results = ExportTable.getExportsFromSource(importPath);
 
             String alias = "";
             if (stmt.identifier.isPresent()) {
@@ -279,7 +317,7 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
                         System.exit(62);
                     }
                 }
-            }
+            }*/
         }
 
         return Optional.empty();
