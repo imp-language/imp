@@ -1,13 +1,31 @@
-// modulus
+//
+//import "shared" as shared
+//import "neighbor" as neighbor
+//
+//import "lib/nested" as nested
+//import "lib/external" as external
+//
+//val res = shared::add(1,2)
+//log(res)
+//neighbor::ree()
+////
+//val res2 = nested::multiplier(4)
+//log(res2)
+//
+//
+//val powResult = external::pow(4,5)
+//log(powResult)
 
-val i = 42
-val f = 4.9
-val d = 17.9812d
+//bytecode pow(a int, b int) int {
+//    iload0;
+//    i2d;
+//    iload1;
+//    i2d;
+//    invokestatic "java/lang/Math.pow:(DD)D";
+//    d21;
+//    ireturn;
+//}
+//
+//val b = pow(2,3)
+//log(b)
 
-log("modulo")
-log(3%2)
-log(d%f)
-log(i%f)
-log(i%d)
-log(d%i)
-log(-3%2)

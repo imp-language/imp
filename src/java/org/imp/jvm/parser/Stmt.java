@@ -35,6 +35,8 @@ public abstract class Stmt implements Node {
 
         R visitBlockStmt(Block stmt);
 
+        R visitBytecodeStatement(Bytecode bytecode);
+
         R visitEnum(Enum stmt);
 
         R visitExport(Export stmt);
@@ -68,7 +70,7 @@ public abstract class Stmt implements Node {
         R visitWhile(While aWhile);
     }
 
-    public sealed interface Exportable permits Stmt.Function, Stmt.Enum, Stmt.Struct, Stmt.Variable, Stmt.Alias {
+    public sealed interface Exportable permits Alias, Bytecode, Enum, Function, Struct, Variable {
         String identifier();
     }
 
@@ -282,6 +284,32 @@ public abstract class Stmt implements Node {
 
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFunctionStmt(this);
+        }
+
+        @Override
+        public String identifier() {
+            return name.source();
+        }
+
+    }
+
+    public static final class Bytecode extends Stmt implements Exportable {
+        public final Token name;
+        public final List<List<Token>> code;
+        public final List<Parameter> parameters;
+        public final TypeStmt returnType;
+
+        public Bytecode(Location loc, Token name, List<Parameter> parameters, TypeStmt returnType,
+                        List<List<Token>> code) {
+            super(loc);
+            this.name = name;
+            this.parameters = parameters;
+            this.returnType = returnType;
+            this.code = code;
+        }
+
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBytecodeStatement(this);
         }
 
         @Override

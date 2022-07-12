@@ -20,13 +20,13 @@ public class SimpleConstructsTest extends BaseTest {
                 """);
     }
 
-    @Test
-    void StdMath() {
-        testLiteral("stdlib/MathLibTest", """
-                MathLibTest
-                5
-                """);
-    }
+//    @Test
+//    void StdMath() {
+//        testLiteral("stdlib/MathLibTest", """
+//                MathLibTest
+//                5
+//                """);
+//    }
 
     @Test
     void assignment() {

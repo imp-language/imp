@@ -1,0 +1,8 @@
+import "../shared" as shared
+
+
+// once this works import shared::add and use from this guy
+export func multiplier(a int) int {
+    log("hello from nested")
+    return a * shared::add(a, 42)
+}

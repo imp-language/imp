@@ -46,13 +46,13 @@ public abstract class Expr implements Node {
 
         R visitLiteralList(LiteralList expr);
 
+        R visitModuleAccess(ModuleAccess expr);
 
         R visitPostfixExpr(Postfix expr);
 
         R visitPrefix(Prefix expr);
 
         R visitPropertyAccess(PropertyAccess expr);
-
     }
 
     public static final class Empty extends Expr {
@@ -66,6 +66,23 @@ public abstract class Expr implements Node {
             return visitor.visitEmpty(this);
         }
     }
+
+    public static final class ModuleAccess extends Expr {
+        public final Identifier identifier;
+        public final Expr foreign;
+
+        public ModuleAccess(Location location, Identifier identifier, Expr foreign) {
+            super(location);
+            this.identifier = identifier;
+            this.foreign = foreign;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitModuleAccess(this);
+        }
+    }
+
 
     // error
     public static final class Bad extends Expr {
@@ -128,6 +145,7 @@ public abstract class Expr implements Node {
 
         public final Expr item;
         public final List<Expr> arguments;
+        public Token foreign;
 
         public Call(Location loc, Expr item, List<Expr> arguments) {
             super(loc);

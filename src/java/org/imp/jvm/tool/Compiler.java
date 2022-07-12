@@ -6,10 +6,12 @@ import org.imp.jvm.Util;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Stmt;
+import org.imp.jvm.types.FuncType;
 import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.EnvironmentVisitor;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
+import org.javatuples.Pair;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -17,48 +19,83 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
-public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilationSet, boolean developmentMode) {
+public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> compilationSet, boolean developmentMode) {
 
 
     public Compiler() {
-        this(new ArrayList<>(), new ArrayList<>(), true);
+        this(new ArrayList<>(), new HashMap<>(), true);
     }
 
     /**
      * @return java class name ('.' separated) relative to the project root
      */
     public String compile(String projectRoot, String filename) throws FileNotFoundException, Comptime.CompilerError {
-
-        AtomicInteger closure = new AtomicInteger(42);
-
-        Consumer<Integer> addToClosure = (i) -> closure.set(closure.get() + i);
-
         String relativePath = FilenameUtils.getPath(filename);
         String name = FilenameUtils.getName(filename);
 
         var entry = parse(projectRoot, relativePath, name);
-        Map<String, SourceFile> compilationSet = new HashMap<>();
         Comptime.killIfErrors(this, "Correct parser errors before continuing.");
-
         Timer.log("build dependency graph");
 
-        TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(this, entry.rootEnvironment, entry);
-        entry.acceptVisitor(typeCheckVisitor);
-        Timer.log("Type checking done");
+        // We've built the parse tree, now we can run environment visitor on each.
+        for (String filePath : compilationSet.keySet()) {
+            var source = compilationSet.get(filePath);
+            Timer.log("Build environment for source file `" + source.name + "`");
+            EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(this, source.rootEnvironment, source);
+            source.acceptVisitor(environmentVisitor);
 
-        Comptime.killIfErrors(this, "Correct type errors before compilation can continue.");
+            for (Stmt stmt : source.stmts) {
+                if (stmt instanceof Stmt.Export exportStmt) {
+                    if (exportStmt.stmt instanceof Stmt.Exportable exportable) {
+                        String identifier = exportable.identifier();
+                        ImpType type = source.rootEnvironment.getVariable(identifier);
+                        if (type != null) {
+                            source.exports.put(identifier, type);
+                        }
+                    }
+
+                }
+            }
+
+            Comptime.killIfErrors(this, "Correct syntax errors before type checking can continue.");
+        }
+
+        // Add imported members to scopes
+        // Todo: add a "ResolveImports" pass to allow for better errors on imported members.
+        //  It'd basically be a stripped-down EnvironmentVisitor.
+        for (String filePath : compilationSet.keySet()) {
+            var source = compilationSet.get(filePath);
+            for (String s : source.imports.keySet()) {
+                var sourceFile = source.imports.get(s);
+                var exportedMembers = sourceFile.exports;
+                for (String exportedName : exportedMembers.keySet()) {
+                    var exportedType = exportedMembers.get(exportedName);
+                    var qualifiedName = sourceFile.name + "::" + exportedName;
+                    if (exportedType instanceof FuncType ft) {
+                        ft.external = sourceFile;
+                    }
+                    source.rootEnvironment.addVariable(qualifiedName, exportedType);
+                }
+            }
+
+        }
+
+        // Typecheck all members
+        for (String filePath : compilationSet.keySet()) {
+            var source = compilationSet.get(filePath);
+            Timer.log("Type checking source file `" + source.name + "`");
+            TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(this, source.rootEnvironment, source);
+            source.acceptVisitor(typeCheckVisitor);
+
+            Comptime.killIfErrors(this, "Correct type errors before compilation can continue.");
+
+        }
+
+        Timer.log("Type checking done");
 
         var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
         Util.println(pretty.print(entry.stmts));
-
-        for (var s : compilationSet()) {
-            if (!compilationSet.containsKey(s.getFullRelativePath())) {
-                compilationSet.put(s.getFullRelativePath(), s);
-            }
-        }
 
         output(compilationSet);
         Timer.log("generate bytecode");
@@ -123,63 +160,62 @@ public record Compiler(List<Comptime.Data> errorData, List<SourceFile> compilati
     }
 
     /**
-     * Tokenize, parse, and build environments for a file.
+     * Tokenize, parse, and collect imports for a file.
+     * <b>Each file should only be parsed once</b>.
      *
      * @return SourceFile with exports gathered.
      */
-    public SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException, Comptime.CompilerError {
+    public SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException {
 
         var source = new SourceFile(projectRoot, relativePath, name);
+        System.out.println("Parsing `" + source.file.getName() + "`");
         source.stmts.add(0, Stmt.Import.instance);
 
-        compilationSet.add(source);
+        compilationSet.put(FilenameUtils.separatorsToUnix(source.file.getPath()), source);
+
+        List<Pair<String, String>> imports = new ArrayList<>();
 
         // Get all qualified imports (but don't load them)
-        source.filter(Stmt.Import.class, (importStmt) -> {
-            String requestedImport = importStmt.stringLiteral.source();
+        for (Stmt stmt : source.stmts) {
+            if (stmt instanceof Stmt.Import importStmt) {
+                String requestedImport = importStmt.stringLiteral.source();
+                System.out.println("\tFound import `" + requestedImport + "`");
 
-            String relative = FilenameUtils.getPath(requestedImport);
-            String n = FilenameUtils.getName(requestedImport);
+                String relative = FilenameUtils.getPath(requestedImport);
+                String n = FilenameUtils.getName(requestedImport);
+                String filePath = Path.of(source.projectRoot, source.relativePath, relative, n + ".imp").toString();
+                var normalizedPath = FilenameUtils.separatorsToUnix(Path.of(filePath).normalize().toString());
+                if (new File(normalizedPath).exists()) {
+                    imports.add(Pair.with(relative, normalizedPath));
 
-            String filePath = Path.of(source.projectRoot, source.relativePath, relative, n + ".imp").toString();
-            filePath = FilenameUtils.separatorsToUnix(filePath);
+                } else if (!n.equals("batteries")) {
+                    Comptime.ModuleNotFound.submit(this, source.file, stmt, n);
 
-            var f = new File(filePath);
-            if (f.exists()) {
-                SourceFile next = null;
+                }
+
+            }
+        }
+
+        // Link imported SourceFiles to current SourceFile
+        for (Pair<String, String> i : imports) {
+            var relative = i.getValue0();
+            var normalizedPath = i.getValue1();
+            var n = FilenameUtils.removeExtension(FilenameUtils.getName(normalizedPath));
+            if (!compilationSet.containsKey(normalizedPath)) {
+                System.out.println("triggered parse, no key exists `" + normalizedPath + "`");
+                SourceFile next;
                 try {
-                    next = parse(projectRoot, Path.of(source.relativePath, relative).toString(), n);
-                } catch (FileNotFoundException | Comptime.CompilerError e) {
+                    next = parse(projectRoot, Path.of(source.relativePath, relative).normalize().toString(), n);
+                    source.addImport(normalizedPath, next);
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                    Util.exit("Issues with building import tree.", 67);
                 }
-                source.addImport(f, next);
+            } else {
+                source.addImport(normalizedPath, compilationSet.get(normalizedPath));
             }
-            return null;
-        });
 
-        // EnvironmentVisitor builds scopes and assigns
-        // UnknownType or Literal types to expressions.
-        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(this, source.rootEnvironment, source);
-        source.acceptVisitor(environmentVisitor);
-        Comptime.killIfErrors(this, "Correct syntax errors before type checking can continue.");
-
-        // Process all exports in the current file
-        source.filter(Stmt.Export.class, (exportStmt) -> {
-            if (exportStmt.stmt instanceof Stmt.Exportable exportable) {
-                String identifier = exportable.identifier();
-                ImpType type = source.rootEnvironment.getVariable(identifier);
-                if (type != null) {
-                    source.exports.put(identifier, type);
-                    ExportTable.add(source, identifier, type);
-                    ExportTable.addSQL(source.file, identifier, type);
-                    // Must figure out what data to store in the table.
-                    // Is it as simple as a list of fields and their types?
-                }
-            }
-            return null;
-        });
-
-        // Feature: need to typecheck all files
+        }
 
         return source;
     }

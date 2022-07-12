@@ -1,0 +1,5 @@
+import "shared" as shared
+
+export func ree() {
+    log("reee")
+}

@@ -166,6 +166,46 @@ public class Parser extends ParserBase {
         return new Stmt.Block(loc, statements, new Environment());
     }
 
+    private Stmt.Bytecode bytecode() {
+        var loc = lok();
+        Token name = consume(IDENTIFIER, "Expected bytecode function name.");
+
+        consume(LPAREN, "Expected opening parentheses after function name.");
+
+        List<Stmt.Parameter> parameters = new ArrayList<>();
+        if (!check(RPAREN)) {
+            do {
+                parameters.add(parameter());
+            } while (match(COMMA));
+        }
+
+        consume(RPAREN, "Expected closing parentheses after function parameters.");
+
+        Stmt.TypeStmt returnType = null;
+        if (!check(LBRACE)) {
+            returnType = union();
+        }
+
+        consume(LBRACE, "Expect '{' before block.");
+
+        List<List<Token>> tokens = new ArrayList<>();
+
+        while (!check(RBRACE) && notAtEnd()) {
+            var list = new ArrayList<Token>();
+            while (!check(SEMICOLON) && notAtEnd()) {
+                var tok = consume();
+                list.add(tok);
+            }
+            consume(); // don't need to add semicolons to the list
+            
+            tokens.add(list);
+        }
+
+        consume(RBRACE, "Expect '}' after block.");
+
+        return new Stmt.Bytecode(loc, name, parameters, returnType, tokens);
+    }
+
     private Stmt.Export export() {
         var loc = lok();
         var stmt = statement();
@@ -330,6 +370,7 @@ public class Parser extends ParserBase {
         if (match(MATCH)) return matchStmt();
         if (match(STRUCT)) return struct();
         if (match(FUNC)) return function();
+        if (match(BYTECODE)) return bytecode();
         if (match(ENUM)) return parseEnum();
         if (match(IF)) return parseIf();
         if (check(MUT) || check(VAL)) return variable();

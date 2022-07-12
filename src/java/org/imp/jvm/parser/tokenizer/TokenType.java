@@ -3,110 +3,112 @@ package org.imp.jvm.parser.tokenizer;
 import java.util.HashMap;
 
 public enum TokenType {
-	// Separators
-	LPAREN("("),
-	RPAREN(")"),
-	LBRACE("{"),
-	RBRACE("}"),
-	LBRACK("["),
-	RBRACK("]"),
-	COMMA(","),
-	VARARGS("..."),
-	RANGE(".."),
-	DOT("."),
+    // Separators
+    LPAREN("("),
+    RPAREN(")"),
+    LBRACE("{"),
+    RBRACE("}"),
+    LBRACK("["),
+    RBRACK("]"),
+    COMMA(","),
+    VARARGS("..."),
+    RANGE(".."),
+    DOT("."),
+    MODULE("::"),
+    SEMICOLON(";"), // only used in inline bytecode
 
+    // Binary operators
+    ASSIGN("="),
+    GE(">="),
+    LE("<="),
+    GT(">"),
+    LT("<"),
+    EQUAL("=="),
+    NOTEQUAL("!="),
+    AND("and", "&&"),
+    OR("or", "||"),
+    XOR("xor", "^"),
+    ADD("+"),
+    MUL("*"),
+    SUB("-"),
+    DIV("/"),
+    MOD("%"),
+    POW("**"),
+    PIPE("|"),
+    ARROW("->"),
 
-	// Binary operators
-	ASSIGN("="),
-	GE(">="),
-	LE("<="),
-	GT(">"),
-	LT("<"),
-	EQUAL("=="),
-	NOTEQUAL("!="),
-	AND("and", "&&"),
-	OR("or", "||"),
-	XOR("xor","^"),
-	ADD("+"),
-	MUL("*"),
-	SUB("-"),
-	DIV("/"),
-	MOD("%"),
-	POW("**"),
-	PIPE("|"),
-	ARROW("->"),
+    // Prefix-only operators
+    NOT("not", "!"),
 
-	// Prefix-only operators
-	NOT("not", "!"),
+    // Suffix-only operators
+    INC("++"),
+    DEC("--"),
 
-	// Suffix-only operators
-	INC("++"),
-	DEC("--"),
-
-	// Keywords
-	FOR("for"),
+    // Keywords
+    FOR("for"),
     WHILE("while"),
-	IF("if"),
-	ELSE("else"),
-	RETURN("return"),
-	STRUCT("struct"),
-	ENUM("enum"),
-	FUNC("func"),
-	ALIAS("type"),
-	VAL("val"),
-	MUT("mut"),
-	EXPORT("export"),
-	IMPORT("import"),
-	AS("as"),
-	NEW("new"),
-	EXTERN("extern"),
-	IN("in"),
-	MATCH("match"),
+    IF("if"),
+    ELSE("else"),
+    RETURN("return"),
+    STRUCT("struct"),
+    ENUM("enum"),
+    FUNC("func"),
+    BYTECODE("bytecode"),
+    ALIAS("type"),
+    VAL("val"),
+    MUT("mut"),
+    EXPORT("export"),
+    IMPORT("import"),
+    AS("as"),
+    NEW("new"),
+    EXTERN("extern"),
+    IN("in"),
+    MATCH("match"),
 
-	// Literals
-	TRUE("true"),
-	FALSE("false"),
-	STRING,
-	IDENTIFIER,
-	INT,
-	FLOAT,
-	DOUBLE,
-	NUMBER,
+    // Literals
+    TRUE("true"),
+    FALSE("false"),
+    STRING,
+    IDENTIFIER,
+    INT,
+    FLOAT,
+    DOUBLE,
+    NUMBER,
 
-	ERROR,
-	EOF;
+    ERROR,
+    EOF;
 
 
-	private static final HashMap<String, TokenType> matcher = new HashMap<>();
+    private static final HashMap<String, TokenType> matcher = new HashMap<>();
 
-	static {
-		for (var tokenType : TokenType.values()) {
-			if (tokenType.representation != null) matcher.put(tokenType.representation, tokenType);
-			if (tokenType.alternate != null) matcher.put(tokenType.alternate, tokenType);
-		}
-	}
+    static {
+        for (var tokenType : TokenType.values()) {
+            if (tokenType.representation != null) matcher.put(tokenType.representation, tokenType);
+            if (tokenType.alternate != null) matcher.put(tokenType.alternate, tokenType);
+        }
+    }
 
-	public final String representation;
-	public final String alternate;
+    public final String representation;
+    public final String alternate;
 
-	TokenType() {
-		this.representation = null;
-		this.alternate = null;
-	}
+    TokenType() {
+        this.representation = null;
+        this.alternate = null;
+    }
 
-	TokenType(String representation) {
-		this.representation = representation;
-		this.alternate = null;
-	}
+    TokenType(String representation) {
+        this.representation = representation;
+        this.alternate = null;
+    }
 
-	TokenType(String representation, String alternate) {
-		this.representation = representation;
-		this.alternate = alternate;
-	}
+    TokenType(String representation, String alternate) {
+        this.representation = representation;
+        this.alternate = alternate;
+    }
 
-	public static TokenType find(String representation) {
-		return matcher.get(representation);
-	}
+    public static TokenType find(String representation) {
+        return matcher.get(representation);
+    }
 
 
 }

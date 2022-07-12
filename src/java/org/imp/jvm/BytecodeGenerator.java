@@ -2,6 +2,7 @@ package org.imp.jvm;
 
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.domain.SourceFile;
+import org.imp.jvm.parser.tokenizer.Token;
 import org.imp.jvm.tool.Compiler;
 import org.imp.jvm.types.StructType;
 import org.imp.jvm.visitors.CodegenVisitor;
@@ -13,8 +14,12 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.commons.Method;
 
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.objectweb.asm.Opcodes.*;
 
 public class BytecodeGenerator {
 
@@ -51,6 +56,41 @@ public class BytecodeGenerator {
         }
         ga.visitInsn(Opcodes.ARETURN);
         ga.endMethod();
+
+    }
+
+    public static void inlineBytecode(GeneratorAdapter ga, List<List<Token>> code) {
+        Pattern pattern = Pattern.compile("^([^.]+).([^:]+):([\\S]+)");
+
+        for (List<Token> line : code) {
+            var instruction = line.get(0);
+            if (line.size() == 1) {
+
+                switch (instruction.source()) {
+                    case "iload0" -> ga.visitVarInsn(ILOAD, 0);
+                    case "iload1" -> ga.visitVarInsn(ILOAD, 1);
+                    case "iload2" -> ga.visitVarInsn(ILOAD, 2);
+                    case "iload3" -> ga.visitVarInsn(ILOAD, 3);
+                    case "i2d" -> ga.visitInsn(I2D);
+                    case "ireturn" -> ga.visitInsn(IRETURN);
+                    case "d21" -> ga.visitInsn(D2I);
+                }
+            } else {
+                var param1 = line.get(1).source();
+                switch (instruction.source()) {
+                    case "invokestatic" -> {
+                        var l = line.get(1).source();
+                        var matcher = pattern.matcher(l);
+                        matcher.find();
+                        var owner = matcher.group(1);
+                        var name = matcher.group(2);
+                        var descriptor = matcher.group(3);
+                        ga.visitMethodInsn(INVOKESTATIC, owner, name, descriptor, false);
+                    }
+                }
+            }
+        }
+
 
     }
 

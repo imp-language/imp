@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BaseTest {
     static final String pwd = System.getProperty("user.dir");
     static final String moduleLocation = Path.of(pwd, "verification").toString();
-    static final Compiler compiler = new Compiler();
 
     public Map<Integer, Long> checkForErrors(String testPath, String projectRoot) throws IOException {
         try {
@@ -43,6 +42,7 @@ public class BaseTest {
     }
 
     protected String run(String path) throws IOException, InterruptedException {
+        Compiler compiler = new Compiler();
         String className = null;
         try {
             className = compiler.compile(moduleLocation, path + ".imp");

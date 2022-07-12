@@ -123,7 +123,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
                     totalType = BuiltInType.BOOLEAN;
                 }
             }
-            case AND, OR, XOR-> {
+            case AND, OR, XOR -> {
                 if (t1.get() instanceof BuiltInType bt1 && t2.get() instanceof BuiltInType bt2) {
                     // check if two values can be compared
                     if (bt1 != BuiltInType.BOOLEAN || bt2 != BuiltInType.BOOLEAN) {
@@ -154,9 +154,60 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     }
 
     @Override
+    public Optional<ImpType> visitBytecodeStatement(Stmt.Bytecode stmt) {
+
+        // Find the FunctionType associated with this statement
+        var funcType = currentEnvironment.getVariableTyped(stmt.name.source(), FuncType.class);
+        if (funcType != null) {
+            functionStack.add(funcType);
+
+            var parametersBefore = funcType.parameters;
+            var parametersAfter = new ArrayList<Pair<String, ImpType>>();
+
+            for (var param : parametersBefore) {
+                if (param.getValue1() instanceof UnknownType ut) {
+                    var attempt = currentEnvironment.getVariable(ut.typeName);
+                    if (attempt != null) {
+                        var nt = param.setAt1(attempt);
+                        parametersAfter.add(nt);
+                    } else {
+                        Comptime.IdentifierNotFound.submit(compiler, file, stmt, ut.typeName);
+                        parametersAfter.add(param); // this can go if we break here
+                    }
+                } else if (param.getValue1() instanceof UnionType ut) {
+                    parametersAfter.add(param);
+                    var resolvedTypes = new HashSet<ImpType>();
+                    extractedMethodForUnions(resolvedTypes, ut, stmt);
+
+                    currentEnvironment.setVariableType(param.getValue0(), ut);
+                } else {
+                    parametersAfter.add(param);
+
+                }
+            }
+            funcType.parameters.clear();
+            funcType.parameters.addAll(parametersAfter);
+
+            if (funcType.returnType instanceof UnknownType ut) {
+                var attempt = currentEnvironment.getVariable(ut.typeName);
+                if (attempt != null) {
+                    funcType.returnType = attempt;
+                } else {
+                    Comptime.IdentifierNotFound.submit(compiler, file, stmt, ut.typeName);
+                }
+            }
+
+            functionStack.pop();
+
+
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<ImpType> visitCall(Expr.Call expr) {
         var e = expr.item.accept(this);
-        if (e.isEmpty()) Util.exit("Big issue.", 95);
+        if (e.isEmpty()) Util.exit("Type checking failed to resolve function type.", 95);
         var t = e.orElseThrow();
         // Shared code
         if (t instanceof StructType st) {
@@ -485,6 +536,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 //            Util.exit("error", 97);
         }
 
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImpType> visitModuleAccess(Expr.ModuleAccess expr) {
+        expr.foreign.accept(this);
         return Optional.empty();
     }
 

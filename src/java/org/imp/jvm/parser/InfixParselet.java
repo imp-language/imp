@@ -68,6 +68,7 @@ public interface InfixParselet {
             }
             return new Expr.Call(
                     loc,
+                    
                     new Expr.Identifier(loc, new Token(TokenType.IDENTIFIER, loc.line(), loc.col(), "at")),
                     arguments
             );

@@ -1,6 +1,7 @@
 package org.imp.jvm.types;
 
 import org.imp.jvm.Util;
+import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.parser.Expr;
 import org.javatuples.Pair;
 import org.objectweb.asm.commons.GeneratorAdapter;
@@ -26,6 +27,7 @@ public class FuncType extends StructType {
     public List<Map<String, ImpType>> specializations = new ArrayList<>();
 
     public Map<String, ImpType> currentSpecialization = null;
+    public SourceFile external;
 
     public FuncType(String name, List<Pair<String, ImpType>> parameters) {
         super(name, parameters, new ArrayList<>());
