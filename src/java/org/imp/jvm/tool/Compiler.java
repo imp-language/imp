@@ -11,7 +11,7 @@ import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.EnvironmentVisitor;
 import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
-import org.jgrapht.alg.util.Triple;
+import org.javatuples.Pair;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -52,10 +52,6 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
                         ImpType type = source.rootEnvironment.getVariable(identifier);
                         if (type != null) {
                             source.exports.put(identifier, type);
-//                    ExportTable.add(source, identifier, type);
-//                    ExportTable.addSQL(source.file, identifier, type);
-                            // Must figure out what data to store in the table.
-                            // Is it as simple as a list of fields and their types?
                         }
                     }
 
@@ -66,6 +62,8 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
         }
 
         // Add imported members to scopes
+        // Todo: add a "ResolveImports" pass to allow for better errors on imported members.
+        //  It'd basically be a stripped-down EnvironmentVisitor.
         for (String filePath : compilationSet.keySet()) {
             var source = compilationSet.get(filePath);
             for (String s : source.imports.keySet()) {
@@ -162,11 +160,12 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
     }
 
     /**
-     * Tokenize, parse, and build environments for a file.
+     * Tokenize, parse, and collect imports for a file.
+     * <b>Each file should only be parsed once</b>.
      *
      * @return SourceFile with exports gathered.
      */
-    public SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException, Comptime.CompilerError {
+    public SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException {
 
         var source = new SourceFile(projectRoot, relativePath, name);
         System.out.println("Parsing `" + source.file.getName() + "`");
@@ -174,7 +173,7 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
 
         compilationSet.put(FilenameUtils.separatorsToUnix(source.file.getPath()), source);
 
-        List<Triple<String, String, String>> imports = new ArrayList<>();
+        List<Pair<String, String>> imports = new ArrayList<>();
 
         // Get all qualified imports (but don't load them)
         for (Stmt stmt : source.stmts) {
@@ -184,40 +183,39 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
 
                 String relative = FilenameUtils.getPath(requestedImport);
                 String n = FilenameUtils.getName(requestedImport);
-
                 String filePath = Path.of(source.projectRoot, source.relativePath, relative, n + ".imp").toString();
-                filePath = FilenameUtils.separatorsToUnix(filePath);
+                var normalizedPath = FilenameUtils.separatorsToUnix(Path.of(filePath).normalize().toString());
+                if (new File(normalizedPath).exists()) {
+                    imports.add(Pair.with(relative, normalizedPath));
 
-                var f = new File(filePath);
-                imports.add(Triple.of(filePath, relative, n));
-            }
-        }
+                } else if (!n.equals("batteries")) {
+                    Comptime.ModuleNotFound.submit(this, source.file, stmt, n);
 
-//        System.out.println(imports);
-
-        for (Triple<String, String, String> i : imports) {
-            var filePath = i.getFirst();
-            var normalizedPath = FilenameUtils.separatorsToUnix(Path.of(filePath).normalize().toString());
-            var relative = i.getSecond();
-            var n = i.getThird();
-            var f = new File(normalizedPath);
-            if (f.exists()) {
-                if (!compilationSet.containsKey(normalizedPath)) {
-                    System.out.println("triggered parse, no key exists `" + normalizedPath + "`");
-                    SourceFile next = null;
-                    try {
-                        next = parse(projectRoot, Path.of(source.relativePath, relative).normalize().toString(), n);
-                    } catch (FileNotFoundException | Comptime.CompilerError e) {
-                        e.printStackTrace();
-                    }
-                    source.addImport(normalizedPath, next);
-                } else {
-                    source.addImport(normalizedPath, compilationSet.get(normalizedPath));
                 }
+
             }
         }
 
-        // Feature: need to typecheck all files
+        // Link imported SourceFiles to current SourceFile
+        for (Pair<String, String> i : imports) {
+            var relative = i.getValue0();
+            var normalizedPath = i.getValue1();
+            var n = FilenameUtils.removeExtension(FilenameUtils.getName(normalizedPath));
+            if (!compilationSet.containsKey(normalizedPath)) {
+                System.out.println("triggered parse, no key exists `" + normalizedPath + "`");
+                SourceFile next;
+                try {
+                    next = parse(projectRoot, Path.of(source.relativePath, relative).normalize().toString(), n);
+                    source.addImport(normalizedPath, next);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Util.exit("Issues with building import tree.", 67);
+                }
+            } else {
+                source.addImport(normalizedPath, compilationSet.get(normalizedPath));
+            }
+
+        }
 
         return source;
     }

@@ -1,0 +1,11 @@
+//import "nonexistent" as n
+
+export bytecode pow(a int, b int) int {
+    iload0;
+    i2d;
+    iload1;
+    i2d;
+    invokestatic "java/lang/Math.pow:(DD)D";
+    d21;
+    ireturn;
+}
