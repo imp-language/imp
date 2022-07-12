@@ -31,6 +31,8 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
      * @return java class name ('.' separated) relative to the project root
      */
     public String compile(String projectRoot, String filename) throws FileNotFoundException, Comptime.CompilerError {
+
+        Timer.log("start compiler");
         String relativePath = FilenameUtils.getPath(filename);
         String name = FilenameUtils.getName(filename);
 
@@ -94,8 +96,10 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
 
         Timer.log("Type checking done");
 
-        var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
-        Util.println(pretty.print(entry.stmts));
+        if (Util.DEBUG) {
+            var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
+            Util.println(pretty.print(entry.stmts));
+        }
 
         output(compilationSet);
         Timer.log("generate bytecode");
@@ -168,7 +172,7 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
     public SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException {
 
         var source = new SourceFile(projectRoot, relativePath, name);
-        System.out.println("Parsing `" + source.file.getName() + "`");
+        Util.debug("Parsing `" + source.file.getName() + "`");
         source.stmts.add(0, Stmt.Import.instance);
 
         compilationSet.put(FilenameUtils.separatorsToUnix(source.file.getPath()), source);
@@ -179,7 +183,7 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
         for (Stmt stmt : source.stmts) {
             if (stmt instanceof Stmt.Import importStmt) {
                 String requestedImport = importStmt.stringLiteral.source();
-                System.out.println("\tFound import `" + requestedImport + "`");
+                Util.debug("\tFound import `" + requestedImport + "`");
 
                 String relative = FilenameUtils.getPath(requestedImport);
                 String n = FilenameUtils.getName(requestedImport);
@@ -202,7 +206,7 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
             var normalizedPath = i.getValue1();
             var n = FilenameUtils.removeExtension(FilenameUtils.getName(normalizedPath));
             if (!compilationSet.containsKey(normalizedPath)) {
-                System.out.println("triggered parse, no key exists `" + normalizedPath + "`");
+                Util.debug("triggered parse, no key exists `" + normalizedPath + "`");
                 SourceFile next;
                 try {
                     next = parse(projectRoot, Path.of(source.relativePath, relative).normalize().toString(), n);

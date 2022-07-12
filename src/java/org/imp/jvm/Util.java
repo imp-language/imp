@@ -9,7 +9,12 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.diogonunes.jcolor.Ansi.colorize;
+import static com.diogonunes.jcolor.Attribute.TEXT_COLOR;
+
 public class Util {
+    public static boolean DEBUG = false;
+
     public static <A, B, O> Stream<O> zipMap(List<? extends A> a, List<? extends B> b, BiFunction<A, B, ? extends O> lambda) throws ArrayIndexOutOfBoundsException {
         var l = new ArrayList<O>();
         if (a.size() == b.size()) {
@@ -40,6 +45,12 @@ public class Util {
     public static void exit(String message, int code) {
         System.err.println(message);
         System.exit(code);
+    }
+
+    public static void debug(String message) {
+        if (DEBUG) {
+            Util.println(colorize(Constants.RIGHT_ARROWHEAD + " " + message, TEXT_COLOR(215)));
+        }
     }
 
     @SafeVarargs

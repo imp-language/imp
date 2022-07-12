@@ -4,8 +4,6 @@ import org.imp.jvm.Constants;
 import org.imp.jvm.Util;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.tool.Compiler;
-import org.imp.jvm.tool.ExportTable;
-import org.imp.jvm.tool.Timer;
 import picocli.CommandLine;
 
 import java.io.FileNotFoundException;
@@ -13,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @CommandLine.Command(name = "imp", subcommands = {
-        NewCommand.class,
         BuildCommand.class,
 }, description = "Compile and run an imp program." +
         ""
@@ -23,6 +20,9 @@ public class CLI implements Runnable {
     @SuppressWarnings("unused")
     @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
     boolean usageHelpRequested;
+
+    @CommandLine.Parameters(index = "0", description = "Entry file to compile and run.")
+    String entry;
 
 
     public static void main(String[] args) {
@@ -43,7 +43,7 @@ public class CLI implements Runnable {
 //                "-verbose:class",
                 "--enable-preview",
                 "-cp",
-                ".compile" + System.getProperty("path.separator") + "../target/classes",
+                ".compile" + System.getProperty("path.separator") + "target/classes", // Todo: runtime needs to go away
                 className
         );
         processBuilder.inheritIO();
@@ -55,36 +55,19 @@ public class CLI implements Runnable {
 
     @Override
     public void run() {
-
         if (usageHelpRequested) {
             CommandLine.usage(this, System.out);
             return;
         }
-
-//        Manifest manifest = null;
-//        try {
-//            manifest = Manifest.get();
-//            assert manifest != null;
-//        } catch (FileNotFoundException e) {
-//            System.err.println("Manifest not found. Switch directories to an imp project, or run `imp new`.");
-//            System.exit(Constants.ENOENT);
-//        }
-
-        Timer.LOG = true;
+//        Timer.LOG = true;
         var imp = new Compiler();
-//        Timer.log("get manifest");
         String pwd = System.getProperty("user.dir");
-        ExportTable.initDB(Path.of(pwd, ".compile", "imp.db"));
-
-//         Connect to db
-        ExportTable.connectDB(Path.of(pwd, ".compile", "imp.db"));
 
         String moduleLocation = Path.of(pwd).toString();
 
         String classPath = null;
         try {
-//			classPath = imp.compile(moduleLocation, manifest.entry());
-            classPath = imp.compile(moduleLocation, "main.imp");
+            classPath = imp.compile(moduleLocation, entry);
         } catch (FileNotFoundException e) {
             System.err.println("Manifest.entry points to a file that does not exist.");
             System.exit(Constants.ENOENT);

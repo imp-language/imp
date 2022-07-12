@@ -86,16 +86,11 @@ chmod u+x imp # the first time only
 
 ### Notes
 
-To compile Java files using the Imp runtime:
-
-```bash
-javac --enable-preview -source 14 -cp .compile;target/classes .compile/main/Example.java
-```
-
 To run the packaged Imp compiler JAR:
 
 ```bash
-java --enable-preview -jar target/imp-0.1.jar examples/scratch.imp
+# in the root directory
+java --enable-preview -jar target/imp-0.1.jar sample/main.imp
 ```
 
 To see a CLOC visualization, https://codeflower.la/?name=imp&owner=mh15&branch=main.

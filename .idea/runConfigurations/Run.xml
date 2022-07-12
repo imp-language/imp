@@ -3,8 +3,9 @@
     <option name="ALTERNATIVE_JRE_PATH" value="openjdk-17" />
     <option name="MAIN_CLASS_NAME" value="org.imp.jvm.tool.cli.CLI" />
     <module name="imp" />
+    <option name="PROGRAM_PARAMETERS" value="sample/main.imp" />
     <option name="VM_PARAMETERS" value="-ea" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/sample" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

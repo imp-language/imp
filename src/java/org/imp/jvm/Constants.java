@@ -23,4 +23,7 @@ public class Constants {
 
     public static final int PublicStatic = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC;
 
+    public static final String RIGHT_ARROWHEAD = "➤";
+    public static final String TIME_SYMBOL = "◔ ";
+
 }

@@ -1,20 +1,20 @@
+
+import "shared" as shared
+import "neighbor" as neighbor
+
+import "lib/nested" as nested
+import "lib/external" as external
+
+val res = shared::add(1,2)
+log(res)
+neighbor::ree()
 //
-//import "shared" as shared
-//import "neighbor" as neighbor
-//
-//import "lib/nested" as nested
-//import "lib/external" as external
-//
-//val res = shared::add(1,2)
-//log(res)
-//neighbor::ree()
-////
-//val res2 = nested::multiplier(4)
-//log(res2)
-//
-//
-//val powResult = external::pow(4,5)
-//log(powResult)
+val res2 = nested::multiplier(4)
+log(res2)
+
+
+val powResult = external::pow(4,5)
+log(powResult)
 
 //bytecode pow(a int, b int) int {
 //    iload0;
