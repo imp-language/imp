@@ -2,9 +2,14 @@
 import "shared" as shared
 import "neighbor" as neighbor
 
-add(1,2)
-//shared::add(1,2)
+import "lib/nested" as nested
 
+val res = shared::add(1,2)
+log(res)
+neighbor::ree()
+//
+val res2 = nested::multiplier(4)
+log(res2)
 
 //bytecode pow(a int, b int) int {
 //    iload0;
@@ -18,3 +23,4 @@ add(1,2)
 //
 //val b = pow(2,3)
 //log(b)
+

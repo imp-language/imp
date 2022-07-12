@@ -379,6 +379,11 @@ public class EnvironmentVisitor implements IVisitor<Optional<ImpType>> {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<ImpType> visitModuleAccess(Expr.ModuleAccess expr) {
+        expr.foreign.accept(this);
+        return Optional.empty();
+    }
 
     @Override
     public Optional<ImpType> visitParameterStmt(Stmt.Parameter stmt) {

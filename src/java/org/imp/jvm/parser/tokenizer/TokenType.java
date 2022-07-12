@@ -14,6 +14,7 @@ public enum TokenType {
     VARARGS("..."),
     RANGE(".."),
     DOT("."),
+    MODULE("::"),
     SEMICOLON(";"), // only used in inline bytecode
 
     // Binary operators

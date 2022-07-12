@@ -67,10 +67,11 @@ public class SourceFile {
         return results;
     }
 
-    public void addImport(File file, SourceFile sourceFile) {
-        String s = FilenameUtils.separatorsToUnix(file.getPath());
-        s = FilenameUtils.removeExtension(s);
-        imports.put(s, sourceFile);
+    public void addImport(String absolute, SourceFile sourceFile) {
+//        String s = FilenameUtils.separatorsToUnix(file.getPath());
+//        s = FilenameUtils.removeExtension(s);
+        absolute = FilenameUtils.separatorsToUnix(absolute);
+        imports.put(absolute, sourceFile);
     }
 
 

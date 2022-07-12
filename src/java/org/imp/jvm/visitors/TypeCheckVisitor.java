@@ -207,7 +207,7 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
     @Override
     public Optional<ImpType> visitCall(Expr.Call expr) {
         var e = expr.item.accept(this);
-        if (e.isEmpty()) Util.exit("Big issue.", 95);
+        if (e.isEmpty()) Util.exit("Type checking failed to resolve function type.", 95);
         var t = e.orElseThrow();
         // Shared code
         if (t instanceof StructType st) {
@@ -536,6 +536,12 @@ public class TypeCheckVisitor implements IVisitor<Optional<ImpType>> {
 //            Util.exit("error", 97);
         }
 
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ImpType> visitModuleAccess(Expr.ModuleAccess expr) {
+        expr.foreign.accept(this);
         return Optional.empty();
     }
 

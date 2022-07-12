@@ -258,6 +258,11 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
                 String name = "_" + callType.name;
                 String owner = FilenameUtils.removeExtension(source.getFullRelativePath());
 
+                // Call static method in the proper compiled class
+                if (callType.external != null) {
+                    owner = callType.external.getFullRelativePath();
+                }
+
                 funcType.ga.visitMethodInsn(Opcodes.INVOKESTATIC, owner, name, methodDescriptor, false);
             }
 
@@ -650,6 +655,10 @@ public class CodegenVisitor implements IVisitor<Optional<ClassWriter>> {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<ClassWriter> visitModuleAccess(Expr.ModuleAccess expr) {
+        return Optional.empty();
+    }
 
     @Override
     public Optional<ClassWriter> visitParameterStmt(Stmt.Parameter stmt) {

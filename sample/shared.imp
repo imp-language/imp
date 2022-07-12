@@ -1,5 +1,6 @@
 
-
-export func add(a int, b int) {
+// Todo: allow void here we should be able to not type this
+// honestly I'd consider just requiring fully typed exported functions
+export func add(a int, b int) int {
     return a + b
 }

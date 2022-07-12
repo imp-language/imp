@@ -235,6 +235,10 @@ public class PrettyPrinterVisitor implements IVisitor<String> {
         return s.toString();
     }
 
+    @Override
+    public String visitModuleAccess(Expr.ModuleAccess expr) {
+        return print(expr.identifier) + "::" + print(expr.foreign);
+    }
 
     @Override
     public String visitParameterStmt(Stmt.Parameter stmt) {

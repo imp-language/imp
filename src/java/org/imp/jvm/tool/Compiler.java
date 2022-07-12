@@ -2,11 +2,14 @@ package org.imp.jvm.tool;
 
 import org.apache.commons.io.FilenameUtils;
 import org.imp.jvm.BytecodeGenerator;
+import org.imp.jvm.Util;
 import org.imp.jvm.domain.SourceFile;
 import org.imp.jvm.errors.Comptime;
 import org.imp.jvm.parser.Stmt;
+import org.imp.jvm.types.FuncType;
 import org.imp.jvm.types.ImpType;
 import org.imp.jvm.visitors.EnvironmentVisitor;
+import org.imp.jvm.visitors.PrettyPrinterVisitor;
 import org.imp.jvm.visitors.TypeCheckVisitor;
 import org.jgrapht.alg.util.Triple;
 
@@ -62,7 +65,6 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
             Comptime.killIfErrors(this, "Correct syntax errors before type checking can continue.");
         }
 
-        // Todo(CURRENT): scope imported members so codegen works properly
         // Add imported members to scopes
         for (String filePath : compilationSet.keySet()) {
             var source = compilationSet.get(filePath);
@@ -71,7 +73,11 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
                 var exportedMembers = sourceFile.exports;
                 for (String exportedName : exportedMembers.keySet()) {
                     var exportedType = exportedMembers.get(exportedName);
-                    source.rootEnvironment.addVariable(exportedName, exportedType);
+                    var qualifiedName = sourceFile.name + "::" + exportedName;
+                    if (exportedType instanceof FuncType ft) {
+                        ft.external = sourceFile;
+                    }
+                    source.rootEnvironment.addVariable(qualifiedName, exportedType);
                 }
             }
 
@@ -90,14 +96,8 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
 
         Timer.log("Type checking done");
 
-//        var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
-//        Util.println(pretty.print(entry.stmts));
-
-//        for (var s : compilationList()) {
-//            if (!compilationSet.containsKey(s.getFullRelativePath())) {
-//                compilationSet.put(s.getFullRelativePath(), s);
-//            }
-//        }
+        var pretty = new PrettyPrinterVisitor(entry.rootEnvironment);
+        Util.println(pretty.print(entry.stmts));
 
         output(compilationSet);
         Timer.log("generate bytecode");
@@ -169,7 +169,7 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
     public SourceFile parse(String projectRoot, String relativePath, String name) throws FileNotFoundException, Comptime.CompilerError {
 
         var source = new SourceFile(projectRoot, relativePath, name);
-        System.out.println("Parsing `" + source.file.getPath() + "`");
+        System.out.println("Parsing `" + source.file.getName() + "`");
         source.stmts.add(0, Stmt.Import.instance);
 
         compilationSet.put(FilenameUtils.separatorsToUnix(source.file.getPath()), source);
@@ -190,61 +190,32 @@ public record Compiler(List<Comptime.Data> errorData, Map<String, SourceFile> co
 
                 var f = new File(filePath);
                 imports.add(Triple.of(filePath, relative, n));
-//                if (f.exists() && !compilationSet.containsKey(f.getPath())) {
-//                    SourceFile next = null;
-//                    try {
-//                        next = parse(projectRoot, Path.of(source.relativePath, relative).toString(), n);
-//                    } catch (FileNotFoundException | Comptime.CompilerError e) {
-//                        e.printStackTrace();
-//                    }
-//                    source.addImport(f, next);
-//                }
             }
         }
 
-        System.out.println(imports);
+//        System.out.println(imports);
 
         for (Triple<String, String, String> i : imports) {
             var filePath = i.getFirst();
+            var normalizedPath = FilenameUtils.separatorsToUnix(Path.of(filePath).normalize().toString());
             var relative = i.getSecond();
             var n = i.getThird();
-            var f = new File(filePath);
+            var f = new File(normalizedPath);
             if (f.exists()) {
-                if (!compilationSet.containsKey(filePath)) {
+                if (!compilationSet.containsKey(normalizedPath)) {
+                    System.out.println("triggered parse, no key exists `" + normalizedPath + "`");
                     SourceFile next = null;
                     try {
-                        next = parse(projectRoot, Path.of(source.relativePath, relative).toString(), n);
+                        next = parse(projectRoot, Path.of(source.relativePath, relative).normalize().toString(), n);
                     } catch (FileNotFoundException | Comptime.CompilerError e) {
                         e.printStackTrace();
                     }
-                    source.addImport(f, next);
+                    source.addImport(normalizedPath, next);
                 } else {
-                    source.addImport(f, compilationSet.get(filePath));
+                    source.addImport(normalizedPath, compilationSet.get(normalizedPath));
                 }
             }
         }
-
-        // EnvironmentVisitor builds scopes and assigns
-        // UnknownType or Literal types to expressions.
-//        EnvironmentVisitor environmentVisitor = new EnvironmentVisitor(this, source.rootEnvironment, source);
-//        source.acceptVisitor(environmentVisitor);
-//        Comptime.killIfErrors(this, "Correct syntax errors before type checking can continue.");
-
-        // Process all exports in the current file
-//        source.filter(Stmt.Export.class, (exportStmt) -> {
-//            if (exportStmt.stmt instanceof Stmt.Exportable exportable) {
-//                String identifier = exportable.identifier();
-//                ImpType type = source.rootEnvironment.getVariable(identifier);
-//                if (type != null) {
-//                    source.exports.put(identifier, type);
-////                    ExportTable.add(source, identifier, type);
-////                    ExportTable.addSQL(source.file, identifier, type);
-//                    // Must figure out what data to store in the table.
-//                    // Is it as simple as a list of fields and their types?
-//                }
-//            }
-//            return null;
-//        });
 
         // Feature: need to typecheck all files
 
