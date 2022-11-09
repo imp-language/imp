@@ -2,6 +2,8 @@ package org.imp.test;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 // Tests that may be from Rosetta Code or a similar aggregator
 public class RosettaCodeTest extends BaseTest {
     @Test
@@ -70,5 +72,10 @@ public class RosettaCodeTest extends BaseTest {
                 F: -421.87003
                 R: 37.8
                 """);
+    }
+
+    @Test
+    void fizzBuzz() throws IOException, InterruptedException {
+        test("rosetta/fizzBuzz.txt", "rosetta/fizzBuzz");
     }
 }
